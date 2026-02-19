@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF -8">
+  <title>iPad Web App</title>
+
+  <style>
+    body{
+      background:#111827;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+      margin-top:120px;
+    }
+
+    h1{
+      color:#36975a;
+    }
+
+    button{
+      padding:12px 20px;
+      background:#22c55e;
+      border:none;
+      border-radius:8px;
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1 id="title">Hello Developer 🚀</h1>
+<p>iPad se real UI ban raha hai.</p>
+
+<button onclick="changeText()">Click Me</button>
+
+<script>
+function changeText(){
+  document.getElementById("title").innerText =
+  "🔥 Button Clicked! You are coding from iPad!";
+}
+</script>
+
+</body>
+</html>
