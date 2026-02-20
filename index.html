@@ -3,38 +3,40 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manomaya Learning</title>
+    <title>Help Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     >
     <style>
       :root {
-        --ink: #0b1019;
-        --paper: #f6f5f2;
-        --fog: #e9eef5;
-        --deep: #112d3a;
-        --teal: #22b4a9;
-        --sky: #7cc7ff;
-        --sun: #ffd77a;
-        --plum: #8d7cf7;
-        --shadow: 0 24px 60px rgba(11, 16, 25, 0.22);
+        --ink: #0f172a;
+        --slate: #334155;
+        --soft: #eef3f8;
+        --card: #ffffff;
+        --blue-1: #7fb2d9;
+        --blue-2: #2f6ea6;
+        --shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        --max-width: 1000px;
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
-        font-family: "Outfit", sans-serif;
+        font-family: "Plus Jakarta Sans", sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at top, rgba(124, 199, 255, 0.25), transparent 55%),
-          radial-gradient(circle at 10% 30%, rgba(141, 124, 247, 0.18), transparent 50%),
-          linear-gradient(160deg, #f8fafc 0%, #f0f4f8 42%, #eef1f7 100%);
+          radial-gradient(circle at 20% 20%, rgba(127, 178, 217, 0.25), transparent 40%),
+          linear-gradient(180deg, #f7fafc 0%, #eef2f7 55%, #e9edf5 100%);
       }
 
       header {
@@ -42,590 +44,517 @@
         top: 0;
         z-index: 10;
         backdrop-filter: blur(14px);
-        background: rgba(246, 245, 242, 0.9);
-        border-bottom: 1px solid rgba(11, 13, 18, 0.08);
+        background: rgba(247, 250, 252, 0.92);
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
       }
 
       .nav {
-        max-width: 1160px;
+        max-width: var(--max-width);
         margin: 0 auto;
-        padding: 18px 24px;
+        padding: 18px 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
 
       .brand {
-        font-family: "Fraunces", serif;
-        font-size: 21px;
+        font-weight: 700;
         letter-spacing: 0.6px;
+        font-size: 18px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 16px;
       }
 
       .nav a {
         text-decoration: none;
-        color: var(--ink);
-        font-weight: 500;
-        margin-left: 18px;
+        color: var(--slate);
+        font-weight: 600;
         font-size: 14px;
+        position: relative;
+        padding-bottom: 4px;
+        transition: color 0.2s ease;
+      }
+
+      .nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: var(--blue-2);
+        transition: width 0.2s ease;
+      }
+
+      .nav a:hover,
+      .nav a.active {
+        color: var(--ink);
+      }
+
+      .nav a:hover::after,
+      .nav a.active::after {
+        width: 100%;
+      }
+
+      .nav a:focus-visible,
+      .btn:focus-visible,
+      .menu-toggle:focus-visible {
+        outline: 2px solid rgba(47, 110, 166, 0.6);
+        outline-offset: 3px;
+      }
+
+      .menu-toggle {
+        display: none;
+        border: none;
+        background: none;
+        padding: 6px;
+        cursor: pointer;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--ink);
+        margin: 5px 0;
+        border-radius: 2px;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+
+      .menu-toggle.open span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .menu-toggle.open span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-toggle.open span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
       }
 
       .hero {
-        max-width: 1160px;
+        background: linear-gradient(135deg, #7fb2d9, #2f6ea6);
+        color: #ffffff;
+        text-align: center;
+        padding: 100px 20px 90px;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 20px;
+        top: -40px;
+        background: #ffffff;
+        color: #2f6ea6;
+        padding: 8px 12px;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        text-decoration: none;
+        font-weight: 600;
+        transition: top 0.2s ease;
+        z-index: 20;
+      }
+
+      .skip-link:focus {
+        top: 12px;
+      }
+
+      .hero-content {
+        max-width: var(--max-width);
         margin: 0 auto;
-        padding: 72px 24px 40px;
-        display: grid;
-        gap: 40px;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        align-items: center;
       }
 
       .hero h1 {
-        font-family: "Fraunces", serif;
-        font-size: clamp(36px, 5vw, 56px);
-        margin: 0 0 18px;
-        color: var(--deep);
+        font-size: clamp(36px, 5vw, 52px);
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0 auto 18px;
+        letter-spacing: -0.4px;
       }
 
       .hero p {
-        font-size: 17px;
+        font-size: 18px;
+        opacity: 0.92;
+        max-width: 720px;
+        margin: 0 auto 32px;
         line-height: 1.6;
-        max-width: 520px;
       }
 
       .cta-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 24px;
+        justify-content: center;
+        gap: 12px;
       }
 
       .btn {
-        padding: 12px 20px;
-        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 22px;
+        border-radius: 8px;
         border: 1px solid transparent;
-        font-size: 15px;
-        cursor: pointer;
+        text-decoration: none;
         font-weight: 600;
+        font-size: 14px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .btn.primary {
-        background: var(--deep);
-        color: #fff;
-        box-shadow: 0 14px 30px rgba(17, 45, 58, 0.28);
-      }
-
-      .btn.secondary {
-        background: transparent;
-        border-color: rgba(11, 13, 18, 0.2);
-        color: var(--deep);
       }
 
       .btn:hover {
         transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
       }
 
-      .preview-card {
-        position: relative;
-        min-height: 320px;
-        padding: 28px 26px;
-        border-radius: 26px;
-        color: #0f1720;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.55)),
-          url("https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80");
-        background-size: cover;
-        box-shadow: var(--shadow);
-        overflow: hidden;
+      .btn-light {
+        background: #ffffff;
+        color: #2f6ea6;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
       }
 
-      .preview-card::after {
-        content: "";
-        position: absolute;
-        inset: 16px;
-        border: 1px solid rgba(11, 13, 18, 0.1);
-        border-radius: 20px;
-        pointer-events: none;
-      }
-
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.8);
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .preview-card h2 {
-        font-family: "Fraunces", serif;
-        margin: 20px 0 12px;
-        font-size: 28px;
-      }
-
-      .preview-card p {
-        margin: 0 0 18px;
-        line-height: 1.5;
-      }
-
-      .preview-meta {
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        opacity: 0.7;
+      .btn-outline {
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.7);
+        color: #ffffff;
       }
 
       .section {
-        max-width: 1160px;
+        max-width: var(--max-width);
         margin: 0 auto;
-        padding: 56px 24px;
+        padding: 64px 20px;
       }
 
       .section-title {
-        font-family: "Fraunces", serif;
-        font-size: 32px;
-        margin: 0 0 18px;
-        color: var(--deep);
+        font-size: 30px;
+        margin: 0 0 12px;
       }
 
-      .section-sub {
-        max-width: 620px;
-        margin-bottom: 32px;
+      .section-subtitle {
+        max-width: 680px;
+        color: var(--slate);
         line-height: 1.6;
+        margin-bottom: 32px;
       }
 
-      .builder {
+      .card-grid {
         display: grid;
-        gap: 28px;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        background: var(--paper);
-        border-radius: 28px;
-        padding: 28px;
-        box-shadow: 0 20px 40px rgba(11, 13, 18, 0.08);
-      }
-
-      .form-group {
-        display: grid;
-        gap: 6px;
-        margin-bottom: 16px;
-      }
-
-      label {
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      input,
-      select,
-      textarea {
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(11, 13, 18, 0.2);
-        font-family: inherit;
-        font-size: 14px;
-        background: #fff;
-      }
-
-      textarea {
-        min-height: 90px;
-        resize: vertical;
-      }
-
-      .template-grid {
-        display: grid;
-        gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      }
-
-      .template {
-        position: relative;
-        border-radius: 18px;
-        padding: 16px;
-        min-height: 160px;
-        color: #fff;
-        display: flex;
-        align-items: flex-end;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 12px 30px rgba(11, 13, 18, 0.2);
-        border: 2px solid transparent;
-      }
-
-      .template.active {
-        border-color: #fff;
-        transform: translateY(-4px);
-      }
-
-      .template span {
-        text-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-      }
-
-      .stats-grid {
-        display: grid;
-        gap: 16px;
+        gap: 18px;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       }
 
-      .stat-card {
-        background: #fff;
-        padding: 18px;
+      .card {
+        background: var(--card);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.14);
+      }
+
+      .card h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--slate);
+        line-height: 1.5;
+      }
+
+      .card .btn {
+        width: fit-content;
+        background: linear-gradient(135deg, #2f6ea6, #3d78b5);
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 10px 16px;
+        box-shadow: 0 4px 12px rgba(47, 110, 166, 0.2);
+      }
+
+      .card .btn:hover {
+        box-shadow: 0 8px 24px rgba(47, 110, 166, 0.3);
+      }
+
+      #resources .card-grid {
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      #resources .card {
+        padding: 24px;
         border-radius: 20px;
-        border: 1px solid rgba(11, 16, 25, 0.08);
-        box-shadow: 0 12px 30px rgba(11, 16, 25, 0.08);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
       }
 
-      .stat-card strong {
-        display: block;
-        font-family: "Fraunces", serif;
-        font-size: 30px;
-        color: var(--deep);
+      #resources .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
       }
 
-      .stat-card span {
-        font-size: 12px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: rgba(11, 16, 25, 0.6);
+      .maths {
+        background: linear-gradient(135deg, #e8f4ff 0%, #f0e8ff 100%);
+        padding: 80px 20px;
+        text-align: center;
+        border-radius: 28px;
+        box-shadow: 0 8px 32px rgba(47, 110, 166, 0.08);
+        max-width: var(--max-width);
+        margin: 0 auto 40px;
       }
 
-      .pricing-grid {
+      .maths h2 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 32px;
+        background: linear-gradient(135deg, #2f6ea6, #5a8fcc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .maths .card {
+        border: 1px solid rgba(47, 110, 166, 0.15);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+      }
+
+      .maths .card:hover {
+        border-color: rgba(47, 110, 166, 0.3);
+        box-shadow: 0 12px 40px rgba(47, 110, 166, 0.15);
+      }
+
+      .updates-grid {
         display: grid;
         gap: 18px;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       }
 
-      .pricing-card {
-        background: #fff;
-        padding: 20px;
-        border-radius: 22px;
-        border: 1px solid rgba(11, 16, 25, 0.1);
+      .post-card {
+        background: var(--card);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: var(--shadow);
         display: grid;
         gap: 12px;
       }
 
-      .pricing-card.featured {
-        background: linear-gradient(150deg, rgba(34, 180, 169, 0.12), rgba(124, 199, 255, 0.12));
-        border-color: rgba(34, 180, 169, 0.4);
+      .thumb {
+        height: 120px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(127, 178, 217, 0.5), rgba(47, 110, 166, 0.5));
       }
 
-      .pricing-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        background: rgba(17, 45, 58, 0.08);
-        font-size: 12px;
+      .contact-box {
+        background: var(--card);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
+      }
+
+      .contact-box a {
+        color: #2f6ea6;
+        text-decoration: none;
         font-weight: 600;
       }
 
-      .pricing-price {
-        font-family: "Fraunces", serif;
-        font-size: 34px;
-        color: var(--deep);
-      }
-
-      .pricing-card ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 8px;
-        color: rgba(11, 16, 25, 0.78);
+      footer {
+        background: #0b1526;
+        color: #cbd5f5;
+        padding: 32px 20px;
+        text-align: center;
         font-size: 14px;
       }
 
-      .info-grid {
-        display: grid;
-        gap: 18px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      }
-
-      .info-card {
-        background: #fff;
-        padding: 18px;
-        border-radius: 20px;
-        border: 1px solid rgba(11, 13, 18, 0.08);
-      }
-
-      .info-card h3 {
-        margin: 0 0 8px;
-        font-family: "Fraunces", serif;
-        color: var(--deep);
-      }
-
-      .cta-banner {
-        background: linear-gradient(135deg, #132a33, #0f1d2a);
-        color: #fff;
-        border-radius: 28px;
-        padding: 32px;
-        display: grid;
-        gap: 18px;
-        align-items: center;
-      }
-
-      .cta-banner h3 {
-        margin: 0;
-        font-family: "Fraunces", serif;
-      }
-
-      footer {
-        padding: 32px 24px 48px;
-        text-align: center;
-        font-size: 13px;
-        color: rgba(11, 13, 18, 0.6);
-      }
-
-      .pulse {
-        animation: pulse 0.4s ease;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.02);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      @media (max-width: 720px) {
-        .nav {
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .cta-row {
+      @media (max-width: 900px) {
+        .nav-links {
+          position: absolute;
+          top: 64px;
+          right: 20px;
+          background: #ffffff;
+          border-radius: 12px;
+          padding: 14px;
           flex-direction: column;
           align-items: flex-start;
+          gap: 10px;
+          box-shadow: var(--shadow);
+          display: none;
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .menu-toggle {
+          display: block;
         }
       }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header>
       <div class="nav">
-        <div class="brand">Manomaya</div>
-        <nav>
-          <a href="#builder">Programs</a>
-          <a href="#templates">Marketplace</a>
-          <a href="#pricing">Plans</a>
-          <a href="#moments">Community</a>
+        <div class="brand">Help Hub</div>
+        <nav class="nav-links" id="navLinks" aria-label="Primary">
+          <a href="#home">Home</a>
+          <a href="#resources">Learning Resources</a>
+          <a href="#maths">2nd Grade Maths</a>
+          <a href="#updates">Updates</a>
+          <a href="#guides">Guides</a>
+          <a href="#contact">Contact</a>
         </nav>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </header>
 
-    <section class="hero">
-      <div>
-        <h1>Share learning, sell knowledge, and grow your community in one calm space.</h1>
-        <p>
-          Manomaya helps educators and creators publish courses, share notes,
-          and host workshops with a clean storefront and built-in checkout.
-          Build once, share everywhere, and keep learners engaged.
-        </p>
-        <div class="cta-row">
-          <button class="btn primary" id="scrollBuilder">Explore programs</button>
-          <button class="btn secondary" id="randomTemplate">List a resource</button>
-        </div>
-      </div>
-      <div class="preview-card" id="previewCard">
-        <div class="badge" id="previewBadge">Featured drop</div>
-        <h2 id="previewHeadline">Learning kit for Maya</h2>
-        <p id="previewMessage">
-          A short, practical program for building attention rituals, study
-          systems, and intentional deep work.
-        </p>
-        <div class="preview-meta" id="previewMeta">Cohort start: Apr 12</div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2 class="section-title">Trusted learning storefronts</h2>
-      <p class="section-sub">
-        A single place to publish, sell, and scale your education content with
-        a clean brand experience.
-      </p>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <strong>120k+</strong>
-          <span>Active learners</span>
-        </div>
-        <div class="stat-card">
-          <strong>3,400</strong>
-          <span>Creator storefronts</span>
-        </div>
-        <div class="stat-card">
-          <strong>92%</strong>
-          <span>Completion lift</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="builder">
-      <h2 class="section-title">Build a learning kit</h2>
-      <p class="section-sub">
-        Publish a structured learning experience with a clear outcome and a
-        personal touch. Use the inputs to shape a ready-to-share outline.
-      </p>
-      <div class="builder">
-        <div>
-          <div class="form-group">
-            <label for="nameInput">Learner name</label>
-            <input id="nameInput" type="text" placeholder="e.g., Maya">
-          </div>
-          <div class="form-group">
-            <label for="occasionSelect">Content type</label>
-            <select id="occasionSelect">
-              <option value="course">Course</option>
-              <option value="workshop">Live workshop</option>
-              <option value="guide">Study guide</option>
-              <option value="mentorship">Mentorship</option>
-              <option value="bundle">Resource bundle</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="toneSelect">Level</label>
-            <select id="toneSelect">
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="exam">Exam prep</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="messageInput">Learning outcome</label>
-            <textarea id="messageInput" placeholder="Describe what learners will achieve after this program."></textarea>
-          </div>
-          <div class="form-group">
-            <label for="signInput">Instructor name</label>
-            <input id="signInput" type="text" placeholder="e.g., Arjun Mehta">
-          </div>
+    <main id="main">
+      <section class="hero" id="home">
+        <div class="hero-content">
+          <h1>Help Hub — Your Trusted Source for Learning Resources and Study Support.</h1>
+          <p>
+            Access notes, 2nd grade mathematics resources, study updates, and practical learning
+            guides — all in one calm and simple space.
+          </p>
           <div class="cta-row">
-            <button class="btn primary" id="generateBtn">Update kit</button>
-            <button class="btn secondary" id="copyBtn">Copy outline</button>
+            <a class="btn btn-light" href="#resources">Explore Resources</a>
+            <a class="btn btn-light" href="#maths">Maths Resources</a>
+            <a class="btn btn-outline" href="#updates">Latest Updates</a>
           </div>
         </div>
-        <div>
-          <div class="preview-card" id="livePreview">
-            <div class="badge" id="liveBadge">Enrollment open</div>
-            <h2 id="liveHeadline">Learning kit for Maya</h2>
-            <p id="liveMessage">
-              A clear, step-by-step roadmap to build a study routine, improve
-              recall, and stay consistent week after week.
-            </p>
-            <p id="liveSign">Instructor: Manomaya</p>
-            <div class="preview-meta" id="liveMeta">6-week cohort | Limited seats</div>
+      </section>
+
+      <section class="section" id="resources">
+        <h2 class="section-title">Learning Resources</h2>
+        <p class="section-subtitle">
+          Curated notes and guides to keep students focused and organized through every term.
+        </p>
+        <div class="card-grid">
+          <div class="card">
+            <h3>SSC Notes</h3>
+            <p>Topic-wise summaries for quick revision and classroom alignment.</p>
+            <a class="btn" href="#">Open Resource</a>
+          </div>
+          <div class="card">
+            <h3>B.Ed Notes</h3>
+            <p>Structured teaching concepts, pedagogy essentials, and key frameworks.</p>
+            <a class="btn" href="#">Open Resource</a>
+          </div>
+          <div class="card">
+            <h3>AI Learning Notes</h3>
+            <p>Simple explanations of AI basics with classroom-friendly examples.</p>
+            <a class="btn" href="#">Open Resource</a>
+          </div>
+          <div class="card">
+            <h3>Study Guides</h3>
+            <p>Weekly plans, revision trackers, and practical study techniques.</p>
+            <a class="btn" href="#">Open Resource</a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section" id="templates">
-      <h2 class="section-title">Resource marketplace</h2>
-      <p class="section-sub">
-        Share digital products, notes, and workshops with clean storefront
-        layouts. Tap a tile to preview a storefront mood.
-      </p>
-      <div class="template-grid">
-        <div class="template active" data-template="sunrise" style="background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80'); background-size: cover;">
-          <span>Skill Sprint</span>
-        </div>
-        <div class="template" data-template="garden" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80'); background-size: cover;">
-          <span>Study Ritual</span>
-        </div>
-        <div class="template" data-template="studio" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80'); background-size: cover;">
-          <span>Portfolio Lab</span>
-        </div>
-        <div class="template" data-template="dusk" style="background-image: url('https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=900&q=80'); background-size: cover;">
-          <span>Exam Ready</span>
-        </div>
-      </div>
-    </section>
+      <section class="maths" id="maths">
+        <h2>2nd Grade Mathematics</h2>
 
-    <section class="section" id="pricing">
-      <h2 class="section-title">Plans built for educators</h2>
-      <p class="section-sub">
-        Start free, then upgrade when you are ready to sell courses, host live
-        cohorts, and grow memberships.
-      </p>
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <span class="pricing-tag">Starter</span>
-          <div class="pricing-price">$0</div>
-          <p>Launch your first resource and build an audience.</p>
-          <ul>
-            <li>1 storefront page</li>
-            <li>Up to 3 resources</li>
-            <li>Basic checkout</li>
-          </ul>
-          <button class="btn secondary">Start free</button>
-        </div>
-        <div class="pricing-card featured">
-          <span class="pricing-tag">Creator</span>
-          <div class="pricing-price">$24/mo</div>
-          <p>Sell courses, bundles, and live workshops with analytics.</p>
-          <ul>
-            <li>Unlimited products</li>
-            <li>Custom landing pages</li>
-            <li>Student analytics</li>
-          </ul>
-          <button class="btn primary">Go creator</button>
-        </div>
-        <div class="pricing-card">
-          <span class="pricing-tag">Academy</span>
-          <div class="pricing-price">$72/mo</div>
-          <p>Run multi-instructor cohorts and memberships.</p>
-          <ul>
-            <li>Team workspaces</li>
-            <li>Live cohort hosting</li>
-            <li>Priority support</li>
-          </ul>
-          <button class="btn secondary">Talk to us</button>
-        </div>
-      </div>
-    </section>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Algebra Notes</h3>
+            <p>Core algebra concepts explained in simple steps.</p>
+            <a href="#" class="btn">Open Maths Resource</a>
+          </div>
 
-    <section class="section" id="moments">
-      <h2 class="section-title">Everything an official academy needs</h2>
-      <p class="section-sub">
-        Share content, sell access, and keep learners engaged with tools that
-        feel professional from day one.
-      </p>
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Secure checkout</h3>
-          <p>Collect payments with instant receipts and clean invoices.</p>
-        </div>
-        <div class="info-card">
-          <h3>Content hosting</h3>
-          <p>Upload videos, PDFs, and lesson notes in one workspace.</p>
-        </div>
-        <div class="info-card">
-          <h3>Learner analytics</h3>
-          <p>Track enrollments, progress, and completion at a glance.</p>
-        </div>
-        <div class="info-card">
-          <h3>Community space</h3>
-          <p>Run Q&amp;A sessions and keep students connected.</p>
-        </div>
-      </div>
-    </section>
+          <div class="card">
+            <h3>Geometry Basics</h3>
+            <p>Important geometry topics with diagrams.</p>
+            <a href="#" class="btn">Open Maths Resource</a>
+          </div>
 
-    <section class="section">
-      <div class="cta-banner">
-        <h3>Launch your next learning drop</h3>
-        <p>Publish a course, sell a resource, or host a cohort in minutes.</p>
-        <button class="btn primary" id="ctaStart">Create a program</button>
-      </div>
-    </section>
+          <div class="card">
+            <h3>Arithmetic Practice</h3>
+            <p>Daily practice questions for strong fundamentals.</p>
+            <a href="#" class="btn">Open Maths Resource</a>
+          </div>
+
+          <div class="card">
+            <h3>Previous Year Questions</h3>
+            <p>Important PYQs for exam preparation.</p>
+            <a href="#" class="btn">Open Maths Resource</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="updates">
+        <h2 class="section-title">Updates</h2>
+        <p class="section-subtitle">Short updates to keep students informed and ready.</p>
+        <div class="updates-grid">
+          <article class="post-card">
+            <div class="thumb" aria-hidden="true"></div>
+            <h3>Exam Strategy Update</h3>
+            <p>New tips for time management, revision sprints, and calm exam prep.</p>
+            <a class="btn" href="#">Read More</a>
+          </article>
+          <article class="post-card">
+            <div class="thumb" aria-hidden="true"></div>
+            <h3>New Study Method</h3>
+            <p>Try the 20-20-20 routine for steady progress and higher recall.</p>
+            <a class="btn" href="#">Read More</a>
+          </article>
+          <article class="post-card">
+            <div class="thumb" aria-hidden="true"></div>
+            <h3>AI Tools Guide</h3>
+            <p>Lightweight tools that help summarize lessons without distractions.</p>
+            <a class="btn" href="#">Read More</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="guides">
+        <h2 class="section-title">Guides</h2>
+        <p class="section-subtitle">Practical guides built for steady, calm learning.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Daily Study Routine</h3>
+            <p>Simple routines to keep focus and balance through busy weeks.</p>
+            <a class="btn" href="#">Open Guide</a>
+          </div>
+          <div class="card">
+            <h3>Portfolio Building Guide</h3>
+            <p>Step-by-step templates for presenting assignments and projects.</p>
+            <a class="btn" href="#">Open Guide</a>
+          </div>
+          <div class="card">
+            <h3>AI Learning Path</h3>
+            <p>A calm path for exploring AI learning without overwhelming steps.</p>
+            <a class="btn" href="#">Open Guide</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="contact">
+        <h2 class="section-title">Contact</h2>
+        <div class="contact-box">
+          <p>Need help? Reach out anytime.</p>
+          <p><a href="https://github.com/your-org">GitHub link placeholder</a></p>
+          <p><a href="mailto:help@helphub.edu">help@helphub.edu</a></p>
+        </div>
+      </section>
+    </main>
 
     <footer>
-      Manomaya Learning, built for educators, creators, and communities.
+      Help Hub - Calm learning support for students and educators.
     </footer>
 
     <script src="index.js"></script>
