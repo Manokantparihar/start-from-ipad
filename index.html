@@ -375,6 +375,43 @@
         font-size: 14px;
       }
 
+      .wish-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #94a3b8;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+        z-index: 2;
+      }
+
+      .wish-btn:hover {
+        transform: scale(1.1);
+        border-color: #2f6ea6;
+        color: #2f6ea6;
+      }
+
+      .wish-btn.active {
+        background: #2f6ea6;
+        color: #ffffff;
+        border-color: #2f6ea6;
+      }
+
+      .wish-btn:focus-visible {
+        outline: 2px solid rgba(47, 110, 166, 0.6);
+        outline-offset: 2px;
+      }
+
       @media (max-width: 900px) {
         .nav-links {
           position: absolute;
@@ -409,6 +446,7 @@
           <a href="#home">Home</a>
           <a href="#resources">Learning Resources</a>
           <a href="#maths">2nd Grade Maths</a>
+          <a href="#wish-list">My Wish List</a>
           <a href="#updates">Updates</a>
           <a href="#guides">Guides</a>
           <a href="#contact">Contact</a>
@@ -493,6 +531,14 @@
             <p>Important PYQs for exam preparation.</p>
             <a href="#" class="btn">Open Maths Resource</a>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="wish-list">
+        <h2 class="section-title">My Wish List</h2>
+        <p class="section-subtitle">Resources you've saved for later.</p>
+        <div id="wishListContent" class="card-grid">
+          <p id="emptyWishList" style="color: var(--slate);">Your wish list is empty. Click the heart icon on any resource to add it here.</p>
         </div>
       </section>
 
