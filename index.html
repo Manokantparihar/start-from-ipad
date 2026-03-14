@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Help Hub</title>
+    <meta
+      name="description"
+      content="Help Hub provides curated learning resources, 2nd grade maths support, study guides, and student updates in one simple platform."
+    >
+    <meta
+      name="keywords"
+      content="learning resources, 2nd grade maths, study notes, student guides, education support"
+    >
+    <meta name="author" content="Help Hub">
+    <meta name="robots" content="index, follow">
+    <link id="canonicalUrl" rel="canonical" href="https://example.com/index.html">
+    <meta property="og:title" content="Help Hub">
+    <meta
+      property="og:description"
+      content="Your trusted source for learning resources and study support."
+    >
+    <meta property="og:type" content="website">
+    <meta id="ogUrl" property="og:url" content="https://example.com/index.html">
+    <meta id="ogImage" property="og:image" content="https://example.com/og-image.svg">
+    <meta property="og:image:alt" content="Help Hub learning resources preview banner">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Help Hub">
+    <meta name="twitter:description" content="Your trusted source for learning resources and study support.">
+    <meta id="twitterImage" name="twitter:image" content="https://example.com/og-image.svg">
+    <meta name="theme-color" content="#2f6ea6">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -39,6 +64,17 @@
           linear-gradient(180deg, #f7fafc 0%, #eef2f7 55%, #e9edf5 100%);
       }
 
+      body.dark-theme {
+        --ink: #e2e8f0;
+        --slate: #a5b4cf;
+        --soft: #0f172a;
+        --card: #111c31;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(127, 178, 217, 0.1), transparent 40%),
+          linear-gradient(180deg, #0b1220 0%, #0f172a 55%, #111827 100%);
+      }
+
       header {
         position: sticky;
         top: 0;
@@ -46,6 +82,11 @@
         backdrop-filter: blur(14px);
         background: rgba(247, 250, 252, 0.92);
         border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+      }
+
+      body.dark-theme header {
+        background: rgba(11, 18, 32, 0.92);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
       }
 
       .nav {
@@ -123,6 +164,22 @@
         margin: 5px 0;
         border-radius: 2px;
         transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+
+      .theme-toggle {
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        background: #ffffff;
+        color: var(--ink);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      body.dark-theme .theme-toggle {
+        background: #1b2944;
+        border-color: rgba(148, 163, 184, 0.35);
       }
 
       .menu-toggle.open span:nth-child(1) {
@@ -299,6 +356,96 @@
       #resources .card:hover {
         transform: translateY(-3px);
         box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+
+            .search-bar-wrap {
+              margin-bottom: 18px;
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              align-items: center;
+            }
+
+            .search-input {
+              flex: 1;
+              min-width: 200px;
+              border: 1px solid rgba(148, 163, 184, 0.45);
+              background: var(--card);
+              color: var(--ink);
+              border-radius: 10px;
+              padding: 10px 14px;
+              font: inherit;
+              font-size: 14px;
+            }
+
+            .search-input:focus {
+              outline: 2px solid rgba(47, 110, 166, 0.5);
+              outline-offset: 2px;
+            }
+
+            .filter-chips {
+              display: flex;
+              gap: 6px;
+              flex-wrap: wrap;
+            }
+
+            .chip {
+              padding: 6px 14px;
+              border-radius: 999px;
+              border: 1px solid rgba(148, 163, 184, 0.4);
+              background: var(--card);
+              color: var(--slate);
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              font-family: inherit;
+              transition: background 0.15s ease, color 0.15s ease;
+            }
+
+            .chip.active,
+            .chip:hover {
+              background: var(--blue-2);
+              color: #ffffff;
+              border-color: var(--blue-2);
+            }
+
+            .card .badge-row {
+              display: flex;
+              gap: 6px;
+              flex-wrap: wrap;
+              margin-top: -4px;
+            }
+
+            .badge {
+              font-size: 11px;
+              font-weight: 700;
+              padding: 3px 8px;
+              border-radius: 999px;
+              display: inline-block;
+            }
+
+            .badge-time {
+              background: #e8f4ff;
+              color: #2f6ea6;
+            }
+
+            .badge-easy { background: #dcfce7; color: #166534; }
+            .badge-medium { background: #fef9c3; color: #854d0e; }
+            .badge-hard { background: #fee2e2; color: #991b1b; }
+            .badge-beginner { background: #f0fdf4; color: #166534; }
+
+            body.dark-theme .badge-time { background: #1e3a5f; color: #93c5fd; }
+            body.dark-theme .badge-easy { background: #14532d; color: #86efac; }
+            body.dark-theme .badge-medium { background: #422006; color: #fde68a; }
+            body.dark-theme .badge-hard { background: #450a0a; color: #fca5a5; }
+            body.dark-theme .badge-beginner { background: #14532d; color: #86efac; }
+
+            .no-results {
+              grid-column: 1 / -1;
+              text-align: center;
+              padding: 32px 20px;
+              color: var(--slate);
+              font-size: 15px;
+            }
       }
 
       .maths {
@@ -331,6 +478,14 @@
         box-shadow: 0 12px 40px rgba(47, 110, 166, 0.15);
       }
 
+      body.dark-theme .maths {
+        background: linear-gradient(135deg, #14233c 0%, #1f2d4a 100%);
+      }
+
+      body.dark-theme .maths .card {
+        background: linear-gradient(135deg, rgba(17, 28, 49, 0.95), rgba(23, 37, 64, 0.9));
+      }
+
       .updates-grid {
         display: grid;
         gap: 18px;
@@ -361,10 +516,116 @@
         gap: 12px;
       }
 
+      .contact-form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .form-field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .form-field label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .form-field input,
+      .form-field textarea {
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: #ffffff;
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 11px 12px;
+        font: inherit;
+      }
+
+      .form-field textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .contact-submit {
+        width: fit-content;
+        border: none;
+        background: linear-gradient(135deg, #2f6ea6, #3d78b5);
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .contact-submit:disabled {
+        opacity: 0.75;
+        cursor: progress;
+      }
+
+      .form-status {
+        margin: 0;
+        min-height: 20px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .form-status.success {
+        color: #1f7a4f;
+      }
+
+      .form-status.error {
+        color: #b42318;
+      }
+
+      body.dark-theme .card,
+      body.dark-theme .post-card,
+      body.dark-theme .contact-box,
+      body.dark-theme #resources .card {
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+
+      body.dark-theme .form-field input,
+      body.dark-theme .form-field textarea {
+        background: #0f172a;
+        border-color: rgba(148, 163, 184, 0.35);
+      }
+
+      body.dark-theme .form-status.success {
+        color: #86efac;
+      }
+
+      body.dark-theme .form-status.error {
+        color: #fca5a5;
+      }
+
+      body.dark-theme .thumb {
+        background: linear-gradient(135deg, rgba(127, 178, 217, 0.25), rgba(47, 110, 166, 0.4));
+      }
+
+      body.dark-theme .btn-light {
+        background: #ffffff;
+        color: #1e3a5f;
+      }
+
+      body.dark-theme .nav a,
+      body.dark-theme .section-subtitle,
+      body.dark-theme .card p {
+        color: var(--slate);
+      }
+
+      body.dark-theme .menu-toggle span {
+        background: var(--ink);
+      }
+
       .contact-box a {
         color: #2f6ea6;
         text-decoration: none;
         font-weight: 600;
+      }
+
+      body.dark-theme .contact-box a {
+        color: #7fb2d9;
       }
 
       footer {
@@ -390,6 +651,11 @@
           display: none;
         }
 
+        body.dark-theme .nav-links {
+          background: #111c31;
+          border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
         .nav-links.open {
           display: flex;
         }
@@ -412,6 +678,9 @@
           <a href="#updates">Updates</a>
           <a href="#guides">Guides</a>
           <a href="#contact">Contact</a>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+            Dark Mode
+          </button>
         </nav>
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
           <span></span>
@@ -442,26 +711,43 @@
         <p class="section-subtitle">
           Curated notes and guides to keep students focused and organized through every term.
         </p>
-        <div class="card-grid">
+        <div class="search-bar-wrap">
+          <input
+            class="search-input"
+            id="searchInput"
+            type="search"
+            placeholder="Search all resources..."
+            aria-label="Search resources"
+            autocomplete="off"
+          >
+          <div class="filter-chips" id="filterChips" role="group" aria-label="Filter by difficulty">
+            <button class="chip active" data-filter="all" type="button">All</button>
+            <button class="chip" data-filter="Easy" type="button">Easy</button>
+            <button class="chip" data-filter="Beginner" type="button">Beginner</button>
+            <button class="chip" data-filter="Medium" type="button">Medium</button>
+            <button class="chip" data-filter="Hard" type="button">Hard</button>
+          </div>
+        </div>
+        <div class="card-grid" id="resourcesGrid">
           <div class="card">
             <h3>SSC Notes</h3>
             <p>Topic-wise summaries for quick revision and classroom alignment.</p>
-            <a class="btn" href="#">Open Resource</a>
+            <a class="btn" href="details.html?item=ssc-notes">Open Resource</a>
           </div>
           <div class="card">
             <h3>B.Ed Notes</h3>
             <p>Structured teaching concepts, pedagogy essentials, and key frameworks.</p>
-            <a class="btn" href="#">Open Resource</a>
+            <a class="btn" href="details.html?item=bed-notes">Open Resource</a>
           </div>
           <div class="card">
             <h3>AI Learning Notes</h3>
             <p>Simple explanations of AI basics with classroom-friendly examples.</p>
-            <a class="btn" href="#">Open Resource</a>
+            <a class="btn" href="details.html?item=ai-learning-notes">Open Resource</a>
           </div>
           <div class="card">
             <h3>Study Guides</h3>
             <p>Weekly plans, revision trackers, and practical study techniques.</p>
-            <a class="btn" href="#">Open Resource</a>
+            <a class="btn" href="details.html?item=study-guides">Open Resource</a>
           </div>
         </div>
       </section>
@@ -469,29 +755,29 @@
       <section class="maths" id="maths">
         <h2>2nd Grade Mathematics</h2>
 
-        <div class="card-grid">
+        <div class="card-grid" id="mathsGrid">
           <div class="card">
             <h3>Algebra Notes</h3>
             <p>Core algebra concepts explained in simple steps.</p>
-            <a href="#" class="btn">Open Maths Resource</a>
+            <a href="details.html?item=algebra-notes" class="btn">Open Maths Resource</a>
           </div>
 
           <div class="card">
             <h3>Geometry Basics</h3>
             <p>Important geometry topics with diagrams.</p>
-            <a href="#" class="btn">Open Maths Resource</a>
+            <a href="details.html?item=geometry-basics" class="btn">Open Maths Resource</a>
           </div>
 
           <div class="card">
             <h3>Arithmetic Practice</h3>
             <p>Daily practice questions for strong fundamentals.</p>
-            <a href="#" class="btn">Open Maths Resource</a>
+            <a href="details.html?item=arithmetic-practice" class="btn">Open Maths Resource</a>
           </div>
 
           <div class="card">
             <h3>Previous Year Questions</h3>
             <p>Important PYQs for exam preparation.</p>
-            <a href="#" class="btn">Open Maths Resource</a>
+            <a href="details.html?item=previous-year-questions" class="btn">Open Maths Resource</a>
           </div>
         </div>
       </section>
@@ -499,24 +785,24 @@
       <section class="section" id="updates">
         <h2 class="section-title">Updates</h2>
         <p class="section-subtitle">Short updates to keep students informed and ready.</p>
-        <div class="updates-grid">
+        <div class="updates-grid" id="updatesGrid">
           <article class="post-card">
             <div class="thumb" aria-hidden="true"></div>
             <h3>Exam Strategy Update</h3>
             <p>New tips for time management, revision sprints, and calm exam prep.</p>
-            <a class="btn" href="#">Read More</a>
+            <a class="btn" href="details.html?item=exam-strategy-update">Read More</a>
           </article>
           <article class="post-card">
             <div class="thumb" aria-hidden="true"></div>
             <h3>New Study Method</h3>
             <p>Try the 20-20-20 routine for steady progress and higher recall.</p>
-            <a class="btn" href="#">Read More</a>
+            <a class="btn" href="details.html?item=new-study-method">Read More</a>
           </article>
           <article class="post-card">
             <div class="thumb" aria-hidden="true"></div>
             <h3>AI Tools Guide</h3>
             <p>Lightweight tools that help summarize lessons without distractions.</p>
-            <a class="btn" href="#">Read More</a>
+            <a class="btn" href="details.html?item=ai-tools-guide">Read More</a>
           </article>
         </div>
       </section>
@@ -524,21 +810,21 @@
       <section class="section" id="guides">
         <h2 class="section-title">Guides</h2>
         <p class="section-subtitle">Practical guides built for steady, calm learning.</p>
-        <div class="card-grid">
+        <div class="card-grid" id="guidesGrid">
           <div class="card">
             <h3>Daily Study Routine</h3>
             <p>Simple routines to keep focus and balance through busy weeks.</p>
-            <a class="btn" href="#">Open Guide</a>
+            <a class="btn" href="details.html?item=daily-study-routine">Open Guide</a>
           </div>
           <div class="card">
             <h3>Portfolio Building Guide</h3>
             <p>Step-by-step templates for presenting assignments and projects.</p>
-            <a class="btn" href="#">Open Guide</a>
+            <a class="btn" href="details.html?item=portfolio-building-guide">Open Guide</a>
           </div>
           <div class="card">
             <h3>AI Learning Path</h3>
             <p>A calm path for exploring AI learning without overwhelming steps.</p>
-            <a class="btn" href="#">Open Guide</a>
+            <a class="btn" href="details.html?item=ai-learning-path">Open Guide</a>
           </div>
         </div>
       </section>
@@ -546,9 +832,29 @@
       <section class="section" id="contact">
         <h2 class="section-title">Contact</h2>
         <div class="contact-box">
-          <p>Need help? Reach out anytime.</p>
-          <p><a href="https://github.com/your-org">GitHub link placeholder</a></p>
-          <p><a href="mailto:help@helphub.edu">help@helphub.edu</a></p>
+          <p>Need help? Send a message and we will get back to you.</p>
+          <form
+            class="contact-form"
+            id="contactForm"
+            data-endpoint="https://formsubmit.co/ajax/manokantparihar@gmail.com"
+            novalidate
+          >
+            <div class="form-field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="form-field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <button class="contact-submit" id="contactSubmit" type="submit">Send Message</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
+          <p><a href="mailto:manokantparihar@gmail.com">manokantparihar@gmail.com</a></p>
         </div>
       </section>
     </main>

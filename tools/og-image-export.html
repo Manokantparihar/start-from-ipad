@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OG Image JPG Export</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #0f172a;
+      }
+
+      .wrap {
+        max-width: 860px;
+        margin: 36px auto;
+        padding: 0 16px;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 18px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+      }
+
+      p {
+        line-height: 1.5;
+      }
+
+      canvas {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #dbe3ef;
+        background: #eef2f7;
+      }
+
+      .row {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #2f6ea6, #3d78b5);
+        color: #fff;
+      }
+
+      .secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 14px;
+        min-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="card">
+        <h1>OG Image Export (JPG)</h1>
+        <p>Loads <strong>/og-image.svg</strong>, renders preview, and downloads <strong>og-image.jpg</strong>.</p>
+
+        <canvas id="preview" width="1200" height="630" aria-label="OG image preview"></canvas>
+
+        <div class="row">
+          <button id="renderBtn" type="button">Render Preview</button>
+          <button id="downloadBtn" type="button">Download og-image.jpg</button>
+          <a href="../index.html" class="secondary" style="text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:600;">Back to Home</a>
+        </div>
+
+        <p class="status" id="status"></p>
+      </section>
+    </main>
+
+    <script>
+      const canvas = document.getElementById("preview");
+      const context = canvas.getContext("2d");
+      const statusText = document.getElementById("status");
+      const renderBtn = document.getElementById("renderBtn");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      let rendered = false;
+
+      const renderSvgToCanvas = async () => {
+        try {
+          const response = await fetch("../og-image.svg", { cache: "no-store" });
+          if (!response.ok) throw new Error("Unable to load og-image.svg");
+
+          const svgText = await response.text();
+          const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+          const objectUrl = URL.createObjectURL(blob);
+          const image = new Image();
+
+          await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = reject;
+            image.src = objectUrl;
+          });
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.fillStyle = "#ffffff";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+          URL.revokeObjectURL(objectUrl);
+          rendered = true;
+          statusText.textContent = "Preview ready. Click Download og-image.jpg.";
+        } catch {
+          statusText.textContent = "Render failed. Make sure server is running from project root.";
+        }
+      };
+
+      const downloadJpg = () => {
+        if (!rendered) {
+          statusText.textContent = "Please render preview first.";
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/jpeg", 0.92);
+        link.download = "og-image.jpg";
+        link.click();
+        statusText.textContent = "og-image.jpg downloaded.";
+      };
+
+      renderBtn.addEventListener("click", renderSvgToCanvas);
+      downloadBtn.addEventListener("click", downloadJpg);
+
+      renderSvgToCanvas();
+    </script>
+  </body>
+</html>

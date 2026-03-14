@@ -1,0 +1,320 @@
+{
+  "sections": {
+    "resources": [
+      {
+        "slug": "ssc-notes",
+        "title": "SSC Notes",
+        "summary": "Topic-wise summaries for quick revision and classroom alignment.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "8 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Start with one chapter per day and finish with self-test.",
+        "fullContent": [
+          "Chapter-wise short notes with key facts and definitions.",
+          "Most important one-line revision points for last-minute prep.",
+          "Practice-oriented examples based on previous exam patterns.",
+          "Common mistakes and quick correction tips."
+        ],
+        "nextSteps": [
+          "Read SSC Notes overview once without notes.",
+          "Write 5 key points of SSC Notes in your notebook.",
+          "Solve 3 practice questions based on SSC Notes.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "bed-notes",
+        "title": "B.Ed Notes",
+        "summary": "Structured teaching concepts, pedagogy essentials, and key frameworks.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "10 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Convert each topic into a micro-lesson and explain aloud.",
+        "fullContent": [
+          "Pedagogy models in simple language.",
+          "Classroom management case examples.",
+          "Assessment planning formats and rubric basics.",
+          "Lesson plan templates for practical teaching."
+        ],
+        "nextSteps": [
+          "Read B.Ed Notes overview once without notes.",
+          "Write 5 key points of B.Ed Notes in your notebook.",
+          "Solve 3 practice questions based on B.Ed Notes.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "ai-learning-notes",
+        "title": "AI Learning Notes",
+        "summary": "Simple explanations of AI basics with classroom-friendly examples.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "12 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Do one mini-project after every two concepts.",
+        "fullContent": [
+          "AI, ML, and Deep Learning differences with examples.",
+          "Real-life AI use-cases in education and daily life.",
+          "Prompt writing basics and responsible AI practices.",
+          "Mini projects to build confidence step-by-step."
+        ],
+        "nextSteps": [
+          "Read AI Learning Notes overview once without notes.",
+          "Write 5 key points of AI Learning Notes in your notebook.",
+          "Solve 3 practice questions based on AI Learning Notes.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "study-guides",
+        "title": "Study Guides",
+        "summary": "Weekly plans, revision trackers, and practical study techniques.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "6 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Track progress daily and adjust targets every Sunday.",
+        "fullContent": [
+          "Weekly timetable templates for focused learning.",
+          "Revision method using active recall and spaced repetition.",
+          "Distraction control and deep-work sessions.",
+          "Self-evaluation sheet for end-of-week analysis."
+        ],
+        "nextSteps": [
+          "Read Study Guides overview once without notes.",
+          "Write 5 key points of Study Guides in your notebook.",
+          "Solve 3 practice questions based on Study Guides.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      }
+    ],
+    "maths": [
+      {
+        "slug": "algebra-notes",
+        "title": "Algebra Notes",
+        "summary": "Core algebra concepts explained in simple steps.",
+        "buttonLabel": "Open Maths Resource",
+        "category": "2nd Grade Mathematics",
+        "readTime": "9 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Practice daily for 20 minutes and check each step.",
+        "fullContent": [
+          "Variables, constants, and expressions simplified.",
+          "Linear equations with solved examples.",
+          "Factorization shortcuts and verification steps.",
+          "Practice worksheet pattern for quick mastery."
+        ],
+        "nextSteps": [
+          "Read Algebra Notes overview once without notes.",
+          "Write 5 key points of Algebra Notes in your notebook.",
+          "Solve 3 practice questions based on Algebra Notes.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "geometry-basics",
+        "title": "Geometry Basics",
+        "summary": "Important geometry topics with diagrams.",
+        "buttonLabel": "Open Maths Resource",
+        "category": "2nd Grade Mathematics",
+        "readTime": "7 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Draw each figure manually before solving questions.",
+        "fullContent": [
+          "Angles, triangles, and quadrilateral properties.",
+          "Circle basics with radius-diameter relations.",
+          "Area and perimeter formula summary sheet.",
+          "Diagram-based questions with visual hints."
+        ],
+        "nextSteps": [
+          "Read Geometry Basics overview once without notes.",
+          "Write 5 key points of Geometry Basics in your notebook.",
+          "Solve 3 practice questions based on Geometry Basics.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "arithmetic-practice",
+        "title": "Arithmetic Practice",
+        "summary": "Daily practice questions for strong fundamentals.",
+        "buttonLabel": "Open Maths Resource",
+        "category": "2nd Grade Mathematics",
+        "readTime": "5 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Use timer-based drills for better speed and accuracy.",
+        "fullContent": [
+          "Speed drills for addition, subtraction, and multiplication.",
+          "Division practice with remainder checks.",
+          "Fraction and decimal conversion basics.",
+          "Word-problem solving framework."
+        ],
+        "nextSteps": [
+          "Read Arithmetic Practice overview once without notes.",
+          "Write 5 key points of Arithmetic Practice in your notebook.",
+          "Solve 3 practice questions based on Arithmetic Practice.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "previous-year-questions",
+        "title": "Previous Year Questions",
+        "summary": "Important PYQs for exam preparation.",
+        "buttonLabel": "Open Maths Resource",
+        "category": "2nd Grade Mathematics",
+        "readTime": "15 min read",
+        "difficulty": "Hard",
+        "resourceTip": "Solve in exam time-limit and review mistakes same day.",
+        "fullContent": [
+          "Topic-wise PYQ clustering for focused prep.",
+          "High-frequency question types and patterns.",
+          "Model answer structure for long and short responses.",
+          "Time-bound mock test strategy."
+        ],
+        "nextSteps": [
+          "Read Previous Year Questions overview once without notes.",
+          "Write 5 key points of Previous Year Questions in your notebook.",
+          "Solve 3 practice questions based on Previous Year Questions.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      }
+    ],
+    "updates": [
+      {
+        "slug": "exam-strategy-update",
+        "title": "Exam Strategy Update",
+        "summary": "New tips for time management, revision sprints, and calm exam prep.",
+        "buttonLabel": "Read More",
+        "category": "Updates",
+        "readTime": "4 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Start with weak topics in morning high-focus slot.",
+        "fullContent": [
+          "3-phase exam plan: learn, revise, test.",
+          "Priority matrix for chapter selection.",
+          "Last 7-day revision blueprint.",
+          "Stress-control and confidence routine."
+        ],
+        "nextSteps": [
+          "Read Exam Strategy Update overview once without notes.",
+          "Write 5 key points of Exam Strategy Update in your notebook.",
+          "Solve 3 practice questions based on Exam Strategy Update.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "new-study-method",
+        "title": "New Study Method",
+        "summary": "Try the 20-20-20 routine for steady progress and higher recall.",
+        "buttonLabel": "Read More",
+        "category": "Updates",
+        "readTime": "5 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Set phone reminders for each 20-min block.",
+        "fullContent": [
+          "20 min learn + 20 min practice + 20 min recap framework.",
+          "How to apply routine per subject.",
+          "Tracking sheet for daily consistency.",
+          "Weekly reflection prompts."
+        ],
+        "nextSteps": [
+          "Read New Study Method overview once without notes.",
+          "Write 5 key points of New Study Method in your notebook.",
+          "Solve 3 practice questions based on New Study Method.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "ai-tools-guide",
+        "title": "AI Tools Guide",
+        "summary": "Lightweight tools that help summarize lessons without distractions.",
+        "buttonLabel": "Read More",
+        "category": "Updates",
+        "readTime": "6 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Always verify AI answer with textbook before final notes.",
+        "fullContent": [
+          "Safe AI usage rules for students.",
+          "How to ask better prompts for summaries.",
+          "Fact-check method before using AI output.",
+          "Sample workflow: notes → summary → revision quiz."
+        ],
+        "nextSteps": [
+          "Read AI Tools Guide overview once without notes.",
+          "Write 5 key points of AI Tools Guide in your notebook.",
+          "Solve 3 practice questions based on AI Tools Guide.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      }
+    ],
+    "guides": [
+      {
+        "slug": "daily-study-routine",
+        "title": "Daily Study Routine",
+        "summary": "Simple routines to keep focus and balance through busy weeks.",
+        "buttonLabel": "Open Guide",
+        "category": "Guides",
+        "readTime": "5 min read",
+        "difficulty": "Easy",
+        "resourceTip": "Keep same study slots daily to build consistency.",
+        "fullContent": [
+          "Morning focus block with highest-priority subject.",
+          "Midday quick revision cycle.",
+          "Evening practice and error-correction window.",
+          "Night planning for next day."
+        ],
+        "nextSteps": [
+          "Read Daily Study Routine overview once without notes.",
+          "Write 5 key points of Daily Study Routine in your notebook.",
+          "Solve 3 practice questions based on Daily Study Routine.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "portfolio-building-guide",
+        "title": "Portfolio Building Guide",
+        "summary": "Step-by-step templates for presenting assignments and projects.",
+        "buttonLabel": "Open Guide",
+        "category": "Guides",
+        "readTime": "8 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Use one template for all projects to keep consistency.",
+        "fullContent": [
+          "Portfolio structure: intro, skills, projects, proofs.",
+          "Best format for assignment showcase.",
+          "Simple writing style for project descriptions.",
+          "Final checklist before submission."
+        ],
+        "nextSteps": [
+          "Read Portfolio Building Guide overview once without notes.",
+          "Write 5 key points of Portfolio Building Guide in your notebook.",
+          "Solve 3 practice questions based on Portfolio Building Guide.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "ai-learning-path",
+        "title": "AI Learning Path",
+        "summary": "A calm path for exploring AI learning without overwhelming steps.",
+        "buttonLabel": "Open Guide",
+        "category": "Guides",
+        "readTime": "11 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Do milestone review every Sunday and refine next week plan.",
+        "fullContent": [
+          "Beginner roadmap: foundations to basic projects.",
+          "Weekly milestones for structured progress.",
+          "Practice resources and challenge ideas.",
+          "Common pitfalls and how to avoid them."
+        ],
+        "nextSteps": [
+          "Read AI Learning Path overview once without notes.",
+          "Write 5 key points of AI Learning Path in your notebook.",
+          "Solve 3 practice questions based on AI Learning Path.",
+          "Revise after 24 hours and mark weak points."
+        ]
+      }
+    ]
+  }
+}

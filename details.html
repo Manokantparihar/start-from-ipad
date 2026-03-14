@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Help Hub - Resource Details</title>
+    <meta
+      name="description"
+      content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
+    >
+    <meta name="robots" content="index, follow">
+    <link id="detailsCanonicalUrl" rel="canonical" href="https://example.com/details.html">
+    <meta id="detailsOgTitle" property="og:title" content="Help Hub - Resource Details">
+    <meta
+      id="detailsOgDescription"
+      property="og:description"
+      content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
+    >
+    <meta property="og:type" content="article">
+    <meta id="detailsOgUrl" property="og:url" content="https://example.com/details.html">
+    <meta id="detailsOgImage" property="og:image" content="https://example.com/og-image.svg">
+    <meta property="og:image:alt" content="Help Hub learning resources preview banner">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta id="detailsTwitterTitle" name="twitter:title" content="Help Hub - Resource Details">
+    <meta
+      id="detailsTwitterDescription"
+      name="twitter:description"
+      content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
+    >
+    <meta id="detailsTwitterImage" name="twitter:image" content="https://example.com/og-image.svg">
+    <style>
+      :root {
+        --ink: #0f172a;
+        --slate: #334155;
+        --card: #ffffff;
+        --blue-2: #2f6ea6;
+        --shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        --max-width: 980px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(127, 178, 217, 0.2), transparent 40%),
+          linear-gradient(180deg, #f7fafc 0%, #eef2f7 60%, #e9edf5 100%);
+      }
+
+      .wrap {
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(var(--max-width), 100%);
+        background: var(--card);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 36px);
+      }
+
+      p {
+        margin: 0 0 14px;
+        color: var(--slate);
+        line-height: 1.6;
+      }
+
+      .meta {
+        font-size: 14px;
+        margin-bottom: 14px;
+      }
+
+      .summary {
+        margin-bottom: 20px;
+      }
+
+      .notes-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 8px;
+        margin: 10px 0 18px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #f1f7ff;
+      }
+
+      .notes-meta p {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .section-title {
+        margin: 26px 0 10px;
+        font-size: 22px;
+      }
+
+      .content-list,
+      .steps-list {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .content-list li,
+      .steps-list li {
+        color: var(--slate);
+        margin-bottom: 10px;
+        line-height: 1.6;
+        break-inside: avoid;
+      }
+
+      .steps-list li {
+        list-style: none;
+        margin-left: -20px;
+      }
+
+      .step-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .step-item input {
+        margin-top: 4px;
+      }
+
+      .step-item.done span {
+        text-decoration: line-through;
+        opacity: 0.72;
+      }
+
+      .resource-box {
+        margin-top: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 14px;
+        padding: 14px;
+        background: #f8fbff;
+      }
+
+      .resource-box p {
+        margin-bottom: 10px;
+      }
+
+      .action-row {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 11px 18px;
+        border-radius: 10px;
+        border: none;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        background: linear-gradient(135deg, #2f6ea6, #3d78b5);
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      .btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+
+      .btn-ghost {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+
+      .progress {
+        margin-top: 10px;
+        font-size: 14px;
+        color: var(--slate);
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f7a4f;
+        min-height: 18px;
+      }
+
+      @page {
+        size: A4;
+        margin: 16mm;
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+          color: #000000;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+
+                .print-footer {
+                  display: block !important;
+                }
+
+        }
+
+        .wrap {
+          padding: 0;
+        }
+
+        .card {
+          box-shadow: none;
+          border: 1px solid #dbe3ef;
+          border-radius: 0;
+          width: 100%;
+          padding: 0;
+        }
+
+        .resource-box {
+          border-color: #dbe3ef;
+          background: #f7fbff;
+        }
+
+        .action-row,
+        #resetProgressBtn,
+        .status {
+          display: none;
+
+                .ai-plan-section {
+                  display: none;
+                }
+
+              .print-footer {
+                display: none;
+                margin-top: 32px;
+                padding-top: 16px;
+                border-top: 1px solid #dbe3ef;
+                font-size: 12px;
+                color: #64748b;
+                text-align: center;
+              }
+
+              .ai-plan-section {
+                margin-top: 28px;
+                border: 1px dashed rgba(47, 110, 166, 0.35);
+                border-radius: 16px;
+                padding: 20px;
+                background: linear-gradient(135deg, #f0f7ff, #f8f0ff);
+              }
+
+              .ai-plan-section h2 {
+                margin: 0 0 6px;
+                font-size: 20px;
+                color: #2f6ea6;
+              }
+
+              .ai-plan-section p {
+                margin: 0 0 14px;
+                font-size: 14px;
+              }
+
+              .ai-plan-row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+              }
+
+              #aiApiKeyInput {
+                flex: 1;
+                min-width: 180px;
+                border: 1px solid rgba(148, 163, 184, 0.45);
+                background: #ffffff;
+                color: #0f172a;
+                border-radius: 10px;
+                padding: 10px 14px;
+                font: inherit;
+                font-size: 14px;
+              }
+
+              #aiPlanOutput {
+                margin-top: 14px;
+                background: #ffffff;
+                border: 1px solid rgba(148, 163, 184, 0.3);
+                border-radius: 12px;
+                padding: 14px 16px;
+                font-size: 14px;
+                color: #0f172a;
+                line-height: 1.7;
+                white-space: pre-wrap;
+                min-height: 60px;
+                display: none;
+              }
+
+              .ai-status {
+                font-size: 13px;
+                font-weight: 600;
+                color: #2f6ea6;
+                min-height: 18px;
+                margin-top: 8px;
+              }
+
+              .not-found-state {
+                text-align: center;
+                padding: 48px 20px;
+              }
+
+              .not-found-state h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+                color: #0f172a;
+              }
+
+              .not-found-state p {
+                color: #64748b;
+                margin-bottom: 20px;
+              }
+        }
+
+        .step-item.done span {
+          text-decoration: none;
+          opacity: 1;
+        }
+
+        .step-item input {
+          transform: scale(0.95);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <article class="card">
+        <h1 id="title">Resource</h1>
+        <p class="meta" id="category">Learning</p>
+        <p class="summary" id="summary">This resource is available and opens correctly from the homepage button.</p>
+        <div class="notes-meta">
+          <p><strong>Prepared For:</strong> Self Study</p>
+          <p><strong>Generated On:</strong> <span id="generatedOn">-</span></p>
+          <p><strong>Format:</strong> PDF / Print Ready Notes</p>
+        </div>
+
+        <h2 class="section-title">Full Content</h2>
+        <ul class="content-list" id="contentList"></ul>
+
+        <div class="resource-box">
+          <p id="resourceTip">Use this section to revise fast before class or exam.</p>
+          <div class="action-row">
+            <a class="btn" id="mailCta" href="mailto:manokantparihar@gmail.com?subject=Need%20Resource%20Access">Request Full Material</a>
+            <button class="btn" id="printBtn" type="button">Print / Save PDF</button>
+            <button class="btn btn-ghost" id="copyPlanBtn" type="button">Copy Next-Step Plan</button>
+            <a class="btn btn-secondary" href="index.html#home">Back to Home</a>
+          </div>
+        </div>
+
+        <h2 class="section-title">Ab Aage Kya Karna Hai</h2>
+        <ol class="steps-list" id="stepsList"></ol>
+        <p class="progress" id="progressText">Progress: 0/0 complete</p>
+        <button class="btn btn-secondary" id="resetProgressBtn" type="button">Reset Progress</button>
+        <p class="status" id="statusText" role="status" aria-live="polite"></p>
+
+        <section class="ai-plan-section" id="aiPlanSection" aria-labelledby="aiPlanHeading">
+          <h2 id="aiPlanHeading">AI Study Plan Generator</h2>
+          <p>Enter your Gemini API key and get a personalized 7-day study plan for this topic.</p>
+          <div class="ai-plan-row">
+            <input
+              id="aiApiKeyInput"
+              type="password"
+              placeholder="Paste Gemini API key here..."
+              autocomplete="off"
+              aria-label="Gemini API key"
+            >
+            <button class="btn" id="generatePlanBtn" type="button">Generate 7-Day Plan</button>
+          </div>
+          <p class="ai-status" id="aiStatus" role="status" aria-live="polite"></p>
+          <div id="aiPlanOutput" aria-live="polite"></div>
+        </section>
+
+        <div class="print-footer" aria-hidden="true">
+          Help Hub &nbsp;|&nbsp; helphub notes &nbsp;|&nbsp; manokantparihar@gmail.com
+        </div>
+      </article>
+    </main>
+
+    <script>
+      const FALLBACK_CONTENT = {
+        title: "Resource",
+        category: "Help Hub",
+        summary: "This content is being prepared. Use Request Full Material for direct access.",
+        fullContent: [
+          "Overview material is currently being prepared.",
+          "Use the request button for complete content access."
+        ],
+        nextSteps: [
+          "Read available summary once.",
+          "Request complete material by email.",
+          "Start revision with your own notes."
+        ],
+        resourceTip: "Use Request Full Material for direct access."
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      const itemSlug = params.get("item");
+      const progressKey = `helpHubProgress:${itemSlug || "default"}`;
+
+      const contentList = document.getElementById("contentList");
+      const stepsList = document.getElementById("stepsList");
+      const progressText = document.getElementById("progressText");
+      const statusText = document.getElementById("statusText");
+      const resetProgressBtn = document.getElementById("resetProgressBtn");
+      const copyPlanBtn = document.getElementById("copyPlanBtn");
+      const mailCta = document.getElementById("mailCta");
+      const printBtn = document.getElementById("printBtn");
+      const generatedOn = document.getElementById("generatedOn");
+      const detailsCanonicalUrl = document.getElementById("detailsCanonicalUrl");
+      const detailsOgTitle = document.getElementById("detailsOgTitle");
+      const detailsOgDescription = document.getElementById("detailsOgDescription");
+      const detailsOgUrl = document.getElementById("detailsOgUrl");
+      const detailsOgImage = document.getElementById("detailsOgImage");
+      const detailsTwitterTitle = document.getElementById("detailsTwitterTitle");
+      const detailsTwitterDescription = document.getElementById("detailsTwitterDescription");
+      const detailsTwitterImage = document.getElementById("detailsTwitterImage");
+      const metaDescription = document.querySelector('meta[name="description"]');
+
+      generatedOn.textContent = new Date().toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+
+      const findItemBySlug = (sections, slug) => {
+        const allItems = Object.values(sections || {}).flat();
+        return allItems.find((entry) => entry.slug === slug);
+      };
+
+      const updateProgressText = (total) => {
+        const checked = stepsList.querySelectorAll("input[type='checkbox']:checked").length;
+        progressText.textContent = `Progress: ${checked}/${total} complete`;
+      };
+
+      const renderPage = (data) => {
+        document.getElementById("title").textContent = data.title;
+        document.getElementById("category").textContent = data.category;
+        document.getElementById("summary").textContent = data.summary;
+        document.getElementById("resourceTip").textContent = data.resourceTip;
+        document.title = `${data.title} - Print Notes`;
+
+        const pageUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        const imageUrl = `${window.location.origin}/og-image.svg`;
+
+        if (detailsCanonicalUrl) detailsCanonicalUrl.setAttribute("href", pageUrl);
+        if (metaDescription) metaDescription.setAttribute("content", data.summary);
+        if (detailsOgTitle) detailsOgTitle.setAttribute("content", `${data.title} | Help Hub`);
+        if (detailsOgDescription) detailsOgDescription.setAttribute("content", data.summary);
+        if (detailsOgUrl) detailsOgUrl.setAttribute("content", pageUrl);
+        if (detailsOgImage) detailsOgImage.setAttribute("content", imageUrl);
+        if (detailsTwitterTitle) detailsTwitterTitle.setAttribute("content", `${data.title} | Help Hub`);
+        if (detailsTwitterDescription) detailsTwitterDescription.setAttribute("content", data.summary);
+        if (detailsTwitterImage) detailsTwitterImage.setAttribute("content", imageUrl);
+
+        mailCta.href = `mailto:manokantparihar@gmail.com?subject=Need%20${encodeURIComponent(data.title)}%20Material`;
+
+        contentList.innerHTML = "";
+        stepsList.innerHTML = "";
+
+        data.fullContent.forEach((point) => {
+          const li = document.createElement("li");
+          li.textContent = point;
+          contentList.appendChild(li);
+        });
+
+        const savedProgress = JSON.parse(localStorage.getItem(progressKey) || "[]");
+
+        data.nextSteps.forEach((step, index) => {
+          const li = document.createElement("li");
+          const wrapper = document.createElement("label");
+          wrapper.className = "step-item";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = Boolean(savedProgress[index]);
+
+          const span = document.createElement("span");
+          span.textContent = step;
+
+          if (checkbox.checked) {
+            wrapper.classList.add("done");
+          }
+
+          checkbox.addEventListener("change", () => {
+            wrapper.classList.toggle("done", checkbox.checked);
+            const current = Array.from(stepsList.querySelectorAll("input[type='checkbox']")).map((el) => el.checked);
+            localStorage.setItem(progressKey, JSON.stringify(current));
+            updateProgressText(data.nextSteps.length);
+          });
+
+          wrapper.appendChild(checkbox);
+          wrapper.appendChild(span);
+          li.appendChild(wrapper);
+          stepsList.appendChild(li);
+        });
+
+        updateProgressText(data.nextSteps.length);
+      };
+
+      resetProgressBtn.addEventListener("click", () => {
+        stepsList.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+          checkbox.checked = false;
+          checkbox.parentElement.classList.remove("done");
+        });
+        localStorage.removeItem(progressKey);
+        const total = stepsList.querySelectorAll("input[type='checkbox']").length;
+        updateProgressText(total);
+        statusText.textContent = "Progress reset successfully.";
+      });
+
+      copyPlanBtn.addEventListener("click", async () => {
+        const title = document.getElementById("title").textContent;
+        const steps = Array.from(stepsList.querySelectorAll("span")).map((el) => el.textContent);
+        const text = `${title} - Next Steps\n${steps.map((step, index) => `${index + 1}. ${step}`).join("\n")}`;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          statusText.textContent = "Next-step plan copied.";
+        } catch {
+          statusText.textContent = "Copy failed. Please copy manually.";
+        }
+      });
+
+      printBtn.addEventListener("click", () => {
+        statusText.textContent = "Opening print dialog. Choose Save as PDF to download.";
+        window.print();
+      });
+
+      const loadDetailsContent = async () => {
+        try {
+          const response = await fetch("data/content.json", { cache: "no-store" });
+          if (!response.ok) throw new Error("Failed to load content file");
+          const payload = await response.json();
+          const selected = findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT;
+          if (!itemSlug || !findItemBySlug(payload.sections, itemSlug)) {
+            if (itemSlug) {
+              renderNotFound(itemSlug);
+              return;
+            }
+          }
+          renderPage(findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT);
+        } catch (error) {
+          console.error("Details content load failed:", error);
+          renderPage(FALLBACK_CONTENT);
+        }
+      };
+
+      loadDetailsContent();
+
+          const renderNotFound = (slug) => {
+            document.querySelector(".card").innerHTML = `
+              <div class="not-found-state">
+                <h1>Resource Not Found</h1>
+                <p>The resource "<strong>${slug}</strong>" does not exist or may have been moved.</p>
+                <a class="btn" href="index.html#resources">Browse All Resources</a>
+              </div>
+            `;
+          };
+
+          const generatePlanBtn = document.getElementById("generatePlanBtn");
+          const aiApiKeyInput = document.getElementById("aiApiKeyInput");
+          const aiPlanOutput = document.getElementById("aiPlanOutput");
+          const aiStatus = document.getElementById("aiStatus");
+
+          if (generatePlanBtn) {
+            generatePlanBtn.addEventListener("click", async () => {
+              const apiKey = aiApiKeyInput ? aiApiKeyInput.value.trim() : "";
+              const topicTitle = document.getElementById("title") ? document.getElementById("title").textContent : "this topic";
+
+              if (!apiKey) {
+                aiStatus.textContent = "Please enter your Gemini API key first.";
+                return;
+              }
+
+              aiStatus.textContent = "Generating plan...";
+              generatePlanBtn.disabled = true;
+              aiPlanOutput.style.display = "none";
+              aiPlanOutput.textContent = "";
+
+              const prompt = `You are a focused study assistant. Create a simple 7-day study plan for a student learning "${topicTitle}". Format it as Day 1 to Day 7, each day with one clear action (1-2 sentences). Keep it practical, calm, and actionable. Do not add introductions or conclusions.`;
+
+              try {
+                const response = await fetch(
+                  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      contents: [{ parts: [{ text: prompt }] }],
+                    }),
+                  },
+                );
+
+                if (!response.ok) {
+                  const errData = await response.json().catch(() => ({}));
+                  throw new Error(errData?.error?.message || `API error ${response.status}`);
+                }
+
+                const data = await response.json();
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No plan generated. Please try again.";
+                aiPlanOutput.textContent = text;
+                aiPlanOutput.style.display = "block";
+                aiStatus.textContent = "Plan ready!";
+              } catch (err) {
+                aiStatus.textContent = `Error: ${err.message}`;
+              } finally {
+                generatePlanBtn.disabled = false;
+              }
+            });
+          }
+    </script>
+  </body>
+</html>
