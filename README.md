@@ -3,6 +3,7 @@ My developer journey starts today 🚀
 
 ## Platform execution plan
 
+- Python-first 90-day learning roadmap: `PROGRAMMING-LEARNING-ROADMAP.md`
 - Full A-to-Z roadmap: `ROADMAP.md`
 - Current sprint board: `SPRINT-1-TASKS.md`
 - Next sprint board (Phase 3): `SPRINT-2-TASKS.md`
