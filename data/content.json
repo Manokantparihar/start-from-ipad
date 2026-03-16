@@ -88,6 +88,24 @@
           "Solve 3 practice questions based on Study Guides.",
           "Revise after 24 hours and mark weak points."
         ]
+      },
+      {
+        "slug": "resources-new-item-2424",
+        "title": "New Topic Title",
+        "summary": "One-line summary for this new item.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "6 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Revise this topic once daily.",
+        "fullContent": [
+          "Concept summary point",
+          "Practice insight point"
+        ],
+        "nextSteps": [
+          "Read summary once",
+          "Solve 3 practice questions"
+        ]
       }
     ],
     "maths": [
@@ -238,7 +256,7 @@
           "Safe AI usage rules for students.",
           "How to ask better prompts for summaries.",
           "Fact-check method before using AI output.",
-          "Sample workflow: notes → summary → revision quiz."
+          "Sample workflow: notes â summary â revision quiz."
         ],
         "nextSteps": [
           "Read AI Tools Guide overview once without notes.",

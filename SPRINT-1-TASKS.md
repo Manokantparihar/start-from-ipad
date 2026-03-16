@@ -18,13 +18,13 @@ Convert current project into a clean, data-driven MVP base with consistent conte
 - [x] Move homepage cards to data-driven rendering.
 - [x] Move details page content to shared data source.
 - [x] Add robust empty-state/fallback when item not found.
-- [ ] Add canonical SEO tags and update Open Graph URL/image placeholders.
+- [x] Add canonical SEO tags and update Open Graph URL/image placeholders.
 
 ### P1
-- [ ] Add section-level search/filter (by category).
-- [ ] Add download tracking event hooks.
-- [ ] Add print footer with platform branding/date.
-- [ ] Add dedicated 404-style content state for invalid `item` slug.
+- [x] Add section-level search/filter (by category).
+- [x] Add download tracking event hooks.
+- [x] Add print footer with platform branding/date.
+- [x] Add dedicated 404-style content state for invalid `item` slug.
 
 ### P2
 - [ ] Add topic tags and estimated reading time.

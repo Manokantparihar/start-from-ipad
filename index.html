@@ -14,20 +14,20 @@
     >
     <meta name="author" content="Help Hub">
     <meta name="robots" content="index, follow">
-    <link id="canonicalUrl" rel="canonical" href="https://example.com/index.html">
+    <link id="canonicalUrl" rel="canonical" href="https://manokantparihar.github.io/start-from-ipad/">
     <meta property="og:title" content="Help Hub">
     <meta
       property="og:description"
       content="Your trusted source for learning resources and study support."
     >
     <meta property="og:type" content="website">
-    <meta id="ogUrl" property="og:url" content="https://example.com/index.html">
-    <meta id="ogImage" property="og:image" content="https://example.com/og-image.svg">
+    <meta id="ogUrl" property="og:url" content="https://manokantparihar.github.io/start-from-ipad/">
+    <meta id="ogImage" property="og:image" content="https://manokantparihar.github.io/start-from-ipad/og-image.svg">
     <meta property="og:image:alt" content="Help Hub learning resources preview banner">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Help Hub">
     <meta name="twitter:description" content="Your trusted source for learning resources and study support.">
-    <meta id="twitterImage" name="twitter:image" content="https://example.com/og-image.svg">
+    <meta id="twitterImage" name="twitter:image" content="https://manokantparihar.github.io/start-from-ipad/og-image.svg">
     <meta name="theme-color" content="#2f6ea6">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -507,13 +507,28 @@
         background: linear-gradient(135deg, rgba(127, 178, 217, 0.5), rgba(47, 110, 166, 0.5));
       }
 
-      .contact-box {
+      .contact-box,
+      .content-update-box {
         background: var(--card);
         border-radius: 20px;
         padding: 24px;
         box-shadow: var(--shadow);
         display: grid;
         gap: 12px;
+      }
+
+      .content-update-list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--slate);
+        display: grid;
+        gap: 6px;
+      }
+
+      .content-update-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
       }
 
       .contact-form {
@@ -563,6 +578,11 @@
         cursor: progress;
       }
 
+      .contact-fallback {
+        background: #e8f1f9;
+        color: #1f5f96;
+      }
+
       .form-status {
         margin: 0;
         min-height: 20px;
@@ -581,6 +601,7 @@
       body.dark-theme .card,
       body.dark-theme .post-card,
       body.dark-theme .contact-box,
+      body.dark-theme .content-update-box,
       body.dark-theme #resources .card {
         border: 1px solid rgba(148, 163, 184, 0.16);
       }
@@ -597,6 +618,11 @@
 
       body.dark-theme .form-status.error {
         color: #fca5a5;
+      }
+
+      body.dark-theme .contact-fallback {
+        background: #1b2a42;
+        color: #a8d3f2;
       }
 
       body.dark-theme .thumb {
@@ -618,13 +644,15 @@
         background: var(--ink);
       }
 
-      .contact-box a {
+      .contact-box a,
+      .content-update-box a {
         color: #2f6ea6;
         text-decoration: none;
         font-weight: 600;
       }
 
-      body.dark-theme .contact-box a {
+      body.dark-theme .contact-box a,
+      body.dark-theme .content-update-box a {
         color: #7fb2d9;
       }
 
@@ -677,6 +705,7 @@
           <a href="#maths">2nd Grade Maths</a>
           <a href="#updates">Updates</a>
           <a href="#guides">Guides</a>
+          <a href="#content-update">Content Update</a>
           <a href="#contact">Contact</a>
           <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
             Dark Mode
@@ -720,12 +749,12 @@
             aria-label="Search resources"
             autocomplete="off"
           >
-          <div class="filter-chips" id="filterChips" role="group" aria-label="Filter by difficulty">
+          <div class="filter-chips" id="filterChips" role="group" aria-label="Filter by section">
             <button class="chip active" data-filter="all" type="button">All</button>
-            <button class="chip" data-filter="Easy" type="button">Easy</button>
-            <button class="chip" data-filter="Beginner" type="button">Beginner</button>
-            <button class="chip" data-filter="Medium" type="button">Medium</button>
-            <button class="chip" data-filter="Hard" type="button">Hard</button>
+            <button class="chip" data-filter="resources" type="button">Resources</button>
+            <button class="chip" data-filter="maths" type="button">Maths</button>
+            <button class="chip" data-filter="updates" type="button">Updates</button>
+            <button class="chip" data-filter="guides" type="button">Guides</button>
           </div>
         </div>
         <div class="card-grid" id="resourcesGrid">
@@ -829,6 +858,24 @@
         </div>
       </section>
 
+      <section class="section" id="content-update">
+        <h2 class="section-title">Content Update</h2>
+        <p class="section-subtitle">Direct tools for updating and validating content data.</p>
+        <div class="content-update-box">
+          <ul class="content-update-list">
+            <li>Edit content in browser using the new Content Manager</li>
+            <li>Run validation before publish: <strong>npm run validate:content</strong></li>
+            <li>Start site after validation: <strong>npm run phase2:serve</strong></li>
+            <li>Follow publish checklist from README</li>
+          </ul>
+          <div class="content-update-actions">
+            <a class="btn" href="content-manager.html">Open Content Manager</a>
+            <a class="btn btn-outline" href="data/content.json" target="_blank" rel="noopener noreferrer">View Raw JSON</a>
+            <a class="btn btn-outline" href="README.md" target="_blank" rel="noopener noreferrer">Open Update Guide</a>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="contact">
         <h2 class="section-title">Contact</h2>
         <div class="contact-box">
@@ -836,7 +883,7 @@
           <form
             class="contact-form"
             id="contactForm"
-            data-endpoint="https://formsubmit.co/ajax/manokantparihar@gmail.com"
+            data-endpoint="/api/contact"
             novalidate
           >
             <div class="form-field">
@@ -852,6 +899,9 @@
               <textarea id="message" name="message" required></textarea>
             </div>
             <button class="contact-submit" id="contactSubmit" type="submit">Send Message</button>
+            <button class="contact-submit contact-fallback" id="contactFallbackBtn" type="button" hidden>
+              Send via Email App
+            </button>
             <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
           </form>
           <p><a href="mailto:manokantparihar@gmail.com">manokantparihar@gmail.com</a></p>
@@ -863,6 +913,6 @@
       Help Hub - Calm learning support for students and educators.
     </footer>
 
-    <script src="index.js"></script>
+    <script src="index.js?v=20260316-4"></script>
   </body>
 </html>

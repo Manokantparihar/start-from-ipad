@@ -3,6 +3,7 @@ const navLinks = document.getElementById("navLinks");
 const themeToggle = document.getElementById("themeToggle");
 const contactForm = document.getElementById("contactForm");
 const contactSubmit = document.getElementById("contactSubmit");
+const contactFallbackBtn = document.getElementById("contactFallbackBtn");
 const formStatus = document.getElementById("formStatus");
 const resourcesGrid = document.getElementById("resourcesGrid");
 const mathsGrid = document.getElementById("mathsGrid");
@@ -32,13 +33,21 @@ const setHomepageSeoMeta = () => {
   if (twitterImageTag) twitterImageTag.setAttribute("content", ogImageUrl);
 };
 
+const trackEvent = (eventType, label = "") => {
+  if (window.gtag) {
+    window.gtag("event", eventType, { event_label: label });
+  }
+  console.info(`[track] ${eventType}${label ? ` | ${label}` : ""}`);
+};
+
 const renderStandardCards = (container, items) => {
   if (!container || !Array.isArray(items)) return;
+  const section = container.id.replace("Grid", "").toLowerCase();
 
   container.innerHTML = items
     .map(
       (item) => `
-      <div class="card" data-slug="${item.slug}" data-title="${item.title.toLowerCase()}" data-difficulty="${item.difficulty || ""}">
+      <div class="card" data-slug="${item.slug}" data-title="${item.title.toLowerCase()}" data-difficulty="${item.difficulty || ""}" data-section="${section}">
         <h3>${item.title}</h3>
         <div class="badge-row">
           ${item.readTime ? `<span class="badge badge-time">${item.readTime}</span>` : ""}
@@ -54,11 +63,12 @@ const renderStandardCards = (container, items) => {
 
 const renderUpdateCards = (container, items) => {
   if (!container || !Array.isArray(items)) return;
+  const section = container.id.replace("Grid", "").toLowerCase();
 
   container.innerHTML = items
     .map(
       (item) => `
-      <article class="post-card" data-slug="${item.slug}" data-title="${item.title.toLowerCase()}" data-difficulty="${item.difficulty || ""}">
+      <article class="post-card" data-slug="${item.slug}" data-title="${item.title.toLowerCase()}" data-difficulty="${item.difficulty || ""}" data-section="${section}">
         <div class="thumb" aria-hidden="true"></div>
         <h3>${item.title}</h3>
         <div class="badge-row">
@@ -85,14 +95,14 @@ const loadHomepageContent = async () => {
     renderUpdateCards(updatesGrid, sectionData.updates);
     renderStandardCards(guidesGrid, sectionData.guides);
 
-      allSearchableItems = [
-        ...(sectionData.resources || []),
-        ...(sectionData.maths || []),
-        ...(sectionData.updates || []),
-        ...(sectionData.guides || []),
-      ];
-      setupSearch();
-    } catch (error) {
+    allSearchableItems = [
+      ...(sectionData.resources || []),
+      ...(sectionData.maths || []),
+      ...(sectionData.updates || []),
+      ...(sectionData.guides || []),
+    ];
+    setupSearch();
+  } catch (error) {
     console.error("Content load failed:", error);
   }
 };
@@ -125,8 +135,24 @@ if (themeToggle) {
 }
 
 if (contactForm && contactSubmit && formStatus) {
+  const submitFallbackForm = ({ name, email, message }) => {
+    const subject = encodeURIComponent(`Contact Form: ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    );
+    const mailtoUrl = `mailto:manokantparihar@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = mailtoUrl;
+  };
+
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    const isHttpProtocol = window.location.protocol === "http:" || window.location.protocol === "https:";
+    if (!isHttpProtocol) {
+      formStatus.textContent = `This page is running on ${window.location.protocol}. Open via web server: run npm run start and use http://localhost:5500`;
+      formStatus.className = "form-status error";
+      return;
+    }
 
     const endpoint = contactForm.dataset.endpoint;
     const formData = new FormData(contactForm);
@@ -137,13 +163,20 @@ if (contactForm && contactSubmit && formStatus) {
     if (!name || !email || !message) {
       formStatus.textContent = "Please fill out all fields.";
       formStatus.className = "form-status error";
+      if (contactFallbackBtn) contactFallbackBtn.hidden = true;
       return;
     }
 
     if (!endpoint) {
       formStatus.textContent = "Submission endpoint is missing.";
       formStatus.className = "form-status error";
+      if (contactFallbackBtn) contactFallbackBtn.hidden = true;
       return;
+    }
+
+    if (contactFallbackBtn) {
+      contactFallbackBtn.hidden = true;
+      contactFallbackBtn.onclick = () => submitFallbackForm({ name, email, message });
     }
 
     try {
@@ -161,22 +194,52 @@ if (contactForm && contactSubmit && formStatus) {
           name,
           email,
           message,
-          _subject: `New contact message from ${name}`,
-          _template: "table",
-          _captcha: "false",
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Submission failed");
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+
+      const responseSuccess = payload?.success === true || payload?.success === "true";
+      if (!response.ok || !responseSuccess) {
+        const messageFromApi = payload?.message || payload?.error || "Submission failed";
+        throw new Error(messageFromApi);
       }
 
       contactForm.reset();
-      formStatus.textContent = "Message sent successfully.";
-      formStatus.className = "form-status success";
-    } catch {
-      formStatus.textContent = "Could not send message. Please try again.";
+      if (payload?.emailForwarded) {
+        formStatus.textContent = "Message submitted and forwarded to inbox successfully.";
+        formStatus.className = "form-status success";
+      } else {
+        formStatus.textContent = `Message saved on site, but email forwarding failed: ${payload?.emailStatus || "Check FormSubmit activation"}. Opening Email App fallback...`;
+        formStatus.className = "form-status error";
+        if (contactFallbackBtn) {
+          contactFallbackBtn.hidden = false;
+        }
+        submitFallbackForm({ name, email, message });
+      }
+      if (payload?.emailForwarded && contactFallbackBtn) contactFallbackBtn.hidden = true;
+    } catch (error) {
+      const isWebServerError = String(error.message || "").toLowerCase().includes("web server");
+      if (isWebServerError) {
+        formStatus.textContent = "Message service blocked. Opening your email app fallback now...";
+        formStatus.className = "form-status success";
+        submitFallbackForm({ name, email, message });
+        return;
+      }
+
+      const helpText = isWebServerError
+        ? ` Open this exact URL in browser: http://localhost:5500 (current: ${window.location.href})`
+        : "";
+      formStatus.textContent = `Could not deliver message: ${error.message}${helpText}`;
       formStatus.className = "form-status error";
+      if (contactFallbackBtn) {
+        contactFallbackBtn.hidden = false;
+      }
     } finally {
       contactSubmit.disabled = false;
       contactSubmit.textContent = "Send Message";
@@ -219,6 +282,14 @@ const highlightNav = () => {
 window.addEventListener("scroll", highlightNav, { passive: true });
 window.addEventListener("load", highlightNav);
 window.addEventListener("load", setHomepageSeoMeta);
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".card .btn, .post-card .btn");
+  if (!btn) return;
+  const card = btn.closest("[data-slug]");
+  const slug = card?.dataset.slug || "";
+  trackEvent("resource_open", slug);
+});
 window.addEventListener("load", loadHomepageContent);
 
 const setupSearch = () => {
@@ -243,9 +314,9 @@ const filterAllCards = () => {
 
   allCards.forEach((card) => {
     const title = card.dataset.title || "";
-    const difficulty = card.dataset.difficulty || "";
+    const section = card.dataset.section || "";
     const matchesSearch = !query || title.includes(query);
-    const matchesFilter = activeFilter === "all" || difficulty === activeFilter;
+    const matchesFilter = activeFilter === "all" || section === activeFilter;
     const show = matchesSearch && matchesFilter;
     card.style.display = show ? "" : "none";
     if (card.parentElement) grids.add(card.parentElement);

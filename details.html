@@ -9,7 +9,7 @@
       content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
     >
     <meta name="robots" content="index, follow">
-    <link id="detailsCanonicalUrl" rel="canonical" href="https://example.com/details.html">
+    <link id="detailsCanonicalUrl" rel="canonical" href="https://manokantparihar.github.io/start-from-ipad/details.html">
     <meta id="detailsOgTitle" property="og:title" content="Help Hub - Resource Details">
     <meta
       id="detailsOgDescription"
@@ -17,8 +17,8 @@
       content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
     >
     <meta property="og:type" content="article">
-    <meta id="detailsOgUrl" property="og:url" content="https://example.com/details.html">
-    <meta id="detailsOgImage" property="og:image" content="https://example.com/og-image.svg">
+    <meta id="detailsOgUrl" property="og:url" content="https://manokantparihar.github.io/start-from-ipad/details.html">
+    <meta id="detailsOgImage" property="og:image" content="https://manokantparihar.github.io/start-from-ipad/og-image.svg">
     <meta property="og:image:alt" content="Help Hub learning resources preview banner">
     <meta name="twitter:card" content="summary_large_image">
     <meta id="detailsTwitterTitle" name="twitter:title" content="Help Hub - Resource Details">
@@ -27,7 +27,7 @@
       name="twitter:description"
       content="Detailed notes, revision checklist, and next-step plan for Help Hub learners."
     >
-    <meta id="detailsTwitterImage" name="twitter:image" content="https://example.com/og-image.svg">
+    <meta id="detailsTwitterImage" name="twitter:image" content="https://manokantparihar.github.io/start-from-ipad/og-image.svg">
     <style>
       :root {
         --ink: #0f172a;
@@ -197,6 +197,94 @@
         min-height: 18px;
       }
 
+      .print-footer {
+        display: none;
+      }
+
+      .ai-plan-section {
+        margin-top: 28px;
+        border: 1px dashed rgba(47, 110, 166, 0.35);
+        border-radius: 16px;
+        padding: 20px;
+        background: linear-gradient(135deg, #f0f7ff, #f8f0ff);
+      }
+
+      .ai-plan-section h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        color: #2f6ea6;
+      }
+
+      .ai-plan-section p {
+        margin: 0 0 14px;
+        font-size: 14px;
+      }
+
+      .ai-plan-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      #aiApiKeyInput {
+        flex: 1;
+        min-width: 180px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: #ffffff;
+        color: #0f172a;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font: inherit;
+        font-size: 14px;
+      }
+
+      #aiPlanOutput {
+        margin-top: 14px;
+        background: #ffffff;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 14px;
+        color: #0f172a;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        min-height: 60px;
+        display: none;
+      }
+
+      .ai-status {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2f6ea6;
+        min-height: 18px;
+        margin-top: 8px;
+      }
+
+      .not-found-state {
+        text-align: center;
+        padding: 48px 20px;
+      }
+
+      .not-found-code {
+        font-size: 64px;
+        font-weight: 700;
+        color: var(--blue-2);
+        margin: 0 0 8px;
+        line-height: 1;
+      }
+
+      .not-found-state h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #0f172a;
+      }
+
+      .not-found-state p {
+        color: #64748b;
+        margin-bottom: 20px;
+      }
+
       @page {
         size: A4;
         margin: 16mm;
@@ -208,11 +296,6 @@
           color: #000000;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
-
-                .print-footer {
-                  display: block !important;
-                }
-
         }
 
         .wrap {
@@ -234,98 +317,19 @@
 
         .action-row,
         #resetProgressBtn,
-        .status {
+        .status,
+        .ai-plan-section {
           display: none;
+        }
 
-                .ai-plan-section {
-                  display: none;
-                }
-
-              .print-footer {
-                display: none;
-                margin-top: 32px;
-                padding-top: 16px;
-                border-top: 1px solid #dbe3ef;
-                font-size: 12px;
-                color: #64748b;
-                text-align: center;
-              }
-
-              .ai-plan-section {
-                margin-top: 28px;
-                border: 1px dashed rgba(47, 110, 166, 0.35);
-                border-radius: 16px;
-                padding: 20px;
-                background: linear-gradient(135deg, #f0f7ff, #f8f0ff);
-              }
-
-              .ai-plan-section h2 {
-                margin: 0 0 6px;
-                font-size: 20px;
-                color: #2f6ea6;
-              }
-
-              .ai-plan-section p {
-                margin: 0 0 14px;
-                font-size: 14px;
-              }
-
-              .ai-plan-row {
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-                align-items: center;
-              }
-
-              #aiApiKeyInput {
-                flex: 1;
-                min-width: 180px;
-                border: 1px solid rgba(148, 163, 184, 0.45);
-                background: #ffffff;
-                color: #0f172a;
-                border-radius: 10px;
-                padding: 10px 14px;
-                font: inherit;
-                font-size: 14px;
-              }
-
-              #aiPlanOutput {
-                margin-top: 14px;
-                background: #ffffff;
-                border: 1px solid rgba(148, 163, 184, 0.3);
-                border-radius: 12px;
-                padding: 14px 16px;
-                font-size: 14px;
-                color: #0f172a;
-                line-height: 1.7;
-                white-space: pre-wrap;
-                min-height: 60px;
-                display: none;
-              }
-
-              .ai-status {
-                font-size: 13px;
-                font-weight: 600;
-                color: #2f6ea6;
-                min-height: 18px;
-                margin-top: 8px;
-              }
-
-              .not-found-state {
-                text-align: center;
-                padding: 48px 20px;
-              }
-
-              .not-found-state h1 {
-                font-size: 28px;
-                margin-bottom: 10px;
-                color: #0f172a;
-              }
-
-              .not-found-state p {
-                color: #64748b;
-                margin-bottom: 20px;
-              }
+        .print-footer {
+          display: block !important;
+          margin-top: 32px;
+          padding-top: 16px;
+          border-top: 1px solid #dbe3ef;
+          font-size: 12px;
+          color: #64748b;
+          text-align: center;
         }
 
         .step-item.done span {
@@ -388,7 +392,7 @@
         </section>
 
         <div class="print-footer" aria-hidden="true">
-          Help Hub &nbsp;|&nbsp; helphub notes &nbsp;|&nbsp; manokantparihar@gmail.com
+          Help Hub &nbsp;|&nbsp; helphub notes &nbsp;|&nbsp; manokantparihar@gmail.com &nbsp;|&nbsp; Printed: <span id="printDate"></span>
         </div>
       </article>
     </main>
@@ -433,11 +437,14 @@
       const detailsTwitterImage = document.getElementById("detailsTwitterImage");
       const metaDescription = document.querySelector('meta[name="description"]');
 
-      generatedOn.textContent = new Date().toLocaleDateString("en-IN", {
+      const today = new Date().toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "short",
         year: "numeric"
       });
+      generatedOn.textContent = today;
+      const printDateEl = document.getElementById("printDate");
+      if (printDateEl) printDateEl.textContent = today;
 
       const findItemBySlug = (sections, slug) => {
         const allItems = Object.values(sections || {}).flat();
@@ -532,6 +539,8 @@
 
         try {
           await navigator.clipboard.writeText(text);
+          if (window.gtag) window.gtag("event", "copy_plan", { event_label: title });
+          console.info(`[track] copy_plan | ${title}`);
           statusText.textContent = "Next-step plan copied.";
         } catch {
           statusText.textContent = "Copy failed. Please copy manually.";
@@ -539,21 +548,35 @@
       });
 
       printBtn.addEventListener("click", () => {
+        const title = document.getElementById("title").textContent;
+        if (window.gtag) window.gtag("event", "print_click", { event_label: title });
+        console.info(`[track] print_click | ${title}`);
         statusText.textContent = "Opening print dialog. Choose Save as PDF to download.";
         window.print();
       });
+
+      const renderNotFound = (slug) => {
+        document.title = "Resource Not Found | Help Hub";
+        const robotsMeta = document.querySelector('meta[name="robots"]');
+        if (robotsMeta) robotsMeta.setAttribute("content", "noindex, follow");
+        document.querySelector(".card").innerHTML = `
+          <div class="not-found-state">
+            <p class="not-found-code">404</p>
+            <h1>Resource Not Found</h1>
+            <p>The resource <strong>"${slug}"</strong> does not exist or may have been moved.</p>
+            <a class="btn" href="index.html#resources">Browse All Resources</a>
+          </div>
+        `;
+      };
 
       const loadDetailsContent = async () => {
         try {
           const response = await fetch("data/content.json", { cache: "no-store" });
           if (!response.ok) throw new Error("Failed to load content file");
           const payload = await response.json();
-          const selected = findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT;
-          if (!itemSlug || !findItemBySlug(payload.sections, itemSlug)) {
-            if (itemSlug) {
-              renderNotFound(itemSlug);
-              return;
-            }
+          if (itemSlug && !findItemBySlug(payload.sections, itemSlug)) {
+            renderNotFound(itemSlug);
+            return;
           }
           renderPage(findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT);
         } catch (error) {
@@ -563,16 +586,6 @@
       };
 
       loadDetailsContent();
-
-          const renderNotFound = (slug) => {
-            document.querySelector(".card").innerHTML = `
-              <div class="not-found-state">
-                <h1>Resource Not Found</h1>
-                <p>The resource "<strong>${slug}</strong>" does not exist or may have been moved.</p>
-                <a class="btn" href="index.html#resources">Browse All Resources</a>
-              </div>
-            `;
-          };
 
           const generatePlanBtn = document.getElementById("generatePlanBtn");
           const aiApiKeyInput = document.getElementById("aiApiKeyInput");
