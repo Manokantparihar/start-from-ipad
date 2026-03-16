@@ -90,21 +90,78 @@
         ]
       },
       {
-        "slug": "resources-new-item-2424",
-        "title": "New Topic Title",
-        "summary": "One-line summary for this new item.",
+        "slug": "python-basics",
+        "title": "Python Basics",
+        "summary": "Start your programming journey with Python fundamentals and core concepts.",
         "buttonLabel": "Open Resource",
         "category": "Learning Resources",
-        "readTime": "6 min read",
-        "difficulty": "Medium",
-        "resourceTip": "Revise this topic once daily.",
+        "readTime": "15 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Practice coding daily for 30 minutes to build muscle memory.",
         "fullContent": [
-          "Concept summary point",
-          "Practice insight point"
+          "Python installation and setup: Download from python.org and verify with 'python --version' command.",
+          "Variables and data types: Integers, floats, strings, booleans with simple examples.",
+          "Basic operators: Arithmetic (+, -, *, /), comparison (==, !=, <, >), and logical (and, or, not).",
+          "Input and output: Using print() for output and input() for taking user input.",
+          "Comments and code readability: Single-line (#) and multi-line (''') comments for documentation.",
+          "First program: Write 'Hello, World!' and basic calculator programs step-by-step."
         ],
         "nextSteps": [
-          "Read summary once",
-          "Solve 3 practice questions"
+          "Install Python on your computer and run your first 'Hello, World!' program.",
+          "Create 5 variables with different data types and print their values.",
+          "Write a simple calculator program for addition and subtraction.",
+          "Practice 10 basic exercises from online Python tutorials.",
+          "Read and understand error messages when code doesn't work."
+        ]
+      },
+      {
+        "slug": "python-data-structures",
+        "title": "Python Data Structures",
+        "summary": "Master lists, tuples, dictionaries, and sets for organizing data effectively.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "18 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Create real-life examples like shopping lists or contact books to practice.",
+        "fullContent": [
+          "Lists: Creating, accessing, modifying, and common methods (append, remove, sort).",
+          "Tuples: Immutable sequences for fixed data with indexing and unpacking examples.",
+          "Dictionaries: Key-value pairs for structured data storage with practical use cases.",
+          "Sets: Unique collections for membership testing and mathematical operations.",
+          "String operations: Slicing, formatting, and common methods (split, join, replace).",
+          "List comprehensions: Write cleaner code with one-line list creation patterns."
+        ],
+        "nextSteps": [
+          "Create a shopping list program using Python lists with add/remove features.",
+          "Build a simple contact book using dictionaries to store names and phone numbers.",
+          "Practice converting between different data structures (list to set, etc.).",
+          "Write 5 programs using list comprehensions for filtering and transforming data.",
+          "Solve 10 data structure exercises from practice platforms."
+        ]
+      },
+      {
+        "slug": "python-control-flow",
+        "title": "Python Functions & Control Flow",
+        "summary": "Learn if-else conditions, loops, and functions to write powerful programs.",
+        "buttonLabel": "Open Resource",
+        "category": "Learning Resources",
+        "readTime": "20 min read",
+        "difficulty": "Medium",
+        "resourceTip": "Draw flowcharts before coding complex logic to visualize the program flow.",
+        "fullContent": [
+          "Conditional statements: if, elif, else with real-world decision-making examples.",
+          "For loops: Iterate through lists, ranges, and dictionaries with practical use cases.",
+          "While loops: Repeat actions until conditions are met with break and continue.",
+          "Functions: Define reusable code blocks with parameters and return values.",
+          "Scope and arguments: Local vs global variables, default parameters, *args and **kwargs.",
+          "Error handling: Try-except blocks to handle errors gracefully without crashes."
+        ],
+        "nextSteps": [
+          "Write a number guessing game using while loop and conditional statements.",
+          "Create 5 custom functions for common tasks like calculating average or finding max.",
+          "Build a simple menu-driven program using functions and loops.",
+          "Practice error handling by adding try-except to user input validation.",
+          "Solve 15 problems on control flow and functions from coding platforms."
         ]
       }
     ],
@@ -331,6 +388,33 @@
           "Write 5 key points of AI Learning Path in your notebook.",
           "Solve 3 practice questions based on AI Learning Path.",
           "Revise after 24 hours and mark weak points."
+        ]
+      },
+      {
+        "slug": "python-practice-projects",
+        "title": "Python Practice Projects",
+        "summary": "Hands-on beginner projects to strengthen Python skills through building.",
+        "buttonLabel": "Open Guide",
+        "category": "Guides",
+        "readTime": "14 min read",
+        "difficulty": "Beginner",
+        "resourceTip": "Complete one project per week and document your learning journey.",
+        "fullContent": [
+          "Project 1: Simple Calculator - Build a calculator with basic arithmetic operations and user menu.",
+          "Project 2: To-Do List App - Create a command-line task manager with add, view, and delete features.",
+          "Project 3: Number Guessing Game - Random number game with hints and score tracking.",
+          "Project 4: Password Generator - Generate secure random passwords with custom length and complexity.",
+          "Project 5: Basic Quiz Program - Multiple choice quiz with score calculation and result display.",
+          "Project 6: Contact Book - Store and manage contacts with search and update functionality.",
+          "Best practices: Code organization, meaningful variable names, and adding comments.",
+          "Next level: Add file storage to save data between program runs."
+        ],
+        "nextSteps": [
+          "Choose Project 1 (Calculator) and complete it within 3 days.",
+          "Test your calculator with different inputs and fix any bugs you find.",
+          "Move to Project 2 (To-Do List) and implement all features step by step.",
+          "Share your completed projects with friends or online communities for feedback.",
+          "Complete all 6 projects within 6 weeks and build your own project idea."
         ]
       }
     ]
