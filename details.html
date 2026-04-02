@@ -147,6 +147,24 @@
         background: #f8fbff;
       }
 
+      .pdf-viewer-section {
+        margin-top: 18px;
+        display: none;
+      }
+
+      .pdf-viewer-section h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .pdf-frame {
+        width: 100%;
+        height: min(72vh, 820px);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        border-radius: 12px;
+        background: #f8fafc;
+      }
+
       .resource-box p {
         margin-bottom: 10px;
       }
@@ -156,6 +174,12 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+      }
+
+      .type-note {
+        margin: 8px 0 0;
+        font-size: 13px;
+        color: #334155;
       }
 
       .btn {
@@ -318,7 +342,8 @@
         .action-row,
         #resetProgressBtn,
         .status,
-        .ai-plan-section {
+        .ai-plan-section,
+        .pdf-viewer-section {
           display: none;
         }
 
@@ -355,20 +380,33 @@
           <p><strong>Format:</strong> PDF / Print Ready Notes</p>
         </div>
 
-        <h2 class="section-title">Full Content</h2>
+        <h2 class="section-title" id="contentHeading">Full Content</h2>
         <ul class="content-list" id="contentList"></ul>
 
         <div class="resource-box">
           <p id="resourceTip">Use this section to revise fast before class or exam.</p>
+          <p class="type-note" id="typeNote"></p>
           <div class="action-row">
             <a class="btn" id="mailCta" href="mailto:manokantparihar@gmail.com?subject=Need%20Resource%20Access">Request Full Material</a>
-            <button class="btn" id="printBtn" type="button">Print / Save PDF</button>
+            <button class="btn" id="printBtn" type="button">Open Attached PDF</button>
+            <button class="btn btn-secondary" id="downloadPdfBtn" type="button">Download PDF</button>
             <button class="btn btn-ghost" id="copyPlanBtn" type="button">Copy Next-Step Plan</button>
             <a class="btn btn-secondary" href="index.html#home">Back to Home</a>
           </div>
         </div>
 
-        <h2 class="section-title">Ab Aage Kya Karna Hai</h2>
+        <section class="pdf-viewer-section" id="pdfViewerSection" aria-labelledby="pdfViewerHeading">
+          <h3 id="pdfViewerHeading">Attached Notes PDF</h3>
+          <iframe
+            class="pdf-frame"
+            id="pdfFrame"
+            title="Notes PDF preview"
+            loading="lazy"
+            src=""
+          ></iframe>
+        </section>
+
+        <h2 class="section-title" id="stepsHeading">Ab Aage Kya Karna Hai</h2>
         <ol class="steps-list" id="stepsList"></ol>
         <p class="progress" id="progressText">Progress: 0/0 complete</p>
         <button class="btn btn-secondary" id="resetProgressBtn" type="button">Reset Progress</button>
@@ -402,6 +440,7 @@
         title: "Resource",
         category: "Help Hub",
         summary: "This content is being prepared. Use Request Full Material for direct access.",
+        type: "guide",
         fullContent: [
           "Overview material is currently being prepared.",
           "Use the request button for complete content access."
@@ -411,7 +450,8 @@
           "Request complete material by email.",
           "Start revision with your own notes."
         ],
-        resourceTip: "Use Request Full Material for direct access."
+        resourceTip: "Use Request Full Material for direct access.",
+        pdfUrl: ""
       };
 
       const params = new URLSearchParams(window.location.search);
@@ -426,6 +466,13 @@
       const copyPlanBtn = document.getElementById("copyPlanBtn");
       const mailCta = document.getElementById("mailCta");
       const printBtn = document.getElementById("printBtn");
+      const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+      const pdfViewerSection = document.getElementById("pdfViewerSection");
+      const pdfFrame = document.getElementById("pdfFrame");
+      const aiPlanSection = document.getElementById("aiPlanSection");
+      const typeNote = document.getElementById("typeNote");
+      const contentHeading = document.getElementById("contentHeading");
+      const stepsHeading = document.getElementById("stepsHeading");
       const generatedOn = document.getElementById("generatedOn");
       const detailsCanonicalUrl = document.getElementById("detailsCanonicalUrl");
       const detailsOgTitle = document.getElementById("detailsOgTitle");
@@ -436,6 +483,8 @@
       const detailsTwitterDescription = document.getElementById("detailsTwitterDescription");
       const detailsTwitterImage = document.getElementById("detailsTwitterImage");
       const metaDescription = document.querySelector('meta[name="description"]');
+      let currentPdfUrl = "";
+      let currentType = "guide";
 
       const today = new Date().toLocaleDateString("en-IN", {
         day: "2-digit",
@@ -451,17 +500,95 @@
         return allItems.find((entry) => entry.slug === slug);
       };
 
+      const findSectionBySlug = (sections, slug) => {
+        const entries = Object.entries(sections || {});
+        for (const [sectionName, items] of entries) {
+          if ((items || []).some((entry) => entry.slug === slug)) return sectionName;
+        }
+        return "guides";
+      };
+
+      const getTypeBySection = (sectionName) => {
+        if (sectionName === "resources") return "pdf";
+        if (sectionName === "maths") return "practice";
+        if (sectionName === "updates") return "update";
+        return "guide";
+      };
+
       const updateProgressText = (total) => {
         const checked = stepsList.querySelectorAll("input[type='checkbox']:checked").length;
         progressText.textContent = `Progress: ${checked}/${total} complete`;
       };
 
-      const renderPage = (data) => {
+      const resolvePdfUrl = (rawUrl) => {
+        const pdfUrl = String(rawUrl || "").trim();
+        if (!pdfUrl) return "";
+        if (/^(https?:|data:|blob:|\/|\.\/|\.\.\/)/i.test(pdfUrl)) return pdfUrl;
+        return `/public/pdfs/${pdfUrl}`;
+      };
+
+      const configureTypeUi = (type, data) => {
+        currentType = type;
+
+        if (type === "pdf") {
+          printBtn.textContent = "View PDF";
+          downloadPdfBtn.style.display = "inline-flex";
+          copyPlanBtn.style.display = "inline-flex";
+          progressText.style.display = "block";
+          resetProgressBtn.style.display = "inline-flex";
+          contentHeading.textContent = "Full Notes";
+          stepsHeading.textContent = "Ab Aage Kya Karna Hai";
+          typeNote.textContent = "Learning section: notes + PDF access.";
+          if (aiPlanSection) aiPlanSection.style.display = "none";
+          return;
+        }
+
+        if (type === "practice") {
+          const count = Number(data.practiceCount) || 10;
+          printBtn.textContent = "Start Practice";
+          downloadPdfBtn.style.display = "none";
+          copyPlanBtn.style.display = "inline-flex";
+          progressText.style.display = "block";
+          resetProgressBtn.style.display = "inline-flex";
+          contentHeading.textContent = "Formulas & Concepts";
+          stepsHeading.textContent = "Practice Checklist";
+          typeNote.textContent = `Maths practice mode: ${count} questions target.`;
+          if (aiPlanSection) aiPlanSection.style.display = "none";
+          return;
+        }
+
+        if (type === "update") {
+          printBtn.textContent = "Read More";
+          downloadPdfBtn.style.display = "none";
+          copyPlanBtn.style.display = "none";
+          progressText.style.display = "none";
+          resetProgressBtn.style.display = "none";
+          contentHeading.textContent = "Latest Information";
+          stepsHeading.textContent = "Quick Actions";
+          typeNote.textContent = `Update published: ${data.updateDate || "Recent"}`;
+          if (aiPlanSection) aiPlanSection.style.display = "none";
+          return;
+        }
+
+        const steps = Number(data.stepsCount) || (Array.isArray(data.nextSteps) ? data.nextSteps.length : 0);
+        printBtn.textContent = "Follow Plan";
+        downloadPdfBtn.style.display = "none";
+        copyPlanBtn.style.display = "inline-flex";
+        progressText.style.display = "block";
+        resetProgressBtn.style.display = "inline-flex";
+        contentHeading.textContent = "Guide Overview";
+        stepsHeading.textContent = "Action Plan";
+        typeNote.textContent = steps > 0 ? `Guide mode: ${steps} action steps.` : "Guide mode active.";
+        if (aiPlanSection) aiPlanSection.style.display = "block";
+      };
+
+      const renderPage = (data, sectionName = "guides") => {
+        const resolvedType = data.type || getTypeBySection(sectionName);
         document.getElementById("title").textContent = data.title;
         document.getElementById("category").textContent = data.category;
         document.getElementById("summary").textContent = data.summary;
         document.getElementById("resourceTip").textContent = data.resourceTip;
-        document.title = `${data.title} - Print Notes`;
+        document.title = `${data.title} - Help Hub`;
 
         const pageUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
         const imageUrl = `${window.location.origin}/og-image.svg`;
@@ -475,6 +602,17 @@
         if (detailsTwitterTitle) detailsTwitterTitle.setAttribute("content", `${data.title} | Help Hub`);
         if (detailsTwitterDescription) detailsTwitterDescription.setAttribute("content", data.summary);
         if (detailsTwitterImage) detailsTwitterImage.setAttribute("content", imageUrl);
+
+        currentPdfUrl = resolvedType === "pdf" ? resolvePdfUrl(data.pdfUrl) : "";
+        if (currentPdfUrl && pdfViewerSection && pdfFrame) {
+          pdfFrame.src = currentPdfUrl;
+          pdfViewerSection.style.display = "block";
+        } else if (pdfViewerSection && pdfFrame) {
+          pdfFrame.src = "";
+          pdfViewerSection.style.display = "none";
+        }
+
+        configureTypeUi(resolvedType, data);
 
         mailCta.href = `mailto:manokantparihar@gmail.com?subject=Need%20${encodeURIComponent(data.title)}%20Material`;
 
@@ -551,8 +689,51 @@
         const title = document.getElementById("title").textContent;
         if (window.gtag) window.gtag("event", "print_click", { event_label: title });
         console.info(`[track] print_click | ${title}`);
-        statusText.textContent = "Opening print dialog. Choose Save as PDF to download.";
-        window.print();
+        if (currentType === "pdf") {
+          if (!currentPdfUrl) {
+            statusText.textContent = "Is note me abhi PDF attach nahi hai. Content manager me PDF URL add karein.";
+            return;
+          }
+
+          const opened = window.open(currentPdfUrl, "_blank", "noopener");
+          if (!opened) {
+            statusText.textContent = "Popup blocked. PDF frame me niche preview dekh sakte hain.";
+            return;
+          }
+
+          statusText.textContent = "Attached PDF opened in new tab.";
+          return;
+        }
+
+        if (currentType === "practice") {
+          stepsHeading.scrollIntoView({ behavior: "smooth", block: "start" });
+          statusText.textContent = "Practice session started. Step 1 complete kijiye.";
+          return;
+        }
+
+        if (currentType === "update") {
+          contentHeading.scrollIntoView({ behavior: "smooth", block: "start" });
+          statusText.textContent = "Latest update open hai. Key points note karein.";
+          return;
+        }
+
+        stepsHeading.scrollIntoView({ behavior: "smooth", block: "start" });
+        statusText.textContent = "Guide follow mode active.";
+      });
+
+      downloadPdfBtn.addEventListener("click", () => {
+        if (!currentPdfUrl) {
+          statusText.textContent = "Download ke liye PDF attach hona zaroori hai.";
+          return;
+        }
+
+        const anchor = document.createElement("a");
+        anchor.href = currentPdfUrl;
+        anchor.download = `${document.getElementById("title").textContent.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        statusText.textContent = "PDF download started.";
       });
 
       const renderNotFound = (slug) => {
@@ -578,10 +759,12 @@
             renderNotFound(itemSlug);
             return;
           }
-          renderPage(findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT);
+          const item = findItemBySlug(payload.sections, itemSlug) || FALLBACK_CONTENT;
+          const sectionName = itemSlug ? findSectionBySlug(payload.sections, itemSlug) : "guides";
+          renderPage(item, sectionName);
         } catch (error) {
           console.error("Details content load failed:", error);
-          renderPage(FALLBACK_CONTENT);
+          renderPage(FALLBACK_CONTENT, "guides");
         }
       };
 

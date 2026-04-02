@@ -7,6 +7,7 @@ const REQUIRED_FIELDS = [
   "slug",
   "title",
   "summary",
+  "type",
   "buttonLabel",
   "category",
   "readTime",
@@ -17,6 +18,12 @@ const REQUIRED_FIELDS = [
 ];
 
 const kebabCaseRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SECTION_TYPE_MAP = {
+  resources: "pdf",
+  maths: "practice",
+  updates: "update",
+  guides: "guide",
+};
 
 const fail = (issues) => {
   console.error("❌ Content validation failed:\n");
@@ -92,6 +99,15 @@ for (const sectionName of REQUIRED_SECTIONS) {
 
     if (!Array.isArray(item.nextSteps) || item.nextSteps.length < 2) {
       issues.push(`${pointer}.nextSteps must contain at least 2 items.`);
+    }
+
+    const expectedType = SECTION_TYPE_MAP[sectionName];
+    if (item.type !== expectedType) {
+      issues.push(`${pointer}.type must be \`${expectedType}\` for section \`${sectionName}\`.`);
+    }
+
+    if (sectionName === "resources" && typeof item.pdfUrl !== "string") {
+      issues.push(`${pointer}.pdfUrl should be provided for PDF resources.`);
     }
   });
 }

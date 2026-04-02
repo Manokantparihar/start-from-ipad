@@ -51,11 +51,18 @@ npm run phase2:serve
 
 If API submit fails for any reason, fallback button opens your default email app with prefilled message.
 
-## PDF / print-ready notes
+## Section-specific content model
 
-- Open any resource from the homepage (it opens `details.html?item=...`).
-- Click **Print / Save PDF** on the details page.
-- In browser print dialog, choose **Save as PDF**.
+- `resources` section is for Notes + PDFs only (`type: "pdf"`).
+- `maths` section is for practice content (`type: "practice"`).
+- `updates` section is for latest notifications/news (`type: "update"`).
+- `guides` section is for strategy/action plans (`type: "guide"`).
+
+### PDF usage (Learning section)
+
+- Place PDF files in `public/pdfs/`.
+- In a `resources` item, set `pdfUrl` to file name like `ssc-notes.pdf`.
+- On details page, use **View PDF** and **Download PDF** buttons.
 
 ## Content update workflow
 
@@ -81,10 +88,12 @@ All visible content (resources, maths, updates, guides) is driven from one file:
 	"slug": "unique-kebab-case-id",
 	"title": "Display Title",
 	"summary": "One-line description shown on the homepage card.",
-	"buttonLabel": "Open Resource",
+	"type": "pdf",
+	"buttonLabel": "View PDF",
 	"category": "Learning Resources",
 	"readTime": "5 min read",
 	"difficulty": "Medium",
+	"pdfUrl": "your-file.pdf",
 	"resourceTip": "Quick tip shown on the details page.",
 	"fullContent": [
 		"Point 1",
@@ -114,10 +123,11 @@ All visible content (resources, maths, updates, guides) is driven from one file:
 Use this quick checklist before publishing any content changes:
 
 - [ ] `slug` is unique and in kebab-case.
-- [ ] `title`, `summary`, and `buttonLabel` are present.
+- [ ] `title`, `summary`, `type`, and `buttonLabel` are present.
 - [ ] `category`, `readTime`, and `difficulty` are filled.
+- [ ] `type` matches section: `resources=pdf`, `maths=practice`, `updates=update`, `guides=guide`.
 - [ ] `fullContent` has clear, learner-friendly bullet points.
 - [ ] `nextSteps` has actionable steps (minimum 2 items).
 - [ ] Resource opens via `details.html?item=<slug>` without fallback.
 - [ ] Search/filter visibility is correct on homepage cards.
-- [ ] Print view on details page still works for the new/updated item.
+- [ ] Section-specific action button behavior is correct on details page.

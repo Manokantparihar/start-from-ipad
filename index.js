@@ -17,6 +17,19 @@ let allSearchableItems = [];
 let activeFilter = "all";
 
 const STORAGE_KEY = "helpHubTheme";
+const SECTION_TYPE_MAP = {
+  resources: "pdf",
+  maths: "practice",
+  updates: "update",
+  guides: "guide",
+};
+
+const TYPE_CTA_MAP = {
+  pdf: "View PDF",
+  practice: "Start Practice",
+  update: "Read More",
+  guide: "Follow Plan",
+};
 
 const setHomepageSeoMeta = () => {
   const canonicalTag = document.getElementById("canonicalUrl");
@@ -40,6 +53,37 @@ const trackEvent = (eventType, label = "") => {
   console.info(`[track] ${eventType}${label ? ` | ${label}` : ""}`);
 };
 
+const getResolvedType = (item, section) => item?.type || SECTION_TYPE_MAP[section] || "guide";
+
+const getActionLabel = (item, section) => {
+  const type = getResolvedType(item, section);
+  return item?.buttonLabel || TYPE_CTA_MAP[type] || "Open";
+};
+
+const getTypeMeta = (item, section) => {
+  const type = getResolvedType(item, section);
+
+  if (type === "pdf") {
+    return "PDF Notes";
+  }
+
+  if (type === "practice") {
+    const count = Number(item?.practiceCount) || 10;
+    return `${count} practice questions`;
+  }
+
+  if (type === "update") {
+    return item?.updateDate || "Latest update";
+  }
+
+  if (type === "guide") {
+    const steps = Number(item?.stepsCount) || (Array.isArray(item?.nextSteps) ? item.nextSteps.length : 0);
+    return steps > 0 ? `${steps} action steps` : "Strategy guide";
+  }
+
+  return section;
+};
+
 const renderStandardCards = (container, items) => {
   if (!container || !Array.isArray(items)) return;
   const section = container.id.replace("Grid", "").toLowerCase();
@@ -53,8 +97,9 @@ const renderStandardCards = (container, items) => {
           ${item.readTime ? `<span class="badge badge-time">${item.readTime}</span>` : ""}
           ${item.difficulty ? `<span class="badge badge-${item.difficulty.toLowerCase()}">${item.difficulty}</span>` : ""}
         </div>
+        <p><strong>${getTypeMeta(item, section)}</strong></p>
         <p>${item.summary}</p>
-        <a class="btn" href="details.html?item=${item.slug}">${item.buttonLabel}</a>
+        <a class="btn" href="details.html?item=${item.slug}">${getActionLabel(item, section)}</a>
       </div>
     `,
     )
@@ -75,8 +120,9 @@ const renderUpdateCards = (container, items) => {
           ${item.readTime ? `<span class="badge badge-time">${item.readTime}</span>` : ""}
           ${item.difficulty ? `<span class="badge badge-${item.difficulty.toLowerCase()}">${item.difficulty}</span>` : ""}
         </div>
+        <p><strong>${getTypeMeta(item, section)}</strong></p>
         <p>${item.summary}</p>
-        <a class="btn" href="details.html?item=${item.slug}">${item.buttonLabel}</a>
+        <a class="btn" href="details.html?item=${item.slug}">${getActionLabel(item, section)}</a>
       </article>
     `,
     )

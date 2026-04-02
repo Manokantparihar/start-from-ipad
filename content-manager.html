@@ -263,6 +263,8 @@
           <ol class="checklist">
             <li><code>Load Current Content</code> dabao.</li>
             <li>Form me values bharo ya template lo.</li>
+            <li>PDF dikhani hai to file <code>public/pdfs/</code> folder me rakho.</li>
+            <li>Form ke <code>PDF URL / File Name</code> me filename likho (example: <code>ssc-notes.pdf</code>).</li>
             <li><code>Add Item From Form</code> dabao.</li>
             <li><code>Validate JSON</code> dabao.</li>
             <li><code>Download Updated JSON</code> dabao.</li>
@@ -289,7 +291,7 @@
         <div class="stack">
           <section class="form-card">
             <h2>Form-based Add Item</h2>
-            <p class="hint">Option 1 + 2: form UI aur template button ready hai.</p>
+            <p class="hint">PDF attach karne ke liye filename do. Example: ssc-notes.pdf auto-resolve hoke /public/pdfs/ssc-notes.pdf ban jayega.</p>
 
             <div class="form-grid">
               <div class="field">
@@ -343,6 +345,11 @@
               </div>
 
               <div class="field wide">
+                <label for="pdfUrlInput">PDF URL / File Name (optional)</label>
+                <input id="pdfUrlInput" placeholder="Example: ssc-notes.pdf or /public/pdfs/ssc-notes.pdf">
+              </div>
+
+              <div class="field wide">
                 <label for="fullContentInput">Full Content (1 line = 1 point)</label>
                 <textarea id="fullContentInput" placeholder="Point 1&#10;Point 2"></textarea>
               </div>
@@ -382,6 +389,7 @@
         "slug",
         "title",
         "summary",
+        "type",
         "buttonLabel",
         "category",
         "readTime",
@@ -390,6 +398,12 @@
         "fullContent",
         "nextSteps",
       ];
+      const SECTION_TYPE_MAP = {
+        resources: "pdf",
+        maths: "practice",
+        updates: "update",
+        guides: "guide",
+      };
       const kebabCaseRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
       const editor = document.getElementById("editor");
@@ -411,6 +425,7 @@
       const readTimeInput = document.getElementById("readTimeInput");
       const difficultyInput = document.getElementById("difficultyInput");
       const resourceTipInput = document.getElementById("resourceTipInput");
+      const pdfUrlInput = document.getElementById("pdfUrlInput");
       const fullContentInput = document.getElementById("fullContentInput");
       const nextStepsInput = document.getElementById("nextStepsInput");
       const addItemBtn = document.getElementById("addItemBtn");
@@ -483,6 +498,11 @@
             if (!Array.isArray(item.nextSteps) || item.nextSteps.length < 2) {
               issues.push(`${pointer}.nextSteps must contain at least 2 items.`);
             }
+
+            const expectedType = SECTION_TYPE_MAP[sectionName];
+            if (item.type !== expectedType) {
+              issues.push(`${pointer}.type must be ${expectedType} for section ${sectionName}.`);
+            }
           });
         }
 
@@ -517,13 +537,24 @@
         slugInput.value = "";
         titleInput.value = "";
         summaryInput.value = "";
-        buttonLabelInput.value = "Open Resource";
+        buttonLabelInput.value = "View PDF";
         categoryInput.value = "Learning Resources";
         readTimeInput.value = "5 min read";
         difficultyInput.value = "Easy";
         resourceTipInput.value = "Use this topic for daily revision.";
+        pdfUrlInput.value = "";
         fullContentInput.value = "Point 1\nPoint 2";
         nextStepsInput.value = "Step 1\nStep 2";
+      };
+
+      const applySectionDefaults = () => {
+        const section = sectionInput.value;
+        buttonLabelInput.value = section === "maths" ? "Start Practice" : section === "updates" ? "Read More" : section === "guides" ? "Follow Plan" : "View PDF";
+        categoryInput.value = section === "maths" ? "2nd Grade Mathematics" : section === "updates" ? "Updates" : section === "guides" ? "Guides" : "Learning Resources";
+        pdfUrlInput.disabled = section !== "resources";
+        if (section !== "resources") {
+          pdfUrlInput.value = "";
+        }
       };
 
       const fillTemplate = () => {
@@ -532,29 +563,37 @@
         slugInput.value = `${section}-new-item-${suffix}`;
         titleInput.value = "New Topic Title";
         summaryInput.value = "One-line summary for this new item.";
-        buttonLabelInput.value = section === "updates" ? "Read More" : section === "guides" ? "Open Guide" : "Open Resource";
+        buttonLabelInput.value = section === "maths" ? "Start Practice" : section === "updates" ? "Read More" : section === "guides" ? "Follow Plan" : "View PDF";
         categoryInput.value = section === "maths" ? "2nd Grade Mathematics" : section === "updates" ? "Updates" : section === "guides" ? "Guides" : "Learning Resources";
         readTimeInput.value = "6 min read";
         difficultyInput.value = "Medium";
         resourceTipInput.value = "Revise this topic once daily.";
+        pdfUrlInput.value = section === "resources" ? `${slugInput.value}.pdf` : "";
         fullContentInput.value = "Concept summary point\nPractice insight point";
         nextStepsInput.value = "Read summary once\nSolve 3 practice questions";
         setStatus("Template filled. Update values and click Add Item From Form.", "success");
       };
 
       const buildItemFromForm = () => {
+        const section = sectionInput.value;
         const item = {
           slug: slugInput.value.trim(),
           title: titleInput.value.trim(),
           summary: summaryInput.value.trim(),
+          type: SECTION_TYPE_MAP[section],
           buttonLabel: buttonLabelInput.value.trim(),
           category: categoryInput.value.trim(),
           readTime: readTimeInput.value.trim(),
           difficulty: difficultyInput.value.trim(),
           resourceTip: resourceTipInput.value.trim(),
+          pdfUrl: pdfUrlInput.value.trim(),
           fullContent: normalizeLines(fullContentInput.value),
           nextSteps: normalizeLines(nextStepsInput.value),
         };
+
+        if (section !== "resources") {
+          delete item.pdfUrl;
+        }
 
         if (!item.slug || !item.title || !item.summary) {
           throw new Error("Slug, title, and summary are required.");
@@ -644,12 +683,15 @@
 
       addItemBtn.addEventListener("click", addItemFromForm);
       fillTemplateBtn.addEventListener("click", fillTemplate);
+      sectionInput.addEventListener("change", applySectionDefaults);
       resetFormBtn.addEventListener("click", () => {
         resetForm();
+        applySectionDefaults();
         setStatus("Form reset.", "success");
       });
 
       resetForm();
+      applySectionDefaults();
       loadCurrentContent();
     </script>
   </body>
