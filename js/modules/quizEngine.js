@@ -150,6 +150,10 @@ const QuizEngine = (() => {
     }));
   };
 
+  const getUserAnswer = (questionIndex) => {
+    return userAnswers[questionIndex];
+  };
+
   const startTimer = (callback) => {
     if (!currentQuiz || !currentQuiz.timeLimit) return;
 
@@ -190,6 +194,7 @@ const QuizEngine = (() => {
     endQuiz,
     calculateResults,
     buildAnswerDetails,
+    getUserAnswer,
     startTimer,
     stopTimer
   };

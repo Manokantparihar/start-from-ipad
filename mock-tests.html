@@ -153,12 +153,20 @@
         <div class="bg-white rounded-xl shadow-md p-8">
           <h3 class="text-xl font-bold text-gray-800 mb-6">${question.question}</h3>
           <div class="space-y-3">
-            ${question.options.map((opt, i) => `
-              <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
-                <input type="radio" name="answer" value="${i}" class="w-4 h-4" onchange="recordAnswer(${i})">
+            ${question.options.map((opt, i) => {
+              const userAnswerIdx = QuizEngine.getUserAnswer(QuizEngine.getCurrentQuestionIndex());
+              const isSelected = i === userAnswerIdx;
+              return `
+              <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors ${
+                isSelected ? 'border-blue-600 bg-blue-50' : ''
+              }">
+                <input type="radio" name="answer" value="${i}" class="w-4 h-4" ${
+                  isSelected ? 'checked' : ''
+                } onchange="recordAnswer(${i})">
                 <span class="ml-4 text-lg text-gray-700">${opt}</span>
               </label>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -274,18 +282,25 @@
       const answers = QuizEngine.buildAnswerDetails();
       const container = document.getElementById('reviewContainer');
 
-      container.innerHTML = answers.map((ans, i) => `
-        <div class="bg-white p-4 rounded-lg border-l-4 ${ans.isCorrect ? 'border-green-500' : 'border-red-500'}">
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="font-semibold text-gray-800">Q${i + 1}: ${ans.question.substring(0, 80)}...</p>
-              <p class="text-sm text-gray-600 mt-2"><strong>Your:</strong> ${QuestionBank.getQuestionById(ans.questionId).options[ans.userAnswer] || 'Not answered'}</p>
-              <p class="text-sm text-gray-600"><strong>Correct:</strong> ${QuestionBank.getQuestionById(ans.questionId).options[ans.correctAnswer]}</p>
+      container.innerHTML = answers.map((ans, i) => {
+        const borderClass = ans.isCorrect ? 'border-green-500' : 'border-red-500';
+        const icon = ans.isCorrect ? '✅' : '❌';
+        const userAns = QuestionBank.getQuestionById(ans.questionId).options[ans.userAnswer] || 'Not answered';
+        const correctAns = QuestionBank.getQuestionById(ans.questionId).options[ans.correctAnswer];
+        
+        return `
+          <div class="bg-white p-4 rounded-lg border-l-4 ${borderClass}">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-semibold text-gray-800">Q${i + 1}: ${ans.question.substring(0, 60)}...</p>
+                <p class="text-sm text-gray-600 mt-2"><strong>Your:</strong> ${userAns}</p>
+                <p class="text-sm text-gray-600"><strong>Correct:</strong> ${correctAns}</p>
+              </div>
+              <span class="text-2xl">${icon}</span>
             </div>
-            <span class="text-2xl">${ans.isCorrect ? '✅' : '❌'}</span>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
   </script>
 </body>

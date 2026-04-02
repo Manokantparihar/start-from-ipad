@@ -164,7 +164,8 @@
 
           <div class="space-y-3">
             ${question.options.map((option, idx) => {
-              const isSelected = idx === QuizEngine.calculateResults()?.correctCount;
+              const userAnswerIdx = QuizEngine.getUserAnswer(QuizEngine.getCurrentQuestionIndex());
+              const isSelected = idx === userAnswerIdx;
               return `
                 <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50 transition-all ${
                   isSelected ? 'border-blue-600 bg-blue-50' : ''
@@ -268,17 +269,20 @@
       const percentage = result.score;
       const color = percentage >= 70 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
       const colorClass = color === 'green' ? 'text-green-600' : color === 'yellow' ? 'text-yellow-600' : 'text-red-600';
+      const colorHex = color === 'green' ? '22c55e' : color === 'yellow' ? 'eab308' : 'ef4444';
+      const feedback = percentage >= 70 ? 'Excellent work! Keep it up!' : percentage >= 50 ? 'Good effort! Keep practicing!' : 'Keep practicing, youll get better!';
+      const emoji = percentage >= 70 ? 'star' : percentage >= 50 ? 'thumb' : 'muscle';
 
       container.innerHTML = `
         <div class="bg-white rounded-xl shadow-md p-8 text-center">
-          <h2 class="text-4xl font-bold text-gray-800 mb-8">Quiz Complete! 🎉</h2>
+          <h2 class="text-4xl font-bold text-gray-800 mb-8">Quiz Complete!</h2>
 
           <div class="mb-8">
             <div class="inline-block">
               <div class="relative w-48 h-48">
                 <svg class="w-48 h-48 transform -rotate-90">
                   <circle cx="96" cy="96" r="88" fill="none" stroke="#e5e7eb" stroke-width="16"/>
-                  <circle cx="96" cy="96" r="88" fill="none" stroke="#${color === 'green' ? '22c55e' : color === 'yellow' ? 'eab308' : 'ef4444'}" stroke-width="16"
+                  <circle cx="96" cy="96" r="88" fill="none" stroke="#${colorHex}" stroke-width="16"
                     stroke-dasharray="${(percentage / 100) * 553}" stroke-dashoffset="0" stroke-linecap="round"/>
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center">
@@ -306,8 +310,8 @@
             </div>
           </div>
 
-          <div class="inline-block">
-            ${percentage >= 70 ? '✨ Excellent work! Keep it up!' : percentage >= 50 ? '👍 Good effort! Keep practicing!' : '💪 Keep practicing, you'll get better!'}
+          <div class="inline-block text-lg font-semibold text-gray-700">
+            ${feedback}
           </div>
         </div>
       `;
@@ -326,24 +330,30 @@
       const answers = QuizEngine.buildAnswerDetails();
       const container = document.getElementById('reviewContainer');
 
-      container.innerHTML = answers.map((answer, idx) => `
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 ${answer.isCorrect ? 'border-green-500' : 'border-red-500'}">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <h4 class="font-semibold text-gray-800">Question ${idx + 1}</h4>
-              <p class="text-gray-700 text-lg mt-2">${answer.question}</p>
+      container.innerHTML = answers.map((answer, idx) => {
+        const borderClass = answer.isCorrect ? 'border-green-500' : 'border-red-500';
+        const statusIcon = answer.isCorrect ? '✅' : '❌';
+        const userAnswerText = QuestionBank.getQuestionById(answer.questionId).options[answer.userAnswer] || 'Not answered';
+        const correctAnswerText = QuestionBank.getQuestionById(answer.questionId).options[answer.correctAnswer];
+        const explanationHtml = answer.explanation ? `<div class="bg-blue-50 rounded p-3 text-sm text-gray-700"><strong>Explanation:</strong> ${answer.explanation}</div>` : '';
+        
+        return `
+          <div class="bg-white rounded-lg shadow p-6 border-l-4 ${borderClass}">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h4 class="font-semibold text-gray-800">Question ${idx + 1}</h4>
+                <p class="text-gray-700 text-lg mt-2">${answer.question}</p>
+              </div>
+              <span class="text-2xl">${statusIcon}</span>
             </div>
-            <span class="text-2xl">${answer.isCorrect ? '✅' : '❌'}</span>
+            <div class="space-y-2 mb-4">
+              <p class="text-sm"><span class="font-semibold text-gray-700">Your answer:</span> ${userAnswerText}</p>
+              <p class="text-sm"><span class="font-semibold text-gray-700">Correct answer:</span> ${correctAnswerText}</p>
+            </div>
+            ${explanationHtml}
           </div>
-
-          <div class="space-y-2 mb-4">
-            <p class="text-sm"><span class="font-semibold text-gray-700">Your answer:</span> ${QuestionBank.getQuestionById(answer.questionId).options[answer.userAnswer] || 'Not answered'}</p>
-            <p class="text-sm"><span class="font-semibold text-gray-700">Correct answer:</span> ${QuestionBank.getQuestionById(answer.questionId).options[answer.correctAnswer]}</p>
-          </div>
-
-          ${answer.explanation ? `<div class="bg-blue-50 rounded p-3 text-sm text-gray-700"><strong>Explanation:</strong> ${answer.explanation}</div>` : ''}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
   </script>
 </body>
