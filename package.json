@@ -8,5 +8,8 @@
     "validate:content": "node tools/validate-content.mjs",
     "phase2:start": "npm run validate:content",
     "phase2:serve": "npm run validate:content && npm run start"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
