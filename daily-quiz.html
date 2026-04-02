@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Quiz - RPSC/REET Prep</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <a href="dashboard.html" class="text-2xl font-bold text-blue-600">📚 RPSC/REET</a>
+      <h1 class="text-lg font-semibold text-gray-800">Daily Quiz</h1>
+      <button id="backBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">← Dashboard</button>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Timer & Instructions Section -->
+    <section id="instructionsSection" class="bg-blue-50 rounded-xl border-2 border-blue-200 p-8 mb-8 animation-fadeIn">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Daily Quiz</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h3 class="font-semibold text-gray-700 mb-2">Quiz Details:</h3>
+          <ul class="text-gray-600 space-y-1">
+            <li>✓ 15 random questions from all topics</li>
+            <li>✓ Multiple choice format (4 options)</li>
+            <li>✓ No time limit</li>
+            <li>✓ Immediate feedback on answers</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-700 mb-2">Instructions:</h3>
+          <ul class="text-gray-600 space-y-1">
+            <li>• Read each question carefully</li>
+            <li>• Select your answer from the options</li>
+            <li>• You can change answers before submitting</li>
+            <li>• Review results after completion</li>
+          </ul>
+        </div>
+      </div>
+      <button id="startQuizBtn" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg">Start Quiz</button>
+    </section>
+
+    <!-- Quiz Section (Hidden initially) -->
+    <section id="quizSection" class="hidden">
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-700 font-semibold" id="questionProgress">Question 1 of 15</span>
+          <span class="text-gray-500 text-sm" id="answeredCount">0 answered</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-3">
+          <div id="progressBar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Question Container -->
+      <div id="questionContainer" class="mb-8"></div>
+
+      <!-- Question Navigation Buttons -->
+      <div class="flex gap-4 mb-6">
+        <button id="prevBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50" disabled>← Previous</button>
+        <button id="nextBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Next →</button>
+        <button id="submitQuizBtn" class="hidden px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">Submit Quiz</button>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div class="bg-white rounded-lg p-6">
+        <h3 class="font-semibold text-gray-800 mb-4">Quick Navigation</h3>
+        <div id="quickNav" class="grid grid-cols-5 md:grid-cols-10 gap-2">
+          <!-- Question buttons will be generated here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section (Hidden initially) -->
+    <section id="resultsSection" class="hidden animation-fadeIn">
+      <div id="resultsContainer"></div>
+      
+      <div class="mt-8 flex gap-4">
+        <a href="dashboard.html" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-center">Back to Dashboard</a>
+        <button id="reviewBtn" class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-medium">Review Answers</button>
+      </div>
+
+      <!-- Answer Review (Hidden initially) -->
+      <div id="reviewSection" class="hidden mt-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Review Answers</h2>
+        <div id="reviewContainer" class="space-y-6"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/modules/questionBank.js"></script>
+  <script src="js/modules/user.js"></script>
+  <script src="js/modules/progressTracker.js"></script>
+  <script src="js/modules/quizEngine.js"></script>
+  <script src="js/modules/ui.js"></script>
+
+  <script>
+    let quizStarted = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await QuestionBank.init();
+      setupEventListeners();
+      
+      if (!User.isLoggedIn()) {
+        UI.showNotification('Please login first', 'warning');
+        setTimeout(() => { location.href = 'dashboard.html'; }, 2000);
+      }
+    });
+
+    function setupEventListeners() {
+      document.getElementById('startQuizBtn').addEventListener('click', startDailyQuiz);
+      document.getElementById('backBtn').addEventListener('click', () => { location.href = 'dashboard.html'; });
+      document.getElementById('nextBtn').addEventListener('click', goToNextQuestion);
+      document.getElementById('prevBtn').addEventListener('click', goToPreviousQuestion);
+      document.getElementById('submitQuizBtn').addEventListener('click', submitQuiz);
+      document.getElementById('reviewBtn').addEventListener('click', toggleReview);
+    }
+
+    function startDailyQuiz() {
+      // Get 15 random questions from all topics
+      const questions = QuestionBank.getRandomQuestions(15, null);
+      
+      if (questions.length === 0) {
+        UI.showNotification('No questions available', 'error');
+        return;
+      }
+
+      QuizEngine.startQuiz(questions, {
+        type: 'daily',
+        title: 'Daily Quiz'
+      });
+
+      quizStarted = true;
+      renderQuestion();
+      updateProgress();
+
+      document.getElementById('instructionsSection').classList.add('hidden');
+      document.getElementById('quizSection').classList.remove('hidden');
+    }
+
+    function renderQuestion() {
+      const question = QuizEngine.getCurrentQuestion();
+      if (!question) return;
+
+      const container = document.getElementById('questionContainer');
+      const progress = QuizEngine.getProgress();
+      
+      container.innerHTML = `
+        <div class="bg-white rounded-xl shadow-md p-8 mb-6">
+          <div class="mb-6">
+            <div class="text-sm text-blue-600 font-semibold mb-2">Question ${progress.current} of ${progress.total}</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-6">${question.question}</h3>
+          </div>
+
+          <div class="space-y-3">
+            ${question.options.map((option, idx) => {
+              const isSelected = idx === QuizEngine.calculateResults()?.correctCount;
+              return `
+                <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50 transition-all ${
+                  isSelected ? 'border-blue-600 bg-blue-50' : ''
+                }">
+                  <input type="radio" name="answer" value="${idx}" class="w-4 h-4 text-blue-600" 
+                    ${isSelected ? 'checked' : ''} onchange="recordAnswer(${idx})">
+                  <span class="ml-3 text-gray-700 text-lg">${option}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="mt-6 p-4 bg-gray-50 rounded-lg border-l-4 border-yellow-500">
+            <p class="text-sm text-gray-700"><strong>Tip:</strong> Take your time, there's no time limit for this quiz.</p>
+          </div>
+        </div>
+      `;
+
+      updateQuickNav();
+      updateNavigationButtons();
+    }
+
+    function recordAnswer(optionIndex) {
+      QuizEngine.recordAnswer(optionIndex);
+      updateProgress();
+      updateQuickNav();
+    }
+
+    function goToNextQuestion() {
+      if (QuizEngine.nextQuestion()) {
+        renderQuestion();
+      } else {
+        document.getElementById('nextBtn').classList.add('hidden');
+        document.getElementById('submitQuizBtn').classList.remove('hidden');
+      }
+    }
+
+    function goToPreviousQuestion() {
+      if (QuizEngine.previousQuestion()) {
+        renderQuestion();
+      }
+    }
+
+    function updateProgress() {
+      const progress = QuizEngine.getProgress();
+      document.getElementById('questionProgress').textContent = `Question ${progress.current} of ${progress.total}`;
+      document.getElementById('answeredCount').textContent = `${progress.answered} answered`;
+      document.getElementById('progressBar').style.width = `${progress.percentage}%`;
+    }
+
+    function updateQuickNav() {
+      const container = document.getElementById('quickNav');
+      const totalQuestions = QuizEngine.getTotalQuestions();
+      let html = '';
+
+      for (let i = 0; i < totalQuestions; i++) {
+        const isAnswered = QuizEngine.buildAnswerDetails()[i] !== undefined;
+        const isCurrent = i === QuizEngine.getCurrentQuestionIndex();
+        
+        html += `
+          <button onclick="QuizEngine.goToQuestion(${i}); renderQuestion();" 
+            class="w-8 h-8 rounded font-semibold text-sm transition-all ${
+            isCurrent ? 'bg-blue-600 text-white ring-2 ring-blue-300' :
+            isAnswered ? 'bg-green-500 text-white' :
+            'bg-gray-200 text-gray-800 hover:bg-gray-300'
+          }">
+            ${i + 1}
+          </button>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function updateNavigationButtons() {
+      const index = QuizEngine.getCurrentQuestionIndex();
+      const total = QuizEngine.getTotalQuestions();
+
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').style.display = index < total - 1 ? 'block' : 'none';
+      
+      if (index === total - 1) {
+        document.getElementById('submitQuizBtn').classList.remove('hidden');
+      } else {
+        document.getElementById('submitQuizBtn').classList.add('hidden');
+      }
+    }
+
+    function submitQuiz() {
+      if (confirm('Are you sure you want to submit the quiz?')) {
+        const result = QuizEngine.endQuiz();
+        showResults(result);
+      }
+    }
+
+    function showResults(result) {
+      document.getElementById('quizSection').classList.add('hidden');
+      document.getElementById('resultsSection').classList.remove('hidden');
+
+      const container = document.getElementById('resultsContainer');
+      const percentage = result.score;
+      const color = percentage >= 70 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
+      const colorClass = color === 'green' ? 'text-green-600' : color === 'yellow' ? 'text-yellow-600' : 'text-red-600';
+
+      container.innerHTML = `
+        <div class="bg-white rounded-xl shadow-md p-8 text-center">
+          <h2 class="text-4xl font-bold text-gray-800 mb-8">Quiz Complete! 🎉</h2>
+
+          <div class="mb-8">
+            <div class="inline-block">
+              <div class="relative w-48 h-48">
+                <svg class="w-48 h-48 transform -rotate-90">
+                  <circle cx="96" cy="96" r="88" fill="none" stroke="#e5e7eb" stroke-width="16"/>
+                  <circle cx="96" cy="96" r="88" fill="none" stroke="#${color === 'green' ? '22c55e' : color === 'yellow' ? 'eab308' : 'ef4444'}" stroke-width="16"
+                    stroke-dasharray="${(percentage / 100) * 553}" stroke-dashoffset="0" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="text-5xl font-bold ${colorClass}">${percentage}%</div>
+                    <div class="text-sm text-gray-500">Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 text-center mb-8">
+            <div class="bg-green-50 rounded-lg p-4">
+              <div class="text-3xl font-bold text-green-600">${result.correctAnswers}</div>
+              <div class="text-sm text-gray-600">Correct</div>
+            </div>
+            <div class="bg-red-50 rounded-lg p-4">
+              <div class="text-3xl font-bold text-red-600">${result.totalQuestions - result.correctAnswers}</div>
+              <div class="text-sm text-gray-600">Wrong</div>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-4">
+              <div class="text-3xl font-bold text-blue-600">${UI.formatTime(result.timeSpent)}</div>
+              <div class="text-sm text-gray-600">Time</div>
+            </div>
+          </div>
+
+          <div class="inline-block">
+            ${percentage >= 70 ? '✨ Excellent work! Keep it up!' : percentage >= 50 ? '👍 Good effort! Keep practicing!' : '💪 Keep practicing, you'll get better!'}
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleReview() {
+      const reviewSection = document.getElementById('reviewSection');
+      reviewSection.classList.toggle('hidden');
+
+      if (!reviewSection.classList.contains('hidden')) {
+        renderReview();
+      }
+    }
+
+    function renderReview() {
+      const answers = QuizEngine.buildAnswerDetails();
+      const container = document.getElementById('reviewContainer');
+
+      container.innerHTML = answers.map((answer, idx) => `
+        <div class="bg-white rounded-lg shadow p-6 border-l-4 ${answer.isCorrect ? 'border-green-500' : 'border-red-500'}">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h4 class="font-semibold text-gray-800">Question ${idx + 1}</h4>
+              <p class="text-gray-700 text-lg mt-2">${answer.question}</p>
+            </div>
+            <span class="text-2xl">${answer.isCorrect ? '✅' : '❌'}</span>
+          </div>
+
+          <div class="space-y-2 mb-4">
+            <p class="text-sm"><span class="font-semibold text-gray-700">Your answer:</span> ${QuestionBank.getQuestionById(answer.questionId).options[answer.userAnswer] || 'Not answered'}</p>
+            <p class="text-sm"><span class="font-semibold text-gray-700">Correct answer:</span> ${QuestionBank.getQuestionById(answer.questionId).options[answer.correctAnswer]}</p>
+          </div>
+
+          ${answer.explanation ? `<div class="bg-blue-50 rounded p-3 text-sm text-gray-700"><strong>Explanation:</strong> ${answer.explanation}</div>` : ''}
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

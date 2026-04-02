@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Question Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-600">⚙️ Admin Panel</h1>
+      <a href="dashboard.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">← Dashboard</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Tabs -->
+    <div class="flex gap-4 mb-8 border-b border-gray-200">
+      <button onclick="switchTab('view')" class="tab-btn active px-6 py-3 font-medium text-blue-600 border-b-2 border-blue-600">View Questions</button>
+      <button onclick="switchTab('add')" class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600">Add Question</button>
+      <button onclick="switchTab('import')" class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600">Import/Export</button>
+    </div>
+
+    <!-- View Questions Tab -->
+    <section id="viewTab" class="tab-content">
+      <div class="mb-6 flex gap-4">
+        <input id="searchInput" type="text" placeholder="Search questions..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select id="topicFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">All Topics</option>
+        </select>
+      </div>
+
+      <div id="questionsTable" class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-100 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Question</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Topic</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Difficulty</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Options</th>
+            </tr>
+          </thead>
+          <tbody id="questionsBody" class="divide-y divide-gray-200">
+            <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading questions...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Add Question Tab -->
+    <section id="addTab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow p-8 max-w-2xl">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Question</h2>
+
+        <form id="addQuestionForm" class="space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Question ID *</label>
+              <input type="text" id="qId" placeholder="e.g., q001" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Topic *</label>
+              <select id="qTopic" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <option value="">Select Topic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Subtopic *</label>
+              <input type="text" id="qSubtopic" placeholder="e.g., Geography" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Difficulty *</label>
+              <select id="qDifficulty" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <option value="">Select Difficulty</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Question *</label>
+            <textarea id="qQuestion" placeholder="Enter the question text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-20" required></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-4">Answer Options *</label>
+            <div class="space-y-3">
+              ${[0, 1, 2, 3].map(i => `
+                <div class="flex gap-2">
+                  <input type="radio" name="correctOption" value="${i}" class="mt-3">
+                  <div class="flex-1">
+                    <label class="text-xs text-gray-600">Option ${i + 1}</label>
+                    <textarea id="option${i}" placeholder="Enter option text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Explanation (Optional)</label>
+            <textarea id="qExplanation" placeholder="Provide explanation for correct answer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-16"></textarea>
+          </div>
+
+          <button type="submit" class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">Add Question</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Import/Export Tab -->
+    <section id="importTab" class="tab-content hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Export -->
+        <div class="bg-white rounded-lg shadow p-8">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">📥 Export Questions</h2>
+          <p class="text-gray-600 mb-4">Download all questions as JSON file for backup or migration</p>
+          <button id="exportBtn" class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">Download JSON</button>
+        </div>
+
+        <!-- Import -->
+        <div class="bg-white rounded-lg shadow p-8">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">📤 Import Questions</h2>
+          <p class="text-gray-600 mb-4">Upload a JSON file with questions to add/update the database</p>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <input type="file" id="importFile" accept=".json" class="hidden">
+            <button onclick="document.getElementById('importFile').click()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Choose File</button>
+            <p class="text-sm text-gray-500 mt-2" id="fileName">No file selected</p>
+          </div>
+          <button id="importBtn" class="w-full mt-4 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold disabled:opacity-50" disabled>Import</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/modules/questionBank.js"></script>
+  <script src="js/modules/user.js"></script>
+  <script src="js/modules/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await QuestionBank.init();
+      loadQuestions();
+      loadTopics();
+      setupEventListeners();
+    });
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'border-b-2', 'border-blue-600', 'text-blue-600'));
+
+      document.getElementById(tab + 'Tab').classList.remove('hidden');
+      event.target.classList.add('active', 'border-b-2', 'border-blue-600', 'text-blue-600');
+    }
+
+    function loadQuestions() {
+      const questions = QuestionBank.getAllQuestions();
+      const body = document.getElementById('questionsBody');
+
+      body.innerHTML = questions.map(q => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm text-gray-700">${q.question.substring(0, 50)}...</td>
+          <td class="px-6 py-4 text-sm text-gray-700">${q.topic}</td>
+          <td class="px-6 py-4 text-sm"><span class="px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold">${q.difficulty}</span></td>
+          <td class="px-6 py-4 text-sm">
+            <button onclick="editQuestion('${q.id}')" class="text-blue-600 hover:text-blue-800 mr-3">Edit</button>
+            <button onclick="deleteQuestion('${q.id}')" class="text-red-600 hover:text-red-800">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadTopics() {
+      const topics = QuestionBank.getTopics();
+      const select = document.getElementById('qTopic');
+
+      select.innerHTML += topics.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    }
+
+    function setupEventListeners() {
+      document.getElementById('addQuestionForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        addQuestion();
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', exportQuestions);
+      document.getElementById('importFile').addEventListener('change', () => {
+        document.getElementById('fileName').textContent = document.getElementById('importFile').files[0]?.name || '';
+        document.getElementById('importBtn').disabled = false;
+      });
+      document.getElementById('importBtn').addEventListener('click', importQuestions);
+    }
+
+    function addQuestion() {
+      const question = {
+        id: document.getElementById('qId').value,
+        question: document.getElementById('qQuestion').value,
+        options: [
+          document.getElementById('option0').value,
+          document.getElementById('option1').value,
+          document.getElementById('option2').value,
+          document.getElementById('option3').value
+        ],
+        correctAnswer: parseInt(document.querySelector('input[name="correctOption"]:checked').value),
+        topic: document.getElementById('qTopic').value,
+        subtopic: document.getElementById('qSubtopic').value,
+        difficulty: document.getElementById('qDifficulty').value,
+        explanation: document.getElementById('qExplanation').value
+      };
+
+      try {
+        QuestionBank.addQuestion(question);
+        UI.showNotification('Question added successfully!', 'success');
+        document.getElementById('addQuestionForm').reset();
+        switchTab('view');
+        loadQuestions();
+      } catch (error) {
+        UI.showNotification(error.message, 'error');
+      }
+    }
+
+    function editQuestion(id) {
+      alert('Edit functionality coming soon');
+    }
+
+    function deleteQuestion(id) {
+      if (confirm('Delete this question?')) {
+        QuestionBank.deleteQuestion(id);
+        UI.showNotification('Question deleted', 'success');
+        loadQuestions();
+      }
+    }
+
+    function exportQuestions() {
+      const questions = QuestionBank.getAllQuestions();
+      const data = { questions };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `questions-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+    }
+
+    function importQuestions() {
+      const file = document.getElementById('importFile').files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.questions) throw new Error('Invalid format');
+
+          let added = 0;
+          data.questions.forEach(q => {
+            try {
+              QuestionBank.addQuestion(q);
+              added++;
+            } catch (err) {
+              console.warn('Skipped:', err.message);
+            }
+          });
+
+          UI.showNotification(`Imported ${added} questions!`, 'success');
+          loadQuestions();
+        } catch (error) {
+          UI.showNotification('Invalid JSON file', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>

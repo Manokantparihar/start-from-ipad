@@ -1,7 +1,8 @@
 {
   "name": "start-from-ipad",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
+  "description": "RPSC/REET Exam Preparation Platform",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
@@ -11,5 +12,8 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
   }
 }
