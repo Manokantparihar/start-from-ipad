@@ -130,3 +130,4 @@ Use this quick checklist before publishing any content changes:
 - [ ] Search/filter visibility is correct on homepage cards.
 - [ ] Section-specific action button behavior is correct on details page.
 - [ ] Print view on details page still works for the new/updated item.
+- [ ] Section-specific action button behavior is correct on details page.
