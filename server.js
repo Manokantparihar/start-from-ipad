@@ -241,5 +241,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Help Hub server running on http://localhost:${PORT}`);
+  console.log(`RPSC/REET prep server running on http://localhost:${PORT}`);
 });

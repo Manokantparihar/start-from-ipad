@@ -3,10 +3,8 @@ My developer journey starts today 🚀
 
 ## Platform execution plan
 
-- Full A-to-Z roadmap: `ROADMAP.md`
-- Current sprint board: `SPRINT-1-TASKS.md`
-- Next sprint board (Phase 3): `SPRINT-2-TASKS.md`
-- Start here every day: complete Day-wise plan from Sprint 1.
+- Python-first 90-day learning roadmap: `PROGRAMMING-LEARNING-ROADMAP.md`
+- Start here every day: complete the day-wise plan from the programming roadmap.
 
 ## SEO / OG preview
 
@@ -131,3 +129,4 @@ Use this quick checklist before publishing any content changes:
 - [ ] Resource opens via `details.html?item=<slug>` without fallback.
 - [ ] Search/filter visibility is correct on homepage cards.
 - [ ] Section-specific action button behavior is correct on details page.
+- [ ] Print view on details page still works for the new/updated item.
