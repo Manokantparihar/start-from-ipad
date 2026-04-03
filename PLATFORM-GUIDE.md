@@ -24,7 +24,7 @@ A modern, interactive test-based learning platform built with vanilla JavaScript
 - Question navigator for quick jumping
 - Detailed result analysis with answer key
 
-### 4. **Progress Dashboard** (`dashboard.html`)
+### 4. **Progress Dashboard** (`index.html`)
 - User authentication with localStorage
 - Performance statistics:
   - Total quizzes attempted
@@ -52,7 +52,7 @@ start-from-ipad/
 │       ├── progressTracker.js  # Quiz history & performance stats
 │       ├── quizEngine.js       # Quiz logic & timer management
 │       └── ui.js               # Common UI utilities & formatters
-├── dashboard.html              # Main dashboard
+├── index.html                  # Main dashboard
 ├── daily-quiz.html             # Daily quiz interface
 ├── topic-tests.html            # Topic selection & testing
 ├── mock-tests.html             # Full mock test with timer
@@ -80,7 +80,7 @@ npm run dev
 Server runs on `http://localhost:5500`
 
 ### Access Points
-- **Dashboard/Learning Hub:** `http://localhost:5500/dashboard.html`
+- **Dashboard/Learning Hub:** `http://localhost:5500/index.html`
 - **Daily Quiz:** `http://localhost:5500/daily-quiz.html`
 - **Topic Tests:** `http://localhost:5500/topic-tests.html`
 - **Mock Tests:** `http://localhost:5500/mock-tests.html`

@@ -186,7 +186,7 @@ const handleContactPost = async (req, res) => {
 
 const safeResolve = (pathname) => {
   const normalizedPath = decodeURIComponent(pathname).replace(/\0/g, "");
-  const requested = normalizedPath === "/" ? "/dashboard.html" : normalizedPath;
+  const requested = normalizedPath === "/" ? "/index.html" : normalizedPath;
   const filePath = path.normalize(path.join(ROOT_DIR, requested));
 
   if (!filePath.startsWith(ROOT_DIR)) {
