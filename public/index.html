@@ -30,7 +30,7 @@
       </div>
       <div class="flex items-center gap-4">
         <span id="userName" class="text-gray-700 font-medium"></span>
-        <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Logout</button>
+        <button id="logoutBtn">Logout</button>
       </div>
     </nav>
   </header>
@@ -134,14 +134,32 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Welcome! 👋</h2>
         <form id="loginForm" class="space-y-4">
           <div>
-            <label class="block text-gray-700 font-medium mb-2">Full Name</label>
-            <input type="text" id="nameInput" placeholder="Your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <label class="block text-gray-700 font-medium mb-2">Email</label>
+            <input type="email" id="loginEmail" placeholder="your.email@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Password</label>
+            <input type="password" id="loginPassword" placeholder="Your password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Login</button>
+          <button type="button" id="showRegisterBtn" class="w-full text-sm text-blue-600 hover:underline">New user? Sign up</button>
+        </form>
+
+        <form id="registerForm" class="space-y-4 hidden">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Name</label>
+            <input type="text" id="registerName" placeholder="Your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
           </div>
           <div>
             <label class="block text-gray-700 font-medium mb-2">Email</label>
-            <input type="email" id="emailInput" placeholder="your.email@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <input type="email" id="registerEmail" placeholder="your.email@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
           </div>
-          <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Start Learning</button>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Password</label>
+            <input type="password" id="registerPassword" placeholder="Create a password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Sign up</button>
+          <button type="button" id="showLoginBtn" class="w-full text-sm text-blue-600 hover:underline">Already have an account? Login</button>
         </form>
       </div>
     </div>
@@ -163,15 +181,19 @@
     });
 
     async function initializeDashboard() {
-      const isLoggedIn = User.isLoggedIn();
-      
-      if (!isLoggedIn) {
+      const meResponse = await fetch('/api/auth/me', {
+        credentials: 'include'
+      });
+
+      if (!meResponse.ok) {
         document.getElementById('loginModal').classList.remove('hidden');
+        localStorage.removeItem('userName');
         return;
       }
 
-      const user = User.getUser();
+      const { user } = await meResponse.json();
       document.getElementById('userName').textContent = user.name;
+      localStorage.setItem('userName', user.name);
 
       // Load stats
       const stats = ProgressTracker.getStats();
@@ -209,21 +231,106 @@
     }
 
     function setupEventListeners() {
-      document.getElementById('loginForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('nameInput').value.trim();
-        const email = document.getElementById('emailInput').value.trim();
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginEmailInput = document.getElementById('loginEmail');
+      const registerEmailInput = document.getElementById('registerEmail');
+      const registerNameInput = document.getElementById('registerName');
 
-        if (name && email) {
-          User.login({ name, email });
+      function showLoginForm(prefillEmail = '') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        if (prefillEmail) {
+          loginEmailInput.value = prefillEmail;
+        }
+        document.getElementById('loginPassword').value = '';
+      }
+
+      function showRegisterForm(prefillEmail = '') {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        if (prefillEmail) {
+          registerEmailInput.value = prefillEmail;
+        }
+        document.getElementById('registerPassword').value = '';
+        registerNameInput.focus();
+      }
+
+      document.getElementById('showRegisterBtn').addEventListener('click', () => {
+        showRegisterForm(loginEmailInput.value.trim());
+      });
+
+      document.getElementById('showLoginBtn').addEventListener('click', () => {
+        showLoginForm(registerEmailInput.value.trim());
+      });
+
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('Login successful');
+          localStorage.setItem('userName', data.user.name);
           document.getElementById('loginModal').classList.add('hidden');
           location.reload();
+        } else {
+          if (data.error === 'Account not found') {
+            alert('New user ho? Signup karo.');
+            showRegisterForm(email);
+          } else if (data.error === 'Wrong password') {
+            alert('Password galat hai.');
+          } else {
+            alert(data.error || 'Login failed');
+          }
         }
       });
 
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        User.logout();
-        localStorage.removeItem('rpsc_user');
+      registerForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('Signup successful! Please login.');
+          showLoginForm(email);
+        } else {
+          alert(data.error || 'Signup failed');
+        }
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        localStorage.removeItem('userName');
+
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+
         location.reload();
       });
     }

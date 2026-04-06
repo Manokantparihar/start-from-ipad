@@ -1,21 +1,118 @@
+require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const cors = require('cors');
-const helmet = require('helmet');
+const path = require('path');
+const fs = require('fs');
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./src/routes/auth');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5500;
 
-app.use(cors());
-app.use(helmet());
+// --- Middlewares ---
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+// --- API Routes ---
+app.use('/api/auth', authRoutes);
+
+// Serve all static files from the 'public' folder automatically!
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Server working 🚀' });
+// --- Data Paths & Contact Setup ---
+const DATA_DIR = path.join(__dirname, 'data');
+const SUBMISSIONS_FILE = path.join(DATA_DIR, 'contact-submissions.jsonl');
+const CONTACT_TARGET_EMAIL =
+  process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com';
+
+// Make sure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// --- Helper Functions ---
+const forwardViaAjaxEndpoint = async ({ name, email, message }) => {
+  const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(
+    CONTACT_TARGET_EMAIL
+  )}`;
+
+  try {
+    const response = await fetch(FORMSUBMIT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        message,
+        _replyto: email,
+        _subject: `New contact from ${name}`,
+        _captcha: 'false'
+      })
+    });
+
+    const payload = await response.json().catch(() => null);
+    const ok =
+      response.ok && (payload?.success === true || payload?.success === 'true');
+
+    if (!ok) {
+      return {
+        success: false,
+        message: payload?.message || 'AJAX forwarding failed'
+      };
+    }
+
+    return { success: true, message: 'Email forwarded (AJAX)' };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
+// Contact API Route
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Missing required fields' });
+    }
+
+    const record = {
+      submittedAt: new Date().toISOString(),
+      name,
+      email,
+      message
+    };
+
+    fs.appendFileSync(SUBMISSIONS_FILE, `${JSON.stringify(record)}\n`, 'utf8');
+
+    const forwarded = await forwardViaAjaxEndpoint({ name, email, message });
+
+    return res.status(200).json({
+      success: true,
+      message: forwarded.success
+        ? 'Message submitted and forwarded'
+        : 'Message submitted locally',
+      emailForwarded: forwarded.success
+    });
+  } catch (error) {
+    console.error('Contact API Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
+// --- Start the Server ---
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Express server running on http://localhost:${PORT}`);
 });

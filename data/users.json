@@ -1,0 +1,16 @@
+[
+  {
+    "id": "54cd72a7-c473-4532-8081-ff4bb7a7bfc3",
+    "name": "Mano",
+    "email": "mano@test.com",
+    "password": "$2b$10$Qb3gJLsFHO9800Wc.ztZk.5Xx0N76XN4ZvoCpwTH6N42V5ru2YzSC",
+    "createdAt": "2026-04-06T20:31:59.835Z"
+  },
+  {
+    "id": "83cc6aa0-aed2-49ac-b576-da5843ecf494",
+    "name": "Manokant",
+    "email": "manokant2002@gmail.com",
+    "password": "$2b$10$9H7OB48EVGSCYEbVc/eJzOIAZiqLrIJCDjTYwxjC3gdq31bN6HQq6",
+    "createdAt": "2026-04-06T21:40:38.347Z"
+  }
+]
