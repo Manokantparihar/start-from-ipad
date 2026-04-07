@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard – RPSC/REET Prep</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
+    .animation-slideIn { animation: slideIn 0.3s ease-in; }
+    .modal-backdrop { backdrop-filter: blur(2px); }
+    .row-details { display: none; }
+    .row-details.open { display: table-row; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header/Navigation -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-8">
+        <a href="index.html" class="text-2xl font-bold text-blue-600">📚 RPSC/REET</a>
+        <div class="hidden md:flex gap-6">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+          <a href="dashboard.html" class="text-blue-600 font-semibold underline underline-offset-2">My Dashboard</a>
+          <a href="daily-quiz.html" class="text-gray-700 hover:text-blue-600 font-medium">Daily Quiz</a>
+          <a href="topic-tests.html" class="text-gray-700 hover:text-blue-600 font-medium">Topic Tests</a>
+          <a href="mock-tests.html" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
+          <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">🧩 Quizzes</a>
+          <a id="adminQuizLink" href="/admin/" class="hidden text-blue-700 hover:text-blue-900 font-medium">🗂 Quiz Manager</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="profile.html" class="text-gray-700 hover:text-blue-600 font-medium text-sm hidden sm:inline">My Profile</a>
+        <span id="userName" class="text-gray-700 font-medium text-sm"></span>
+        <button id="logoutBtn" class="px-3 py-1 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-500">Loading your dashboard…</p>
+    </div>
+  </div>
+
+  <!-- Error Screen -->
+  <div id="errorScreen" class="hidden flex items-center justify-center min-h-screen">
+    <div class="text-center bg-white rounded-xl shadow-md p-10 max-w-md">
+      <div class="text-5xl mb-4">🔒</div>
+      <h2 class="text-xl font-bold text-gray-800 mb-2">Login Required</h2>
+      <p class="text-gray-500 mb-6">Please log in to view your dashboard.</p>
+      <a href="index.html" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Go to Login</a>
+    </div>
+  </div>
+
+  <!-- Main Dashboard (hidden until authenticated) -->
+  <main id="dashboardMain" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
+
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-1">My Dashboard</h2>
+      <p class="text-gray-500">Track your quiz attempts, scores, and progress.</p>
+    </div>
+
+    <!-- Global error/info banner -->
+    <div id="globalBanner" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+    <!-- Summary Stats -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-blue-500">
+        <div class="text-2xl font-bold text-blue-600" id="statTotal">—</div>
+        <div class="text-gray-500 text-sm mt-1">Total Attempts</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-green-500">
+        <div class="text-2xl font-bold text-green-600" id="statAvg">—</div>
+        <div class="text-gray-500 text-sm mt-1">Average Score</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-purple-500">
+        <div class="text-2xl font-bold text-purple-600" id="statBest">—</div>
+        <div class="text-gray-500 text-sm mt-1">Best Score</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-orange-500">
+        <div class="text-2xl font-bold text-orange-600" id="statCompleted">—</div>
+        <div class="text-gray-500 text-sm mt-1">Completed</div>
+      </div>
+    </section>
+
+    <!-- Filter & Export Row -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+      <div class="flex flex-wrap gap-3 items-end">
+        <!-- Search -->
+        <div class="flex-1 min-w-48">
+          <label class="block text-xs font-medium text-gray-500 mb-1">Search by Quiz</label>
+          <input
+            id="filterSearch"
+            type="text"
+            placeholder="Quiz title…"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+        <!-- Type filter -->
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
+          <select id="filterType" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">All Types</option>
+            <option value="mock">Mock Test</option>
+            <option value="topic">Topic Test</option>
+            <option value="daily">Daily Quiz</option>
+          </select>
+        </div>
+        <!-- Status filter -->
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+          <select id="filterStatus" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">All Statuses</option>
+            <option value="completed">Completed</option>
+            <option value="in-progress">In Progress</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+        <!-- Clear filters -->
+        <button id="clearFiltersBtn" class="px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50">Clear</button>
+        <!-- Export CSV -->
+        <button id="exportCsvBtn" class="ml-auto flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm">
+          ⬇ Export CSV
+        </button>
+      </div>
+    </section>
+
+    <!-- Attempts Table -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-semibold text-gray-700">Attempt History</h3>
+        <span id="filteredCount" class="text-xs text-gray-400"></span>
+      </div>
+
+      <!-- Table (desktop) -->
+      <div class="overflow-x-auto">
+        <table id="attemptsTable" class="min-w-full text-sm hidden">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">Quiz Title</th>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">Date</th>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">Score</th>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">%</th>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">Type</th>
+              <th class="px-6 py-3 text-left font-semibold text-gray-600">Status</th>
+              <th class="px-6 py-3 text-right font-semibold text-gray-600">Details</th>
+            </tr>
+          </thead>
+          <tbody id="attemptsBody" class="divide-y divide-gray-50"></tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="hidden text-center py-16 px-6">
+        <div class="text-5xl mb-4">📭</div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">No attempts yet</h3>
+        <p class="text-gray-400 mb-6">Start a quiz to see your attempt history here.</p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="daily-quiz.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">Daily Quiz</a>
+          <a href="topic-tests.html" class="px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm">Topic Tests</a>
+          <a href="mock-tests.html" class="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium text-sm">Mock Tests</a>
+        </div>
+      </div>
+
+      <!-- No results after filter -->
+      <div id="noResults" class="hidden text-center py-10 px-6">
+        <div class="text-3xl mb-3">🔍</div>
+        <p class="text-gray-500">No attempts match your filters.</p>
+        <button id="clearFiltersBtn2" class="mt-3 text-blue-600 text-sm underline">Clear filters</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- View Details Modal -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop bg-black/50 px-4 py-6">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animation-fadeIn">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between p-6 border-b border-gray-100">
+        <div class="flex-1 min-w-0">
+          <h3 id="modalTitle" class="text-lg font-bold text-gray-800 truncate">Attempt Details</h3>
+          <p id="modalMeta" class="text-sm text-gray-500 mt-0.5"></p>
+        </div>
+        <button id="modalCloseBtn" class="ml-4 text-gray-400 hover:text-gray-600 text-2xl leading-none flex-shrink-0" aria-label="Close">✕</button>
+      </div>
+      <!-- Modal Score Summary -->
+      <div id="modalScore" class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-6 text-sm"></div>
+      <!-- Modal Loading -->
+      <div id="modalLoading" class="flex items-center justify-center py-10">
+        <div class="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <!-- Modal Error -->
+      <div id="modalError" class="hidden px-6 py-4 text-red-600 text-sm"></div>
+      <!-- Modal Breakdown List -->
+      <div id="modalBreakdown" class="hidden overflow-y-auto flex-1 divide-y divide-gray-100"></div>
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-gray-100 text-right">
+        <button id="modalCloseFooterBtn" class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    let allAttempts = [];
+    let filteredAttempts = [];
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function showBanner(el, message, type) {
+      el.textContent = message;
+      el.className =
+        type === 'success'
+          ? 'mb-6 px-4 py-3 rounded-lg text-sm font-medium bg-green-50 text-green-700 border border-green-200'
+          : 'mb-6 px-4 py-3 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200';
+      el.classList.remove('hidden');
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '—';
+      try {
+        return new Date(ts).toLocaleDateString(undefined, {
+          year: 'numeric', month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+      } catch { return '—'; }
+    }
+
+    function formatDateShort(ts) {
+      if (!ts) return '—';
+      try {
+        return new Date(ts).toLocaleDateString(undefined, {
+          year: 'numeric', month: 'short', day: 'numeric'
+        });
+      } catch { return '—'; }
+    }
+
+    function typeBadge(type) {
+      const map = {
+        mock:  { label: 'Mock',  cls: 'bg-orange-100 text-orange-700' },
+        topic: { label: 'Topic', cls: 'bg-purple-100 text-purple-700' },
+        daily: { label: 'Daily', cls: 'bg-blue-100 text-blue-700' }
+      };
+      const t = map[type] || { label: type || 'Quiz', cls: 'bg-gray-100 text-gray-600' };
+      return `<span class="px-2 py-0.5 rounded-full text-xs font-medium ${t.cls}">${t.label}</span>`;
+    }
+
+    function statusBadge(status) {
+      const map = {
+        completed:   { label: 'Completed',   cls: 'bg-green-100 text-green-700' },
+        'in-progress': { label: 'In Progress', cls: 'bg-yellow-100 text-yellow-700' },
+        expired:     { label: 'Expired',     cls: 'bg-red-100 text-red-700' }
+      };
+      const s = map[status] || { label: status || '—', cls: 'bg-gray-100 text-gray-600' };
+      return `<span class="px-2 py-0.5 rounded-full text-xs font-medium ${s.cls}">${s.label}</span>`;
+    }
+
+    function percentColor(pct) {
+      if (pct >= 75) return 'text-green-600 font-semibold';
+      if (pct >= 50) return 'text-yellow-600 font-semibold';
+      return 'text-red-600 font-semibold';
+    }
+
+    // ── Summary stats ──────────────────────────────────────────────────────────
+    function renderStats(attempts) {
+      const total = attempts.length;
+      const completed = attempts.filter(a => a.status === 'completed' && a.maxScore > 0);
+      const avg = completed.length
+        ? Math.round(completed.reduce((s, a) => s + a.percent, 0) / completed.length)
+        : null;
+      const best = completed.length
+        ? Math.max(...completed.map(a => a.percent))
+        : null;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statAvg').textContent = avg !== null ? `${avg}%` : '—';
+      document.getElementById('statBest').textContent = best !== null ? `${best}%` : '—';
+      document.getElementById('statCompleted').textContent = completed.length;
+    }
+
+    // ── Table rendering ────────────────────────────────────────────────────────
+    function renderTable(attempts) {
+      const tbody = document.getElementById('attemptsBody');
+      const table = document.getElementById('attemptsTable');
+      const emptyState = document.getElementById('emptyState');
+      const noResults = document.getElementById('noResults');
+      const countEl = document.getElementById('filteredCount');
+
+      tbody.innerHTML = '';
+
+      if (allAttempts.length === 0) {
+        table.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        noResults.classList.add('hidden');
+        countEl.textContent = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      if (attempts.length === 0) {
+        table.classList.add('hidden');
+        noResults.classList.remove('hidden');
+        countEl.textContent = '';
+        return;
+      }
+
+      noResults.classList.add('hidden');
+      table.classList.remove('hidden');
+      countEl.textContent = `Showing ${attempts.length} of ${allAttempts.length} attempt${allAttempts.length !== 1 ? 's' : ''}`;
+
+      attempts.forEach(a => {
+        const scoreText = a.status === 'completed' || a.status === 'expired'
+          ? `${a.score ?? '—'}/${a.maxScore ?? '—'}`
+          : '—';
+        const pctText = a.status === 'completed' && a.maxScore > 0
+          ? `<span class="${percentColor(a.percent)}">${a.percent}%</span>`
+          : '<span class="text-gray-400">—</span>';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50 transition-colors';
+        tr.innerHTML = `
+          <td class="px-6 py-4 font-medium text-gray-800 max-w-xs truncate" title="${escapeHtml(a.quizTitle || '')}">${escapeHtml(a.quizTitle || 'Unknown Quiz')}</td>
+          <td class="px-6 py-4 text-gray-500 whitespace-nowrap">${formatDateShort(a.date)}</td>
+          <td class="px-6 py-4 text-gray-700">${scoreText}</td>
+          <td class="px-6 py-4">${pctText}</td>
+          <td class="px-6 py-4">${typeBadge(a.type)}</td>
+          <td class="px-6 py-4">${statusBadge(a.status)}</td>
+          <td class="px-6 py-4 text-right">
+            <button
+              class="view-details-btn px-3 py-1 text-xs bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 font-medium"
+              data-id="${escapeHtml(a.id)}"
+            >View Details</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Attach view-details listeners
+      tbody.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', () => openDetailModal(btn.dataset.id));
+      });
+    }
+
+    // ── Filter logic ───────────────────────────────────────────────────────────
+    function applyFilters() {
+      const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+      const type   = document.getElementById('filterType').value;
+      const status = document.getElementById('filterStatus').value;
+
+      filteredAttempts = allAttempts.filter(a => {
+        if (search && !(a.quizTitle || '').toLowerCase().includes(search)) return false;
+        if (type && a.type !== type) return false;
+        if (status && a.status !== status) return false;
+        return true;
+      });
+
+      renderTable(filteredAttempts);
+    }
+
+    function clearFilters() {
+      document.getElementById('filterSearch').value = '';
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterStatus').value = '';
+      filteredAttempts = [...allAttempts];
+      renderTable(filteredAttempts);
+    }
+
+    // ── CSV Export ─────────────────────────────────────────────────────────────
+    function exportCsv() {
+      const rows = filteredAttempts.length > 0 ? filteredAttempts : allAttempts;
+      if (rows.length === 0) {
+        showBanner(document.getElementById('globalBanner'), 'No attempts to export.', 'error');
+        return;
+      }
+
+      const headers = ['Quiz Title', 'Date', 'Score', 'Max Score', 'Percent (%)', 'Type', 'Status'];
+      const lines = [headers];
+      rows.forEach(a => {
+        lines.push([
+          a.quizTitle || '',
+          formatDateShort(a.date),
+          a.score ?? '',
+          a.maxScore ?? '',
+          a.status === 'completed' && a.maxScore > 0 ? `${a.percent}%` : '',
+          a.type || '',
+          a.status || ''
+        ].map(csvCell));
+      });
+
+      const csv = lines.map(row => row.join(',')).join('\r\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `quiz-attempts-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(val) {
+      const s = String(val ?? '');
+      if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+      return s;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Detail Modal ───────────────────────────────────────────────────────────
+    async function openDetailModal(attemptId) {
+      const modal = document.getElementById('detailModal');
+      const loading = document.getElementById('modalLoading');
+      const errorEl = document.getElementById('modalError');
+      const breakdown = document.getElementById('modalBreakdown');
+      const scoreEl = document.getElementById('modalScore');
+      const titleEl = document.getElementById('modalTitle');
+      const metaEl = document.getElementById('modalMeta');
+
+      // Reset modal
+      loading.classList.remove('hidden');
+      errorEl.classList.add('hidden');
+      breakdown.classList.add('hidden');
+      scoreEl.innerHTML = '';
+      titleEl.textContent = 'Loading…';
+      metaEl.textContent = '';
+      breakdown.innerHTML = '';
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      try {
+        const res = await fetch(`/api/attempts/${encodeURIComponent(attemptId)}/review`, {
+          credentials: 'include'
+        });
+        if (!res.ok) throw new Error((await res.json()).error || 'Failed to load details');
+        const data = await res.json();
+
+        titleEl.textContent = data.quizTitle || 'Quiz Attempt';
+        metaEl.textContent = `${formatDate(data.date)}  ·  ${(data.type || 'Quiz').charAt(0).toUpperCase() + (data.type || 'quiz').slice(1)}`;
+
+        // Score summary
+        const scoreColor = data.status === 'completed' && data.maxScore > 0
+          ? (data.percent >= 75 ? 'text-green-600' : data.percent >= 50 ? 'text-yellow-600' : 'text-red-600')
+          : 'text-gray-600';
+
+        scoreEl.innerHTML = `
+          <div><span class="text-gray-500">Status:</span> <span class="font-medium capitalize">${data.status || '—'}</span></div>
+          ${data.maxScore > 0 ? `
+            <div><span class="text-gray-500">Score:</span> <span class="font-medium">${data.score}/${data.maxScore}</span></div>
+            <div><span class="text-gray-500">Percentage:</span> <span class="font-semibold ${scoreColor}">${data.percent}%</span></div>
+            <div><span class="text-gray-500">Correct:</span> <span class="font-medium text-green-600">${data.score}</span></div>
+            <div><span class="text-gray-500">Wrong:</span> <span class="font-medium text-red-600">${data.maxScore - data.score}</span></div>
+          ` : ''}
+        `;
+
+        loading.classList.add('hidden');
+
+        if (!data.breakdown || data.breakdown.length === 0) {
+          errorEl.textContent = data.status === 'in-progress'
+            ? 'This attempt is still in progress.'
+            : 'No question breakdown available for this attempt.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        // Render breakdown
+        breakdown.innerHTML = '';
+        data.breakdown.forEach((item, idx) => {
+          const div = document.createElement('div');
+          div.className = 'px-6 py-4';
+
+          const userSelected = item.selected;
+          const isCorrect = item.isCorrect;
+          const isAnswered = userSelected !== null && userSelected !== undefined;
+
+          let qStatus = '';
+          if (!isAnswered) qStatus = '<span class="text-xs text-gray-400 font-medium">Not Answered</span>';
+          else if (isCorrect) qStatus = '<span class="text-xs text-green-600 font-medium">✓ Correct</span>';
+          else qStatus = '<span class="text-xs text-red-600 font-medium">✗ Wrong</span>';
+
+          const optionsHtml = (item.options || []).map(opt => {
+            let cls = 'flex items-center gap-2 text-sm py-1 px-2 rounded ';
+            if (opt === item.correctAnswer && opt === userSelected) cls += 'bg-green-50 text-green-700 font-medium';
+            else if (opt === item.correctAnswer) cls += 'bg-green-50 text-green-700 font-medium';
+            else if (opt === userSelected) cls += 'bg-red-50 text-red-700';
+            else cls += 'text-gray-600';
+
+            let icon = '';
+            if (opt === item.correctAnswer) icon = '<span class="text-green-500 text-xs">✓</span>';
+            else if (opt === userSelected && !isCorrect) icon = '<span class="text-red-500 text-xs">✗</span>';
+
+            return `<div class="${cls}">${icon}<span>${escapeHtml(opt)}</span></div>`;
+          }).join('');
+
+          div.innerHTML = `
+            <div class="flex items-start justify-between mb-2 gap-4">
+              <p class="font-medium text-gray-800 text-sm leading-snug flex-1">
+                <span class="text-gray-400 text-xs mr-1">Q${idx + 1}.</span>${escapeHtml(item.question)}
+              </p>
+              ${qStatus}
+            </div>
+            <div class="space-y-0.5 mb-2">${optionsHtml}</div>
+            ${item.explanation ? `<p class="text-xs text-gray-500 mt-2 italic">💡 ${escapeHtml(item.explanation)}</p>` : ''}
+          `;
+          breakdown.appendChild(div);
+        });
+
+        breakdown.classList.remove('hidden');
+      } catch (err) {
+        loading.classList.add('hidden');
+        errorEl.textContent = err.message || 'Could not load attempt details.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // ── Load data & boot ───────────────────────────────────────────────────────
+    async function loadDashboard() {
+      // Auth check
+      let user = null;
+      try {
+        const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!meRes.ok) throw new Error('Not authenticated');
+        const meData = await meRes.json();
+        user = meData.user;
+      } catch {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('errorScreen').classList.remove('hidden');
+        document.getElementById('errorScreen').classList.add('flex');
+        return;
+      }
+
+      // Set user info
+      document.getElementById('userName').textContent = user.name || '';
+      if (user.role === 'admin') {
+        document.getElementById('adminQuizLink').classList.remove('hidden');
+      }
+
+      // Fetch attempts
+      try {
+        const attRes = await fetch('/api/attempts', { credentials: 'include' });
+        if (!attRes.ok) {
+          const errData = await attRes.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to load attempts');
+        }
+        allAttempts = await attRes.json();
+        // Ensure it's an array (backward compat with paginated format)
+        if (!Array.isArray(allAttempts)) {
+          allAttempts = allAttempts.attempts || [];
+        }
+      } catch (err) {
+        showBanner(
+          document.getElementById('globalBanner'),
+          `Could not load your attempts: ${err.message}`,
+          'error'
+        );
+        allAttempts = [];
+      }
+
+      filteredAttempts = [...allAttempts];
+
+      // Render
+      renderStats(allAttempts);
+      renderTable(filteredAttempts);
+
+      // Show main
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('dashboardMain').classList.remove('hidden');
+    }
+
+    // ── Event Listeners ────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadDashboard();
+
+      // Filters
+      document.getElementById('filterSearch').addEventListener('input', applyFilters);
+      document.getElementById('filterType').addEventListener('change', applyFilters);
+      document.getElementById('filterStatus').addEventListener('change', applyFilters);
+      document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+      document.getElementById('clearFiltersBtn2').addEventListener('click', clearFilters);
+
+      // Export
+      document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+
+      // Modal close
+      document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+      document.getElementById('modalCloseFooterBtn').addEventListener('click', closeModal);
+      document.getElementById('detailModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>
