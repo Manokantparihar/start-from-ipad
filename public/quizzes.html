@@ -180,8 +180,8 @@
                 <h3 class="text-lg font-bold text-gray-800 mb-2">${escHtml(quiz.title)}</h3>
                 <p class="text-gray-500 text-sm mb-4">Tap to start this quiz</p>
                 <button
-                  onclick="startQuiz('${escAttr(quiz.id)}')"
-                  class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                  data-quiz-id="${escHtml(quiz.id)}"
+                  class="start-quiz-btn w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
                   Start Quiz
                 </button>
               </div>
@@ -254,15 +254,16 @@
       document.getElementById('questionContainer').innerHTML = `
         <div class="mb-2 text-sm text-blue-600 font-semibold">Question ${currentQuestionIndex + 1}</div>
         <h3 class="text-xl font-bold text-gray-800 mb-6">${escHtml(q.text)}</h3>
-        <div class="space-y-3">
+        <div class="space-y-3" id="optionsContainer">
           ${q.options.map(opt => `
             <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-all ${
               selected === opt ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
             }">
-              <input type="radio" name="answer" value="${escAttr(opt)}"
-                class="w-4 h-4 text-blue-600 accent-blue-600"
-                ${selected === opt ? 'checked' : ''}
-                onchange="recordAnswer('${escAttr(q.id)}', '${escAttr(opt)}')">
+              <input type="radio" name="answer"
+                data-question-id="${escHtml(q.id)}"
+                data-option="${escHtml(opt)}"
+                class="w-4 h-4 text-blue-600 accent-blue-600 quiz-answer-radio"
+                ${selected === opt ? 'checked' : ''}>
               <span class="ml-3 text-gray-700">${escHtml(opt)}</span>
             </label>
           `).join('')}
@@ -282,7 +283,7 @@
     function recordAnswer(questionId, selected) {
       userAnswers[questionId] = selected;
       // Highlight selected option
-      document.querySelectorAll('label').forEach(label => {
+      document.querySelectorAll('#optionsContainer label').forEach(label => {
         const input = label.querySelector('input[type=radio]');
         if (input) {
           label.classList.toggle('border-blue-500', input.checked);
@@ -321,8 +322,8 @@
         const isAnswered = userAnswers[q.id] !== undefined;
         const isCurrent = idx === currentQuestionIndex;
         return `
-          <button onclick="goToQuestion(${idx})"
-            class="w-9 h-9 rounded font-semibold text-sm transition-all ${
+          <button data-question-index="${idx}"
+            class="quick-nav-btn w-9 h-9 rounded font-semibold text-sm transition-all ${
               isCurrent  ? 'bg-blue-600 text-white ring-2 ring-blue-300' :
               isAnswered ? 'bg-green-500 text-white' :
                            'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -371,6 +372,24 @@
         hide('historySection');
         show('quizListSection');
         document.getElementById('pageTitle').textContent = 'Quizzes';
+      });
+
+      // Event delegation: start quiz buttons
+      document.getElementById('quizList').addEventListener('click', (e) => {
+        const btn = e.target.closest('.start-quiz-btn');
+        if (btn) startQuiz(btn.dataset.quizId);
+      });
+
+      // Event delegation: quick nav buttons
+      document.getElementById('quickNav').addEventListener('click', (e) => {
+        const btn = e.target.closest('.quick-nav-btn');
+        if (btn) goToQuestion(Number(btn.dataset.questionIndex));
+      });
+
+      // Event delegation: quiz answer radio buttons
+      document.getElementById('questionContainer').addEventListener('change', (e) => {
+        const input = e.target.closest('.quiz-answer-radio');
+        if (input) recordAnswer(input.dataset.questionId, input.dataset.option);
       });
     }
 
@@ -516,7 +535,7 @@
           return `
             <div class="bg-white rounded-xl shadow-sm p-5 mb-4 flex justify-between items-center hover:shadow-md transition-shadow">
               <div>
-                <p class="font-semibold text-gray-800">${escHtml(a.quizId)}</p>
+                <p class="font-semibold text-gray-800">${escHtml(a.quizTitle || a.quizId)}</p>
                 <p class="text-sm text-gray-500 mt-0.5">${date}</p>
               </div>
               <div class="text-right">
@@ -560,10 +579,6 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-    }
-
-    function escAttr(str) {
-      return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
     }
   </script>
 </body>

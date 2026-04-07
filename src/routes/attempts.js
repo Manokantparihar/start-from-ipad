@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
       id: uuidv4(),
       userId: req.userId,
       quizId,
+      quizTitle: quiz.title,
       status: 'in-progress',
       startedAt: now,
       expiresAt: now + 20 * 60 * 1000, // 20 minutes
