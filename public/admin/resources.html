@@ -197,6 +197,9 @@
       .replace(/'/g, '&#39;');
   }
 
+  // escAttr is identical to escHtml – both escape the double-quote for HTML attribute context
+  const escAttr = escHtml;
+
   // ── Reset Upload Form ─────────────────────────────────────────────────────
 
   function resetForm() {
@@ -245,8 +248,8 @@
             <a href="/api/resources/${r.id}/download"
                class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100"
                download>⬇ Download</a>
-            <button onclick="openDeleteModal('${r.id}', '${escHtml(r.title).replace(/'/g, "\\'")}')"
-                    class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100">
+            <button class="delete-btn px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100"
+                    data-id="${escAttr(r.id)}" data-title="${escAttr(r.title)}">
               🗑 Delete
             </button>
           </div>
@@ -292,7 +295,7 @@
     btn.innerHTML = '<span class="spinner"></span> Uploading…';
 
     // Use XMLHttpRequest for progress tracking
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/admin/resources');
 
@@ -314,15 +317,17 @@
             showBanner('Resource uploaded successfully!', 'success');
             resetForm();
             loadResources();
+            resolve();
           } else {
             showUploadError(data.error || 'Upload failed. Please try again.');
             progressWrap.classList.add('hidden');
+            resolve();
           }
         } catch {
           showUploadError('Upload failed. Please try again.');
           progressWrap.classList.add('hidden');
+          resolve();
         }
-        resolve();
       });
 
       xhr.addEventListener('error', () => {
@@ -330,15 +335,24 @@
         btn.innerHTML = '⬆ Upload';
         showUploadError('Network error. Please check your connection and try again.');
         progressWrap.classList.add('hidden');
-        resolve();
+        reject(new Error('Network error'));
       });
 
       xhr.withCredentials = true;
       xhr.send(formData);
+    }).catch(() => {
+      // Error already shown in the upload error banner; no further action needed
     });
   });
 
   // ── Delete Modal ──────────────────────────────────────────────────────────
+
+  // Use event delegation so dynamically rendered delete buttons work without inline handlers
+  document.getElementById('resourceList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.delete-btn');
+    if (!btn) return;
+    openDeleteModal(btn.dataset.id, btn.dataset.title);
+  });
 
   function openDeleteModal(id, title) {
     pendingDeleteId = id;

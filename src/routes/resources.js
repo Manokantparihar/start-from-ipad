@@ -7,6 +7,12 @@ const db = require('../utils/db');
 
 const router = express.Router();
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_TITLE_LENGTH = 200;
+const MAX_DESCRIPTION_LENGTH = 1000;
+
 // ─── Upload Directory ─────────────────────────────────────────────────────────
 
 const RESOURCES_DIR = path.join(__dirname, '../../uploads/resources');
@@ -23,8 +29,6 @@ const storage = multer.diskStorage({
     cb(null, `${uuidv4()}${ext}`);
   }
 });
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const upload = multer({
   storage,
@@ -57,8 +61,15 @@ router.post('/', (req, res) => {
 
     const { title, description } = req.body;
     if (!title || !String(title).trim()) {
-      // Remove the orphaned file before rejecting
-      try { fs.unlinkSync(req.file.path); } catch (_) {}
+      // Remove the orphaned file before rejecting – verify path stays within RESOURCES_DIR
+      const safeOrphanPath = path.resolve(RESOURCES_DIR, path.basename(req.file.filename));
+      if (safeOrphanPath.startsWith(RESOURCES_DIR + path.sep)) {
+        try { fs.unlinkSync(safeOrphanPath); } catch (unlinkErr) {
+          if (unlinkErr.code !== 'ENOENT') {
+            console.error('Failed to delete orphaned upload:', unlinkErr.message);
+          }
+        }
+      }
       return res.status(400).json({ error: 'Title is required.' });
     }
 
@@ -67,8 +78,8 @@ router.post('/', (req, res) => {
       const now = new Date().toISOString();
       const record = {
         id: uuidv4(),
-        title: String(title).trim().slice(0, 200),
-        description: description ? String(description).trim().slice(0, 1000) : '',
+        title: String(title).trim().slice(0, MAX_TITLE_LENGTH),
+        description: description ? String(description).trim().slice(0, MAX_DESCRIPTION_LENGTH) : '',
         origFilename: req.file.originalname,
         filename: req.file.filename,
         filePath: `/uploads/resources/${req.file.filename}`,
