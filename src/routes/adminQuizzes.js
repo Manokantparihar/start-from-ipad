@@ -140,9 +140,6 @@ router.get('/', async (req, res) => {
   try {
     const { search, mode, topic, status } = req.query;
 
-    const includeDeleted = status === 'deleted' || !status;
-    const includeUnpublished = status !== 'published';
-
     let quizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
 
     // Status filter
