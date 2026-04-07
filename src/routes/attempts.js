@@ -1,231 +1,118 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs').promises;
 const { v4: uuidv4 } = require('uuid');
-const { requireAuth } = require('../middlewares/auth');
 const db = require('../utils/db');
+const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
-// All attempts routes require authentication
-router.use(requireAuth);
+// All attempt routes require authentication
+router.use(auth);
 
-// Helper: read master questions (needed for grading)
-async function getAllQuestions() {
-  try {
-    const filePath = path.join(__dirname, '../../data/questions.json');
-    const raw = await fs.readFile(filePath, 'utf8');
-    const parsed = JSON.parse(raw || '{}');
-    return Array.isArray(parsed) ? parsed : (parsed.questions || []);
-  } catch {
-    return [];
-  }
-}
-
-// POST /api/attempts — start a new attempt
+// POST /api/attempts - start a new attempt
 router.post('/', async (req, res) => {
   try {
-    const userId = req.userId; // always from middleware, never client
     const { quizId } = req.body;
+    if (!quizId) return res.status(400).json({ error: 'quizId is required' });
 
-    if (!quizId) {
-      return res.status(400).json({ error: 'quizId is required' });
-    }
-
-    // Verify the quiz exists
     const quizzes = await db.getQuizzes();
-    const quiz = quizzes.find((q) => q.id === quizId);
-    if (!quiz) {
-      return res.status(404).json({ error: 'Quiz not found' });
-    }
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) return res.status(400).json({ error: 'Quiz not found' });
 
-    const attempts = await db.getAttempts();
+    let attempts = await db.getAttempts();
 
-    // Enforce single active in-progress attempt per user per quiz
-    const existingActive = attempts.find(
-      (a) => a.userId === userId && a.quizId === quizId && a.status === 'in-progress'
+    // Remove previous in-progress attempts for this user+quiz
+    attempts = attempts.filter(
+      a => !(a.userId === req.userId && a.quizId === quizId && a.status === 'in-progress')
     );
-    if (existingActive) {
-      return res.status(409).json({
-        error: 'You already have an in-progress attempt for this quiz',
-        attemptId: existingActive.id
-      });
-    }
 
-    const now = new Date();
-    const expiresAt = quiz.timeLimit
-      ? new Date(now.getTime() + quiz.timeLimit * 1000).toISOString()
-      : null;
-
-    const newAttempt = {
+    const now = Date.now();
+    const attempt = {
       id: uuidv4(),
-      userId,
+      userId: req.userId,
       quizId,
+      quizTitle: quiz.title,
       status: 'in-progress',
-      answers: {},
-      score: null,
-      total: quiz.questions.length,
-      createdAt: now.toISOString(),
-      expiresAt,
-      submittedAt: null
+      startedAt: now,
+      expiresAt: now + 20 * 60 * 1000, // 20 minutes
+      answers: [],
+      createdAt: now
     };
-
-    attempts.push(newAttempt);
+    attempts.push(attempt);
     await db.saveAttempts(attempts);
 
-    res.status(201).json({ message: 'Attempt started', attempt: newAttempt });
-  } catch (error) {
+    res.json({ attemptId: attempt.id, expiresAt: attempt.expiresAt });
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// PUT /api/attempts/:id/save — save answers for an in-progress attempt
+// PUT /api/attempts/:id/save - auto-save answers
 router.put('/:id/save', async (req, res) => {
   try {
-    const userId = req.userId;
-    const { answers } = req.body; // { questionId: selectedOptionIndex, ... }
-
-    if (!answers || typeof answers !== 'object') {
-      return res.status(400).json({ error: 'answers object is required' });
-    }
-
-    const attempts = await db.getAttempts();
-    const idx = attempts.findIndex((a) => a.id === req.params.id);
-
-    if (idx === -1) {
-      return res.status(404).json({ error: 'Attempt not found' });
-    }
+    let attempts = await db.getAttempts();
+    const idx = attempts.findIndex(a => a.id === req.params.id && a.userId === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'Attempt not found' });
 
     const attempt = attempts[idx];
-
-    if (attempt.userId !== userId) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
     if (attempt.status !== 'in-progress') {
       return res.status(400).json({ error: 'Attempt is not in progress' });
     }
 
-    // Check expiry
-    if (attempt.expiresAt && new Date() > new Date(attempt.expiresAt)) {
-      return res.status(400).json({ error: 'Attempt has expired' });
-    }
-
-    // Merge saved answers (allow partial saves)
-    attempts[idx].answers = { ...attempt.answers, ...answers };
-
+    attempt.answers = req.body.answers || [];
+    attempts[idx] = attempt;
     await db.saveAttempts(attempts);
 
-    res.json({ message: 'Answers saved', answers: attempts[idx].answers });
-  } catch (error) {
+    res.json({ saved: true });
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// POST /api/attempts/:id/submit — submit and grade an attempt
+// POST /api/attempts/:id/submit - submit and grade the attempt
 router.post('/:id/submit', async (req, res) => {
   try {
-    const userId = req.userId;
-    const { answers } = req.body; // optional final answers to merge before grading
-
-    const attempts = await db.getAttempts();
-    const idx = attempts.findIndex((a) => a.id === req.params.id);
-
-    if (idx === -1) {
-      return res.status(404).json({ error: 'Attempt not found' });
-    }
+    let attempts = await db.getAttempts();
+    const idx = attempts.findIndex(a => a.id === req.params.id && a.userId === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'Attempt not found' });
 
     const attempt = attempts[idx];
+    attempt.answers = req.body.answers || attempt.answers;
+    attempt.completedAt = Date.now();
+    attempt.status = Date.now() > attempt.expiresAt ? 'expired' : 'completed';
 
-    if (attempt.userId !== userId) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
-    if (attempt.status !== 'in-progress') {
-      return res.status(400).json({ error: 'Attempt already submitted' });
-    }
-
-    // Merge any final answers supplied with submission
-    const finalAnswers = answers && typeof answers === 'object'
-      ? { ...attempt.answers, ...answers }
-      : attempt.answers;
-
-    // Grade: look up correct answers from questions.json
+    // Grade the attempt
     const quizzes = await db.getQuizzes();
-    const quiz = quizzes.find((q) => q.id === attempt.quizId);
-
-    if (!quiz) {
-      return res.status(500).json({ error: 'Quiz data not found for this attempt' });
-    }
-
-    const allQuestions = await getAllQuestions();
-
+    const quiz = quizzes.find(q => q.id === attempt.quizId);
     let score = 0;
-    const results = {};
-    quiz.questions.forEach((qId) => {
-      const question = allQuestions.find((q) => q.id === qId);
-      if (!question) return;
-      const userAnswer = finalAnswers[qId];
-      const correct = question.correctAnswer;
-      const isCorrect = userAnswer !== undefined && Number(userAnswer) === correct;
-      if (isCorrect) score += 1;
-      results[qId] = {
-        userAnswer: userAnswer !== undefined ? Number(userAnswer) : null,
-        correctAnswer: correct,
-        isCorrect
-      };
-    });
+    let total = 0;
+    if (quiz && quiz.questions) {
+      total = quiz.questions.length;
+      for (const q of quiz.questions) {
+        const userAns = attempt.answers.find(a => a.questionId === q.id);
+        if (userAns && userAns.selected === q.correctAnswer) score++;
+      }
+    }
+    attempt.score = score;
+    attempt.total = total;
 
-    // Update attempt record
-    attempts[idx] = {
-      ...attempt,
-      answers: finalAnswers,
-      status: 'submitted',
-      score,
-      submittedAt: new Date().toISOString()
-    };
-
+    attempts[idx] = attempt;
     await db.saveAttempts(attempts);
 
-    res.json({
-      message: 'Attempt submitted',
-      score,
-      total: attempt.total,
-      results
-    });
-  } catch (error) {
+    res.json({ completed: true, score, total });
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// GET /api/attempts — list attempt history for the logged-in user, most recent first
+// GET /api/attempts - get current user's attempt history
 router.get('/', async (req, res) => {
   try {
-    const userId = req.userId;
-
     const attempts = await db.getAttempts();
-    const quizzes = await db.getQuizzes();
-
     const userAttempts = attempts
-      .filter((a) => a.userId === userId)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((a) => {
-        const quiz = quizzes.find((q) => q.id === a.quizId);
-        return {
-          id: a.id,
-          quizId: a.quizId,
-          quizTitle: quiz ? quiz.title : 'Unknown Quiz',
-          status: a.status,
-          score: a.score,
-          total: a.total,
-          createdAt: a.createdAt,
-          expiresAt: a.expiresAt,
-          submittedAt: a.submittedAt
-        };
-      });
-
-    res.json({ attempts: userAttempts });
-  } catch (error) {
+      .filter(a => a.userId === req.userId)
+      .sort((a, b) => b.createdAt - a.createdAt);
+    res.json(userAttempts);
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
