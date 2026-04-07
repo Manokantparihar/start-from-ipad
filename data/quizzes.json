@@ -2,102 +2,295 @@
   {
     "id": "quiz-001",
     "title": "General Knowledge - Basic",
+    "slug": "general-knowledge-basic",
+    "description": "",
+    "mode": "topic",
+    "topic": "",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": null,
+    "createdAt": "2026-04-07T17:23:04.713Z",
+    "updatedAt": "2026-04-07T17:23:04.713Z",
+    "adminNotes": "",
+    "questionCount": 5,
     "questions": [
       {
         "id": "q1",
-        "text": "भारत का राष्ट्रीय पक्षी कौन सा है?",
-        "options": ["तोता", "मोर", "कबूतर", "बाज"],
-        "correctAnswer": "मोर"
+        "question": "भारत का राष्ट्रीय पक्षी कौन सा है?",
+        "options": [
+          "तोता",
+          "मोर",
+          "कबूतर",
+          "बाज"
+        ],
+        "correctAnswer": "मोर",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q2",
-        "text": "भारत की राजधानी क्या है?",
-        "options": ["मुंबई", "कोलकाता", "नई दिल्ली", "चेन्नई"],
-        "correctAnswer": "नई दिल्ली"
+        "question": "भारत की राजधानी क्या है?",
+        "options": [
+          "मुंबई",
+          "कोलकाता",
+          "नई दिल्ली",
+          "चेन्नई"
+        ],
+        "correctAnswer": "नई दिल्ली",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q3",
-        "text": "2 + 2 = ?",
-        "options": ["3", "4", "5", "6"],
-        "correctAnswer": "4"
+        "question": "2 + 2 = ?",
+        "options": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correctAnswer": "4",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q4",
-        "text": "राजस्थान की राजधानी कौन सी है?",
-        "options": ["जोधपुर", "उदयपुर", "जयपुर", "कोटा"],
-        "correctAnswer": "जयपुर"
+        "question": "राजस्थान की राजधानी कौन सी है?",
+        "options": [
+          "जोधपुर",
+          "उदयपुर",
+          "जयपुर",
+          "कोटा"
+        ],
+        "correctAnswer": "जयपुर",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q5",
-        "text": "पृथ्वी का सबसे बड़ा महाद्वीप कौन सा है?",
-        "options": ["अफ्रीका", "यूरोप", "एशिया", "ऑस्ट्रेलिया"],
-        "correctAnswer": "एशिया"
+        "question": "पृथ्वी का सबसे बड़ा महाद्वीप कौन सा है?",
+        "options": [
+          "अफ्रीका",
+          "यूरोप",
+          "एशिया",
+          "ऑस्ट्रेलिया"
+        ],
+        "correctAnswer": "एशिया",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       }
     ]
   },
   {
     "id": "quiz-002",
     "title": "Rajasthan GK",
+    "slug": "rajasthan-gk",
+    "description": "",
+    "mode": "topic",
+    "topic": "",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": null,
+    "createdAt": "2026-04-07T17:23:04.713Z",
+    "updatedAt": "2026-04-07T17:23:04.713Z",
+    "adminNotes": "",
+    "questionCount": 4,
     "questions": [
       {
         "id": "q1",
-        "text": "राजस्थान का सबसे बड़ा जिला कौन सा है?",
-        "options": ["बाड़मेर", "जैसलमेर", "बीकानेर", "जोधपुर"],
-        "correctAnswer": "जैसलमेर"
+        "question": "राजस्थान का सबसे बड़ा जिला कौन सा है?",
+        "options": [
+          "बाड़मेर",
+          "जैसलमेर",
+          "बीकानेर",
+          "जोधपुर"
+        ],
+        "correctAnswer": "जैसलमेर",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q2",
-        "text": "राजस्थान में कितने जिले हैं?",
-        "options": ["30", "33", "36", "50"],
-        "correctAnswer": "33"
+        "question": "राजस्थान में कितने जिले हैं?",
+        "options": [
+          "30",
+          "33",
+          "36",
+          "50"
+        ],
+        "correctAnswer": "33",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q3",
-        "text": "राजस्थान का राज्य पशु कौन सा है?",
-        "options": ["शेर", "हाथी", "ऊँट", "चीतल"],
-        "correctAnswer": "ऊँट"
+        "question": "राजस्थान का राज्य पशु कौन सा है?",
+        "options": [
+          "शेर",
+          "हाथी",
+          "ऊँट",
+          "चीतल"
+        ],
+        "correctAnswer": "ऊँट",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q4",
-        "text": "राजस्थान का राज्य फूल कौन सा है?",
-        "options": ["गुलाब", "रोहिड़ा", "कमल", "सूरजमुखी"],
-        "correctAnswer": "रोहिड़ा"
+        "question": "राजस्थान का राज्य फूल कौन सा है?",
+        "options": [
+          "गुलाब",
+          "रोहिड़ा",
+          "कमल",
+          "सूरजमुखी"
+        ],
+        "correctAnswer": "रोहिड़ा",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       }
     ]
   },
   {
     "id": "quiz-003",
     "title": "Mathematics - Basic",
+    "slug": "mathematics-basic",
+    "description": "",
+    "mode": "topic",
+    "topic": "",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": null,
+    "createdAt": "2026-04-07T17:23:04.713Z",
+    "updatedAt": "2026-04-07T17:23:04.713Z",
+    "adminNotes": "",
+    "questionCount": 5,
     "questions": [
       {
         "id": "q1",
-        "text": "15 × 4 = ?",
-        "options": ["50", "55", "60", "65"],
-        "correctAnswer": "60"
+        "question": "15 × 4 = ?",
+        "options": [
+          "50",
+          "55",
+          "60",
+          "65"
+        ],
+        "correctAnswer": "60",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q2",
-        "text": "100 ÷ 5 = ?",
-        "options": ["15", "20", "25", "30"],
-        "correctAnswer": "20"
+        "question": "100 ÷ 5 = ?",
+        "options": [
+          "15",
+          "20",
+          "25",
+          "30"
+        ],
+        "correctAnswer": "20",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q3",
-        "text": "√144 = ?",
-        "options": ["10", "11", "12", "13"],
-        "correctAnswer": "12"
+        "question": "√144 = ?",
+        "options": [
+          "10",
+          "11",
+          "12",
+          "13"
+        ],
+        "correctAnswer": "12",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q4",
-        "text": "25% of 200 = ?",
-        "options": ["40", "50", "60", "70"],
-        "correctAnswer": "50"
+        "question": "25% of 200 = ?",
+        "options": [
+          "40",
+          "50",
+          "60",
+          "70"
+        ],
+        "correctAnswer": "50",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       },
       {
         "id": "q5",
-        "text": "यदि एक वर्ग की भुजा 5 cm है, तो उसका क्षेत्रफल क्या होगा?",
-        "options": ["10 cm²", "20 cm²", "25 cm²", "30 cm²"],
-        "correctAnswer": "25 cm²"
+        "question": "यदि एक वर्ग की भुजा 5 cm है, तो उसका क्षेत्रफल क्या होगा?",
+        "options": [
+          "10 cm²",
+          "20 cm²",
+          "25 cm²",
+          "30 cm²"
+        ],
+        "correctAnswer": "25 cm²",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
       }
     ]
   }

@@ -27,6 +27,7 @@
           <a href="mock-tests.html" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
           <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">🧩 Quizzes</a>
           <a href="admin.html" class="text-gray-700 hover:text-blue-600 font-medium">⚙️ Admin</a>
+          <a id="adminQuizLink" href="/admin/" class="hidden text-blue-700 hover:text-blue-900 font-medium">🗂 Quiz Manager</a>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -195,6 +196,11 @@
       const { user } = await meResponse.json();
       document.getElementById('userName').textContent = user.name;
       localStorage.setItem('userName', user.name);
+      // Show admin quiz manager link for admins
+      if (user.role === 'admin') {
+        const adminLink = document.getElementById('adminQuizLink');
+        if (adminLink) adminLink.classList.remove('hidden');
+      }
 
       // Load stats from backend API
       let attempts = [];

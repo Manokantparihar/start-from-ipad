@@ -35,6 +35,7 @@ router.post('/register', async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
+      role: 'user',
       createdAt: new Date().toISOString()
     };
 
@@ -99,7 +100,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Current user
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   try {
     const token = req.cookies.token;
 
@@ -108,12 +109,16 @@ router.get('/me', (req, res) => {
     }
 
     const payload = jwt.verify(token, JWT_SECRET);
+    // Look up full user to include role
+    const users = await db.getUsers();
+    const user = users.find(u => u.id === payload.userId);
 
     return res.json({
       user: {
         id: payload.userId,
-        name: payload.name,
-        email: payload.email
+        name: user ? user.name : payload.name,
+        email: user ? user.email : payload.email,
+        role: user ? (user.role || 'user') : 'user'
       }
     });
   } catch (error) {
