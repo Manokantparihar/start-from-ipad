@@ -95,7 +95,7 @@
                 class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold flex items-center gap-2">
           ⬆ Upload
         </button>
-        <button type="button" onclick="resetForm()"
+        <button type="button" id="resetBtn"
                 class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">
           Reset
         </button>
@@ -107,7 +107,7 @@
   <section>
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-lg font-semibold text-gray-800">📁 Uploaded Resources</h2>
-      <button onclick="loadResources()"
+      <button id="refreshBtn"
               class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">🔄 Refresh</button>
     </div>
 
@@ -135,7 +135,7 @@
               class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-semibold">
         Delete
       </button>
-      <button onclick="closeDeleteModal()"
+      <button id="cancelDeleteBtn"
               class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">
         Cancel
       </button>
@@ -391,6 +391,10 @@
   document.getElementById('deleteModal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
   });
+
+  document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+  document.getElementById('resetBtn').addEventListener('click', resetForm);
+  document.getElementById('refreshBtn').addEventListener('click', loadResources);
 
   // ── Auth Check & Init ─────────────────────────────────────────────────────
 
