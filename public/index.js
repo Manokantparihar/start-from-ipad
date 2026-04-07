@@ -13,6 +13,63 @@ const sections = document.querySelectorAll("section[id]");
 const searchInput = document.getElementById("searchInput");
 const filterChips = document.getElementById("filterChips");
 
+const loginModal = document.getElementById('loginModal');
+const signupModal = document.getElementById('signupModal');
+
+const openSignupBtn = document.getElementById('openSignupBtn');
+const backToLoginBtn = document.getElementById('backToLoginBtn');
+const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
+const closeSignupModalBtn = document.getElementById('closeSignupModalBtn');
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+
+document.getElementById("showSignup")?.addEventListener("click", () => {
+  loginForm?.classList.add("hidden");
+  signupForm?.classList.remove("hidden");
+});
+
+document.getElementById("showLogin")?.addEventListener("click", () => {
+  signupForm?.classList.add("hidden");
+  loginForm?.classList.remove("hidden");
+});
+
+function showLoginModal() {
+  if (!loginModal) return;
+  loginModal.classList.remove('hidden');
+  loginModal.classList.add('flex');
+}
+
+function hideLoginModal() {
+  if (!loginModal) return;
+  loginModal.classList.add('hidden');
+  loginModal.classList.remove('flex');
+}
+
+function showSignupModal() {
+  if (!signupModal) return;
+  signupModal.classList.remove('hidden');
+  signupModal.classList.add('flex');
+}
+
+function hideSignupModal() {
+  if (!signupModal) return;
+  signupModal.classList.add('hidden');
+  signupModal.classList.remove('flex');
+}
+
+openSignupBtn?.addEventListener('click', () => {
+  hideLoginModal();
+  showSignupModal();
+});
+
+backToLoginBtn?.addEventListener('click', () => {
+  hideSignupModal();
+  showLoginModal();
+});
+
+closeLoginModalBtn?.addEventListener('click', hideLoginModal);
+closeSignupModalBtn?.addEventListener('click', hideSignupModal);
+
 let allSearchableItems = [];
 let activeFilter = "all";
 
@@ -385,3 +442,33 @@ const filterAllCards = () => {
     }
   });
 };
+
+async function setupNavbar() {
+  try {
+    const res = await fetch('/api/auth/me', {
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+    const user = data.user;
+
+    // Username set karo
+    const nameEl = document.getElementById('navUserName');
+    if (nameEl) nameEl.textContent = user.name;
+
+    // Admin link control
+    const adminLink = document.getElementById('adminNavLink');
+    if (adminLink) {
+      if (user.role === 'admin') {
+        adminLink.style.display = 'inline-flex';
+      } else {
+        adminLink.style.display = 'none';
+      }
+    }
+
+  } catch (err) {
+    console.error('Navbar error:', err);
+  }
+}
+
+setupNavbar();

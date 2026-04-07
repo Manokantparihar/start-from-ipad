@@ -33,7 +33,7 @@ A modern, interactive test-based learning platform built with vanilla JavaScript
   - Weak topics identification
 - Recent quiz history
 
-### 5. **Admin Panel** (`admin.html`)
+### 5. **Admin Panel** (`admin/index.html`)
 - Add/Edit/Delete questions
 - Bulk import/export via JSON
 - Question validation
@@ -56,7 +56,7 @@ start-from-ipad/
 ├── daily-quiz.html             # Daily quiz interface
 ├── topic-tests.html            # Topic selection & testing
 ├── mock-tests.html             # Full mock test with timer
-├── admin.html                  # Question management
+├── admin/index.html            # Question management
 ├── index.html                  # Old homepage (still available)
 ├── package.json                # Updated with Tailwind CSS
 ├── server.js                   # Node.js server
@@ -84,7 +84,7 @@ Server runs on `http://localhost:5500`
 - **Daily Quiz:** `http://localhost:5500/daily-quiz.html`
 - **Topic Tests:** `http://localhost:5500/topic-tests.html`
 - **Mock Tests:** `http://localhost:5500/mock-tests.html`
-- **Admin Panel:** `http://localhost:5500/admin.html`
+- **Admin Panel:** `http://localhost:5500/admin/index.html`
 
 ## 📊 Data Structure
 
@@ -264,7 +264,7 @@ The platform uses **localStorage-based authentication** (suitable for developmen
 ## 📝 Adding Questions
 
 ### Method 1: Admin Panel
-1. Go to `http://localhost:5500/admin.html`
+1. Go to `http://localhost:5500/admin/index.html`
 2. Click "Add Question" tab
 3. Fill in all fields
 4. Click "Add Question"

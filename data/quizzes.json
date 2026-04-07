@@ -5,16 +5,16 @@
     "slug": "general-knowledge-basic",
     "description": "",
     "mode": "topic",
-    "topic": "",
+    "topic": "G.k",
     "difficulty": "medium",
     "timeLimit": 20,
     "isPublished": true,
     "isDeleted": false,
     "createdBy": null,
     "createdAt": "2026-04-07T17:23:04.713Z",
-    "updatedAt": "2026-04-07T17:23:04.713Z",
+    "updatedAt": "2026-04-07T20:31:39.797Z",
     "adminNotes": "",
-    "questionCount": 5,
+    "questionCount": 6,
     "questions": [
       {
         "id": "q1",
@@ -97,6 +97,23 @@
         "explanation": "",
         "topic": "",
         "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "17a47362-a1ca-4e03-812d-44a050847bad",
+        "question": "What is the capital of Rajasthan?",
+        "options": [
+          "Jaipur",
+          "Jodhpur",
+          "Kota",
+          "Pali"
+        ],
+        "correctAnswer": "Jaipur",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "easy",
         "marks": 1,
         "negativeMarks": 0,
         "isActive": true
@@ -293,5 +310,41 @@
         "isActive": true
       }
     ]
+  },
+  {
+    "id": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "title": "Daily quiz 01",
+    "slug": "daily-quiz-01",
+    "description": "",
+    "mode": "daily",
+    "topic": "Geography",
+    "difficulty": "medium",
+    "timeLimit": 5,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-07T20:51:57.649Z",
+    "updatedAt": "2026-04-07T20:52:42.536Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "question": "What is the length of guru shikhar ?",
+        "options": [
+          "1722 meter",
+          "1979 meter",
+          "2002 meter",
+          "187 meter"
+        ],
+        "correctAnswer": "1722 meter",
+        "explanation": "",
+        "topic": "",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 1
   }
 ]

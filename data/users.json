@@ -6,5 +6,25 @@
     "password": "$2b$10$Z7NLEhurmp2ddMAwXvALLu1jGjg6RwGlQrQi5DiIe/7Y3FbPy3heq",
     "role": "admin",
     "createdAt": "2026-04-07T19:00:00.000Z"
+  },
+  {
+    "id": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "name": "manokant",
+    "email": "manokant2002@gmail.com",
+    "password": "$2b$10$Kf05xgQI21h8C659EwHFWe4Q5kTGFy59tP3dcuPWctzbO/5C3bj6m",
+    "role": "admin",
+    "createdAt": "2026-04-07T20:25:46.502Z",
+    "profileImage": "/uploads/avatars/cb370536-35ed-4e83-b730-7070f92e1e04.jpeg",
+    "updatedAt": "2026-04-07T20:34:43.153Z"
+  },
+  {
+    "id": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "name": "divya",
+    "email": "divya@gmail.com",
+    "password": "$2b$10$iHB/sVHIAtt6817S7CqgZOLr57gQWFZjjc3thmX.j3o3qJ0Lwy55e",
+    "role": "user",
+    "createdAt": "2026-04-07T20:37:24.804Z",
+    "profileImage": "/uploads/avatars/401f86e2-8e13-4199-b271-f5be696d2f58.jpeg",
+    "updatedAt": "2026-04-07T20:44:11.730Z"
   }
 ]

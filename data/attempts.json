@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "id": "eb9db8a9-4a47-4ab9-ad3a-3161b1c4c3a2",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1775594127647,
+    "expiresAt": 1775595327647,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "मोर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "नई दिल्ली"
+      },
+      {
+        "questionId": "q3",
+        "selected": "4"
+      },
+      {
+        "questionId": "q4",
+        "selected": "जयपुर"
+      },
+      {
+        "questionId": "q5",
+        "selected": "एशिया"
+      },
+      {
+        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
+        "selected": "Jaipur"
+      }
+    ],
+    "createdAt": 1775594127647,
+    "completedAt": 1775594155983,
+    "score": 6,
+    "total": 6
+  },
+  {
+    "id": "1500fca8-8952-47ae-ba31-d45780175f64",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775595197331,
+    "expiresAt": 1775596397331,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775595197331,
+    "completedAt": 1775595209511,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "2b45763d-e919-4f91-ad49-cdb488ae6562",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775595214285,
+    "expiresAt": 1775596414285,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1979 meter"
+      }
+    ],
+    "createdAt": 1775595214285,
+    "completedAt": 1775595219442,
+    "score": 0,
+    "total": 1
+  },
+  {
+    "id": "cd0b850e-5cd4-41e8-a687-00c77b565b56",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775600416699,
+    "expiresAt": 1775601616699,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "बाड़मेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "33"
+      },
+      {
+        "questionId": "q3",
+        "selected": "हाथी"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775600416699,
+    "completedAt": 1775600426919,
+    "score": 2,
+    "total": 4
+  }
+]
