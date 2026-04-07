@@ -46,9 +46,26 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET /api/attempts/:id - get a single attempt (owner only)
+router.get('/:id', async (req, res) => {
+  try {
+    const attempts = await db.getAttempts();
+    const attempt = attempts.find(a => a.id === req.params.id && a.userId === req.userId);
+    if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
+    res.json(attempt);
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // PUT /api/attempts/:id/save - auto-save answers
 router.put('/:id/save', async (req, res) => {
   try {
+    const { answers } = req.body;
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({ error: 'answers must be an array' });
+    }
+
     let attempts = await db.getAttempts();
     const idx = attempts.findIndex(a => a.id === req.params.id && a.userId === req.userId);
     if (idx === -1) return res.status(404).json({ error: 'Attempt not found' });
@@ -58,7 +75,7 @@ router.put('/:id/save', async (req, res) => {
       return res.status(400).json({ error: 'Attempt is not in progress' });
     }
 
-    attempt.answers = req.body.answers || [];
+    attempt.answers = answers;
     attempts[idx] = attempt;
     await db.saveAttempts(attempts);
 
@@ -71,12 +88,20 @@ router.put('/:id/save', async (req, res) => {
 // POST /api/attempts/:id/submit - submit and grade the attempt
 router.post('/:id/submit', async (req, res) => {
   try {
+    const submittedAnswers = req.body.answers;
+    if (!Array.isArray(submittedAnswers)) {
+      return res.status(400).json({ error: 'answers must be an array' });
+    }
+
     let attempts = await db.getAttempts();
     const idx = attempts.findIndex(a => a.id === req.params.id && a.userId === req.userId);
     if (idx === -1) return res.status(404).json({ error: 'Attempt not found' });
 
     const attempt = attempts[idx];
-    attempt.answers = req.body.answers || attempt.answers;
+    if (attempt.status !== 'in-progress') {
+      return res.status(400).json({ error: 'Attempt already submitted' });
+    }
+    attempt.answers = submittedAnswers;
     attempt.completedAt = Date.now();
     attempt.status = Date.now() > attempt.expiresAt ? 'expired' : 'completed';
 
