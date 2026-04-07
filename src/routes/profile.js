@@ -7,7 +7,31 @@ const db = require('../utils/db');
 
 const router = express.Router();
 
-// ─── Avatar Upload Setup ─────────────────────────────────────────────────────
+// ─── Email Validation Helper ──────────────────────────────────────────────────
+
+/**
+ * ReDoS-safe email validator.
+ * Checks: max total length (254), local part ≤64, at least one dot in domain.
+ */
+function isValidEmail(value) {
+  if (typeof value !== 'string') return false;
+  const normalized = value.trim().toLowerCase();
+  if (normalized.length > 254) return false;
+  const atIdx = normalized.indexOf('@');
+  if (atIdx < 1) return false;
+  const local = normalized.slice(0, atIdx);
+  const domain = normalized.slice(atIdx + 1);
+  return (
+    local.length >= 1 &&
+    local.length <= 64 &&
+    domain.length >= 1 &&
+    domain.length <= 255 &&
+    domain.includes('.') &&
+    !/\s/.test(normalized)
+  );
+}
+
+// ─── Avatar Upload Setup ──────────────────────────────────────────────────────
 
 const AVATAR_DIR = path.join(__dirname, '../../uploads/avatars');
 if (!fs.existsSync(AVATAR_DIR)) {
@@ -88,8 +112,7 @@ router.put('/', async (req, res) => {
     // Validate email
     if (email !== undefined) {
       const normalized = String(email).trim().toLowerCase();
-      // Use a simple, ReDoS-safe check: length + basic format
-      if (normalized.length > 254 || !/^[^@\s]{1,64}@[^@\s]{1,255}$/.test(normalized) || normalized.indexOf('.') === -1) {
+      if (!isValidEmail(normalized)) {
         return res.status(400).json({ error: 'Please enter a valid email address.' });
       }
       // Check uniqueness (ignore self)
@@ -184,7 +207,11 @@ router.post('/avatar', (req, res, next) => {
       if (prevImage) {
         const prevFile = path.join(__dirname, '../../', prevImage);
         if (fs.existsSync(prevFile)) {
-          try { fs.unlinkSync(prevFile); } catch { /* ignore if already gone */ }
+          try { fs.unlinkSync(prevFile); } catch (unlinkErr) {
+            if (unlinkErr.code !== 'ENOENT') {
+              console.error('Failed to delete previous avatar:', unlinkErr.message);
+            }
+          }
         }
       }
 

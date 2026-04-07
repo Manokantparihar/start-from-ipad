@@ -190,6 +190,22 @@
     let currentUser = null;
     let selectedAvatarFile = null;
 
+    // ── Email Validation (mirrors server-side logic) ───────────────────────────
+    function isValidEmail(value) {
+      if (typeof value !== 'string') return false;
+      const v = value.trim().toLowerCase();
+      if (v.length > 254) return false;
+      const atIdx = v.indexOf('@');
+      if (atIdx < 1) return false;
+      const local = v.slice(0, atIdx);
+      const domain = v.slice(atIdx + 1);
+      return (
+        local.length >= 1 && local.length <= 64 &&
+        domain.length >= 1 && domain.length <= 255 &&
+        domain.includes('.') && !/\s/.test(v)
+      );
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
     function showBanner(el, message, type /* 'success' | 'error' */) {
       el.textContent = message;
@@ -374,8 +390,7 @@
         showFieldErr(nameErr, 'Name is required.');
         hasError = true;
       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email || !emailRegex.test(email)) {
+      if (!email || !isValidEmail(email)) {
         showFieldErr(emailErr, 'Please enter a valid email address.');
         hasError = true;
       }
