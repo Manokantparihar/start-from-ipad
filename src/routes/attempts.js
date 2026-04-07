@@ -109,7 +109,7 @@ router.put('/:id/save', async (req, res) => {
   }
 });
 
-// POST /api/attempts/:id/submit — submit and grade attempt
+// POST /apin/attempts/:id/submit — submit and grade attempt
 router.post('/:id/submit', async (req, res) => {
   try {
     const attempts = await getAttempts();
