@@ -3,11 +3,11 @@ const db = require('../utils/db');
 
 const router = express.Router();
 
-// GET /api/quizzes - list all quizzes (id and title only)
+// GET /api/quizzes - list all quizzes (id, title, and question count only)
 router.get('/', async (req, res) => {
   try {
     const quizzes = await db.getQuizzes();
-    res.json(quizzes.map(({ id, title }) => ({ id, title })));
+    res.json(quizzes.map(({ id, title, questions }) => ({ id, title, questionCount: (questions || []).length })));
   } catch {
     res.status(500).json({ error: 'Server error' });
   }

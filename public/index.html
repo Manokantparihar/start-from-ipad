@@ -67,7 +67,7 @@
       </div>
       <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-600">
         <div class="text-3xl font-bold text-purple-600" id="stat-total-time">-</div>
-        <div class="text-gray-600 text-sm mt-2">Total Time Spent</div>
+        <div class="text-gray-600 text-sm mt-2">Quizzes Completed</div>
       </div>
       <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-600">
         <div class="text-3xl font-bold text-orange-600" id="stat-weak-topic">-</div>
@@ -196,37 +196,56 @@
       document.getElementById('userName').textContent = user.name;
       localStorage.setItem('userName', user.name);
 
-      // Load stats
-      const stats = ProgressTracker.getStats();
-      const history = ProgressTracker.getQuizHistory(5);
-      const weakTopics = ProgressTracker.getWeakTopics(1);
+      // Load stats from backend API
+      let attempts = [];
+      try {
+        const attemptsRes = await fetch('/api/attempts', { credentials: 'include' });
+        if (attemptsRes.ok) attempts = await attemptsRes.json();
+      } catch { /* ignore */ }
 
-      document.getElementById('stat-attempts').textContent = stats.totalAttempts;
-      document.getElementById('stat-avg-score').textContent = (stats.averageScore || 0) + '%';
-      
-      const totalSeconds = history.reduce((sum, q) => sum + q.timeSpent, 0);
-      document.getElementById('stat-total-time').textContent = UI.formatTime(totalSeconds);
-      
-      if (weakTopics.length > 0) {
-        document.getElementById('stat-weak-topic').textContent = weakTopics[0][0] + ' (' + weakTopics[0][1].avgScore + '%)';
-      }
+      const completed = attempts.filter(a => a.status === 'completed' && a.total > 0);
+      const totalAttempts = attempts.length;
+      const avgScore = completed.length > 0
+        ? Math.round(completed.reduce((sum, a) => sum + Math.round((a.score / a.total) * 100), 0) / completed.length)
+        : 0;
 
-      // Load recent quizzes
-      if (history.length > 0) {
-        const html = history.map(quiz => `
-          <div class="p-4 hover:bg-gray-50">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="font-medium text-gray-800">${quiz.type === 'daily' ? '📝 Daily Quiz' : quiz.topic ? '🎯 ' + quiz.topic : '⏱️ Mock Test'}</p>
-                <p class="text-sm text-gray-500">${UI.formatDate(quiz.date)}</p>
-              </div>
-              <div class="text-right">
-                <p class="text-lg font-bold text-blue-600">${quiz.score}%</p>
-                <p class="text-sm text-gray-500">${quiz.correctAnswers}/${quiz.totalQuestions}</p>
+      document.getElementById('stat-attempts').textContent = totalAttempts;
+      document.getElementById('stat-avg-score').textContent = avgScore + '%';
+      document.getElementById('stat-total-time').textContent = completed.length > 0 ? completed.length + ' done' : '-';
+      document.getElementById('stat-weak-topic').textContent = '-';
+
+      // Load recent quizzes from backend
+      const recent = attempts.slice(0, 5);
+      if (recent.length > 0) {
+        function escHtml(str) {
+          return String(str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+        const html = recent.map(a => {
+          const date = new Date(a.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          });
+          const scoreText = (a.status === 'completed' || a.status === 'expired') && a.total > 0
+            ? Math.round((a.score / a.total) * 100) + '%'
+            : a.status === 'in-progress' ? 'In progress' : '-';
+          const scoreFraction = a.total > 0 ? `${a.score}/${a.total}` : '';
+          return `
+            <div class="p-4 hover:bg-gray-50">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-medium text-gray-800">📝 ${escHtml(a.quizTitle || a.quizId)}</p>
+                  <p class="text-sm text-gray-500">${date}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold text-blue-600">${scoreText}</p>
+                  <p class="text-sm text-gray-500">${scoreFraction}</p>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
         document.getElementById('recentQuizzes').innerHTML = html;
       }
     }
