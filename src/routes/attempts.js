@@ -46,7 +46,55 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/attempts/:id - get a single attempt (owner only)
+// GET /api/attempts/:id/review - get a single completed attempt with per-question breakdown (owner only)
+router.get('/:id/review', async (req, res) => {
+  try {
+    const attempts = await db.getAttempts();
+    const attempt = attempts.find(a => a.id === req.params.id && a.userId === req.userId);
+    if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
+
+    // Look up quiz (including deleted/unpublished) so old attempts still work
+    const allQuizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
+    const quiz = allQuizzes.find(q => q.id === attempt.quizId);
+
+    let breakdown = [];
+    if (quiz && Array.isArray(quiz.questions)) {
+      breakdown = quiz.questions.map(q => {
+        const userAns = (attempt.answers || []).find(a => a.questionId === q.id);
+        const selected = userAns ? userAns.selected : null;
+        return {
+          questionId: q.id,
+          question: q.question || q.text || '',
+          options: q.options || [],
+          correctAnswer: q.correctAnswer,
+          selected,
+          isCorrect: selected !== null && selected === q.correctAnswer,
+          explanation: q.explanation || ''
+        };
+      });
+    }
+
+    const maxScore = typeof attempt.total === 'number' ? attempt.total : 0;
+    const score = typeof attempt.score === 'number' ? attempt.score : 0;
+    const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+
+    res.json({
+      id: attempt.id,
+      quizId: attempt.quizId,
+      quizTitle: attempt.quizTitle,
+      status: attempt.status,
+      date: attempt.completedAt || attempt.createdAt,
+      score,
+      maxScore,
+      percent,
+      type: quiz ? (quiz.mode || 'topic') : 'topic',
+      breakdown
+    });
+  } catch (err) {
+    console.error('[GET /api/attempts/:id/review]', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 router.get('/:id', async (req, res) => {
   try {
     const attempts = await db.getAttempts();
@@ -130,15 +178,56 @@ router.post('/:id/submit', async (req, res) => {
   }
 });
 
-// GET /api/attempts - get current user's attempt history
+// GET /api/attempts - get current user's attempt history (enriched with percent, maxScore, type)
+// Optional query params: ?type=mock|topic|daily  ?status=completed|in-progress|expired
+// Optional pagination: ?page=1&limit=20 (when provided, returns { attempts, total, page, limit, totalPages })
 router.get('/', async (req, res) => {
   try {
-    const attempts = await db.getAttempts();
-    const userAttempts = attempts
+    const allAttempts = await db.getAttempts();
+    // Load quizzes (including deleted) so we can look up mode/type for any attempt
+    const allQuizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
+    const quizMap = {};
+    for (const q of allQuizzes) quizMap[q.id] = q;
+
+    let userAttempts = allAttempts
       .filter(a => a.userId === req.userId)
       .sort((a, b) => b.createdAt - a.createdAt);
+
+    // Enrich each attempt with computed fields
+    userAttempts = userAttempts.map(a => {
+      const quiz = quizMap[a.quizId] || {};
+      const maxScore = typeof a.total === 'number' ? a.total : 0;
+      const score = typeof a.score === 'number' ? a.score : 0;
+      const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+      return {
+        ...a,
+        maxScore,
+        percent,
+        type: quiz.mode || 'topic',
+        date: a.completedAt || a.createdAt
+      };
+    });
+
+    // Apply filters
+    const { type, status } = req.query;
+    if (type) userAttempts = userAttempts.filter(a => a.type === type);
+    if (status) userAttempts = userAttempts.filter(a => a.status === status);
+
+    // Pagination (only when ?page is explicitly provided)
+    const pageParam = req.query.page;
+    if (pageParam !== undefined) {
+      const page = Math.max(1, parseInt(pageParam, 10) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+      const total = userAttempts.length;
+      const totalPages = Math.ceil(total / limit) || 1;
+      const start = (page - 1) * limit;
+      const paginated = userAttempts.slice(start, start + limit);
+      return res.json({ attempts: paginated, total, page, limit, totalPages });
+    }
+
     res.json(userAttempts);
-  } catch {
+  } catch (err) {
+    console.error('[GET /api/attempts]', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
