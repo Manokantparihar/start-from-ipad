@@ -169,11 +169,17 @@ function normalizeQuestion(q) {
   };
 }
 
+// RESOURCES (PDFs / Notes / Assignments)
+const getResources = () => readFile('resources');
+const saveResources = (resources) => writeFile('resources', resources);
+
 module.exports = {
   getUsers,
   saveUsers,
   getAttempts,
   saveAttempts,
+  getResources,
+  saveResources,
   // Quiz helpers (migration-friendly abstraction)
   getQuizzes,
   saveQuizzes,
