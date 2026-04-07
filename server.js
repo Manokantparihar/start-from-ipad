@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/routes/auth');
 const quizRoutes = require('./src/routes/quizzes');
 const attemptRoutes = require('./src/routes/attempts');
+const adminQuizRoutes = require('./src/routes/adminQuizzes');
+const authMiddleware = require('./src/middlewares/auth');
+const isAdmin = require('./src/middlewares/isAdmin');
 
 const app = express();
 const PORT = process.env.PORT || 5500;
@@ -26,6 +29,8 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
+// Admin quiz management – protected by auth + isAdmin
+app.use('/api/admin/quizzes', authMiddleware, isAdmin, adminQuizRoutes);
 
 // Serve all static files from the 'public' folder automatically!
 app.use(express.static(path.join(__dirname, 'public')));

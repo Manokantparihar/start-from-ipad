@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Quiz Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    .banner { transition: opacity 0.3s; }
+    .hidden { display: none !important; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .modal-backdrop { background: rgba(0,0,0,0.45); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- ── BANNER (success/error notifications) ── -->
+<div id="banner" class="banner hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center"></div>
+
+<!-- ── HEADER ── -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-blue-600">⚙️ Admin – Quiz Manager</h1>
+      <span id="adminBadge" class="hidden px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Admin</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="userNameDisplay" class="text-sm text-gray-600"></span>
+      <a href="/index.html" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">← Dashboard</a>
+      <button id="logoutBtn" class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ── ACCESS DENIED (shown if not admin) ── -->
+<div id="accessDenied" class="hidden max-w-lg mx-auto mt-24 text-center p-8 bg-white rounded-2xl shadow">
+  <div class="text-5xl mb-4">🔒</div>
+  <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+  <p class="text-gray-600 mb-6">This page is only accessible to administrators.</p>
+  <a href="/index.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go to Dashboard</a>
+</div>
+
+<!-- ── LOADING STATE ── -->
+<div id="pageLoading" class="text-center py-24 text-gray-500">
+  <div class="spinner border-blue-500 mx-auto mb-3" style="width:32px;height:32px;border-width:3px;border-top-color:transparent;border-color:#3b82f6;border-top-color:transparent;"></div>
+  <p>Checking authentication…</p>
+</div>
+
+<!-- ── MAIN ADMIN PANEL ── -->
+<main id="adminPanel" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap gap-3 mb-6 items-center justify-between">
+    <div class="flex flex-wrap gap-3 items-center">
+      <input id="searchInput" type="text" placeholder="Search quizzes…"
+             class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-56">
+      <select id="modeFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">All Modes</option>
+        <option value="daily">Daily</option>
+        <option value="topic">Topic</option>
+        <option value="mock">Mock</option>
+      </select>
+      <select id="statusFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">All Status</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+        <option value="deleted">Deleted</option>
+      </select>
+      <button onclick="loadQuizzes()" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">🔄 Refresh</button>
+    </div>
+    <button onclick="openCreateForm()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700">+ New Quiz</button>
+  </div>
+
+  <!-- Quiz List -->
+  <div id="quizListSection">
+    <div id="quizTableWrap" class="bg-white rounded-xl shadow overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold text-gray-700">Title</th>
+            <th class="px-4 py-3 text-left font-semibold text-gray-700">Mode</th>
+            <th class="px-4 py-3 text-left font-semibold text-gray-700">Difficulty</th>
+            <th class="px-4 py-3 text-center font-semibold text-gray-700">Qs</th>
+            <th class="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="quizTableBody" class="divide-y divide-gray-100">
+          <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="hidden text-center py-16 text-gray-400">
+      <div class="text-5xl mb-3">📭</div>
+      <p class="text-lg font-medium">No quizzes found</p>
+      <p class="text-sm mt-1">Try adjusting filters or create a new quiz.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════════════════════
+     QUIZ CREATE/EDIT MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="quizFormModal" class="hidden fixed inset-0 z-50 flex items-start justify-center modal-backdrop overflow-y-auto py-8">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 my-auto" onclick="event.stopPropagation()">
+
+    <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+      <h2 id="formTitle" class="text-xl font-bold text-gray-800">Create Quiz</h2>
+      <button onclick="closeFormModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+    </div>
+
+    <form id="quizForm" class="px-6 py-5 space-y-6" novalidate>
+      <!-- Error summary -->
+      <div id="formErrors" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 space-y-1"></div>
+
+      <!-- Basic fields -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
+          <input id="fTitle" type="text" placeholder="Quiz title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Slug <span class="text-gray-400 font-normal text-xs">(auto-generated)</span></label>
+          <input id="fSlug" type="text" placeholder="auto-generated-from-title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-gray-50">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+        <textarea id="fDescription" rows="2" placeholder="Optional description" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Mode <span class="text-red-500">*</span></label>
+          <select id="fMode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+            <option value="">Select</option>
+            <option value="daily">Daily</option>
+            <option value="topic">Topic</option>
+            <option value="mock">Mock</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Topic</label>
+          <input id="fTopic" type="text" placeholder="e.g. GK" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Difficulty</label>
+          <select id="fDifficulty" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Time Limit (min) <span class="text-red-500">*</span></label>
+          <input id="fTimeLimit" type="number" min="1" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Admin Notes <span class="text-gray-400 font-normal text-xs">(internal, not shown to users)</span></label>
+        <textarea id="fAdminNotes" rows="1" placeholder="Internal notes for admin use" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm resize-none"></textarea>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input id="fIsPublished" type="checkbox" class="w-4 h-4 accent-blue-600">
+        <label for="fIsPublished" class="text-sm font-semibold text-gray-700">Publish this quiz (visible to users)</label>
+      </div>
+
+      <!-- Questions section -->
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-base font-bold text-gray-800">Questions</h3>
+          <button type="button" onclick="addQuestion()" class="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700">+ Add Question</button>
+        </div>
+        <div id="questionsContainer" class="space-y-4"></div>
+        <div id="noQuestionsHint" class="text-center py-6 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">No questions yet. Click "+ Add Question" to begin.</div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="button" onclick="closeFormModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">Cancel</button>
+        <button type="button" onclick="previewQuiz()" class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm hover:bg-purple-200">👁 Preview</button>
+        <button type="submit" id="saveBtn" class="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-60">
+          <span id="saveBtnText">Save Quiz</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     PREVIEW MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
+      <h2 class="text-lg font-bold text-gray-800">📋 Quiz Preview</h2>
+      <button onclick="closePreviewModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+    </div>
+    <div id="previewContent" class="px-6 py-5"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     CONFIRM DELETE MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 text-center" onclick="event.stopPropagation()">
+    <div class="text-4xl mb-3">🗑️</div>
+    <h3 class="text-lg font-bold text-gray-800 mb-2" id="confirmTitle">Delete Quiz?</h3>
+    <p class="text-gray-500 text-sm mb-6" id="confirmMessage">This will soft-delete the quiz. It can be restored later.</p>
+    <div class="flex gap-3 justify-center">
+      <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">Cancel</button>
+      <button id="confirmOkBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+let currentUser = null;
+let editingQuizId = null;
+let quizList = [];
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  if (currentUser && currentUser.role === 'admin') {
+    initPage();
+  }
+});
+
+async function checkAuth() {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) throw new Error('not authenticated');
+    const data = await res.json();
+    currentUser = data.user;
+  } catch {
+    currentUser = null;
+  }
+
+  document.getElementById('pageLoading').classList.add('hidden');
+
+  if (!currentUser) {
+    // Redirect to login
+    window.location.href = '/index.html';
+    return;
+  }
+
+  if (currentUser.role !== 'admin') {
+    document.getElementById('accessDenied').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('adminBadge').classList.remove('hidden');
+  document.getElementById('userNameDisplay').textContent = currentUser.name || currentUser.email;
+  document.getElementById('adminPanel').classList.remove('hidden');
+}
+
+function initPage() {
+  loadQuizzes();
+  document.getElementById('searchInput').addEventListener('input', debounce(loadQuizzes, 350));
+  document.getElementById('modeFilter').addEventListener('change', loadQuizzes);
+  document.getElementById('statusFilter').addEventListener('change', loadQuizzes);
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/index.html';
+  });
+  document.getElementById('quizForm').addEventListener('submit', handleFormSubmit);
+  // Auto-generate slug from title
+  document.getElementById('fTitle').addEventListener('input', (e) => {
+    document.getElementById('fSlug').value = generateSlug(e.target.value);
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// QUIZ LIST
+// ════════════════════════════════════════════════════════════
+async function loadQuizzes() {
+  const search = document.getElementById('searchInput').value;
+  const mode   = document.getElementById('modeFilter').value;
+  const status = document.getElementById('statusFilter').value;
+
+  const params = new URLSearchParams();
+  if (search) params.set('search', search);
+  if (mode)   params.set('mode', mode);
+  if (status) params.set('status', status);
+
+  const tbody = document.getElementById('quizTableBody');
+  tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">Loading…</td></tr>';
+
+  try {
+    const res = await fetch(`/api/admin/quizzes?${params.toString()}`);
+    if (res.status === 401) { window.location.href = '/index.html'; return; }
+    if (res.status === 403) { showBanner('Access denied – admin only.', 'error'); return; }
+    if (!res.ok) throw new Error('Failed to load');
+    quizList = await res.json();
+    renderTable(quizList);
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-red-400">Error loading quizzes: ${esc(err.message)}</td></tr>`;
+  }
+}
+
+function renderTable(quizzes) {
+  const tbody = document.getElementById('quizTableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (!quizzes.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = quizzes.map(q => `
+    <tr class="hover:bg-gray-50 ${q.isDeleted ? 'opacity-50' : ''}">
+      <td class="px-4 py-3">
+        <div class="font-medium text-gray-800">${esc(q.title)}</div>
+        <div class="text-xs text-gray-400">${esc(q.slug || '')} ${q.topic ? '· ' + esc(q.topic) : ''}</div>
+      </td>
+      <td class="px-4 py-3">
+        <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${modeBadge(q.mode)}">${esc(q.mode || '—')}</span>
+      </td>
+      <td class="px-4 py-3 text-gray-600 text-xs">${esc(q.difficulty || '—')}</td>
+      <td class="px-4 py-3 text-center text-gray-600">${Number(q.questionCount) || 0}</td>
+      <td class="px-4 py-3 text-center">
+        ${q.isDeleted
+          ? '<span class="px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-xs font-semibold">Deleted</span>'
+          : q.isPublished
+            ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Published</span>'
+            : '<span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">Draft</span>'
+        }
+      </td>
+      <td class="px-4 py-3 text-right whitespace-nowrap space-x-1">
+        ${!q.isDeleted ? `
+          <button onclick="editQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100">Edit</button>
+          <button onclick="togglePublish('${esc(q.id)}', ${!!q.isPublished})" class="px-2 py-1 text-xs ${q.isPublished ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'} rounded">
+            ${q.isPublished ? 'Unpublish' : 'Publish'}
+          </button>
+          <button onclick="duplicateQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-purple-50 text-purple-600 rounded hover:bg-purple-100">Copy</button>
+          <button onclick="confirmDelete('${esc(q.id)}', '${esc(q.title)}')" class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100">Delete</button>
+        ` : `
+          <span class="text-xs text-gray-400 italic">Soft-deleted</span>
+        `}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function modeBadge(mode) {
+  return mode === 'daily' ? 'bg-blue-100 text-blue-700'
+       : mode === 'mock'  ? 'bg-purple-100 text-purple-700'
+       : 'bg-gray-100 text-gray-600';
+}
+
+// ════════════════════════════════════════════════════════════
+// CRUD ACTIONS
+// ════════════════════════════════════════════════════════════
+async function togglePublish(id, currentlyPublished) {
+  try {
+    const res = await fetch(`/api/admin/quizzes/${id}/publish`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isPublished: !currentlyPublished })
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    showBanner(currentlyPublished ? 'Quiz unpublished.' : 'Quiz published!', 'success');
+    loadQuizzes();
+  } catch (err) {
+    showBanner('Error: ' + err.message, 'error');
+  }
+}
+
+async function duplicateQuiz(id) {
+  try {
+    const res = await fetch(`/api/admin/quizzes/${id}/duplicate`, { method: 'POST' });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    showBanner('Quiz duplicated as draft.', 'success');
+    loadQuizzes();
+  } catch (err) {
+    showBanner('Error: ' + err.message, 'error');
+  }
+}
+
+let pendingDeleteId = null;
+function confirmDelete(id, title) {
+  pendingDeleteId = id;
+  document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
+  document.getElementById('confirmMessage').textContent = 'This will soft-delete the quiz. It will no longer be visible to users.';
+  document.getElementById('confirmOkBtn').onclick = doDelete;
+  document.getElementById('confirmModal').classList.remove('hidden');
+}
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.add('hidden');
+  pendingDeleteId = null;
+}
+async function doDelete() {
+  if (!pendingDeleteId) return;
+  closeConfirmModal();
+  try {
+    const res = await fetch(`/api/admin/quizzes/${pendingDeleteId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    showBanner('Quiz deleted (soft).', 'success');
+    loadQuizzes();
+  } catch (err) {
+    showBanner('Error: ' + err.message, 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// FORM: CREATE / EDIT
+// ════════════════════════════════════════════════════════════
+function openCreateForm() {
+  editingQuizId = null;
+  document.getElementById('formTitle').textContent = 'Create Quiz';
+  document.getElementById('saveBtnText').textContent = 'Create Quiz';
+  resetForm();
+  document.getElementById('quizFormModal').classList.remove('hidden');
+}
+
+async function editQuiz(id) {
+  try {
+    const res = await fetch(`/api/admin/quizzes/${id}`);
+    if (!res.ok) throw new Error('Quiz not found');
+    const quiz = await res.json();
+
+    editingQuizId = id;
+    document.getElementById('formTitle').textContent = 'Edit Quiz';
+    document.getElementById('saveBtnText').textContent = 'Save Changes';
+    resetForm();
+    populateForm(quiz);
+    document.getElementById('quizFormModal').classList.remove('hidden');
+  } catch (err) {
+    showBanner('Error loading quiz: ' + err.message, 'error');
+  }
+}
+
+function resetForm() {
+  document.getElementById('quizForm').reset();
+  document.getElementById('fSlug').value = '';
+  document.getElementById('formErrors').classList.add('hidden');
+  document.getElementById('formErrors').innerHTML = '';
+  document.getElementById('questionsContainer').innerHTML = '';
+  document.getElementById('noQuestionsHint').classList.remove('hidden');
+  document.getElementById('fDifficulty').value = 'medium';
+  document.getElementById('fTimeLimit').value = '20';
+}
+
+function populateForm(quiz) {
+  document.getElementById('fTitle').value = quiz.title || '';
+  document.getElementById('fSlug').value = quiz.slug || '';
+  document.getElementById('fDescription').value = quiz.description || '';
+  document.getElementById('fMode').value = quiz.mode || '';
+  document.getElementById('fTopic').value = quiz.topic || '';
+  document.getElementById('fDifficulty').value = quiz.difficulty || 'medium';
+  document.getElementById('fTimeLimit').value = quiz.timeLimit || 20;
+  document.getElementById('fAdminNotes').value = quiz.adminNotes || '';
+  document.getElementById('fIsPublished').checked = !!quiz.isPublished;
+
+  (quiz.questions || []).forEach(q => addQuestion(q));
+}
+
+function closeFormModal() {
+  document.getElementById('quizFormModal').classList.add('hidden');
+  editingQuizId = null;
+}
+
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('saveBtn');
+  const btnText = document.getElementById('saveBtnText');
+  btn.disabled = true;
+  const origText = btnText.textContent;
+  btnText.innerHTML = '<span class="spinner"></span> Saving…';
+
+  try {
+    const body = buildFormPayload();
+    const url    = editingQuizId ? `/api/admin/quizzes/${editingQuizId}` : '/api/admin/quizzes';
+    const method = editingQuizId ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showFormErrors(data.errors || [{ message: data.error || 'Unknown error' }]);
+      return;
+    }
+
+    showBanner(editingQuizId ? 'Quiz updated!' : 'Quiz created!', 'success');
+    closeFormModal();
+    loadQuizzes();
+  } catch (err) {
+    showBanner('Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = origText;
+  }
+}
+
+function buildFormPayload() {
+  const questions = [];
+  document.querySelectorAll('.question-block').forEach(block => {
+    const qText = block.querySelector('.q-text').value.trim();
+    const opts = Array.from(block.querySelectorAll('.q-option')).map(o => o.value.trim());
+    const correctIdx = block.querySelector('.q-correct:checked')?.value;
+    const correct = correctIdx !== undefined ? opts[parseInt(correctIdx)] : '';
+    questions.push({
+      id: block.dataset.qid || undefined,
+      question: qText,
+      options: opts,
+      correctAnswer: correct,
+      explanation: block.querySelector('.q-explanation').value.trim(),
+      topic: block.querySelector('.q-topic').value.trim(),
+      difficulty: block.querySelector('.q-difficulty').value,
+      marks: parseFloat(block.querySelector('.q-marks').value) || 1,
+      negativeMarks: parseFloat(block.querySelector('.q-neg-marks').value) || 0,
+      isActive: block.querySelector('.q-active').checked
+    });
+  });
+
+  return {
+    title: document.getElementById('fTitle').value.trim(),
+    slug: document.getElementById('fSlug').value.trim() || undefined,
+    description: document.getElementById('fDescription').value.trim(),
+    mode: document.getElementById('fMode').value,
+    topic: document.getElementById('fTopic').value.trim(),
+    difficulty: document.getElementById('fDifficulty').value,
+    timeLimit: parseFloat(document.getElementById('fTimeLimit').value),
+    adminNotes: document.getElementById('fAdminNotes').value.trim(),
+    isPublished: document.getElementById('fIsPublished').checked,
+    questions
+  };
+}
+
+function showFormErrors(errors) {
+  const box = document.getElementById('formErrors');
+  box.innerHTML = errors.map(e => `<div>• ${esc(e.message || JSON.stringify(e))}</div>`).join('');
+  box.classList.remove('hidden');
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ════════════════════════════════════════════════════════════
+// DYNAMIC QUESTIONS
+// ════════════════════════════════════════════════════════════
+let qCounter = 0;
+
+function addQuestion(data = null) {
+  qCounter++;
+  const hint = document.getElementById('noQuestionsHint');
+  hint.classList.add('hidden');
+
+  const container = document.getElementById('questionsContainer');
+  const idx = container.children.length;
+  const qid = data?.id || '';
+  const block = document.createElement('div');
+  block.className = 'question-block bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3';
+  block.dataset.qid = qid;
+
+  const options = data?.options || ['', '', '', ''];
+  const correctVal = data?.correctAnswer || '';
+  const correctIdx = options.indexOf(correctVal);
+
+  block.innerHTML = `
+    <div class="flex justify-between items-center">
+      <h4 class="text-sm font-bold text-gray-700">Question ${idx + 1}</h4>
+      <button type="button" onclick="removeQuestion(this)" class="text-red-400 hover:text-red-600 text-xs">✕ Remove</button>
+    </div>
+
+    <textarea class="q-text w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none" rows="2" placeholder="Question text…">${esc(data?.question || data?.text || '')}</textarea>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 mb-1 block">Options <span class="text-gray-400 font-normal">(select correct answer)</span></label>
+      <div class="options-list space-y-2">
+        ${options.map((opt, oi) => `
+          <div class="flex items-center gap-2 option-row" data-oi="${oi}">
+            <input type="radio" name="correct_q${qCounter}" value="${oi}" class="q-correct" ${oi === correctIdx ? 'checked' : ''}>
+            <input type="text" class="q-option flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" placeholder="Option ${oi + 1}" value="${esc(opt)}">
+            ${options.length > 2 ? `<button type="button" onclick="removeOption(this)" class="text-red-400 hover:text-red-600 text-xs">✕</button>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      <button type="button" onclick="addOption(this)" class="mt-2 text-xs text-blue-600 hover:text-blue-800">+ Add Option</button>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+      <div>
+        <label class="font-semibold text-gray-600 block mb-0.5">Topic</label>
+        <input class="q-topic w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400" value="${esc(data?.topic || '')}">
+      </div>
+      <div>
+        <label class="font-semibold text-gray-600 block mb-0.5">Difficulty</label>
+        <select class="q-difficulty w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400">
+          <option value="easy" ${data?.difficulty==='easy'?'selected':''}>Easy</option>
+          <option value="medium" ${!data?.difficulty||data?.difficulty==='medium'?'selected':''}>Medium</option>
+          <option value="hard" ${data?.difficulty==='hard'?'selected':''}>Hard</option>
+        </select>
+      </div>
+      <div>
+        <label class="font-semibold text-gray-600 block mb-0.5">Marks</label>
+        <input class="q-marks w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400" type="number" step="0.5" min="0" value="${data?.marks !== undefined ? data.marks : 1}">
+      </div>
+      <div>
+        <label class="font-semibold text-gray-600 block mb-0.5">Neg. Marks</label>
+        <input class="q-neg-marks w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400" type="number" step="0.25" min="0" value="${data?.negativeMarks !== undefined ? data.negativeMarks : 0}">
+      </div>
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-0.5">Explanation</label>
+      <textarea class="q-explanation w-full px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none" rows="1" placeholder="Optional explanation for correct answer">${esc(data?.explanation || '')}</textarea>
+    </div>
+
+    <div class="flex items-center gap-2 text-xs">
+      <input type="checkbox" class="q-active" ${data?.isActive !== false ? 'checked' : ''}>
+      <label class="text-gray-600">Active (include in quiz)</label>
+    </div>
+  `;
+
+  container.appendChild(block);
+  renumberQuestions();
+}
+
+function removeQuestion(btn) {
+  btn.closest('.question-block').remove();
+  renumberQuestions();
+  if (!document.getElementById('questionsContainer').children.length) {
+    document.getElementById('noQuestionsHint').classList.remove('hidden');
+  }
+}
+
+function renumberQuestions() {
+  document.querySelectorAll('.question-block h4').forEach((h, i) => {
+    h.textContent = `Question ${i + 1}`;
+  });
+}
+
+function addOption(btn) {
+  const block = btn.closest('.question-block');
+  const list  = block.querySelector('.options-list');
+  const oi    = list.children.length;
+  const qName = block.querySelector('.q-correct').name;
+  const row   = document.createElement('div');
+  row.className = 'flex items-center gap-2 option-row';
+  row.dataset.oi = oi;
+  row.innerHTML = `
+    <input type="radio" name="${qName}" value="${oi}" class="q-correct">
+    <input type="text" class="q-option flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" placeholder="Option ${oi + 1}">
+    <button type="button" onclick="removeOption(this)" class="text-red-400 hover:text-red-600 text-xs">✕</button>
+  `;
+  list.appendChild(row);
+  refreshRemoveOptionBtns(list);
+}
+
+function removeOption(btn) {
+  const list = btn.closest('.options-list');
+  btn.closest('.option-row').remove();
+  refreshRemoveOptionBtns(list);
+  // Re-index radio values
+  list.querySelectorAll('.option-row').forEach((row, i) => {
+    row.dataset.oi = i;
+    row.querySelector('.q-correct').value = i;
+    row.querySelector('.q-option').placeholder = `Option ${i + 1}`;
+  });
+}
+
+function refreshRemoveOptionBtns(list) {
+  const rows = list.querySelectorAll('.option-row');
+  rows.forEach(row => {
+    const btn = row.querySelector('button');
+    if (rows.length <= 2) {
+      if (btn) btn.remove();
+    } else if (!btn) {
+      const newBtn = document.createElement('button');
+      newBtn.type = 'button';
+      newBtn.className = 'text-red-400 hover:text-red-600 text-xs';
+      newBtn.textContent = '✕';
+      newBtn.onclick = () => removeOption(newBtn);
+      row.appendChild(newBtn);
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// PREVIEW
+// ════════════════════════════════════════════════════════════
+function previewQuiz() {
+  const payload = buildFormPayload();
+  const content = document.getElementById('previewContent');
+  content.innerHTML = `
+    <div class="mb-4">
+      <h3 class="text-xl font-bold text-gray-800">${esc(payload.title || 'Untitled')}</h3>
+      <div class="flex gap-3 flex-wrap text-xs text-gray-500 mt-1">
+        <span>Mode: <b>${esc(payload.mode || '—')}</b></span>
+        <span>Difficulty: <b>${esc(payload.difficulty || '—')}</b></span>
+        <span>Time: <b>${esc(String(payload.timeLimit))} min</b></span>
+        <span>${payload.isPublished ? '✅ Published' : '📝 Draft'}</span>
+      </div>
+      ${payload.description ? `<p class="text-sm text-gray-600 mt-2">${esc(payload.description)}</p>` : ''}
+    </div>
+    <div class="space-y-5">
+      ${payload.questions.length === 0
+        ? '<p class="text-gray-400 text-sm text-center py-4">No questions added.</p>'
+        : payload.questions.map((q, i) => `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <p class="font-semibold text-gray-800 text-sm mb-2">${i + 1}. ${esc(q.question)}</p>
+            <ul class="space-y-1">
+              ${q.options.map((o, oi) => `
+                <li class="text-sm px-3 py-1.5 rounded-lg ${o === q.correctAnswer ? 'bg-green-100 text-green-800 font-medium' : 'bg-gray-50 text-gray-700'}">
+                  ${esc(String.fromCharCode(65 + oi))}. ${esc(o)}
+                  ${o === q.correctAnswer ? ' ✓' : ''}
+                </li>
+              `).join('')}
+            </ul>
+            ${q.explanation ? `<p class="text-xs text-gray-500 mt-2 italic">💡 ${esc(q.explanation)}</p>` : ''}
+          </div>
+        `).join('')}
+    </div>
+  `;
+  document.getElementById('previewModal').classList.remove('hidden');
+}
+function closePreviewModal() {
+  document.getElementById('previewModal').classList.add('hidden');
+}
+
+// ════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════
+function showBanner(msg, type = 'success') {
+  const banner = document.getElementById('banner');
+  banner.textContent = msg;
+  banner.className = `banner fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center
+    ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+  banner.classList.remove('hidden');
+  setTimeout(() => banner.classList.add('hidden'), 3500);
+}
+
+function esc(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function generateSlug(title) {
+  const safe = String(title).slice(0, 200);
+  return safe.toLowerCase().trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/_/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function debounce(fn, delay) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+</script>
+</body>
+</html>

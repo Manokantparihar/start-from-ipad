@@ -105,9 +105,10 @@ router.post('/:id/submit', async (req, res) => {
     attempt.completedAt = Date.now();
     attempt.status = Date.now() > attempt.expiresAt ? 'expired' : 'completed';
 
-    // Grade the attempt
-    const quizzes = await db.getQuizzes();
-    const quiz = quizzes.find(q => q.id === attempt.quizId);
+    // Grade the attempt – look up quiz including deleted/unpublished
+    // so existing in-progress attempts can still be submitted
+    const allQuizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
+    const quiz = allQuizzes.find(q => q.id === attempt.quizId);
     let score = 0;
     let total = 0;
     if (quiz && quiz.questions) {
