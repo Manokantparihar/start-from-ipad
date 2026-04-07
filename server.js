@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/routes/auth');
+const attemptRoutes = require('./src/routes/attempts');
 
 const app = express();
 const PORT = process.env.PORT || 5500;
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 // --- API Routes ---
 app.use('/api/auth', authRoutes);
+app.use('/api/attempts', attemptRoutes);
 
 // Serve all static files from the 'public' folder automatically!
 app.use(express.static(path.join(__dirname, 'public')));
