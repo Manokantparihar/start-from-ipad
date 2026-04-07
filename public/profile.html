@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile – RPSC/REET Prep</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
+    .animation-slideIn { animation: slideIn 0.3s ease-in; }
+    #avatarPreview { object-fit: cover; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header/Navigation -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-8">
+        <a href="index.html" class="text-2xl font-bold text-blue-600">📚 RPSC/REET</a>
+        <div class="hidden md:flex gap-6">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Dashboard</a>
+          <a href="daily-quiz.html" class="text-gray-700 hover:text-blue-600 font-medium">Daily Quiz</a>
+          <a href="topic-tests.html" class="text-gray-700 hover:text-blue-600 font-medium">Topic Tests</a>
+          <a href="mock-tests.html" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
+          <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">🧩 Quizzes</a>
+          <a id="adminQuizLink" href="/admin/" class="hidden text-blue-700 hover:text-blue-900 font-medium">🗂 Quiz Manager</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="profile.html" class="text-blue-600 font-semibold underline underline-offset-2">My Profile</a>
+        <span id="userName" class="text-gray-700 font-medium"></span>
+        <button id="logoutBtn" class="px-3 py-1 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Auth guard: shown while loading -->
+  <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
+    <div class="text-gray-400 text-lg">Loading…</div>
+  </div>
+
+  <!-- Main content (hidden until authenticated) -->
+  <main id="profileMain" class="hidden max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animation-slideIn">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">My Profile</h2>
+
+    <!-- ── Avatar Section ─────────────────────────────────────── -->
+    <section class="bg-white rounded-xl shadow-md p-6 mb-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Profile Photo</h3>
+      <div class="flex items-center gap-6">
+        <!-- Avatar display -->
+        <div class="relative w-24 h-24 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center flex-shrink-0 border-2 border-blue-200">
+          <img id="avatarPreview" src="" alt="Avatar" class="hidden w-24 h-24 rounded-full">
+          <span id="avatarInitials" class="text-3xl font-bold text-blue-600"></span>
+        </div>
+
+        <div class="flex-1">
+          <label for="avatarInput" class="block text-sm text-gray-500 mb-2">JPEG, PNG, WebP or GIF · max 2 MB</label>
+          <div class="flex gap-3 flex-wrap">
+            <label class="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">
+              Choose Photo
+              <input id="avatarInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
+            </label>
+            <button id="avatarSaveBtn" class="hidden px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm">Upload</button>
+          </div>
+          <div id="avatarBanner" class="hidden mt-3 px-4 py-2 rounded-lg text-sm font-medium"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Profile Info Section ────────────────────────────────── -->
+    <section class="bg-white rounded-xl shadow-md p-6 mb-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Account Info</h3>
+
+      <!-- Read-only info -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 text-sm text-gray-500">
+        <div>
+          <span class="font-medium text-gray-600">Role:</span>
+          <span id="displayRole" class="ml-1 capitalize"></span>
+        </div>
+        <div>
+          <span class="font-medium text-gray-600">Member since:</span>
+          <span id="displayCreatedAt" class="ml-1"></span>
+        </div>
+      </div>
+
+      <form id="profileForm" class="space-y-4" novalidate>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1" for="profileName">Name</label>
+          <input
+            id="profileName"
+            type="text"
+            maxlength="100"
+            autocomplete="name"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Your full name"
+          >
+          <p id="profileNameErr" class="hidden mt-1 text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1" for="profileEmail">Email</label>
+          <input
+            id="profileEmail"
+            type="email"
+            autocomplete="email"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="you@example.com"
+          >
+          <p id="profileEmailErr" class="hidden mt-1 text-sm text-red-600"></p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="submit"
+            id="profileSaveBtn"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >Save Changes</button>
+          <button
+            type="button"
+            id="profileCancelBtn"
+            class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+          >Reset</button>
+        </div>
+
+        <div id="profileBanner" class="hidden px-4 py-3 rounded-lg text-sm font-medium"></div>
+      </form>
+    </section>
+
+    <!-- ── Change Password Section ─────────────────────────────── -->
+    <section class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Change Password</h3>
+
+      <form id="passwordForm" class="space-y-4" novalidate>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1" for="currentPassword">Current Password</label>
+          <input
+            id="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Your current password"
+          >
+          <p id="currentPasswordErr" class="hidden mt-1 text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1" for="newPassword">New Password</label>
+          <input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="At least 6 characters"
+          >
+          <p id="newPasswordErr" class="hidden mt-1 text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1" for="confirmPassword">Confirm New Password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Repeat new password"
+          >
+          <p id="confirmPasswordErr" class="hidden mt-1 text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            id="passwordSaveBtn"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >Change Password</button>
+        </div>
+
+        <div id="passwordBanner" class="hidden px-4 py-3 rounded-lg text-sm font-medium"></div>
+      </form>
+    </section>
+
+  </main>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    let currentUser = null;
+    let selectedAvatarFile = null;
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function showBanner(el, message, type /* 'success' | 'error' */) {
+      el.textContent = message;
+      el.className =
+        type === 'success'
+          ? 'px-4 py-3 rounded-lg text-sm font-medium bg-green-50 text-green-700 border border-green-200'
+          : 'px-4 py-3 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200';
+      el.classList.remove('hidden');
+    }
+
+    function hideBanner(el) {
+      el.classList.add('hidden');
+      el.textContent = '';
+    }
+
+    function showFieldErr(el, msg) {
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    function hideFieldErr(el) {
+      el.classList.add('hidden');
+      el.textContent = '';
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      try {
+        return new Date(iso).toLocaleDateString(undefined, {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+      } catch { return iso; }
+    }
+
+    // ── Avatar rendering ───────────────────────────────────────────────────────
+    function renderAvatar(profileImage, name) {
+      const img = document.getElementById('avatarPreview');
+      const initials = document.getElementById('avatarInitials');
+
+      if (profileImage) {
+        img.src = profileImage;
+        img.classList.remove('hidden');
+        initials.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        img.src = '';
+        const parts = (name || '?').trim().split(/\s+/).filter(Boolean);
+        initials.textContent = parts.length >= 2
+          ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+          : parts.length === 1
+            ? parts[0].slice(0, 2).toUpperCase()
+            : '?';
+        initials.classList.remove('hidden');
+      }
+    }
+
+    // ── Populate form ──────────────────────────────────────────────────────────
+    function populateProfile(user) {
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('profileName').value = user.name;
+      document.getElementById('profileEmail').value = user.email;
+      document.getElementById('displayRole').textContent = user.role || 'user';
+      document.getElementById('displayCreatedAt').textContent = formatDate(user.createdAt);
+      renderAvatar(user.profileImage, user.name);
+    }
+
+    // ── Load current user ──────────────────────────────────────────────────────
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/profile', { credentials: 'include' });
+        if (res.status === 401) {
+          window.location.href = 'index.html';
+          return;
+        }
+        if (!res.ok) throw new Error('Failed to load profile');
+        const data = await res.json();
+        currentUser = data.user;
+        populateProfile(currentUser);
+
+        // Show admin link
+        if (currentUser.role === 'admin') {
+          document.getElementById('adminQuizLink').classList.remove('hidden');
+        }
+
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('profileMain').classList.remove('hidden');
+      } catch {
+        document.getElementById('loadingScreen').innerHTML =
+          '<p class="text-red-500">Could not load profile. <a href="index.html" class="underline text-blue-600">Go to Dashboard</a></p>';
+      }
+    }
+
+    // ── Avatar: file picker ────────────────────────────────────────────────────
+    document.getElementById('avatarInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const banner = document.getElementById('avatarBanner');
+      hideBanner(banner);
+
+      const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowed.includes(file.type)) {
+        showBanner(banner, 'Only JPEG, PNG, WebP, or GIF images are allowed.', 'error');
+        e.target.value = '';
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        showBanner(banner, 'Image is too large. Maximum size is 2 MB.', 'error');
+        e.target.value = '';
+        return;
+      }
+
+      selectedAvatarFile = file;
+      // Show local preview
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.getElementById('avatarPreview');
+        img.src = ev.target.result;
+        img.classList.remove('hidden');
+        document.getElementById('avatarInitials').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+      document.getElementById('avatarSaveBtn').classList.remove('hidden');
+    });
+
+    // ── Avatar: upload ─────────────────────────────────────────────────────────
+    document.getElementById('avatarSaveBtn').addEventListener('click', async () => {
+      if (!selectedAvatarFile) return;
+      const btn = document.getElementById('avatarSaveBtn');
+      const banner = document.getElementById('avatarBanner');
+      hideBanner(banner);
+      btn.disabled = true;
+      btn.textContent = 'Uploading…';
+
+      try {
+        const formData = new FormData();
+        formData.append('avatar', selectedAvatarFile);
+        const res = await fetch('/api/profile/avatar', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+        currentUser.profileImage = data.profileImage;
+        showBanner(banner, data.message || 'Avatar updated!', 'success');
+        btn.classList.add('hidden');
+        selectedAvatarFile = null;
+        document.getElementById('avatarInput').value = '';
+      } catch (err) {
+        showBanner(banner, err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Upload';
+      }
+    });
+
+    // ── Profile form ───────────────────────────────────────────────────────────
+    document.getElementById('profileCancelBtn').addEventListener('click', () => {
+      if (currentUser) populateProfile(currentUser);
+      hideBanner(document.getElementById('profileBanner'));
+      hideFieldErr(document.getElementById('profileNameErr'));
+      hideFieldErr(document.getElementById('profileEmailErr'));
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('profileName').value.trim();
+      const email = document.getElementById('profileEmail').value.trim();
+      const saveBtn = document.getElementById('profileSaveBtn');
+      const banner = document.getElementById('profileBanner');
+      const nameErr = document.getElementById('profileNameErr');
+      const emailErr = document.getElementById('profileEmailErr');
+
+      hideBanner(banner);
+      hideFieldErr(nameErr);
+      hideFieldErr(emailErr);
+
+      // Client-side validation
+      let hasError = false;
+      if (!name) {
+        showFieldErr(nameErr, 'Name is required.');
+        hasError = true;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        showFieldErr(emailErr, 'Please enter a valid email address.');
+        hasError = true;
+      }
+      if (hasError) return;
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      try {
+        const res = await fetch('/api/profile', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          const msg = data.error || 'Update failed.';
+          // Show field-specific errors when possible
+          if (msg.toLowerCase().includes('email')) {
+            showFieldErr(emailErr, msg);
+          } else if (msg.toLowerCase().includes('name')) {
+            showFieldErr(nameErr, msg);
+          } else {
+            showBanner(banner, msg, 'error');
+          }
+          return;
+        }
+        currentUser = { ...currentUser, ...data.user };
+        document.getElementById('userName').textContent = currentUser.name;
+        showBanner(banner, data.message || 'Profile updated!', 'success');
+      } catch {
+        showBanner(banner, 'Network error. Please try again.', 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+      }
+    });
+
+    // ── Password form ──────────────────────────────────────────────────────────
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const saveBtn = document.getElementById('passwordSaveBtn');
+      const banner = document.getElementById('passwordBanner');
+      const currentErr = document.getElementById('currentPasswordErr');
+      const newErr = document.getElementById('newPasswordErr');
+      const confirmErr = document.getElementById('confirmPasswordErr');
+
+      hideBanner(banner);
+      hideFieldErr(currentErr);
+      hideFieldErr(newErr);
+      hideFieldErr(confirmErr);
+
+      // Client-side validation
+      let hasError = false;
+      if (!currentPassword) {
+        showFieldErr(currentErr, 'Current password is required.');
+        hasError = true;
+      }
+      if (!newPassword || newPassword.length < 6) {
+        showFieldErr(newErr, 'New password must be at least 6 characters.');
+        hasError = true;
+      }
+      if (newPassword && confirmPassword !== newPassword) {
+        showFieldErr(confirmErr, 'Passwords do not match.');
+        hasError = true;
+      }
+      if (newPassword && currentPassword && newPassword === currentPassword) {
+        showFieldErr(newErr, 'New password must be different from current password.');
+        hasError = true;
+      }
+      if (hasError) return;
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Changing…';
+
+      try {
+        const res = await fetch('/api/profile/password', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          const msg = data.error || 'Password change failed.';
+          if (msg.toLowerCase().includes('current') || msg.toLowerCase().includes('incorrect')) {
+            showFieldErr(currentErr, msg);
+          } else {
+            showBanner(banner, msg, 'error');
+          }
+          return;
+        }
+        document.getElementById('passwordForm').reset();
+        showBanner(banner, data.message || 'Password changed successfully!', 'success');
+      } catch {
+        showBanner(banner, 'Network error. Please try again.', 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Change Password';
+      }
+    });
+
+    // ── Logout ─────────────────────────────────────────────────────────────────
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = 'index.html';
+    });
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

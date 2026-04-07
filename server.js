@@ -8,6 +8,7 @@ const authRoutes = require('./src/routes/auth');
 const quizRoutes = require('./src/routes/quizzes');
 const attemptRoutes = require('./src/routes/attempts');
 const adminQuizRoutes = require('./src/routes/adminQuizzes');
+const profileRoutes = require('./src/routes/profile');
 const authMiddleware = require('./src/middlewares/auth');
 const isAdmin = require('./src/middlewares/isAdmin');
 
@@ -31,6 +32,11 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
 // Admin quiz management – protected by auth + isAdmin
 app.use('/api/admin/quizzes', authMiddleware, isAdmin, adminQuizRoutes);
+// User profile – protected by auth
+app.use('/api/profile', authMiddleware, profileRoutes);
+
+// Serve uploaded avatars
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve all static files from the 'public' folder automatically!
 app.use(express.static(path.join(__dirname, 'public')));
