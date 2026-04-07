@@ -271,7 +271,7 @@
       const total = attempts.length;
       const completed = attempts.filter(a => a.status === 'completed' && a.maxScore > 0);
       const avg = completed.length
-        ? Math.round(completed.reduce((s, a) => s + a.percent, 0) / completed.length)
+        ? Math.round(completed.reduce((sum, a) => sum + a.percent, 0) / completed.length)
         : null;
       const best = completed.length
         ? Math.max(...completed.map(a => a.percent))
@@ -451,7 +451,8 @@
         const data = await res.json();
 
         titleEl.textContent = data.quizTitle || 'Quiz Attempt';
-        metaEl.textContent = `${formatDate(data.date)}  ·  ${(data.type || 'Quiz').charAt(0).toUpperCase() + (data.type || 'quiz').slice(1)}`;
+        const typeLabel = (data.type || 'quiz').charAt(0).toUpperCase() + (data.type || 'quiz').slice(1);
+        metaEl.textContent = `${formatDate(data.date)}  ·  ${typeLabel}`;
 
         // Score summary
         const scoreColor = data.status === 'completed' && data.maxScore > 0

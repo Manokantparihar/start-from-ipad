@@ -90,12 +90,11 @@ router.get('/:id/review', async (req, res) => {
       type: quiz ? (quiz.mode || 'topic') : 'topic',
       breakdown
     });
-  } catch {
+  } catch (err) {
+    console.error('[GET /api/attempts/:id/review]', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-// GET /api/attempts/:id - get a single attempt (owner only)
 router.get('/:id', async (req, res) => {
   try {
     const attempts = await db.getAttempts();
@@ -227,7 +226,8 @@ router.get('/', async (req, res) => {
     }
 
     res.json(userAttempts);
-  } catch {
+  } catch (err) {
+    console.error('[GET /api/attempts]', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
