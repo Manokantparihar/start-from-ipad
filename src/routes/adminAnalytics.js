@@ -55,10 +55,11 @@ function toDateStr(ts) {
 function toWeekStr(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
-  // ISO 8601 week number
-  const jan4 = new Date(d.getFullYear(), 0, 4);
-  const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
-  const weekNum = Math.ceil((dayOfYear + jan4.getDay()) / 7);
+  if (isNaN(d)) return null;
+  // Simple week-of-year (1-indexed, 7-day blocks from Jan 1)
+  const startOfYear = new Date(d.getFullYear(), 0, 1);
+  const dayOfYear = Math.floor((d - startOfYear) / 86400000) + 1;
+  const weekNum = Math.ceil(dayOfYear / 7);
   return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
 }
 

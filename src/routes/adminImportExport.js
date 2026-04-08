@@ -39,8 +39,14 @@ const upload = multer({
 /**
  * Parse a CSV string into an array of objects using the header row as keys.
  * Handles quoted fields containing commas and embedded quotes ("").
+ * The caller (multer) already enforces a 5 MB file-size limit so content
+ * length is bounded; the guard below is an additional safety check.
  */
 function parseCSV(text) {
+  // Guard against unexpectedly large input (multer limit is 5 MB)
+  if (typeof text !== 'string' || text.length > 6 * 1024 * 1024) {
+    throw new Error('CSV content too large.');
+  }
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
   const nonEmpty = lines.filter(l => l.trim().length > 0);
   if (nonEmpty.length < 2) return [];
@@ -61,13 +67,16 @@ function parseCSV(text) {
 
 /**
  * Split a single CSV row into fields, respecting quoted fields.
+ * Limited to rows of at most 1 MB to guard against unbounded iteration.
  */
 function splitCSVRow(line) {
+  // Guard against unusually long individual rows
+  const safeLen = Math.min(line.length, 1024 * 1024);
   const fields = [];
   let current = '';
   let inQuotes = false;
 
-  for (let i = 0; i < line.length; i++) {
+  for (let i = 0; i < safeLen; i++) {
     const ch = line[i];
     if (ch === '"') {
       if (inQuotes && line[i + 1] === '"') {
