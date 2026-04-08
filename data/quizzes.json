@@ -346,5 +346,279 @@
       }
     ],
     "questionCount": 1
+  },
+  {
+    "id": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
+    "title": "Geography Quiz",
+    "slug": "geography-quiz",
+    "description": "",
+    "mode": "topic",
+    "topic": "Geography",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-08T01:32:59.108Z",
+    "updatedAt": "2026-04-08T01:32:59.108Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "9cefc458-a37c-48d0-92c7-67175febabcc",
+        "question": "What is the largest continent?",
+        "options": [
+          "Asia",
+          "Africa",
+          "Europe",
+          "Australia"
+        ],
+        "correctAnswer": "Asia",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d00982f5-dd21-490e-8e0c-7e274cbc22aa",
+        "question": "Which is the longest river in the world?",
+        "options": [
+          "Nile",
+          "Amazon",
+          "Ganga",
+          "Mississippi"
+        ],
+        "correctAnswer": "Nile",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "0d3a60df-8c8a-4886-ac26-e3adf8cae216",
+        "question": "Which country has the largest population?",
+        "options": [
+          "USA",
+          "India",
+          "China",
+          "Russia"
+        ],
+        "correctAnswer": "India",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "ecb31624-283b-49b0-8116-c9b9a2bfdbf9",
+        "question": "Which desert is the largest in the world?",
+        "options": [
+          "Sahara",
+          "Arabian",
+          "Gobi",
+          "Kalahari"
+        ],
+        "correctAnswer": "Sahara",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "e37d3ec4-7890-4920-ab33-3cd5c85babae",
+        "question": "Mount Everest is located in which country?",
+        "options": [
+          "India",
+          "Nepal",
+          "Bhutan",
+          "China"
+        ],
+        "correctAnswer": "Nepal",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3b656038-5cb1-4798-9477-602848424530",
+        "question": "Which ocean is the largest?",
+        "options": [
+          "Atlantic",
+          "Indian",
+          "Pacific",
+          "Arctic"
+        ],
+        "correctAnswer": "Pacific",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "c6cc3ddd-e607-4068-bddb-b23697c8da6a",
+        "question": "Which country is known as the Land of Rising Sun?",
+        "options": [
+          "China",
+          "Japan",
+          "Korea",
+          "Thailand"
+        ],
+        "correctAnswer": "Japan",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "573cec66-4b34-48b0-8fda-5fd16550792d",
+        "question": "Which is the smallest continent?",
+        "options": [
+          "Asia",
+          "Europe",
+          "Australia",
+          "Africa"
+        ],
+        "correctAnswer": "Australia",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "94b52d35-db56-4237-b139-52f0d08595e5",
+        "question": "Which river flows through Egypt?",
+        "options": [
+          "Amazon",
+          "Nile",
+          "Danube",
+          "Volga"
+        ],
+        "correctAnswer": "Nile",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "ab13083c-6ddd-467e-8b31-6b2e71e55fc3",
+        "question": "Which is the highest mountain in the world?",
+        "options": [
+          "K2",
+          "Kangchenjunga",
+          "Everest",
+          "Lhotse"
+        ],
+        "correctAnswer": "Everest",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "32eade1c-7e6d-40de-922f-c76425c745e8",
+        "question": "Which country has the most volcanoes?",
+        "options": [
+          "Japan",
+          "Indonesia",
+          "USA",
+          "Italy"
+        ],
+        "correctAnswer": "Indonesia",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "279d6e25-0dd9-43d1-af7f-0b7c3fa5a21e",
+        "question": "Which continent is known as Dark Continent?",
+        "options": [
+          "Asia",
+          "Africa",
+          "Europe",
+          "Australia"
+        ],
+        "correctAnswer": "Africa",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "e036235b-f4e0-4355-8a62-c84ceb263cb1",
+        "question": "Which is the deepest ocean?",
+        "options": [
+          "Atlantic",
+          "Indian",
+          "Pacific",
+          "Arctic"
+        ],
+        "correctAnswer": "Pacific",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "64fe11a5-9e2f-4ae1-8220-ebf828bb2308",
+        "question": "Which country is the largest by area?",
+        "options": [
+          "USA",
+          "China",
+          "Canada",
+          "Russia"
+        ],
+        "correctAnswer": "Russia",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "65b73228-f004-43b8-9eea-66f14a078790",
+        "question": "Which line divides Earth into two halves?",
+        "options": [
+          "Equator",
+          "Tropic of Cancer",
+          "Tropic of Capricorn",
+          "Prime Meridian"
+        ],
+        "correctAnswer": "Equator",
+        "explanation": "",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 15
   }
 ]

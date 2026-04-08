@@ -106,5 +106,170 @@
     "completedAt": 1775600426919,
     "score": 2,
     "total": 4
+  },
+  {
+    "id": "e81246b2-36e9-4dee-a2af-b04deca45271",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
+    "quizTitle": "Geography Quiz",
+    "status": "completed",
+    "startedAt": 1775612037945,
+    "expiresAt": 1775613237945,
+    "answers": [
+      {
+        "questionId": "9cefc458-a37c-48d0-92c7-67175febabcc",
+        "selected": "Asia"
+      },
+      {
+        "questionId": "d00982f5-dd21-490e-8e0c-7e274cbc22aa",
+        "selected": "Amazon"
+      },
+      {
+        "questionId": "0d3a60df-8c8a-4886-ac26-e3adf8cae216",
+        "selected": "China"
+      },
+      {
+        "questionId": "ecb31624-283b-49b0-8116-c9b9a2bfdbf9",
+        "selected": "Sahara"
+      },
+      {
+        "questionId": "e37d3ec4-7890-4920-ab33-3cd5c85babae",
+        "selected": "Nepal"
+      },
+      {
+        "questionId": "3b656038-5cb1-4798-9477-602848424530",
+        "selected": "Pacific"
+      },
+      {
+        "questionId": "c6cc3ddd-e607-4068-bddb-b23697c8da6a",
+        "selected": "Japan"
+      },
+      {
+        "questionId": "573cec66-4b34-48b0-8fda-5fd16550792d",
+        "selected": "Australia"
+      },
+      {
+        "questionId": "94b52d35-db56-4237-b139-52f0d08595e5",
+        "selected": "Nile"
+      },
+      {
+        "questionId": "ab13083c-6ddd-467e-8b31-6b2e71e55fc3",
+        "selected": "Everest"
+      },
+      {
+        "questionId": "32eade1c-7e6d-40de-922f-c76425c745e8",
+        "selected": "Indonesia"
+      },
+      {
+        "questionId": "279d6e25-0dd9-43d1-af7f-0b7c3fa5a21e",
+        "selected": "Africa"
+      },
+      {
+        "questionId": "e036235b-f4e0-4355-8a62-c84ceb263cb1",
+        "selected": "Atlantic"
+      },
+      {
+        "questionId": "64fe11a5-9e2f-4ae1-8220-ebf828bb2308",
+        "selected": "Russia"
+      },
+      {
+        "questionId": "65b73228-f004-43b8-9eea-66f14a078790",
+        "selected": "Equator"
+      }
+    ],
+    "createdAt": 1775612037945,
+    "completedAt": 1775612141581,
+    "score": 12,
+    "total": 15
+  },
+  {
+    "id": "c601d89e-815f-428e-85db-6d869602f38d",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
+    "quizTitle": "Geography Quiz",
+    "status": "completed",
+    "startedAt": 1775612332502,
+    "expiresAt": 1775613532502,
+    "answers": [
+      {
+        "questionId": "9cefc458-a37c-48d0-92c7-67175febabcc",
+        "selected": "Asia"
+      },
+      {
+        "questionId": "d00982f5-dd21-490e-8e0c-7e274cbc22aa",
+        "selected": "Amazon"
+      },
+      {
+        "questionId": "0d3a60df-8c8a-4886-ac26-e3adf8cae216",
+        "selected": "India"
+      },
+      {
+        "questionId": "ecb31624-283b-49b0-8116-c9b9a2bfdbf9",
+        "selected": "Arabian"
+      },
+      {
+        "questionId": "e37d3ec4-7890-4920-ab33-3cd5c85babae",
+        "selected": "Nepal"
+      },
+      {
+        "questionId": "3b656038-5cb1-4798-9477-602848424530",
+        "selected": "Indian"
+      },
+      {
+        "questionId": "c6cc3ddd-e607-4068-bddb-b23697c8da6a",
+        "selected": "Japan"
+      },
+      {
+        "questionId": "573cec66-4b34-48b0-8fda-5fd16550792d",
+        "selected": "Europe"
+      },
+      {
+        "questionId": "94b52d35-db56-4237-b139-52f0d08595e5",
+        "selected": "Nile"
+      },
+      {
+        "questionId": "ab13083c-6ddd-467e-8b31-6b2e71e55fc3",
+        "selected": "Kangchenjunga"
+      },
+      {
+        "questionId": "32eade1c-7e6d-40de-922f-c76425c745e8",
+        "selected": "Indonesia"
+      },
+      {
+        "questionId": "e036235b-f4e0-4355-8a62-c84ceb263cb1",
+        "selected": "Indian"
+      },
+      {
+        "questionId": "64fe11a5-9e2f-4ae1-8220-ebf828bb2308",
+        "selected": "China"
+      },
+      {
+        "questionId": "65b73228-f004-43b8-9eea-66f14a078790",
+        "selected": "Tropic of Cancer"
+      }
+    ],
+    "createdAt": 1775612332502,
+    "completedAt": 1775612356034,
+    "score": 6,
+    "total": 15
+  },
+  {
+    "id": "e57c0870-17d3-4d42-ada2-346062fbad7b",
+    "userId": "b29f88dc-d9e1-4895-9733-273d1286b287",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775612526855,
+    "expiresAt": 1775613726855,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775612526855,
+    "completedAt": 1775612532640,
+    "score": 1,
+    "total": 1
   }
 ]

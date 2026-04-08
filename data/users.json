@@ -1,13 +1,5 @@
 [
   {
-    "id": "admin-001",
-    "name": "Admin",
-    "email": "admin@example.com",
-    "password": "$2b$10$Z7NLEhurmp2ddMAwXvALLu1jGjg6RwGlQrQi5DiIe/7Y3FbPy3heq",
-    "role": "admin",
-    "createdAt": "2026-04-07T19:00:00.000Z"
-  },
-  {
     "id": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "name": "manokant",
     "email": "manokant2002@gmail.com",
@@ -25,6 +17,16 @@
     "role": "user",
     "createdAt": "2026-04-07T20:37:24.804Z",
     "profileImage": "/uploads/avatars/401f86e2-8e13-4199-b271-f5be696d2f58.jpeg",
-    "updatedAt": "2026-04-07T20:44:11.730Z"
+    "updatedAt": "2026-04-08T00:46:14.515Z"
+  },
+  {
+    "id": "b29f88dc-d9e1-4895-9733-273d1286b287",
+    "name": "Laxman",
+    "email": "laxman@gmail.com",
+    "password": "$2b$10$F8THwXBKQIVBDSo/wPRA1OLaRwUS7kb/9WR6Wtn0Sg6dUUcbYIlJ6",
+    "role": "user",
+    "createdAt": "2026-04-08T01:41:22.288Z",
+    "profileImage": "/uploads/avatars/b29f88dc-d9e1-4895-9733-273d1286b287.jpeg",
+    "updatedAt": "2026-04-08T01:42:57.579Z"
   }
 ]
