@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Import / Export</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    .banner { transition: opacity 0.3s; }
+    .hidden { display: none !important; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .drop-zone { border: 2px dashed #cbd5e1; border-radius: 0.75rem; transition: border-color .2s, background .2s; }
+    .drop-zone.over { border-color: #3b82f6; background: #eff6ff; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- BANNER -->
+<div id="banner" class="banner hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center"></div>
+
+<!-- HEADER -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-blue-600">📦 Admin – Import / Export</h1>
+      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Admin</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="userNameDisplay" class="text-sm text-gray-600"></span>
+      <a href="/admin/index.html" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">← Quiz Manager</a>
+      <a href="/admin/analytics.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📊 Analytics</a>
+      <a href="/admin/resources.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📄 Resources</a>
+      <button id="logoutBtn" class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ACCESS DENIED -->
+<div id="accessDenied" class="hidden max-w-lg mx-auto mt-24 text-center p-8 bg-white rounded-2xl shadow">
+  <div class="text-5xl mb-4">🔒</div>
+  <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+  <p class="text-gray-600 mb-6">This page is only accessible to administrators.</p>
+  <a href="/index.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go to Dashboard</a>
+</div>
+
+<!-- LOADING -->
+<div id="pageLoading" class="text-center py-24 text-gray-500">
+  <div class="spinner border-blue-500 mx-auto mb-3" style="width:32px;height:32px;border-width:3px;border-color:#3b82f6;border-top-color:transparent;"></div>
+  <p>Checking authentication…</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="mainPanel" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+  <!-- ══ EXPORT SECTION ══════════════════════════════════════════════════════ -->
+  <section class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-1">⬇️ Export Data</h2>
+    <p class="text-sm text-gray-500 mb-5">Download quizzes or attempts as CSV for backup or offline editing.</p>
+    <div class="flex flex-wrap gap-4">
+      <div class="flex-1 min-w-[220px] border border-gray-200 rounded-xl p-5">
+        <h3 class="font-semibold text-gray-800 mb-1">📋 Quizzes + Questions</h3>
+        <p class="text-xs text-gray-500 mb-4">Exports all quizzes with their questions in one CSV (one row per question). Use this file to re-import or edit offline.</p>
+        <button onclick="exportQuizzes()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700">
+          Download Quizzes CSV
+        </button>
+      </div>
+      <div class="flex-1 min-w-[220px] border border-gray-200 rounded-xl p-5">
+        <h3 class="font-semibold text-gray-800 mb-1">📝 Quiz Attempts</h3>
+        <p class="text-xs text-gray-500 mb-4">Exports all user attempts including scores and completion dates. No sensitive user info (email/password) included.</p>
+        <button onclick="exportAttempts()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700">
+          Download Attempts CSV
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ IMPORT SECTION ══════════════════════════════════════════════════════ -->
+  <section class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-1">⬆️ Import Quizzes</h2>
+    <p class="text-sm text-gray-500 mb-2">Upload a CSV file to bulk-import quizzes and questions. Preview and validate before saving.</p>
+
+    <!-- CSV format guide -->
+    <details class="mb-5 bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-800">
+      <summary class="cursor-pointer font-semibold text-sm">📖 CSV Format Guide (click to expand)</summary>
+      <div class="mt-3 space-y-2">
+        <p><strong>Required columns:</strong> <code>quizTitle, mode, question, option1, option2, correctAnswer</code></p>
+        <p><strong>Optional columns:</strong> <code>topic, difficulty, timeLimit, isPublished, option3, option4, explanation, marks, negativeMarks, adminNotes</code></p>
+        <p><strong>Rules:</strong></p>
+        <ul class="list-disc ml-4 space-y-1">
+          <li>One row = one question. Rows with the same <code>quizTitle</code> belong to the same quiz.</li>
+          <li><code>mode</code> must be: <code>daily</code>, <code>topic</code>, or <code>mock</code></li>
+          <li><code>difficulty</code> must be: <code>easy</code>, <code>medium</code>, or <code>hard</code> (default: medium)</li>
+          <li><code>correctAnswer</code> must exactly match one of option1–option4</li>
+          <li><code>isPublished</code>: <code>true</code> or <code>false</code> (default: false)</li>
+          <li>Maximum file size: 5 MB</li>
+          <li>Quizzes with a title that already exists will be skipped (no overwrite)</li>
+        </ul>
+        <p class="mt-2"><strong>Example row:</strong></p>
+        <pre class="bg-white border border-blue-200 rounded p-2 overflow-x-auto text-xs">quizTitle,mode,topic,difficulty,timeLimit,isPublished,question,option1,option2,option3,option4,correctAnswer,explanation,marks
+GK Quiz,topic,GK,medium,20,false,Capital of India?,Mumbai,New Delhi,Kolkata,Chennai,New Delhi,New Delhi is the capital,1</pre>
+      </div>
+    </details>
+
+    <!-- Drop zone -->
+    <div id="dropZone" class="drop-zone p-8 text-center mb-4 cursor-pointer" onclick="document.getElementById('csvFile').click()">
+      <div class="text-4xl mb-2">📂</div>
+      <p class="text-gray-600 font-medium">Drag &amp; drop a CSV file here, or <span class="text-blue-600 underline">click to browse</span></p>
+      <p class="text-xs text-gray-400 mt-1">Supported: .csv · Max 5 MB</p>
+      <input id="csvFile" type="file" accept=".csv,text/csv" class="sr-only">
+    </div>
+
+    <!-- Selected file info -->
+    <div id="fileInfo" class="hidden mb-4 flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm">
+      <span class="text-2xl">📄</span>
+      <div class="flex-1 min-w-0">
+        <p id="fileName" class="font-semibold text-gray-800 truncate"></p>
+        <p id="fileSize" class="text-xs text-gray-500"></p>
+      </div>
+      <button onclick="clearFile()" class="text-gray-400 hover:text-red-500 text-lg leading-none ml-2">&times;</button>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex flex-wrap gap-3">
+      <button id="previewBtn" onclick="previewImport()" disabled
+              class="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-semibold hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed">
+        👁 Preview &amp; Validate
+      </button>
+      <button id="importBtn" onclick="doImport()" disabled
+              class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed">
+        ✅ Import Quizzes
+      </button>
+    </div>
+
+    <!-- Preview result area -->
+    <div id="previewArea" class="hidden mt-6 space-y-4">
+      <div id="previewSummary" class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800"></div>
+
+      <!-- Validation errors -->
+      <div id="errorsBox" class="hidden bg-red-50 border border-red-200 rounded-lg p-4">
+        <h4 class="font-semibold text-red-700 mb-2 text-sm">⚠️ Validation Errors</h4>
+        <ul id="errorsList" class="text-xs text-red-700 space-y-1 list-disc ml-4"></ul>
+      </div>
+
+      <!-- Preview table -->
+      <div id="previewTableWrap" class="hidden overflow-x-auto">
+        <h4 class="font-semibold text-gray-700 text-sm mb-2">Parsed Quizzes Preview</h4>
+        <table class="w-full text-xs border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-100 border-b border-gray-200">
+            <tr>
+              <th class="px-3 py-2 text-left text-gray-600">Quiz Title</th>
+              <th class="px-3 py-2 text-left text-gray-600">Mode</th>
+              <th class="px-3 py-2 text-left text-gray-600">Topic</th>
+              <th class="px-3 py-2 text-center text-gray-600">Questions</th>
+              <th class="px-3 py-2 text-center text-gray-600">Difficulty</th>
+              <th class="px-3 py-2 text-center text-gray-600">Publish?</th>
+            </tr>
+          </thead>
+          <tbody id="previewTableBody" class="divide-y divide-gray-100 bg-white"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let selectedFile = null;
+let previewValid = false;
+
+// ── Banner helper ────────────────────────────────────────────────────────────
+function showBanner(msg, ok = true) {
+  const b = document.getElementById('banner');
+  b.textContent = msg;
+  b.className = `banner fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center ${ok ? 'bg-green-500' : 'bg-red-500'}`;
+  b.classList.remove('hidden');
+  setTimeout(() => b.classList.add('hidden'), 5000);
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Auth check ───────────────────────────────────────────────────────────────
+async function checkAuth() {
+  try {
+    const res = await fetch('/api/profile', { credentials: 'include' });
+    if (!res.ok) throw new Error('not auth');
+    const user = await res.json();
+    if (user.role !== 'admin') throw new Error('not admin');
+    document.getElementById('userNameDisplay').textContent = user.username || user.name || '';
+    document.getElementById('pageLoading').classList.add('hidden');
+    document.getElementById('mainPanel').classList.remove('hidden');
+  } catch {
+    document.getElementById('pageLoading').classList.add('hidden');
+    document.getElementById('accessDenied').classList.remove('hidden');
+  }
+}
+
+// ── File selection & drag-drop ────────────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+const csvFileInput = document.getElementById('csvFile');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) setFile(f);
+});
+csvFileInput.addEventListener('change', () => {
+  if (csvFileInput.files[0]) setFile(csvFileInput.files[0]);
+});
+
+function setFile(file) {
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    showBanner('Only CSV files are accepted.', false);
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showBanner('File too large. Maximum size is 5 MB.', false);
+    return;
+  }
+  selectedFile = file;
+  previewValid = false;
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('fileInfo').classList.remove('hidden');
+  document.getElementById('previewBtn').disabled = false;
+  document.getElementById('importBtn').disabled = true;
+  document.getElementById('previewArea').classList.add('hidden');
+}
+
+function clearFile() {
+  selectedFile = null;
+  previewValid = false;
+  csvFileInput.value = '';
+  document.getElementById('fileInfo').classList.add('hidden');
+  document.getElementById('previewBtn').disabled = true;
+  document.getElementById('importBtn').disabled = true;
+  document.getElementById('previewArea').classList.add('hidden');
+}
+
+// ── Preview ───────────────────────────────────────────────────────────────────
+async function previewImport() {
+  if (!selectedFile) return;
+  const btn = document.getElementById('previewBtn');
+  btn.innerHTML = '<span class="spinner"></span> Validating…';
+  btn.disabled = true;
+  previewValid = false;
+  document.getElementById('importBtn').disabled = true;
+
+  try {
+    const fd = new FormData();
+    fd.append('file', selectedFile);
+    const res = await fetch('/api/admin/import/quizzes?preview=1', {
+      method: 'POST', credentials: 'include', body: fd
+    });
+    const data = await res.json();
+
+    document.getElementById('previewArea').classList.remove('hidden');
+    const errorsBox = document.getElementById('errorsBox');
+    const errorsList = document.getElementById('errorsList');
+    const previewTableWrap = document.getElementById('previewTableWrap');
+    const previewSummary = document.getElementById('previewSummary');
+
+    if (!res.ok) {
+      previewSummary.textContent = data.error || 'Validation failed.';
+      previewSummary.className = 'bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700';
+      errorsBox.classList.add('hidden');
+      previewTableWrap.classList.add('hidden');
+    } else {
+      const errs = data.errors || [];
+      previewSummary.className = 'bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800';
+      previewSummary.innerHTML = `Parsed <strong>${data.rowCount}</strong> rows → <strong>${data.quizCount}</strong> quiz(es) with ${(data.quizzes || []).reduce((s,q)=>s+q.questionCount,0)} questions total.`;
+
+      if (errs.length) {
+        errorsBox.classList.remove('hidden');
+        errorsList.innerHTML = errs.map(e => `<li>Row ${e.row}, <code>${escHtml(e.field)}</code>: ${escHtml(e.message)}</li>`).join('');
+      } else {
+        errorsBox.classList.add('hidden');
+      }
+
+      if (data.quizzes && data.quizzes.length) {
+        previewTableWrap.classList.remove('hidden');
+        document.getElementById('previewTableBody').innerHTML = data.quizzes.map(q => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-3 py-2 font-medium text-gray-800">${escHtml(q.title)}</td>
+            <td class="px-3 py-2 text-gray-600">${escHtml(q.mode)}</td>
+            <td class="px-3 py-2 text-gray-600">${escHtml(q.topic || '—')}</td>
+            <td class="px-3 py-2 text-center text-blue-700 font-semibold">${q.questionCount}</td>
+            <td class="px-3 py-2 text-center text-gray-600">${escHtml(q.difficulty)}</td>
+            <td class="px-3 py-2 text-center">${q.isPublished ? '<span class="text-green-600 font-semibold">Yes</span>' : '<span class="text-gray-400">No</span>'}</td>
+          </tr>`).join('');
+      } else {
+        previewTableWrap.classList.add('hidden');
+      }
+
+      if (!errs.length && data.quizCount > 0) {
+        previewValid = true;
+        document.getElementById('importBtn').disabled = false;
+      }
+    }
+  } catch (e) {
+    showBanner('Preview request failed. Please try again.', false);
+  } finally {
+    btn.textContent = '👁 Preview & Validate';
+    btn.disabled = false;
+  }
+}
+
+// ── Import ────────────────────────────────────────────────────────────────────
+async function doImport() {
+  if (!selectedFile || !previewValid) return;
+  const btn = document.getElementById('importBtn');
+  btn.innerHTML = '<span class="spinner"></span> Importing…';
+  btn.disabled = true;
+
+  try {
+    const fd = new FormData();
+    fd.append('file', selectedFile);
+    const res = await fetch('/api/admin/import/quizzes', {
+      method: 'POST', credentials: 'include', body: fd
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showBanner(data.error || 'Import failed.', false);
+    } else {
+      let msg = `✅ Imported ${data.imported} quiz(es).`;
+      if (data.skipped > 0) msg += ` ${data.skipped} skipped (already exist).`;
+      showBanner(msg, true);
+      clearFile();
+    }
+  } catch {
+    showBanner('Import request failed. Please try again.', false);
+  } finally {
+    btn.textContent = '✅ Import Quizzes';
+    btn.disabled = !previewValid;
+  }
+}
+
+// ── Export helpers ────────────────────────────────────────────────────────────
+async function triggerDownload(url, label) {
+  try {
+    const res = await fetch(url, { credentials: 'include' });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showBanner(data.error || `Failed to export ${label}.`, false);
+      return;
+    }
+    const blob = await res.blob();
+    const disposition = res.headers.get('Content-Disposition') || '';
+    const match = disposition.match(/filename="([^"]+)"/);
+    const filename = match ? match[1] : `${label}-export.csv`;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    showBanner(`${label} export downloaded successfully.`, true);
+  } catch {
+    showBanner(`Failed to download ${label} export.`, false);
+  }
+}
+
+function exportQuizzes() { triggerDownload('/api/admin/export/quizzes', 'Quizzes'); }
+function exportAttempts() { triggerDownload('/api/admin/export/attempts', 'Attempts'); }
+
+// ── Logout ────────────────────────────────────────────────────────────────────
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  window.location.href = '/index.html';
+});
+
+// ── Bootstrap ────────────────────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>

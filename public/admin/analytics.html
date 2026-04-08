@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Analytics Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    .banner { transition: opacity 0.3s; }
+    .hidden { display: none !important; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .stat-card { background: #fff; border-radius: 1rem; padding: 1.25rem 1.5rem; box-shadow: 0 1px 6px rgba(0,0,0,.08); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- BANNER -->
+<div id="banner" class="banner hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center"></div>
+
+<!-- HEADER -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-blue-600">📊 Admin – Analytics</h1>
+      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Admin</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="userNameDisplay" class="text-sm text-gray-600"></span>
+      <a href="/admin/index.html" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">← Quiz Manager</a>
+      <a href="/admin/import-export.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📦 Import/Export</a>
+      <a href="/admin/resources.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📄 Resources</a>
+      <button id="logoutBtn" class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ACCESS DENIED -->
+<div id="accessDenied" class="hidden max-w-lg mx-auto mt-24 text-center p-8 bg-white rounded-2xl shadow">
+  <div class="text-5xl mb-4">🔒</div>
+  <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+  <p class="text-gray-600 mb-6">This page is only accessible to administrators.</p>
+  <a href="/index.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go to Dashboard</a>
+</div>
+
+<!-- LOADING -->
+<div id="pageLoading" class="text-center py-24 text-gray-500">
+  <div class="spinner mx-auto mb-3" style="width:32px;height:32px;border-width:3px;"></div>
+  <p>Checking authentication…</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="analyticsPanel" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+  <!-- ── OVERVIEW CARDS ── -->
+  <section>
+    <h2 class="text-lg font-bold text-gray-800 mb-4">📈 Overview</h2>
+    <div id="overviewCards" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Users</p><p id="ovUsers" class="text-3xl font-bold text-blue-600">—</p></div>
+      <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Quizzes</p><p id="ovQuizzes" class="text-3xl font-bold text-purple-600">—</p></div>
+      <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Attempts</p><p id="ovAttempts" class="text-3xl font-bold text-green-600">—</p></div>
+      <div class="stat-card"><p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Avg Score</p><p id="ovAvgScore" class="text-3xl font-bold text-yellow-500">—</p></div>
+    </div>
+  </section>
+
+  <!-- ── TIME SERIES CHART ── -->
+  <section class="bg-white rounded-2xl shadow p-6">
+    <div class="flex flex-wrap gap-3 items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-gray-800">📅 Attempts Over Time</h2>
+      <div class="flex gap-2">
+        <button onclick="loadTimeChart('daily')" id="btnDaily" class="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white">Daily</button>
+        <button onclick="loadTimeChart('weekly')" id="btnWeekly" class="px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200">Weekly</button>
+        <button onclick="loadTimeChart('monthly')" id="btnMonthly" class="px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200">Monthly</button>
+      </div>
+    </div>
+    <div class="relative h-64">
+      <canvas id="timeChart"></canvas>
+      <div id="timeChartEmpty" class="hidden absolute inset-0 flex items-center justify-center text-gray-400 text-sm">No attempt data yet.</div>
+    </div>
+  </section>
+
+  <!-- ── QUIZ STATS & SCORE DISTRIBUTION ── -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Quiz Stats (bar chart) -->
+    <section class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">🏆 Most Attempted Quizzes</h2>
+      <div class="relative h-64">
+        <canvas id="quizChart"></canvas>
+        <div id="quizChartEmpty" class="hidden absolute inset-0 flex items-center justify-center text-gray-400 text-sm">No quiz attempt data yet.</div>
+      </div>
+    </section>
+
+    <!-- Score Distribution (doughnut) -->
+    <section class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">📊 Score Distribution</h2>
+      <div class="relative h-64">
+        <canvas id="scoreChart"></canvas>
+        <div id="scoreChartEmpty" class="hidden absolute inset-0 flex items-center justify-center text-gray-400 text-sm">No score data yet.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── TOP / BOTTOM SCORERS ── -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">🥇 Top Scorers</h2>
+      <div id="topScorersTable" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200"><tr>
+            <th class="px-3 py-2 text-left text-gray-600 font-semibold">#</th>
+            <th class="px-3 py-2 text-left text-gray-600 font-semibold">Username</th>
+            <th class="px-3 py-2 text-center text-gray-600 font-semibold">Attempts</th>
+            <th class="px-3 py-2 text-center text-gray-600 font-semibold">Avg Score</th>
+          </tr></thead>
+          <tbody id="topScorersBody" class="divide-y divide-gray-100">
+            <tr><td colspan="4" class="px-3 py-6 text-center text-gray-400">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">⬇️ Bottom Scorers</h2>
+      <div id="bottomScorersTable" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200"><tr>
+            <th class="px-3 py-2 text-left text-gray-600 font-semibold">#</th>
+            <th class="px-3 py-2 text-left text-gray-600 font-semibold">Username</th>
+            <th class="px-3 py-2 text-center text-gray-600 font-semibold">Attempts</th>
+            <th class="px-3 py-2 text-center text-gray-600 font-semibold">Avg Score</th>
+          </tr></thead>
+          <tbody id="bottomScorersBody" class="divide-y divide-gray-100">
+            <tr><td colspan="4" class="px-3 py-6 text-center text-gray-400">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── RECENT ACTIVITY ── -->
+  <section class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">🕐 Recent Activity</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200"><tr>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">Username</th>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">Quiz</th>
+          <th class="px-3 py-2 text-center text-gray-600 font-semibold">Score</th>
+          <th class="px-3 py-2 text-center text-gray-600 font-semibold">%</th>
+          <th class="px-3 py-2 text-right text-gray-600 font-semibold">Date</th>
+        </tr></thead>
+        <tbody id="recentBody" class="divide-y divide-gray-100">
+          <tr><td colspan="5" class="px-3 py-8 text-center text-gray-400">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── Shared colours ──────────────────────────────────────────────────────────
+const COLOURS = ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#f97316','#6366f1'];
+
+// ── Chart instances (so we can destroy+recreate on period change) ────────────
+let timeChartInst = null;
+
+// ── Banner helper ────────────────────────────────────────────────────────────
+function showBanner(msg, ok = true) {
+  const b = document.getElementById('banner');
+  b.textContent = msg;
+  b.className = `banner fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center ${ok ? 'bg-green-500' : 'bg-red-500'}`;
+  b.classList.remove('hidden');
+  setTimeout(() => b.classList.add('hidden'), 4000);
+}
+
+// ── Auth check ───────────────────────────────────────────────────────────────
+async function checkAuth() {
+  try {
+    const res = await fetch('/api/profile', { credentials: 'include' });
+    if (!res.ok) throw new Error('not auth');
+    const user = await res.json();
+    if (user.role !== 'admin') throw new Error('not admin');
+    document.getElementById('userNameDisplay').textContent = user.username || user.name || '';
+    document.getElementById('pageLoading').classList.add('hidden');
+    document.getElementById('analyticsPanel').classList.remove('hidden');
+    loadAll();
+  } catch {
+    document.getElementById('pageLoading').classList.add('hidden');
+    document.getElementById('accessDenied').classList.remove('hidden');
+  }
+}
+
+// ── Fetch wrapper ────────────────────────────────────────────────────────────
+async function apiFetch(path) {
+  const res = await fetch(path, { credentials: 'include' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ── Load everything ──────────────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([
+    loadOverview(),
+    loadTimeChart('daily'),
+    loadQuizChart(),
+    loadScoreChart(),
+    loadUserStats(),
+    loadRecentActivity()
+  ]);
+}
+
+// ── Overview cards ───────────────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const d = await apiFetch('/api/admin/analytics/overview');
+    document.getElementById('ovUsers').textContent = d.totalUsers;
+    document.getElementById('ovQuizzes').textContent = d.totalQuizzes;
+    document.getElementById('ovAttempts').textContent = d.totalAttempts;
+    document.getElementById('ovAvgScore').textContent = d.avgScore + '%';
+  } catch (e) {
+    showBanner('Failed to load overview stats.', false);
+  }
+}
+
+// ── Time chart ───────────────────────────────────────────────────────────────
+async function loadTimeChart(period) {
+  // Update button styles
+  ['daily','weekly','monthly'].forEach(p => {
+    const btn = document.getElementById('btn' + p.charAt(0).toUpperCase() + p.slice(1));
+    if (btn) {
+      btn.className = p === period
+        ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200';
+    }
+  });
+  try {
+    const data = await apiFetch(`/api/admin/analytics/attempts-over-time?period=${period}`);
+    const empty = document.getElementById('timeChartEmpty');
+    if (!data.length) {
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+    }
+    if (timeChartInst) { timeChartInst.destroy(); timeChartInst = null; }
+    timeChartInst = new Chart(document.getElementById('timeChart'), {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.period),
+        datasets: [{
+          label: 'Attempts',
+          data: data.map(d => d.count),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,0.1)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+  } catch {
+    showBanner('Failed to load time chart.', false);
+  }
+}
+
+// ── Quiz stats chart ─────────────────────────────────────────────────────────
+async function loadQuizChart() {
+  try {
+    const data = await apiFetch('/api/admin/analytics/quiz-stats');
+    const top = data.slice(0, 8);
+    const empty = document.getElementById('quizChartEmpty');
+    if (!top.length) { empty.classList.remove('hidden'); return; }
+    empty.classList.add('hidden');
+    new Chart(document.getElementById('quizChart'), {
+      type: 'bar',
+      data: {
+        labels: top.map(d => d.title),
+        datasets: [{
+          label: 'Attempts',
+          data: top.map(d => d.attempts),
+          backgroundColor: COLOURS,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { maxRotation: 30, font: { size: 10 } } },
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+  } catch {
+    showBanner('Failed to load quiz chart.', false);
+  }
+}
+
+// ── Score distribution chart ─────────────────────────────────────────────────
+async function loadScoreChart() {
+  try {
+    const data = await apiFetch('/api/admin/analytics/score-distribution');
+    const empty = document.getElementById('scoreChartEmpty');
+    const total = data.reduce((s, d) => s + d.count, 0);
+    if (!total) { empty.classList.remove('hidden'); return; }
+    empty.classList.add('hidden');
+    new Chart(document.getElementById('scoreChart'), {
+      type: 'doughnut',
+      data: {
+        labels: data.map(d => d.range),
+        datasets: [{
+          data: data.map(d => d.count),
+          backgroundColor: ['#ef4444','#f97316','#f59e0b','#10b981','#3b82f6'],
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } }
+      }
+    });
+  } catch {
+    showBanner('Failed to load score chart.', false);
+  }
+}
+
+// ── Scorers tables ───────────────────────────────────────────────────────────
+function renderScorersTable(bodyId, rows) {
+  const tbody = document.getElementById(bodyId);
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-6 text-center text-gray-400">No data yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr class="hover:bg-gray-50">
+      <td class="px-3 py-2 text-gray-500">${i + 1}</td>
+      <td class="px-3 py-2 font-medium text-gray-800">${escHtml(r.username)}</td>
+      <td class="px-3 py-2 text-center text-gray-600">${r.attempts}</td>
+      <td class="px-3 py-2 text-center font-semibold ${r.avgScore >= 60 ? 'text-green-600' : 'text-red-500'}">${r.avgScore}%</td>
+    </tr>`).join('');
+}
+
+async function loadUserStats() {
+  try {
+    const { topScorers, bottomScorers } = await apiFetch('/api/admin/analytics/user-stats');
+    renderScorersTable('topScorersBody', topScorers);
+    renderScorersTable('bottomScorersBody', bottomScorers);
+  } catch {
+    showBanner('Failed to load user stats.', false);
+  }
+}
+
+// ── Recent activity ──────────────────────────────────────────────────────────
+async function loadRecentActivity() {
+  try {
+    const data = await apiFetch('/api/admin/analytics/recent-activity?limit=20');
+    const tbody = document.getElementById('recentBody');
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-3 py-8 text-center text-gray-400">No recent activity.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr class="hover:bg-gray-50">
+        <td class="px-3 py-2 font-medium text-gray-800">${escHtml(r.username)}</td>
+        <td class="px-3 py-2 text-gray-700 max-w-xs truncate">${escHtml(r.quizTitle)}</td>
+        <td class="px-3 py-2 text-center text-gray-600">${r.score}/${r.total}</td>
+        <td class="px-3 py-2 text-center font-semibold ${r.percent >= 60 ? 'text-green-600' : 'text-red-500'}">${r.percent}%</td>
+        <td class="px-3 py-2 text-right text-gray-500 text-xs">${r.date || '—'}</td>
+      </tr>`).join('');
+  } catch {
+    showBanner('Failed to load recent activity.', false);
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Logout ───────────────────────────────────────────────────────────────────
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  window.location.href = '/index.html';
+});
+
+// ── Bootstrap ────────────────────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>
