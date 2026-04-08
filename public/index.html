@@ -24,6 +24,14 @@
       </div>
 
       <div class="flex items-center gap-4">
+        <!-- Notification Bell -->
+        <div id="notifWidget" class="relative hidden">
+          <button id="notifBell" title="Notifications" class="relative p-1 rounded-full hover:bg-gray-100 text-xl">
+            🔔
+            <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none font-bold"></span>
+          </button>
+          <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"></div>
+        </div>
         <a href="/profile.html" class="profile-trigger flex items-center gap-2 hover:opacity-80 transition-opacity">
           <img id="navAvatar" src="/default-avatar.png" style="width:32px;height:32px;border-radius:50%;" alt="Profile">
           <span id="navUserName" class="text-gray-700 font-medium text-sm hidden sm:inline">User</span>
@@ -224,5 +232,6 @@
       setupEventListeners();
     });
   </script>
+  <script src="/js/notifications.js"></script>
 </body>
 </html>

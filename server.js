@@ -12,6 +12,8 @@ const profileRoutes = require('./src/routes/profile');
 const resourceRoutes = require('./src/routes/resources');
 const adminAnalyticsRoutes = require('./src/routes/adminAnalytics');
 const adminImportExportRoutes = require('./src/routes/adminImportExport');
+const notificationRoutes = require('./src/routes/notifications');
+const adminNotificationRoutes = require('./src/routes/adminNotifications');
 const authMiddleware = require('./src/middlewares/auth');
 const isAdmin = require('./src/middlewares/isAdmin');
 
@@ -44,6 +46,10 @@ app.use('/api/resources', resourceRoutes);
 app.use('/api/admin/analytics', authMiddleware, isAdmin, adminAnalyticsRoutes);
 // Import / Export – admin only
 app.use('/api/admin', authMiddleware, isAdmin, adminImportExportRoutes);
+// Notifications – user (auth required)
+app.use('/api/notifications', authMiddleware, notificationRoutes);
+// Admin notifications – admin only
+app.use('/api/admin/notifications', authMiddleware, isAdmin, adminNotificationRoutes);
 
 // Serve uploaded avatars
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

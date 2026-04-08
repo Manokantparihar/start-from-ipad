@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Notifications</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .banner { transition: opacity 0.3s; }
+    .hidden { display: none !important; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- ── BANNER ── -->
+<div id="banner" class="banner hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center"></div>
+
+<!-- ── HEADER ── -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-blue-600">⚙️ Admin – Notifications</h1>
+      <span id="adminBadge" class="hidden px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Admin</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="userNameDisplay" class="text-sm text-gray-600"></span>
+      <a href="/admin/" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">🗂 Quiz Manager</a>
+      <a href="/admin/analytics.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📊 Analytics</a>
+      <a href="/admin/resources.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📄 Resources</a>
+      <a href="/index.html" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">← Dashboard</a>
+      <button id="logoutBtn" class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ── ACCESS DENIED ── -->
+<div id="accessDenied" class="hidden max-w-lg mx-auto mt-24 text-center p-8 bg-white rounded-2xl shadow">
+  <div class="text-5xl mb-4">🔒</div>
+  <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+  <p class="text-gray-600 mb-6">This page is only accessible to administrators.</p>
+  <a href="/index.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go to Dashboard</a>
+</div>
+
+<!-- ── LOADING ── -->
+<div id="pageLoading" class="text-center py-24 text-gray-500">
+  <div class="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+  <p>Checking authentication…</p>
+</div>
+
+<!-- ── MAIN PANEL ── -->
+<main id="adminPanel" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+  <!-- ── Send Announcement ─────────────────────────────────────────── -->
+  <section class="bg-white rounded-2xl shadow-md p-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-5">📢 Send Announcement</h2>
+
+    <form id="announceForm" novalidate class="space-y-4">
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="announceTitle">Title <span class="text-red-500">*</span></label>
+        <input id="announceTitle" type="text" maxlength="200" placeholder="Announcement title…"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+        <p id="announceTitleErr" class="hidden mt-1 text-xs text-red-600"></p>
+      </div>
+
+      <!-- Message -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="announceMsg">Message <span class="text-red-500">*</span></label>
+        <textarea id="announceMsg" rows="4" maxlength="2000" placeholder="Write your announcement here…"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-y"></textarea>
+        <p id="announceMsgErr" class="hidden mt-1 text-xs text-red-600"></p>
+      </div>
+
+      <!-- Recipients -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Recipients</label>
+        <div class="flex items-center gap-4 flex-wrap">
+          <label class="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="recipientType" value="all" id="recipientAll" checked class="text-blue-600">
+            <span>All users</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="recipientType" value="selected" id="recipientSelected" class="text-blue-600">
+            <span>Selected users</span>
+          </label>
+        </div>
+        <!-- User selector (shown when "selected" chosen) -->
+        <div id="userSelectorWrap" class="hidden mt-3">
+          <input id="userSearch" type="text" placeholder="Search users by name or email…"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+          <div id="userList" class="border border-gray-200 rounded-lg max-h-48 overflow-y-auto divide-y divide-gray-100 bg-white"></div>
+          <p class="text-xs text-gray-400 mt-1"><span id="selectedCount">0</span> user(s) selected</p>
+        </div>
+      </div>
+
+      <!-- Email toggle -->
+      <div class="flex items-center gap-3">
+        <input type="checkbox" id="sendEmailCheck" class="w-4 h-4 text-blue-600 rounded">
+        <label for="sendEmailCheck" class="text-sm text-gray-700">Also send email to opted-in users</label>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex items-center gap-3">
+        <button type="submit" id="announceBtn"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+          Send Announcement
+        </button>
+      </div>
+
+      <div id="announceBanner" class="hidden px-4 py-3 rounded-lg text-sm font-medium"></div>
+    </form>
+  </section>
+
+  <!-- ── Delivery Log ──────────────────────────────────────────────── -->
+  <section class="bg-white rounded-2xl shadow-md p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-gray-800">📋 Announcement Log</h2>
+      <button id="refreshLogsBtn" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">↻ Refresh</button>
+    </div>
+    <div id="logsContainer">
+      <div class="text-center py-10 text-gray-400">Loading logs…</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ── State ────────────────────────────────────────────────────────────────────
+  let allUsers = [];
+  let selectedUserIds = new Set();
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function showBanner(el, msg, ok) {
+    el.textContent = msg;
+    el.className = `px-4 py-3 rounded-lg text-sm font-medium ${ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 5000);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtDate(iso) {
+    try { return new Date(iso).toLocaleString(); } catch { return iso; }
+  }
+
+  // ── Auth check ───────────────────────────────────────────────────────────────
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!res.ok) throw new Error();
+      const { user } = await res.json();
+      if (user.role !== 'admin') throw new Error('not admin');
+
+      document.getElementById('userNameDisplay').textContent = user.name;
+      document.getElementById('adminBadge').classList.remove('hidden');
+      document.getElementById('pageLoading').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+
+      await Promise.all([loadUsers(), loadLogs()]);
+    } catch {
+      document.getElementById('pageLoading').classList.add('hidden');
+      document.getElementById('accessDenied').classList.remove('hidden');
+    }
+  }
+
+  // ── Load users ───────────────────────────────────────────────────────────────
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/admin/notifications/users', { credentials: 'include' });
+      const data = await res.json();
+      allUsers = data.users || [];
+      renderUserList('');
+    } catch {
+      console.warn('Could not load user list');
+    }
+  }
+
+  function renderUserList(query) {
+    const container = document.getElementById('userList');
+    const q = query.trim().toLowerCase();
+    const filtered = q
+      ? allUsers.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+      : allUsers;
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p class="px-4 py-3 text-sm text-gray-400 text-center">No users found.</p>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(u => {
+      const checked = selectedUserIds.has(u.id) ? 'checked' : '';
+      return `
+        <label class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+          <input type="checkbox" class="user-checkbox w-4 h-4 text-blue-600 rounded" value="${escHtml(u.id)}" ${checked}>
+          <span class="flex-1 min-w-0">
+            <span class="font-medium text-gray-800">${escHtml(u.name)}</span>
+            <span class="text-gray-400 ml-2">${escHtml(u.email)}</span>
+            ${u.role === 'admin' ? '<span class="ml-1 text-xs text-blue-600 font-semibold">admin</span>' : ''}
+          </span>
+        </label>`;
+    }).join('');
+
+    // Attach listeners
+    container.querySelectorAll('.user-checkbox').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedUserIds.add(cb.value);
+        else selectedUserIds.delete(cb.value);
+        document.getElementById('selectedCount').textContent = selectedUserIds.size;
+      });
+    });
+  }
+
+  document.getElementById('userSearch').addEventListener('input', (e) => {
+    renderUserList(e.target.value);
+  });
+
+  // ── Recipient type toggle ────────────────────────────────────────────────────
+  document.querySelectorAll('input[name="recipientType"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const wrap = document.getElementById('userSelectorWrap');
+      if (document.getElementById('recipientSelected').checked) {
+        wrap.classList.remove('hidden');
+      } else {
+        wrap.classList.add('hidden');
+        selectedUserIds.clear();
+        document.getElementById('selectedCount').textContent = '0';
+      }
+    });
+  });
+
+  // ── Announce form ────────────────────────────────────────────────────────────
+  document.getElementById('announceForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const banner = document.getElementById('announceBanner');
+    const btn = document.getElementById('announceBtn');
+
+    const title = document.getElementById('announceTitle').value.trim();
+    const message = document.getElementById('announceMsg').value.trim();
+    const sendEmail = document.getElementById('sendEmailCheck').checked;
+    const useSelected = document.getElementById('recipientSelected').checked;
+
+    // Validate
+    let valid = true;
+    const titleErr = document.getElementById('announceTitleErr');
+    const msgErr = document.getElementById('announceMsgErr');
+    titleErr.classList.add('hidden');
+    msgErr.classList.add('hidden');
+
+    if (!title) { titleErr.textContent = 'Title is required.'; titleErr.classList.remove('hidden'); valid = false; }
+    if (!message) { msgErr.textContent = 'Message is required.'; msgErr.classList.remove('hidden'); valid = false; }
+    if (useSelected && selectedUserIds.size === 0) {
+      showBanner(banner, 'Select at least one user, or choose "All users".', false);
+      valid = false;
+    }
+    if (!valid) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Sending…';
+
+    try {
+      const body = {
+        title,
+        message,
+        sendEmail,
+        targetUserIds: useSelected ? [...selectedUserIds] : []
+      };
+      const res = await fetch('/api/admin/notifications/announce', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showBanner(banner,
+          `✅ Sent to ${data.inAppCount} user(s) in-app${data.emailSent ? `; ${data.emailSent} email(s) sent` : ''}.`,
+          true);
+        document.getElementById('announceForm').reset();
+        selectedUserIds.clear();
+        document.getElementById('selectedCount').textContent = '0';
+        document.getElementById('userSelectorWrap').classList.add('hidden');
+        document.getElementById('recipientAll').checked = true;
+        await loadLogs();
+      } else {
+        showBanner(banner, data.error || 'Failed to send announcement.', false);
+      }
+    } catch {
+      showBanner(banner, 'Network error. Please try again.', false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Announcement';
+    }
+  });
+
+  // ── Load logs ────────────────────────────────────────────────────────────────
+  async function loadLogs() {
+    const container = document.getElementById('logsContainer');
+    try {
+      const res = await fetch('/api/admin/notifications/logs', { credentials: 'include' });
+      const data = await res.json();
+      const logs = data.logs || [];
+
+      if (logs.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-400 py-8 text-sm">No announcements sent yet.</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+              <tr>
+                <th class="px-4 py-3">Title</th>
+                <th class="px-4 py-3">Sent at</th>
+                <th class="px-4 py-3">Sent by</th>
+                <th class="px-4 py-3 text-center">In-App</th>
+                <th class="px-4 py-3 text-center">Emails</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              ${logs.map(log => `
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3">
+                    <p class="font-medium text-gray-800">${escHtml(log.title)}</p>
+                    <p class="text-xs text-gray-400 mt-0.5 line-clamp-1">${escHtml(log.message)}</p>
+                  </td>
+                  <td class="px-4 py-3 text-gray-500 whitespace-nowrap">${fmtDate(log.sentAt)}</td>
+                  <td class="px-4 py-3 text-gray-600">${escHtml(log.adminName || log.adminId)}</td>
+                  <td class="px-4 py-3 text-center font-medium text-blue-700">${log.inAppCount}</td>
+                  <td class="px-4 py-3 text-center">
+                    ${log.emailRequested
+                      ? `<span class="text-green-600 font-medium">${log.emailSent}</span>${log.emailFailed > 0 ? ` <span class="text-red-500 text-xs">(${log.emailFailed} failed)</span>` : ''}`
+                      : '<span class="text-gray-400 text-xs">—</span>'}
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    } catch {
+      container.innerHTML = '<p class="text-center text-red-500 py-8 text-sm">Failed to load logs.</p>';
+    }
+  }
+
+  document.getElementById('refreshLogsBtn').addEventListener('click', loadLogs);
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/index.html';
+  });
+
+  // ── Bootstrap ────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', checkAuth);
+</script>
+</body>
+</html>

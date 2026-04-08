@@ -173,6 +173,14 @@ function normalizeQuestion(q) {
 const getResources = () => readFile('resources');
 const saveResources = (resources) => writeFile('resources', resources);
 
+// NOTIFICATIONS
+const getNotifications = () => readFile('notifications');
+const saveNotifications = (notifications) => writeFile('notifications', notifications);
+
+// NOTIFICATION LOGS (admin broadcast history)
+const getNotificationLogs = () => readFile('notification-logs');
+const saveNotificationLogs = (logs) => writeFile('notification-logs', logs);
+
 module.exports = {
   getUsers,
   saveUsers,
@@ -180,6 +188,10 @@ module.exports = {
   saveAttempts,
   getResources,
   saveResources,
+  getNotifications,
+  saveNotifications,
+  getNotificationLogs,
+  saveNotificationLogs,
   // Quiz helpers (migration-friendly abstraction)
   getQuizzes,
   saveQuizzes,

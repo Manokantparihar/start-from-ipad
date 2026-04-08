@@ -77,7 +77,8 @@ router.get('/', async (req, res) => {
         role: user.role || 'user',
         profileImage: user.profileImage || null,
         createdAt: user.createdAt || null,
-        updatedAt: user.updatedAt || null
+        updatedAt: user.updatedAt || null,
+        emailNotifications: user.emailNotifications !== false
       }
     });
   } catch {
@@ -135,7 +136,8 @@ router.put('/', async (req, res) => {
         email: user.email,
         role: user.role || 'user',
         profileImage: user.profileImage || null,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
+        emailNotifications: user.emailNotifications !== false
       }
     });
   } catch {
@@ -177,6 +179,32 @@ router.put('/password', async (req, res) => {
     await db.saveUsers(users);
 
     return res.json({ message: 'Password changed successfully.' });
+  } catch {
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── PATCH /api/profile/notifications ───────────────────────────────────────
+// Toggles email notification opt-in/out for the current user.
+router.patch('/notifications', async (req, res) => {
+  try {
+    const { emailNotifications } = req.body;
+    if (typeof emailNotifications !== 'boolean') {
+      return res.status(400).json({ error: '"emailNotifications" must be a boolean.' });
+    }
+
+    const users = await db.getUsers();
+    const idx = users.findIndex(u => u.id === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+
+    users[idx].emailNotifications = emailNotifications;
+    users[idx].updatedAt = new Date().toISOString();
+    await db.saveUsers(users);
+
+    return res.json({
+      message: `Email notifications ${emailNotifications ? 'enabled' : 'disabled'}.`,
+      emailNotifications
+    });
   } catch {
     return res.status(500).json({ error: 'Server error' });
   }
