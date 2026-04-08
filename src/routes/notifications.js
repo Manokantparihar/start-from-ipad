@@ -26,7 +26,7 @@ const RATE_MAX = 60;              // max requests per window per user
 const _rateCounts = new Map(); // userId → { count, resetAt }
 
 function rateLimiter(req, res, next) {
-  const userId = req.user && req.user.id;
+  const userId = req.userId;
   if (!userId) return next(); // auth middleware already blocks unauthenticated
 
   const now = Date.now();
@@ -50,7 +50,7 @@ router.use(rateLimiter);
 
 router.get('/', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const all = await db.getNotifications();
     const mine = all
       .filter(n => n.userId === userId)
@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
 
 router.patch('/read-all', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const all = await db.getNotifications();
     let changed = 0;
     const updated = all.map(n => {
@@ -83,7 +83,7 @@ router.patch('/read-all', async (req, res) => {
 
 router.patch('/:id/read', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const { id } = req.params;
     if (!id || typeof id !== 'string') return res.status(400).json({ error: 'Invalid id' });
 
@@ -103,7 +103,7 @@ router.patch('/:id/read', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const { id } = req.params;
     if (!id || typeof id !== 'string') return res.status(400).json({ error: 'Invalid id' });
 

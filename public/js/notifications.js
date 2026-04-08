@@ -155,9 +155,6 @@
     if (_dropdownOpen) {
       renderDropdown();
       dd.classList.remove('hidden');
-      // Mark all as read automatically when opened
-      fetch('/api/notifications/read-all', { method: 'PATCH', credentials: 'include' })
-        .then(() => fetchNotifications());
     } else {
       dd.classList.add('hidden');
     }

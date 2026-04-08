@@ -24,7 +24,7 @@ const RATE_MAX_ADMIN = 10;
 const _adminRateCounts = new Map();
 
 function adminRateLimiter(req, res, next) {
-  const userId = req.user && req.user.id;
+  const userId = req.userId;
   if (!userId) return next();
   const now = Date.now();
   const entry = _adminRateCounts.get(userId);
@@ -110,8 +110,8 @@ router.post('/announce', adminRateLimiter, async (req, res) => {
     const logs = await db.getNotificationLogs();
     const logEntry = {
       id: uuidv4(),
-      adminId: req.user.id,
-      adminName: req.user.name,
+      adminId: req.userId,
+      adminName: req.user ? req.user.name : req.userId,
       title: cleanTitle,
       message: cleanMessage,
       sentAt: now,

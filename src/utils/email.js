@@ -20,6 +20,23 @@ const SITE_NAME = process.env.SITE_NAME || 'RPSC/REET Prep';
 
 let _transporter = null;
 
+/**
+ * Strip HTML tags from a string without using backtracking-heavy regexes.
+ * Iterates character-by-character, which is safe against ReDoS.
+ */
+function stripHtml(html) {
+  let result = '';
+  let insideTag = false;
+  for (let i = 0; i < html.length; i++) {
+    const ch = html[i];
+    if (ch === '<') { insideTag = true; result += ' '; }
+    else if (ch === '>') { insideTag = false; }
+    else if (!insideTag) { result += ch; }
+  }
+  // Collapse runs of whitespace to a single space
+  return result.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 function getTransporter() {
   if (_transporter) return _transporter;
   if (!process.env.SMTP_HOST) return null;
@@ -53,7 +70,9 @@ async function sendEmail({ to, subject, html, text }) {
   }
 
   const from = process.env.SMTP_FROM || `"${SITE_NAME}" <no-reply@example.com>`;
-  const plainText = text || html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  // Build a safe plain-text fallback by stripping HTML tags without using
+  // a complex regex that could exhibit ReDoS behaviour.
+  const plainText = text || stripHtml(html);
 
   try {
     await transporter.sendMail({ from, to, subject, html, text: plainText });
