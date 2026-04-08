@@ -15,38 +15,8 @@
 </head>
 <body class="bg-gray-50">
 
-  <!-- Header/Navigation -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <div class="flex items-center gap-8">
-        <a href="index.html" class="text-2xl font-bold text-blue-600">📚 RPSC/REET</a>
-        <div class="hidden md:flex gap-6">
-          <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
-          <a href="dashboard.html" class="text-gray-700 hover:text-blue-600 font-medium">My Dashboard</a>
-          <a href="quizzes.html?mode=daily" class="text-gray-700 hover:text-blue-600 font-medium">Daily Quiz</a>
-          <a href="quizzes.html?mode=topic" class="text-gray-700 hover:text-blue-600 font-medium">Topic Tests</a>
-          <a href="quizzes.html?mode=mock" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
-          <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">🧩 Quizzes</a>
-          <a href="leaderboard.html" class="text-gray-700 hover:text-blue-600 font-medium">🏆 Leaderboard</a>
-          <a href="resources.html" class="text-gray-700 hover:text-blue-600 font-medium">📄 Resources</a>
-          <a id="adminQuizLink" href="/admin/" class="hidden text-blue-700 hover:text-blue-900 font-medium">🗂 Quiz Manager</a>
-        </div>
-      </div>
-      <div class="flex items-center gap-4">
-        <!-- Notification Bell -->
-        <div id="notifWidget" class="relative hidden">
-          <button id="notifBell" title="Notifications" class="relative p-1 rounded-full hover:bg-gray-100 text-xl">
-            🔔
-            <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none font-bold"></span>
-          </button>
-          <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"></div>
-        </div>
-        <a href="profile.html" class="text-blue-600 font-semibold underline underline-offset-2">My Profile</a>
-        <span id="userName" class="text-gray-700 font-medium"></span>
-        <button id="logoutBtn" class="px-3 py-1 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium">Logout</button>
-      </div>
-    </nav>
-  </header>
+  <!-- Navbar Mount Point -->
+  <div id="appNavbar"></div>
 
   <!-- Auth guard: shown while loading -->
   <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
@@ -308,40 +278,100 @@
       } catch { return iso; }
     }
 
+    function getInitials(name) {
+      const parts = String(name || '?').trim().split(/\s+/).filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return '?';
+    }
+
+    function withCacheBuster(url, version) {
+      if (!url) return '';
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}v=${encodeURIComponent(version || Date.now())}`;
+    }
+
+    function toPublicAvatarUrl(profileImage, version) {
+      if (!profileImage) return '';
+      const raw = String(profileImage).trim();
+      if (!raw) return '';
+      if (/^https?:\/\//i.test(raw)) return withCacheBuster(raw, version);
+      const normalized = raw.startsWith('/') ? raw : `/${raw}`;
+      return withCacheBuster(normalized, version);
+    }
+
+    function syncNavbarIdentity(user) {
+      const nameLabel = document.getElementById('profileMenuLabel');
+      if (nameLabel && user?.name) {
+        nameLabel.textContent = user.name;
+      }
+
+      const avatarImg = document.getElementById('profileMenuAvatarImg');
+      const avatarFallback = document.getElementById('profileMenuAvatarFallback');
+      if (!avatarImg || !avatarFallback) return;
+
+      avatarFallback.textContent = getInitials(user?.name || 'Profile');
+      const avatarUrl = toPublicAvatarUrl(user?.profileImage, user?.updatedAt || Date.now());
+      if (!avatarUrl) {
+        avatarImg.classList.add('hidden');
+        avatarImg.removeAttribute('src');
+        avatarFallback.classList.remove('hidden');
+        return;
+      }
+
+      avatarImg.onload = () => {
+        avatarImg.classList.remove('hidden');
+        avatarFallback.classList.add('hidden');
+      };
+
+      avatarImg.onerror = () => {
+        avatarImg.classList.add('hidden');
+        avatarImg.removeAttribute('src');
+        avatarFallback.classList.remove('hidden');
+      };
+
+      avatarImg.src = avatarUrl;
+    }
+
     // ── Avatar rendering ───────────────────────────────────────────────────────
-    function renderAvatar(profileImage, name) {
+    function renderAvatar(profileImage, name, updatedAt) {
       const img = document.getElementById('avatarPreview');
       const initials = document.getElementById('avatarInitials');
+      initials.textContent = getInitials(name || '?');
 
-      if (profileImage) {
-        img.src = profileImage;
+      const avatarUrl = toPublicAvatarUrl(profileImage, updatedAt || Date.now());
+      if (!avatarUrl) {
+        img.classList.add('hidden');
+        img.removeAttribute('src');
+        initials.classList.remove('hidden');
+        return;
+      }
+
+      img.onload = () => {
         img.classList.remove('hidden');
         initials.classList.add('hidden');
-      } else {
+      };
+
+      img.onerror = () => {
         img.classList.add('hidden');
-        img.src = '';
-        const parts = (name || '?').trim().split(/\s+/).filter(Boolean);
-        initials.textContent = parts.length >= 2
-          ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-          : parts.length === 1
-            ? parts[0].slice(0, 2).toUpperCase()
-            : '?';
+        img.removeAttribute('src');
         initials.classList.remove('hidden');
-      }
+      };
+
+      img.src = avatarUrl;
     }
 
     // ── Populate form ──────────────────────────────────────────────────────────
     function populateProfile(user) {
-      document.getElementById('userName').textContent = user.name;
       document.getElementById('profileName').value = user.name;
       document.getElementById('profileEmail').value = user.email;
       document.getElementById('displayRole').textContent = user.role || 'user';
       document.getElementById('displayCreatedAt').textContent = formatDate(user.createdAt);
-      renderAvatar(user.profileImage, user.name);
-      // Email notification toggle
+      renderAvatar(user.profileImage, user.name, user.updatedAt);
       const toggle = document.getElementById('emailNotifToggle');
       if (toggle) toggle.checked = user.emailNotifications !== false;
       renderGamification(user);
+      syncNavbarIdentity(user);
     }
 
     function renderGamification(user) {
@@ -403,9 +433,9 @@
         currentUser = data.user;
         populateProfile(currentUser);
 
-        // Show admin link
-        if (currentUser.role === 'admin') {
-          document.getElementById('adminQuizLink').classList.remove('hidden');
+        // Mount navbar with current user
+        if (window.Navbar) {
+          Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
         }
 
         document.getElementById('loadingScreen').classList.add('hidden');
@@ -469,6 +499,12 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Upload failed');
         currentUser.profileImage = data.profileImage;
+        currentUser.updatedAt = data.updatedAt || new Date().toISOString();
+        renderAvatar(currentUser.profileImage, currentUser.name, currentUser.updatedAt);
+        // Remount navbar to ensure fresh user data and proper image loading
+        if (window.Navbar) {
+          await Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
+        }
         showBanner(banner, data.message || 'Avatar updated!', 'success');
         btn.classList.add('hidden');
         selectedAvatarFile = null;
@@ -538,7 +574,11 @@
           return;
         }
         currentUser = { ...currentUser, ...data.user };
-        document.getElementById('userName').textContent = currentUser.name;
+        populateProfile(currentUser);
+        // Remount navbar after profile update to reflect any changes
+        if (window.Navbar) {
+          await Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
+        }
         showBanner(banner, data.message || 'Profile updated!', 'success');
       } catch {
         showBanner(banner, 'Network error. Please try again.', 'error');
@@ -616,10 +656,13 @@
     });
 
     // ── Logout ─────────────────────────────────────────────────────────────────
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = 'index.html';
-    });
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = 'index.html';
+      });
+    }
 
     // ── Email Notification Toggle ───────────────────────────────────────────────
     const emailNotifToggle = document.getElementById('emailNotifToggle');
@@ -651,6 +694,7 @@
     // ── Init ───────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', loadProfile);
   </script>
+    <script src="/js/modules/navbar.js"></script>
   <script src="/js/notifications.js"></script>
 </body>
 </html>

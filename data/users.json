@@ -1,26 +1,26 @@
 [
   {
     "id": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "name": "manokant",
+    "name": "MANOKANT",
     "email": "manokant2002@gmail.com",
     "password": "$2b$10$Kf05xgQI21h8C659EwHFWe4Q5kTGFy59tP3dcuPWctzbO/5C3bj6m",
     "role": "admin",
     "createdAt": "2026-04-07T20:25:46.502Z",
     "profileImage": "/uploads/avatars/cb370536-35ed-4e83-b730-7070f92e1e04.jpeg",
-    "updatedAt": "2026-04-08T15:23:09.068Z",
+    "updatedAt": "2026-04-08T22:48:45.636Z",
     "streak": {
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T18:38:19.338Z"
+      "updatedAt": "2026-04-08T22:30:01.669Z"
     },
-    "totalXp": 215,
-    "currentLevel": 3,
-    "xpToNextLevel": 10,
-    "currentLevelXp": 125,
-    "nextLevelXp": 225,
-    "currentLevelProgress": 90,
-    "completedQuizCount": 7,
+    "totalXp": 245,
+    "currentLevel": 4,
+    "xpToNextLevel": 105,
+    "currentLevelXp": 225,
+    "nextLevelXp": 350,
+    "currentLevelProgress": 16,
+    "completedQuizCount": 8,
     "currentStreak": 2,
     "bestStreak": 2,
     "lastActiveDate": "2026-04-08",
@@ -90,17 +90,17 @@
       "rarity": "epic",
       "unlockedAt": "2026-04-08T18:31:28.333Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T18:38:19.338Z",
-    "xpBalance": 215,
+    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
+    "xpBalance": 245,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 168,
-    "weeklyCompletedQuizzes": 7,
-    "weeklyRank": 1,
+    "weeklyXp": 193,
+    "weeklyCompletedQuizzes": 8,
+    "weeklyRank": 2,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Silver",
     "activeBoost": null,
@@ -131,7 +131,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 7,
+        "progress": 8,
         "target": 2,
         "completed": true
       }
@@ -158,9 +158,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 7,
+        "progress": 8,
         "target": 2,
-        "bonusXpEarned": 35,
+        "bonusXpEarned": 40,
         "completed": true,
         "badgeAwardedAt": "2026-04-07T20:53:29.511Z"
       }
@@ -223,10 +223,10 @@
             "rewardXp": 8,
             "rewardEarned": true,
             "progress": {
-              "value": 4,
+              "value": 5,
               "target": 2
             },
-            "completedAt": "2026-04-08T15:13:31.008Z"
+            "completedAt": "2026-04-08T22:30:01.666Z"
           },
           {
             "id": "score-80-plus",
@@ -237,7 +237,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-08T15:13:31.008Z"
+            "completedAt": "2026-04-08T22:30:01.666Z"
           },
           {
             "id": "new-topic",
@@ -248,7 +248,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-08T15:13:31.008Z"
+            "completedAt": "2026-04-08T22:30:01.666Z"
           }
         ],
         "completedMissionIds": [
@@ -268,10 +268,10 @@
           "rewardXp": 8,
           "rewardEarned": true,
           "progress": {
-            "value": 4,
+            "value": 5,
             "target": 2
           },
-          "completedAt": "2026-04-08T15:13:31.008Z"
+          "completedAt": "2026-04-08T22:30:01.666Z"
         },
         {
           "id": "score-80-plus",
@@ -282,7 +282,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-08T15:13:31.008Z"
+          "completedAt": "2026-04-08T22:30:01.666Z"
         },
         {
           "id": "new-topic",
@@ -293,7 +293,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-08T15:13:31.008Z"
+          "completedAt": "2026-04-08T22:30:01.666Z"
         }
       ],
       "completedMissionIds": [
@@ -304,10 +304,10 @@
       "rewardXpEarned": 21
     },
     "totalSpentXp": 0,
-    "baseXp": 126,
+    "baseXp": 151,
     "boostXp": 0,
     "weekendBonusXp": 0,
-    "eventBonusXp": 47,
+    "eventBonusXp": 52,
     "missionBonusXp": 42
   },
   {
@@ -383,7 +383,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T18:38:19.338Z"
+      "updatedAt": "2026-04-08T22:30:01.669Z"
     },
     "latestBadge": {
       "id": "top-10-weekly",
@@ -393,7 +393,7 @@
       "rarity": "epic",
       "unlockedAt": "2026-04-08T18:31:28.333Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T18:38:19.338Z",
+    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
     "xpBalance": 159,
     "streakFreeze": {
       "maxCount": 1,
@@ -403,7 +403,7 @@
     },
     "weeklyXp": 122,
     "weeklyCompletedQuizzes": 5,
-    "weeklyRank": 2,
+    "weeklyRank": 3,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Silver",
     "activeBoost": null,
@@ -658,7 +658,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T18:38:19.338Z"
+      "updatedAt": "2026-04-08T22:30:01.669Z"
     },
     "latestBadge": {
       "id": "top-10-weekly",
@@ -668,7 +668,7 @@
       "rarity": "epic",
       "unlockedAt": "2026-04-08T18:31:28.333Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T18:38:19.338Z",
+    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
     "xpBalance": 46,
     "streakFreeze": {
       "maxCount": 1,
@@ -853,7 +853,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T18:38:19.338Z"
+      "updatedAt": "2026-04-08T22:30:01.669Z"
     },
     "profileImage": "/uploads/avatars/b4c7947b-6a72-4378-8338-7c20413af1a0.jpeg",
     "updatedAt": "2026-04-08T11:46:28.527Z",
@@ -910,7 +910,7 @@
       "rarity": "epic",
       "unlockedAt": "2026-04-08T18:31:28.333Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T18:38:19.338Z",
+    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
     "xpBalance": 84,
     "streakFreeze": {
       "maxCount": 1,
@@ -1090,16 +1090,16 @@
     "id": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
     "name": "Sujal",
     "email": "sujal@gmail.com",
-    "password": "$2b$10$MLwB2qjbzRGjPchfaf.QheEUTFuhpNoo1GcGyokBKTFCxCO595jFq",
+    "password": "$2b$10$krPSfl71Dt3b5isVXJev2uiL1HLXE0m0JvM/i7rDf90j4XPZ1CNCy",
     "role": "user",
     "createdAt": "2026-04-08T17:37:03.002Z",
-    "totalXp": 144,
-    "currentLevel": 3,
-    "xpToNextLevel": 81,
-    "currentLevelXp": 125,
-    "nextLevelXp": 225,
-    "currentLevelProgress": 19,
-    "completedQuizCount": 5,
+    "totalXp": 244,
+    "currentLevel": 4,
+    "xpToNextLevel": 106,
+    "currentLevelXp": 225,
+    "nextLevelXp": 350,
+    "currentLevelProgress": 15,
+    "completedQuizCount": 8,
     "currentStreak": 1,
     "bestStreak": 1,
     "lastActiveDate": "2026-04-08",
@@ -1151,46 +1151,46 @@
         "category": "milestone",
         "rarity": "common",
         "unlockedAt": "2026-04-08T18:37:21.275Z"
+      },
+      {
+        "id": "topic-explorer",
+        "title": "Topic Explorer",
+        "description": "Complete quizzes from three different topics.",
+        "category": "exploration",
+        "rarity": "rare",
+        "unlockedAt": "2026-04-08T22:06:47.510Z"
       }
     ],
     "streak": {
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T18:38:19.338Z"
+      "updatedAt": "2026-04-08T22:30:01.669Z"
     },
     "latestBadge": {
-      "id": "five-quizzes",
-      "title": "5 Quizzes Completed",
-      "description": "Complete five quizzes.",
-      "category": "milestone",
-      "rarity": "common",
-      "unlockedAt": "2026-04-08T18:37:21.275Z"
+      "id": "topic-explorer",
+      "title": "Topic Explorer",
+      "description": "Complete quizzes from three different topics.",
+      "category": "exploration",
+      "rarity": "rare",
+      "unlockedAt": "2026-04-08T22:06:47.510Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T18:38:19.338Z",
+    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
     "profileImage": "/uploads/avatars/5b24cef1-e655-4eb2-9d50-6c96405eb6da.jpeg",
-    "updatedAt": "2026-04-08T17:41:56.794Z",
-    "xpBalance": 84,
+    "updatedAt": "2026-04-08T22:26:17.636Z",
+    "xpBalance": 184,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 119,
-    "weeklyCompletedQuizzes": 5,
-    "weeklyRank": 3,
+    "weeklyXp": 204,
+    "weeklyCompletedQuizzes": 8,
+    "weeklyRank": 1,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Silver",
-    "activeBoost": {
-      "rewardId": "double-xp-next-quiz",
-      "title": "Double XP (Next 1 Quiz)",
-      "multiplier": 2,
-      "remainingUses": 1,
-      "startedAt": "2026-04-08T18:38:19.337Z",
-      "expiresAt": null,
-      "source": "reward-shop"
-    },
+    "activeBoost": null,
     "activeEvents": [
       {
         "id": "geography-week",
@@ -1218,7 +1218,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 5,
+        "progress": 8,
         "target": 2,
         "completed": true
       }
@@ -1245,9 +1245,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 5,
+        "progress": 8,
         "target": 2,
-        "bonusXpEarned": 25,
+        "bonusXpEarned": 40,
         "completed": true,
         "badgeAwardedAt": "2026-04-08T18:35:36.457Z"
       }
@@ -1270,7 +1270,15 @@
         }
       }
     ],
-    "consumedBoostHistory": [],
+    "consumedBoostHistory": [
+      {
+        "redemptionId": "34da8450-052e-42a4-9e02-6f3d285b57d7",
+        "rewardId": "double-xp-next-quiz",
+        "usedAt": "2026-04-08T22:06:16.479Z",
+        "multiplier": 2,
+        "remainingUses": 0
+      }
+    ],
     "weeklyGroupRanks": [],
     "groupIds": [],
     "dailyMissionHistory": [
@@ -1283,10 +1291,10 @@
             "rewardXp": 8,
             "rewardEarned": true,
             "progress": {
-              "value": 5,
+              "value": 8,
               "target": 2
             },
-            "completedAt": "2026-04-08T18:37:21.275Z"
+            "completedAt": "2026-04-08T22:06:47.510Z"
           },
           {
             "id": "score-80-plus",
@@ -1297,7 +1305,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-08T18:37:21.275Z"
+            "completedAt": "2026-04-08T22:06:47.510Z"
           },
           {
             "id": "new-topic",
@@ -1308,7 +1316,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-08T18:37:21.275Z"
+            "completedAt": "2026-04-08T22:06:47.510Z"
           }
         ],
         "completedMissionIds": [
@@ -1328,10 +1336,10 @@
           "rewardXp": 8,
           "rewardEarned": true,
           "progress": {
-            "value": 5,
+            "value": 8,
             "target": 2
           },
-          "completedAt": "2026-04-08T18:37:21.275Z"
+          "completedAt": "2026-04-08T22:06:47.510Z"
         },
         {
           "id": "score-80-plus",
@@ -1342,7 +1350,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-08T18:37:21.275Z"
+          "completedAt": "2026-04-08T22:06:47.510Z"
         },
         {
           "id": "new-topic",
@@ -1353,7 +1361,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-08T18:37:21.275Z"
+          "completedAt": "2026-04-08T22:06:47.510Z"
         }
       ],
       "completedMissionIds": [
@@ -1364,10 +1372,10 @@
       "rewardXpEarned": 21
     },
     "totalSpentXp": 60,
-    "baseXp": 98,
-    "boostXp": 0,
+    "baseXp": 158,
+    "boostXp": 25,
     "weekendBonusXp": 0,
-    "eventBonusXp": 25,
+    "eventBonusXp": 40,
     "missionBonusXp": 21
   }
 ]

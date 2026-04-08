@@ -709,5 +709,23 @@
       }
     ],
     "questionCount": 1
+  },
+  {
+    "id": "233082a8-2273-4c91-b8e3-4ce4d5f44f36",
+    "title": "General Knowledge - Basic (Copy)",
+    "slug": "general-knowledge-basic-copy",
+    "description": "",
+    "mode": "topic",
+    "topic": "G.k",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": false,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-08T22:31:42.747Z",
+    "updatedAt": "2026-04-08T22:33:35.916Z",
+    "adminNotes": "",
+    "questionCount": 0,
+    "questions": []
   }
 ]

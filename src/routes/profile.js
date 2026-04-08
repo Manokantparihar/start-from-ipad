@@ -233,10 +233,14 @@ router.post('/avatar', (req, res, next) => {
       const idx = users.findIndex(u => u.id === req.userId);
       if (idx === -1) return res.status(404).json({ error: 'User not found' });
 
-      // Remove any previous avatar file to avoid stale files on disk
+      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
       const prevImage = users[idx].profileImage;
-      if (prevImage) {
-        const prevFile = path.join(__dirname, '../../', prevImage);
+
+      // Remove previous avatar only when it points to a different file.
+      // If filename is unchanged (same extension), multer has already replaced the file.
+      if (prevImage && prevImage !== avatarUrl) {
+        const prevRelativePath = String(prevImage).replace(/^\/+/, '');
+        const prevFile = path.join(__dirname, '../../', prevRelativePath);
         if (fs.existsSync(prevFile)) {
           try { fs.unlinkSync(prevFile); } catch (unlinkErr) {
             if (unlinkErr.code !== 'ENOENT') {
@@ -246,14 +250,14 @@ router.post('/avatar', (req, res, next) => {
         }
       }
 
-      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
       users[idx].profileImage = avatarUrl;
       users[idx].updatedAt = new Date().toISOString();
       await db.saveUsers(users);
 
       return res.json({
         message: 'Avatar uploaded successfully.',
-        profileImage: avatarUrl
+        profileImage: avatarUrl,
+        updatedAt: users[idx].updatedAt
       });
     } catch {
       return res.status(500).json({ error: 'Server error' });

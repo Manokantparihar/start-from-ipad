@@ -30,5 +30,47 @@
         "error": "SMTP not configured"
       }
     ]
+  },
+  {
+    "id": "3c4aa5cb-3a77-45e3-9051-81b9d0345cab",
+    "adminId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "adminName": "manokant",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "sentAt": "2026-04-08T21:18:55.925Z",
+    "targetCount": 5,
+    "targetUserIds": [
+      "cb370536-35ed-4e83-b730-7070f92e1e04",
+      "401f86e2-8e13-4199-b271-f5be696d2f58",
+      "b29f88dc-d9e1-4895-9733-273d1286b287",
+      "b4c7947b-6a72-4378-8338-7c20413af1a0",
+      "5b24cef1-e655-4eb2-9d50-6c96405eb6da"
+    ],
+    "inAppCount": 5,
+    "emailRequested": true,
+    "emailSent": 0,
+    "emailFailed": 5,
+    "emailErrors": [
+      {
+        "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+        "error": "SMTP not configured"
+      },
+      {
+        "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+        "error": "SMTP not configured"
+      },
+      {
+        "userId": "b29f88dc-d9e1-4895-9733-273d1286b287",
+        "error": "SMTP not configured"
+      },
+      {
+        "userId": "b4c7947b-6a72-4378-8338-7c20413af1a0",
+        "error": "SMTP not configured"
+      },
+      {
+        "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+        "error": "SMTP not configured"
+      }
+    ]
   }
 ]

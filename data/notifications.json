@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "id": "c3124fd4-a68c-4953-b403-23dda29b94f7",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "type": "announcement",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-08T21:18:55.926Z"
+  },
+  {
+    "id": "36270eb4-1e77-413c-8c56-2f853d0a9d79",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "type": "announcement",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-08T21:18:55.927Z"
+  },
+  {
+    "id": "a8f9f7a1-e603-4491-8cdd-8327a6efff35",
+    "userId": "b29f88dc-d9e1-4895-9733-273d1286b287",
+    "type": "announcement",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-08T21:18:55.928Z"
+  },
+  {
+    "id": "35a35f97-35b1-4e80-8bae-aaf4e86781ad",
+    "userId": "b4c7947b-6a72-4378-8338-7c20413af1a0",
+    "type": "announcement",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-08T21:18:55.928Z"
+  },
+  {
+    "id": "7b29306b-600f-4a86-b7aa-051e66b0d18a",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "type": "announcement",
+    "title": "Bxbxbjs",
+    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-08T21:18:55.929Z"
+  }
+]
