@@ -363,5 +363,224 @@
     "completedAt": 1775622164975,
     "score": 1,
     "total": 1
+  },
+  {
+    "id": "c575e5fd-350d-4f2d-b9a1-1f3b5be49f15",
+    "userId": "b4c7947b-6a72-4378-8338-7c20413af1a0",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775648577809,
+    "expiresAt": 1775649777809,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775648577809,
+    "completedAt": 1775648586071,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "9be8c948-dfd3-40bb-af84-4221ebaf2caf",
+    "userId": "b4c7947b-6a72-4378-8338-7c20413af1a0",
+    "quizId": "d8e5ab1f-3a3c-487d-9095-7344af8d1d41",
+    "quizTitle": "Science",
+    "status": "completed",
+    "startedAt": 1775648606305,
+    "expiresAt": 1775649806305,
+    "answers": [
+      {
+        "questionId": "ce5e51da-4b27-4299-a8a1-57c1312356e8",
+        "selected": "3"
+      }
+    ],
+    "createdAt": 1775648606305,
+    "completedAt": 1775648611793,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "33366000-5dc1-46ba-ba4e-f5edf1cb08fd",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "bc4e8fdb-e68b-41e6-8b1d-428bed964403",
+    "quizTitle": "Jgsddjsgjcjj",
+    "status": "completed",
+    "startedAt": 1775660741906,
+    "expiresAt": 1775661941906,
+    "answers": [
+      {
+        "questionId": "1b952ec5-b9f3-476a-8783-b90a33bce20f",
+        "selected": "Discrimination"
+      }
+    ],
+    "createdAt": 1775660741906,
+    "completedAt": 1775660754783,
+    "score": 0,
+    "total": 1
+  },
+  {
+    "id": "49480936-8cca-4e70-80fd-42182505c27e",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1775661194482,
+    "expiresAt": 1775662394482,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "मोर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "कोलकाता"
+      },
+      {
+        "questionId": "q3",
+        "selected": "5"
+      },
+      {
+        "questionId": "q4",
+        "selected": "जयपुर"
+      },
+      {
+        "questionId": "q5",
+        "selected": "एशिया"
+      },
+      {
+        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
+        "selected": "Kota"
+      },
+      {
+        "questionId": "490a7222-91e2-40d2-ade4-deeb6dce84f5",
+        "selected": "ygudgyuduu"
+      }
+    ],
+    "createdAt": 1775661194482,
+    "completedAt": 1775661211008,
+    "score": 3,
+    "total": 7
+  },
+  {
+    "id": "30a21862-9ca3-4db4-85f1-da1744d3e92e",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775669891920,
+    "expiresAt": 1775671091920,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775669891920,
+    "completedAt": 1775669904273,
+    "score": 3,
+    "total": 4
+  },
+  {
+    "id": "ecc9614f-4f4a-4c2d-878e-3a999470dc0c",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775673329685,
+    "expiresAt": 1775674529685,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775673329685,
+    "completedAt": 1775673336457,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "7d54523c-8b43-414a-b52c-439d9b64853a",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775673341085,
+    "expiresAt": 1775674541085,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775673341085,
+    "completedAt": 1775673354371,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "3daa23e5-0a61-419e-a9e5-d7fc826d314f",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "quizId": "bc4e8fdb-e68b-41e6-8b1d-428bed964403",
+    "quizTitle": "Jgsddjsgjcjj",
+    "status": "completed",
+    "startedAt": 1775673361574,
+    "expiresAt": 1775674561574,
+    "answers": [
+      {
+        "questionId": "1b952ec5-b9f3-476a-8783-b90a33bce20f",
+        "selected": "Nuclear resources to be used"
+      }
+    ],
+    "createdAt": 1775673361574,
+    "completedAt": 1775673368938,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "4030e6f0-303b-4321-8e15-5379b9d44c9e",
+    "userId": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775673428767,
+    "expiresAt": 1775674628767,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775673428767,
+    "completedAt": 1775673441275,
+    "score": 3,
+    "total": 4
   }
 ]

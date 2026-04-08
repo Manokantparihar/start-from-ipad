@@ -1,9 +1,12 @@
-function toUtcDateKey(ts) {
-  if (!ts) return null;
-  const date = new Date(ts);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toISOString().slice(0, 10);
-}
+const {
+  getAttemptPercent,
+  getCurrentWeekRange,
+  getTierForXp,
+  isCompletedAttempt,
+  previousDateKey,
+  summarizeUserForLeaderboard,
+  toUtcDateKey
+} = require('./gamification');
 
 function normalizeTopicKey(value) {
   const text = String(value || '').trim();
@@ -30,30 +33,6 @@ function resolveQuizTopic(quiz) {
   }
 
   return { key: '', label: '' };
-}
-
-function isCountableAttempt(attempt) {
-  if (!attempt || !attempt.quizId) return false;
-  if (attempt.status === 'completed') return true;
-
-  const score = Number(attempt.score);
-  const total = Number(attempt.total);
-  return attempt.status === 'expired' && Number.isFinite(score) && Number.isFinite(total) && total > 0;
-}
-
-function getAttemptPercent(attempt) {
-  const total = Number(attempt?.total);
-  const score = Number(attempt?.score);
-  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(score)) return 0;
-  return Math.round((score / total) * 100);
-}
-
-function previousDateKey(dateKey) {
-  if (!dateKey) return null;
-  const date = new Date(`${dateKey}T00:00:00.000Z`);
-  if (Number.isNaN(date.getTime())) return null;
-  date.setUTCDate(date.getUTCDate() - 1);
-  return date.toISOString().slice(0, 10);
 }
 
 function computeStreakMetrics(dateKeys, referenceDate = new Date()) {
@@ -114,13 +93,23 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
         userId,
         name: user.name || user.username || 'Unknown',
         profileImage: user.profileImage || null,
+        totalXp: Number(user.totalXp) || 0,
+        weeklyXp: Number(user.weeklyXp) || 0,
+        weeklyCompletedQuizzes: Number(user.weeklyCompletedQuizzes) || 0,
+        currentStreak: Number(user.currentStreak ?? user.streak?.currentStreak) || 0,
+        bestStreak: Number(user.bestStreak ?? user.streak?.bestStreak) || 0,
         totalCompleted: 0,
         totalScore: 0,
-        dateKeys: new Set()
+        dateKeys: new Set(),
+        currentTier: user.currentTier || getTierForXp(user.totalXp)
       });
     }
     return summaries.get(userId);
   };
+
+  for (const user of users) {
+    ensureSummary(user.id);
+  }
 
   for (const quiz of quizzes) {
     const topic = resolveQuizTopic(quiz);
@@ -130,7 +119,7 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
   }
 
   for (const attempt of attempts) {
-    if (!isCountableAttempt(attempt)) continue;
+    if (!isCompletedAttempt(attempt)) continue;
 
     const quiz = quizMap.get(attempt.quizId) || {};
     const topic = resolveQuizTopic(quiz);
@@ -168,11 +157,15 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
       userId: summary.userId,
       name: summary.name,
       profileImage: summary.profileImage,
+      totalXp: summary.totalXp,
+      weeklyXp: summary.weeklyXp,
+      weeklyCompletedQuizzes: summary.weeklyCompletedQuizzes,
       averageScore,
       totalCompleted: summary.totalCompleted,
-      currentStreak: streakMetrics.currentStreak,
-      bestStreak: streakMetrics.bestStreak,
+      currentStreak: summary.currentStreak || streakMetrics.currentStreak,
+      bestStreak: summary.bestStreak || streakMetrics.bestStreak,
       lastActiveDate: streakMetrics.lastActiveDate,
+      currentTier: summary.currentTier,
       topics: summary.topics || new Map()
     };
   });
@@ -185,9 +178,18 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
   };
 }
 
+function sortWeeklyRows(rows) {
+  return [...rows].sort((a, b) => {
+    if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+    if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
+    if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+    return a.name.localeCompare(b.name);
+  });
+}
+
 function sortOverallRows(rows) {
   return [...rows].sort((a, b) => {
-    if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
+    if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     return a.name.localeCompare(b.name);
@@ -217,15 +219,16 @@ function stripLeaderboardRow(row, rank, includeStreak = false, isCurrentUser = f
     rank,
     name: row.name,
     profileImage: row.profileImage || null,
-    averageScore: row.averageScore,
-    totalCompleted: row.totalCompleted,
+    totalXp: row.totalXp || 0,
+    weeklyXp: row.weeklyXp || 0,
+    weeklyCompletedQuizzes: row.weeklyCompletedQuizzes || 0,
+    currentStreak: row.currentStreak || 0,
+    tier: row.currentTier || getTierForXp(row.totalXp || 0),
     isCurrentUser: Boolean(isCurrentUser)
   };
 
   if (includeStreak) {
-    payload.currentStreak = row.currentStreak;
-    payload.bestStreak = row.bestStreak;
-    payload.lastActiveDate = row.lastActiveDate || null;
+    payload.currentStreak = row.currentStreak || 0;
   }
 
   return payload;
@@ -235,6 +238,8 @@ function buildLeaderboardResponse({ mode, users, attempts, quizzes, limit = 10, 
   const { rows, topics } = buildLeaderboardSummaries({ users, attempts, quizzes, topicKey });
   const rankedRows = mode === 'streak'
     ? sortStreakRows(rows)
+    : mode === 'weekly'
+      ? sortWeeklyRows(rows)
     : mode === 'topic'
       ? sortTopicRows(rows)
       : sortOverallRows(rows);
@@ -251,6 +256,7 @@ function buildLeaderboardResponse({ mode, users, attempts, quizzes, limit = 10, 
     viewer: viewer
       ? stripLeaderboardRow(viewer, viewer.rank, mode !== 'topic', true)
       : null,
+    week: getCurrentWeekRange(),
     topics
   };
 }
@@ -259,7 +265,7 @@ function computeUserStreakSnapshot({ attempts = [], quizzes = [], userId }) {
   const userDates = [];
 
   for (const attempt of attempts) {
-    if (attempt.userId !== userId || !isCountableAttempt(attempt)) continue;
+    if (attempt.userId !== userId || !isCompletedAttempt(attempt)) continue;
     const dateKey = toUtcDateKey(attempt.completedAt || attempt.createdAt || attempt.startedAt);
     if (dateKey) userDates.push(dateKey);
   }
@@ -271,7 +277,6 @@ module.exports = {
   buildLeaderboardResponse,
   computeUserStreakSnapshot,
   computeStreakMetrics,
-  isCountableAttempt,
   normalizeTopicKey,
   resolveQuizTopic,
   toUtcDateKey

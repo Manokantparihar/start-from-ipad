@@ -2,7 +2,9 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
 const auth = require('../middlewares/auth');
-const { computeUserStreakSnapshot } = require('../utils/leaderboard');
+const {
+  syncUsersToGamification
+} = require('../utils/gamification');
 
 const router = express.Router();
 
@@ -174,29 +176,29 @@ router.post('/:id/submit', async (req, res) => {
     await db.saveAttempts(attempts);
 
     try {
-      const users = await db.getUsers();
-      const userIndex = users.findIndex((user) => user.id === req.userId);
-      if (userIndex !== -1) {
-        const snapshot = computeUserStreakSnapshot({
+      const [users, events, groups, config] = await Promise.all([
+        db.getUsers(),
+        db.getEvents(),
+        db.getGroups(),
+        db.getGamificationConfig()
+      ]);
+      if (users.length > 0) {
+        const syncedUsers = await syncUsersToGamification({
+          users,
           attempts,
           quizzes: allQuizzes,
-          userId: req.userId
+          events,
+          groups,
+          config
         });
-
-        users[userIndex] = {
-          ...users[userIndex],
-          streak: {
-            currentStreak: snapshot.currentStreak,
-            bestStreak: snapshot.bestStreak,
-            lastActiveDate: snapshot.lastActiveDate,
-            updatedAt: new Date().toISOString()
-          }
-        };
-
+        if (syncedUsers.length > 0) {
+          await db.saveUsers(syncedUsers);
+        } else {
         await db.saveUsers(users);
+        }
       }
-    } catch (streakErr) {
-      console.error('[POST /api/attempts/:id/submit] streak sync failed:', streakErr);
+    } catch (gamificationErr) {
+      console.error('[POST /api/attempts/:id/submit] gamification sync failed:', gamificationErr);
     }
 
     res.json({ completed: true, score, total });

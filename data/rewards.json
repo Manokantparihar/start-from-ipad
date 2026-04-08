@@ -1,0 +1,77 @@
+[
+  {
+    "id": "streak-freeze-refill",
+    "title": "Streak Freeze Refill",
+    "description": "Refill your single streak freeze slot.",
+    "costXp": 80,
+    "rarity": "rare",
+    "type": "utility",
+    "repeatable": true,
+    "enabled": true,
+    "effect": {
+      "type": "refill-streak-freeze"
+    }
+  },
+  {
+    "id": "double-xp-next-quiz",
+    "title": "Double XP (Next 1 Quiz)",
+    "description": "2x XP for your next completed quiz.",
+    "costXp": 60,
+    "rarity": "rare",
+    "type": "boost",
+    "repeatable": true,
+    "enabled": true,
+    "effect": {
+      "type": "xp-boost-token",
+      "multiplier": 2,
+      "uses": 1
+    }
+  },
+  {
+    "id": "double-xp-next-3",
+    "title": "Double XP (Next 3 Quizzes)",
+    "description": "2x XP for your next three completed quizzes.",
+    "costXp": 150,
+    "rarity": "epic",
+    "type": "boost",
+    "repeatable": true,
+    "enabled": true,
+    "effect": {
+      "type": "xp-boost-token",
+      "multiplier": 2,
+      "uses": 3
+    }
+  },
+  {
+    "id": "sunset-theme",
+    "title": "Sunset Theme Unlock",
+    "description": "Unlock the Sunset cosmetic theme.",
+    "costXp": 120,
+    "rarity": "rare",
+    "type": "cosmetic",
+    "repeatable": false,
+    "enabled": true,
+    "effect": {
+      "type": "theme-unlock",
+      "themeKey": "sunset"
+    }
+  },
+  {
+    "id": "shop-champion-badge",
+    "title": "Shop Champion Badge",
+    "description": "Unlock an exclusive cosmetic badge.",
+    "costXp": 200,
+    "rarity": "legendary",
+    "type": "cosmetic",
+    "repeatable": false,
+    "enabled": true,
+    "effect": {
+      "type": "badge-unlock",
+      "badgeId": "shop-champion",
+      "badgeTitle": "Shop Champion",
+      "badgeDescription": "Redeemed elite shop badge.",
+      "badgeCategory": "shop",
+      "badgeRarity": "legendary"
+    }
+  }
+]

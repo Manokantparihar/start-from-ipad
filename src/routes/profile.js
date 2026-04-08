@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const db = require('../utils/db');
+const { buildPublicGamification } = require('../utils/gamification');
 
 const router = express.Router();
 
@@ -78,7 +79,8 @@ router.get('/', async (req, res) => {
         profileImage: user.profileImage || null,
         createdAt: user.createdAt || null,
         updatedAt: user.updatedAt || null,
-        emailNotifications: user.emailNotifications !== false
+        emailNotifications: user.emailNotifications !== false,
+        ...buildPublicGamification(user)
       }
     });
   } catch {
@@ -137,7 +139,8 @@ router.put('/', async (req, res) => {
         role: user.role || 'user',
         profileImage: user.profileImage || null,
         updatedAt: user.updatedAt,
-        emailNotifications: user.emailNotifications !== false
+        emailNotifications: user.emailNotifications !== false,
+        ...buildPublicGamification(user)
       }
     });
   } catch {

@@ -5,6 +5,7 @@ const {
   buildLeaderboardResponse,
   normalizeTopicKey
 } = require('../utils/leaderboard');
+const { getUserGroupIds } = require('../utils/gamification');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
@@ -85,6 +86,34 @@ router.get('/streak', async (req, res) => {
   }
 });
 
+router.get('/weekly', async (req, res) => {
+  try {
+    const { users, attempts, quizzes } = await buildBaseData();
+    const viewerUserId = getOptionalViewerUserId(req);
+    const limit = req.query.limit || 10;
+
+    const payload = buildLeaderboardResponse({
+      mode: 'weekly',
+      users,
+      attempts,
+      quizzes,
+      limit,
+      viewerUserId
+    });
+
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.json({
+      leaderboard: payload.entries,
+      viewer: payload.viewer,
+      week: payload.week,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[GET /api/leaderboard/weekly]', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.get('/topic', async (req, res) => {
   try {
     const { users, attempts, quizzes } = await buildBaseData();
@@ -136,6 +165,62 @@ router.get('/topic', async (req, res) => {
   } catch (err) {
     console.error('[GET /api/leaderboard/topic]', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/group/:groupId', async (req, res) => {
+  try {
+    const { users } = await buildBaseData();
+    const groups = await db.getGroups();
+    const viewerUserId = getOptionalViewerUserId(req);
+    const groupId = String(req.params.groupId || '').trim();
+
+    const group = (groups || []).find((entry) => String(entry.id) === groupId);
+    if (!group) return res.status(404).json({ error: 'Group not found' });
+
+    const members = users
+      .filter((user) => {
+        const ids = new Set(getUserGroupIds(user, groups));
+        return ids.has(groupId);
+      })
+      .map((user) => ({
+        userId: user.id,
+        name: user.name || 'Unknown',
+        profileImage: user.profileImage || null,
+        totalXp: Number(user.totalXp) || 0,
+        weeklyXp: Number(user.weeklyXp) || 0,
+        currentStreak: Number(user.currentStreak) || 0,
+        tier: user.currentTier || 'Bronze'
+      }))
+      .sort((a, b) => {
+        if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+        if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+        return a.name.localeCompare(b.name);
+      })
+      .map((entry, index) => ({
+        rank: index + 1,
+        ...entry,
+        isCurrentUser: Boolean(viewerUserId && viewerUserId === entry.userId)
+      }));
+
+    const viewer = viewerUserId
+      ? members.find((entry) => entry.userId === viewerUserId) || null
+      : null;
+
+    return res.json({
+      group: {
+        id: group.id,
+        name: group.name || group.id,
+        description: group.description || '',
+        memberCount: members.length
+      },
+      leaderboard: members,
+      viewer,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[GET /api/leaderboard/group/:groupId]', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

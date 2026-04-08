@@ -24,5 +24,18 @@
     "uploadedById": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "uploadedAt": "2026-04-08T03:47:14.107Z",
     "isDeleted": false
+  },
+  {
+    "id": "44587a32-7246-483a-8df8-23b22d7bb8c7",
+    "title": "schedule",
+    "description": "",
+    "origFilename": "Schedule e 2025'.pdf",
+    "filename": "5fc23c19-d3ce-48db-81ef-77e09a27058b.pdf",
+    "filePath": "/uploads/resources/5fc23c19-d3ce-48db-81ef-77e09a27058b.pdf",
+    "size": 274470,
+    "uploadedBy": "manokant",
+    "uploadedById": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "uploadedAt": "2026-04-08T15:09:25.889Z",
+    "isDeleted": false
   }
 ]

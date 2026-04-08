@@ -1,0 +1,47 @@
+[
+  {
+    "id": "geography-week",
+    "title": "Geography Week",
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-14",
+    "eligibleModes": ["topic"],
+    "eligibleTopics": ["geography"],
+    "bonusXp": 12,
+    "progressTarget": 3,
+    "badgeReward": {
+      "id": "geo-week-hero",
+      "title": "Geo Week Hero",
+      "description": "Completed Geography Week objectives.",
+      "category": "event",
+      "rarity": "epic"
+    }
+  },
+  {
+    "id": "mock-marathon",
+    "title": "Mock Marathon",
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-30",
+    "eligibleModes": ["mock"],
+    "eligibleTopics": [],
+    "bonusXp": 15,
+    "progressTarget": 5,
+    "badgeReward": {
+      "id": "mock-marathon-finisher",
+      "title": "Mock Marathon Finisher",
+      "description": "Completed Mock Marathon event.",
+      "category": "event",
+      "rarity": "legendary"
+    }
+  },
+  {
+    "id": "weekend-challenge",
+    "title": "Weekend Challenge",
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
+    "eligibleModes": ["daily", "topic", "mock"],
+    "eligibleTopics": [],
+    "bonusXp": 5,
+    "progressTarget": 2,
+    "badgeReward": null
+  }
+]

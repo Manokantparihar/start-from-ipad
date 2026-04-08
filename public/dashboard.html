@@ -83,6 +83,20 @@
     <!-- Global error/info banner -->
     <div id="globalBanner" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-medium"></div>
 
+    <section id="eventBanner" class="hidden mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-amber-700 font-semibold">Seasonal Event</p>
+          <h3 id="eventBannerTitle" class="text-lg font-bold text-amber-900 mt-1">No active event</h3>
+          <p id="eventBannerMeta" class="text-sm text-amber-800 mt-1"></p>
+        </div>
+        <div class="text-right">
+          <div id="eventBannerProgress" class="text-2xl font-bold text-amber-700">0/0</div>
+          <div class="text-xs text-amber-700">Event Progress</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Summary Stats -->
     <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-blue-500">
@@ -108,6 +122,162 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-cyan-500">
         <div class="text-2xl font-bold text-cyan-600" id="statLatest">—</div>
         <div class="text-gray-500 text-sm mt-1">Latest Score</div>
+      </div>
+    </section>
+
+    <!-- Gamification Overview -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-800 text-lg">Active XP Boost</h3>
+            <p class="text-sm text-gray-500 mt-1">Boosted XP applies on completed quizzes only.</p>
+          </div>
+          <div class="text-right">
+            <div id="boostMultiplierValue" class="text-2xl font-bold text-rose-600">x1</div>
+            <div class="text-sm text-gray-500">Multiplier</div>
+          </div>
+        </div>
+        <div class="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-4">
+          <div id="boostTitle" class="font-semibold text-rose-800">No active boost</div>
+          <div id="boostMeta" class="text-sm text-rose-700 mt-1">Redeem a Double XP token from the shop.</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-800 text-lg">XP Wallet</h3>
+            <p class="text-sm text-gray-500 mt-1">Spend XP in the reward shop.</p>
+          </div>
+          <div class="text-right">
+            <div id="xpBalanceValue" class="text-2xl font-bold text-emerald-600">0</div>
+            <div class="text-sm text-gray-500">Balance</div>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3">
+            <div class="text-gray-500">Spent XP</div>
+            <div id="xpSpentValue" class="text-lg font-semibold text-emerald-700">0</div>
+          </div>
+          <div class="rounded-lg bg-sky-50 border border-sky-100 p-3">
+            <div class="text-gray-500">Redeems</div>
+            <div id="redeemCountValue" class="text-lg font-semibold text-sky-700">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-800 text-lg">Group Rank</h3>
+            <p class="text-sm text-gray-500 mt-1">Your classroom competition snapshot.</p>
+          </div>
+          <div class="text-right">
+            <div id="groupRankValue" class="text-2xl font-bold text-indigo-600">—</div>
+            <div class="text-sm text-gray-500">Best group rank</div>
+          </div>
+        </div>
+        <div id="groupPreview" class="mt-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-800">
+          No group joined yet.
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="font-semibold text-gray-800 text-lg">Reward Shop</h3>
+          <p class="text-sm text-gray-500">Redeem boosts, utilities, and cosmetic unlocks with XP.</p>
+        </div>
+        <div class="text-sm text-gray-500">Quick redeem supported for basic rewards</div>
+      </div>
+      <div id="rewardShopList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <p class="text-gray-500 text-sm">Loading rewards…</p>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h3 class="font-semibold text-gray-800 text-lg">Latest Achievement</h3>
+      <div id="achievementBanner" class="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <div id="achievementTitle" class="font-semibold text-emerald-800">No achievement yet</div>
+        <div id="achievementMeta" class="text-sm text-emerald-700 mt-1">Keep practicing to unlock your next badge.</div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h3 class="font-semibold text-gray-800 text-lg">Badge Collection</h3>
+      <p class="text-sm text-gray-500 mt-1">Badges now include category and rarity.</p>
+      <div id="badgeCollection" class="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <p class="text-gray-500 text-sm">No badges yet.</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-800 text-lg">XP & Level Progress</h3>
+            <p class="text-sm text-gray-500 mt-1">Only completed quizzes award XP.</p>
+          </div>
+          <div class="text-right">
+            <div id="gamificationXpValue" class="text-2xl font-bold text-blue-600">0 XP</div>
+            <div id="gamificationLevelValue" class="text-sm text-gray-500">Level 1</div>
+          </div>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="rounded-xl bg-blue-50 border border-blue-100 p-4">
+            <div class="text-xs uppercase tracking-wide text-blue-600 font-semibold">XP Earned</div>
+            <div id="gamificationTotalXp" class="text-xl font-bold text-blue-700 mt-1">0</div>
+          </div>
+          <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-4">
+            <div class="text-xs uppercase tracking-wide text-indigo-600 font-semibold">Next Level</div>
+            <div id="gamificationXpToNext" class="text-xl font-bold text-indigo-700 mt-1">50 XP</div>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+            <span id="gamificationProgressText">0 / 50 XP to next level</span>
+            <span id="gamificationLevelRangeText">Level 1</span>
+          </div>
+          <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div id="gamificationProgressBar" class="h-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-800 text-lg">Streak & Badge</h3>
+            <p class="text-sm text-gray-500 mt-1">Daily consistency drives streaks.</p>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold text-indigo-600" id="gamificationCurrentStreak">0</div>
+            <div class="text-sm text-gray-500">Current streak</div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-3">
+            <div class="text-gray-500">Best streak</div>
+            <div id="gamificationBestStreak" class="text-lg font-semibold text-indigo-700">0</div>
+          </div>
+          <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3">
+            <div class="text-gray-500">Badges</div>
+            <div id="gamificationBadgeCount" class="text-lg font-semibold text-emerald-700">0</div>
+          </div>
+        </div>
+
+        <div class="mt-5 border-t border-gray-100 pt-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Latest badge</p>
+          <div id="latestBadgeCard" class="mt-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4">
+            <div id="latestBadgeTitle" class="font-semibold text-gray-800">No badge yet</div>
+            <div id="latestBadgeDescription" class="text-sm text-gray-500 mt-1">Complete your first quiz to unlock a badge.</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -274,6 +444,7 @@
     // ── State ──────────────────────────────────────────────────────────────────
     let allAttempts = [];
     let filteredAttempts = [];
+    let currentUser = null;
 
     // ── Helpers ────────────────────────────────────────────────────────────────
     function showBanner(el, message, type) {
@@ -365,9 +536,241 @@
       return rank ? `#${rank}` : '—';
     }
 
+    function formatRarityLabel(rarity) {
+      const value = String(rarity || 'common').toLowerCase();
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function rarityClass(rarity) {
+      const value = String(rarity || 'common').toLowerCase();
+      if (value === 'legendary') return 'bg-amber-100 text-amber-800 border-amber-200';
+      if (value === 'epic') return 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200';
+      if (value === 'rare') return 'bg-sky-100 text-sky-800 border-sky-200';
+      return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
+
+    function renderEventBanner(user) {
+      const banner = document.getElementById('eventBanner');
+      const activeEvents = Array.isArray(user?.activeEvents) ? user.activeEvents : [];
+      if (activeEvents.length === 0) {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      const event = activeEvents[0];
+      banner.classList.remove('hidden');
+      document.getElementById('eventBannerTitle').textContent = event.title || 'Active Event';
+      document.getElementById('eventBannerMeta').textContent = `${event.startDate || '—'} to ${event.endDate || '—'} · +${event.bonusXp || 0} XP each`;
+      document.getElementById('eventBannerProgress').textContent = `${event.progress || 0}/${event.target || 0}`;
+    }
+
+    function renderBoostCard(user) {
+      const boost = user?.activeBoost || null;
+      const multiplierEl = document.getElementById('boostMultiplierValue');
+      const titleEl = document.getElementById('boostTitle');
+      const metaEl = document.getElementById('boostMeta');
+
+      if (!boost || Number(boost.remainingUses) <= 0) {
+        multiplierEl.textContent = 'x1';
+        titleEl.textContent = 'No active boost';
+        metaEl.textContent = 'Redeem a Double XP token from the shop.';
+        return;
+      }
+
+      multiplierEl.textContent = `x${Number(boost.multiplier) || 1}`;
+      titleEl.textContent = boost.title || 'XP Boost';
+      metaEl.textContent = `${Math.max(0, Number(boost.remainingUses) || 0)} use(s) left`;
+    }
+
+    function renderWallet(user) {
+      const balance = Math.max(0, Number(user?.xpBalance) || 0);
+      const spent = Math.max(0, Number(user?.totalXp) - balance);
+      const redemptions = Array.isArray(user?.rewardRedemptions) ? user.rewardRedemptions : [];
+      document.getElementById('xpBalanceValue').textContent = String(balance);
+      document.getElementById('xpSpentValue').textContent = String(spent);
+      document.getElementById('redeemCountValue').textContent = String(redemptions.length);
+    }
+
+    function renderGroupPreview(groups = []) {
+      const best = Array.isArray(groups)
+        ? groups.slice().sort((a, b) => (Number(a.yourRank) || 999) - (Number(b.yourRank) || 999))[0]
+        : null;
+      const rankValue = best && best.yourRank ? `#${best.yourRank}` : '—';
+      document.getElementById('groupRankValue').textContent = rankValue;
+      const preview = document.getElementById('groupPreview');
+
+      if (!best) {
+        preview.textContent = 'No group joined yet.';
+        return;
+      }
+
+      preview.innerHTML = `
+        <div class="font-semibold">${escapeHtml(best.name || 'Group')}</div>
+        <div class="mt-1">Rank ${rankValue} of ${best.memberCount || 0} members</div>
+      `;
+    }
+
+    function renderAchievement(user) {
+      const latest = user?.latestBadge || null;
+      const titleEl = document.getElementById('achievementTitle');
+      const metaEl = document.getElementById('achievementMeta');
+      const card = document.getElementById('achievementBanner');
+
+      if (!latest) {
+        titleEl.textContent = 'No achievement yet';
+        metaEl.textContent = 'Keep practicing to unlock your next badge.';
+        card.className = 'mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4';
+        return;
+      }
+
+      titleEl.textContent = latest.title || 'Achievement unlocked';
+      metaEl.textContent = `${latest.description || ''} · ${formatRarityLabel(latest.rarity)} · ${latest.category || 'general'}`;
+      card.className = `mt-3 rounded-xl border p-4 ${rarityClass(latest.rarity)}`;
+    }
+
+    function renderBadgeCollection(user) {
+      const wrap = document.getElementById('badgeCollection');
+      const badges = Array.isArray(user?.badges) ? [...user.badges] : [];
+
+      if (badges.length === 0) {
+        wrap.innerHTML = '<p class="text-gray-500 text-sm">No badges yet.</p>';
+        return;
+      }
+
+      badges.sort((a, b) => Date.parse(b.unlockedAt || 0) - Date.parse(a.unlockedAt || 0));
+      wrap.innerHTML = badges.slice(0, 9).map((badge) => `
+        <div class="rounded-xl border p-3 ${rarityClass(badge.rarity)}">
+          <div class="flex items-center justify-between gap-2">
+            <div class="font-semibold">${escapeHtml(badge.title || badge.id)}</div>
+            <span class="text-xs uppercase tracking-wide font-semibold">${escapeHtml(formatRarityLabel(badge.rarity))}</span>
+          </div>
+          <div class="text-xs mt-1 opacity-90">${escapeHtml(badge.description || '')}</div>
+          <div class="text-[11px] mt-2 opacity-80">${escapeHtml(badge.category || 'general')}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadRewardsShop() {
+      const list = document.getElementById('rewardShopList');
+      try {
+        const res = await fetch('/api/rewards', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load rewards');
+        const payload = await res.json();
+        const rewards = Array.isArray(payload.rewards) ? payload.rewards : [];
+
+        if (rewards.length === 0) {
+          list.innerHTML = '<p class="text-gray-500 text-sm">No rewards available.</p>';
+          return;
+        }
+
+        list.innerHTML = rewards.map((reward) => `
+          <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <div class="flex items-center justify-between gap-2">
+              <h4 class="font-semibold text-gray-800">${escapeHtml(reward.title || reward.id)}</h4>
+              <span class="text-xs px-2 py-0.5 rounded-full border ${rarityClass(reward.rarity)}">${escapeHtml(formatRarityLabel(reward.rarity))}</span>
+            </div>
+            <p class="text-sm text-gray-600 mt-2">${escapeHtml(reward.description || '')}</p>
+            <div class="mt-3 flex items-center justify-between">
+              <span class="text-sm font-semibold text-emerald-700">${Number(reward.costXp) || 0} XP</span>
+              <button class="quick-redeem-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700" data-reward-id="${escapeHtml(reward.id)}">Quick Redeem</button>
+            </div>
+          </div>
+        `).join('');
+
+        list.querySelectorAll('.quick-redeem-btn').forEach((button) => {
+          button.addEventListener('click', async () => {
+            const rewardId = button.dataset.rewardId;
+            button.disabled = true;
+            button.textContent = 'Redeeming...';
+            try {
+              const redeemRes = await fetch('/api/rewards/redeem', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rewardId })
+              });
+              const result = await redeemRes.json().catch(() => ({}));
+              if (!redeemRes.ok) {
+                throw new Error(result.error || 'Redeem failed');
+              }
+              showBanner(document.getElementById('globalBanner'), result.message || 'Redeemed successfully', 'success');
+              await loadDashboardDataOnly();
+            } catch (error) {
+              showBanner(document.getElementById('globalBanner'), error.message || 'Redeem failed', 'error');
+            } finally {
+              button.disabled = false;
+              button.textContent = 'Quick Redeem';
+            }
+          });
+        });
+      } catch (error) {
+        list.innerHTML = '<p class="text-red-600 text-sm">Could not load rewards.</p>';
+      }
+    }
+
+    function renderGamificationSummary(user) {
+      const totalXp = Number(user?.totalXp) || 0;
+      const currentLevel = Number(user?.currentLevel) || 1;
+      const xpToNextLevel = Number(user?.xpToNextLevel);
+      const progress = Number(user?.currentLevelProgress);
+      const currentLevelXp = Number(user?.currentLevelXp) || 0;
+      const nextLevelXp = Number(user?.nextLevelXp) || 0;
+      const currentStreak = Number(user?.currentStreak) || 0;
+      const bestStreak = Number(user?.bestStreak) || 0;
+      const badges = Array.isArray(user?.badges) ? user.badges : [];
+      const latestBadge = user?.latestBadge || badges[badges.length - 1] || null;
+
+      document.getElementById('gamificationXpValue').textContent = `${totalXp} XP`;
+      document.getElementById('gamificationLevelValue').textContent = `Level ${currentLevel}`;
+      document.getElementById('gamificationTotalXp').textContent = String(totalXp);
+      document.getElementById('gamificationXpToNext').textContent = `${Math.max(0, xpToNextLevel || 0)} XP`;
+      document.getElementById('gamificationCurrentStreak').textContent = String(currentStreak);
+      document.getElementById('gamificationBestStreak').textContent = String(bestStreak);
+      document.getElementById('gamificationBadgeCount').textContent = String(badges.length);
+      document.getElementById('gamificationProgressText').textContent = `${Math.max(0, totalXp - currentLevelXp)} / ${Math.max(nextLevelXp - currentLevelXp, 1)} XP to next level`;
+      document.getElementById('gamificationLevelRangeText').textContent = `Level ${currentLevel}`;
+      document.getElementById('gamificationProgressBar').style.width = `${Math.max(0, Math.min(100, progress || 0))}%`;
+
+      const latestBadgeTitle = document.getElementById('latestBadgeTitle');
+      const latestBadgeDescription = document.getElementById('latestBadgeDescription');
+      if (latestBadge) {
+        latestBadgeTitle.textContent = latestBadge.title || 'Badge unlocked';
+        latestBadgeDescription.textContent = latestBadge.description || 'Keep going to earn more badges.';
+        document.getElementById('latestBadgeCard').className = 'mt-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4';
+      } else {
+        latestBadgeTitle.textContent = 'No badge yet';
+        latestBadgeDescription.textContent = 'Complete your first quiz to unlock a badge.';
+        document.getElementById('latestBadgeCard').className = 'mt-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4';
+      }
+    }
+
+    async function loadDashboardDataOnly() {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) throw new Error('Not authenticated');
+      const meData = await meRes.json();
+      currentUser = meData.user;
+
+      renderGamificationSummary(currentUser);
+      renderEventBanner(currentUser);
+      renderBoostCard(currentUser);
+      renderWallet(currentUser);
+      renderAchievement(currentUser);
+      renderBadgeCollection(currentUser);
+
+      try {
+        const groupsRes = await fetch('/api/me/groups', { credentials: 'include' });
+        const groupsPayload = groupsRes.ok ? await groupsRes.json() : { groups: [] };
+        renderGroupPreview(groupsPayload.groups || []);
+      } catch {
+        renderGroupPreview([]);
+      }
+
+      await loadRewardsShop();
+    }
+
     function renderStandingCards(viewer) {
       document.getElementById('userCurrentStreak').textContent = viewer ? String(viewer.currentStreak ?? 0) : '0';
-      document.getElementById('userBestStreak').textContent = viewer ? String(viewer.bestStreak ?? 0) : '0';
+      document.getElementById('userBestStreak').textContent = currentUser ? String(currentUser.bestStreak ?? 0) : '0';
       document.getElementById('userRank').textContent = viewer && viewer.rank ? formatLeaderboardRank(viewer.rank) : '—';
     }
 
@@ -401,8 +804,8 @@
               </div>
             </div>
             <div class="text-right shrink-0">
-              <p class="font-bold text-blue-600">${entry.averageScore != null ? `${entry.averageScore}%` : '—'}</p>
-              <p class="text-xs text-gray-500">${entry.totalCompleted ?? 0} completed</p>
+              <p class="font-bold text-blue-600">${entry.totalXp ?? 0} XP</p>
+              <p class="text-xs text-gray-500">Streak ${entry.currentStreak ?? 0}</p>
             </div>
           </div>
         `;
@@ -756,10 +1159,27 @@
       }
 
       // Set user info
+      currentUser = user;
       document.getElementById('userName').textContent = user.name || '';
       if (user.role === 'admin') {
         document.getElementById('adminQuizLink').classList.remove('hidden');
       }
+      renderGamificationSummary(user);
+      renderEventBanner(user);
+      renderBoostCard(user);
+      renderWallet(user);
+      renderAchievement(user);
+      renderBadgeCollection(user);
+
+      try {
+        const groupsRes = await fetch('/api/me/groups', { credentials: 'include' });
+        const groupsPayload = groupsRes.ok ? await groupsRes.json() : { groups: [] };
+        renderGroupPreview(groupsPayload.groups || []);
+      } catch {
+        renderGroupPreview([]);
+      }
+
+      await loadRewardsShop();
 
       // Fetch attempts
       try {

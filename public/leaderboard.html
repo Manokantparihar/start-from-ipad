@@ -50,10 +50,10 @@
         <div class="text-sm text-gray-500 mb-1">Current Streak</div>
         <div id="viewerCurrentStreak" class="text-2xl font-bold text-violet-600">0</div>
       </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-emerald-500">
-        <div class="text-sm text-gray-500 mb-1">Best Streak</div>
-        <div id="viewerBestStreak" class="text-2xl font-bold text-emerald-600">0</div>
-      </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-sky-500">
+          <div class="text-sm text-gray-500 mb-1">Your XP</div>
+          <div id="viewerXp" class="text-2xl font-bold text-sky-600">0</div>
+        </div>
     </section>
 
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
@@ -74,7 +74,7 @@
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
         <div>
           <h2 id="leaderboardTitle" class="font-semibold text-gray-800">Overall Leaderboard</h2>
-          <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by average score, then completed quizzes.</p>
+           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by XP, then completed quizzes.</p>
         </div>
         <span id="leaderboardMeta" class="text-xs text-gray-400"></span>
       </div>
@@ -86,7 +86,7 @@
       <div id="emptyState" class="hidden px-6 py-16 text-center">
         <div class="text-5xl mb-4">🏆</div>
         <h3 class="text-lg font-semibold text-gray-700 mb-2">Not enough data yet</h3>
-        <p id="emptyMessage" class="text-gray-500">Complete a few quizzes to populate this leaderboard.</p>
+         <p id="emptyMessage" class="text-gray-500">Complete a few quizzes to populate this leaderboard.</p>
       </div>
 
       <div id="tableWrap" class="hidden overflow-x-auto">
@@ -225,8 +225,8 @@
 
     function renderViewer(viewer) {
       document.getElementById('viewerRank').textContent = viewer && viewer.rank ? `#${viewer.rank}` : '—';
+      document.getElementById('viewerXp').textContent = viewer ? String(viewer.totalXp ?? 0) : '0';
       document.getElementById('viewerCurrentStreak').textContent = viewer ? String(viewer.currentStreak ?? 0) : '0';
-      document.getElementById('viewerBestStreak').textContent = viewer ? String(viewer.bestStreak ?? 0) : '0';
     }
 
     function renderTable(rows, mode) {
@@ -241,10 +241,10 @@
         return;
       }
 
-      const isStreak = mode === 'streak';
-      const headers = isStreak
-        ? ['Rank', 'User', 'Current Streak', 'Best Streak', 'Last Active']
-        : ['Rank', 'User', 'Average Score', 'Completed'];
+      const isTopic = mode === 'topic';
+      const headers = isTopic
+        ? ['Rank', 'User', 'Average Score', 'Completed']
+        : ['Rank', 'User', 'XP', 'Current Streak'];
 
       headRow.innerHTML = headers.map((header) => `<th class="px-6 py-3 text-left font-semibold text-gray-600">${header}</th>`).join('');
 
@@ -254,7 +254,7 @@
           ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="w-10 h-10 rounded-full object-cover border border-gray-200">`
           : `<div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-semibold">${escapeHtml((row.name || 'U').slice(0, 1).toUpperCase())}</div>`;
 
-        if (isStreak) {
+        if (isTopic) {
           return `
             <tr class="${highlight}">
               <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
@@ -267,9 +267,27 @@
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
-              <td class="px-6 py-4 text-gray-700">${row.bestStreak ?? 0}</td>
-              <td class="px-6 py-4 text-gray-500">${row.lastActiveDate || '—'}</td>
+              <td class="px-6 py-4 font-semibold text-blue-600">${row.averageScore ?? 0}%</td>
+              <td class="px-6 py-4 text-gray-700">${row.totalCompleted ?? 0}</td>
+            </tr>
+          `;
+        }
+
+        if (mode === 'streak') {
+          return `
+            <tr class="${highlight}">
+              <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  ${avatar}
+                  <div>
+                    <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
+                    <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                  </div>
+                </div>
+              </td>
+                <td class="px-6 py-4 font-semibold text-sky-600">${row.totalXp ?? 0}</td>
+                <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
             </tr>
           `;
         }
@@ -286,8 +304,8 @@
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 font-semibold text-blue-600">${row.averageScore ?? 0}%</td>
-            <td class="px-6 py-4 text-gray-700">${row.totalCompleted ?? 0}</td>
+              <td class="px-6 py-4 font-semibold text-sky-600">${row.totalXp ?? 0}</td>
+              <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
           </tr>
         `;
       }).join('');

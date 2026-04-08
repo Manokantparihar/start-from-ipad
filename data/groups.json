@@ -1,0 +1,14 @@
+[
+  {
+    "id": "class-a",
+    "name": "Class A",
+    "description": "Foundation batch learners",
+    "members": []
+  },
+  {
+    "id": "class-b",
+    "name": "Class B",
+    "description": "Advanced batch learners",
+    "members": []
+  }
+]

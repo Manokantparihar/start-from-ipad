@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
+const { buildPublicGamification } = require('../utils/gamification');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
@@ -143,7 +144,8 @@ router.get('/me', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role || 'user'
+        role: user.role || 'user',
+        ...buildPublicGamification(user)
       }
     });
   } catch (error) {

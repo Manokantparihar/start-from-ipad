@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { normalizeGamificationFields } = require('./gamification');
 
 const DATA_DIR = path.join(__dirname, '../../data');
 
@@ -21,9 +22,26 @@ async function writeFile(filename, data) {
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
+function normalizeUser(user) {
+  const gamification = normalizeGamificationFields(user);
+  const streak = user.streak || {};
+
+  return {
+    ...user,
+    ...gamification,
+    streak: {
+      currentStreak: gamification.currentStreak,
+      bestStreak: gamification.bestStreak,
+      lastActiveDate: gamification.lastActiveDate || streak.lastActiveDate || null,
+      updatedAt: streak.updatedAt || user.gamificationUpdatedAt || null
+    },
+    latestBadge: gamification.badges.length > 0 ? gamification.badges[gamification.badges.length - 1] : null
+  };
+}
+
 // USERS
-const getUsers = () => readFile('users');
-const saveUsers = (users) => writeFile('users', users);
+const getUsers = async () => (await readFile('users')).map(normalizeUser);
+const saveUsers = async (users) => writeFile('users', users.map(normalizeUser));
 
 // ATTEMPTS
 const getAttempts = () => readFile('attempts');
@@ -181,6 +199,28 @@ const saveNotifications = (notifications) => writeFile('notifications', notifica
 const getNotificationLogs = () => readFile('notification-logs');
 const saveNotificationLogs = (logs) => writeFile('notification-logs', logs);
 
+// PHASE 3: Events / Groups / Rewards / Config
+const getEvents = () => readFile('events');
+const saveEvents = (events) => writeFile('events', events);
+
+const getGroups = () => readFile('groups');
+const saveGroups = (groups) => writeFile('groups', groups);
+
+const getRewards = () => readFile('rewards');
+const saveRewards = (rewards) => writeFile('rewards', rewards);
+
+async function getGamificationConfig() {
+  const rows = await readFile('gamification-config');
+  if (Array.isArray(rows)) {
+    return rows[0] || {};
+  }
+  return rows || {};
+}
+
+async function saveGamificationConfig(config = {}) {
+  return writeFile('gamification-config', [config]);
+}
+
 module.exports = {
   getUsers,
   saveUsers,
@@ -192,6 +232,14 @@ module.exports = {
   saveNotifications,
   getNotificationLogs,
   saveNotificationLogs,
+  getEvents,
+  saveEvents,
+  getGroups,
+  saveGroups,
+  getRewards,
+  saveRewards,
+  getGamificationConfig,
+  saveGamificationConfig,
   // Quiz helpers (migration-friendly abstraction)
   getQuizzes,
   saveQuizzes,

@@ -12,9 +12,9 @@
     "isDeleted": false,
     "createdBy": null,
     "createdAt": "2026-04-07T17:23:04.713Z",
-    "updatedAt": "2026-04-07T20:31:39.797Z",
+    "updatedAt": "2026-04-08T15:12:47.767Z",
     "adminNotes": "",
-    "questionCount": 6,
+    "questionCount": 7,
     "questions": [
       {
         "id": "q1",
@@ -114,6 +114,23 @@
         "explanation": "",
         "topic": "",
         "difficulty": "easy",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "490a7222-91e2-40d2-ade4-deeb6dce84f5",
+        "question": "Oidjijfoidjiofhjdivhfd",
+        "options": [
+          "ffhvfvjl",
+          "Huihhhvcu",
+          "ygudgyuduu",
+          "hoifidhfiudi"
+        ],
+        "correctAnswer": "ffhvfvjl",
+        "explanation": "",
+        "topic": "minerals",
+        "difficulty": "medium",
         "marks": 1,
         "negativeMarks": 0,
         "isActive": true
