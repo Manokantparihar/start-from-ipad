@@ -2,6 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
 const auth = require('../middlewares/auth');
+const { computeUserStreakSnapshot } = require('../utils/leaderboard');
 
 const router = express.Router();
 
@@ -172,6 +173,32 @@ router.post('/:id/submit', async (req, res) => {
     attempts[idx] = attempt;
     await db.saveAttempts(attempts);
 
+    try {
+      const users = await db.getUsers();
+      const userIndex = users.findIndex((user) => user.id === req.userId);
+      if (userIndex !== -1) {
+        const snapshot = computeUserStreakSnapshot({
+          attempts,
+          quizzes: allQuizzes,
+          userId: req.userId
+        });
+
+        users[userIndex] = {
+          ...users[userIndex],
+          streak: {
+            currentStreak: snapshot.currentStreak,
+            bestStreak: snapshot.bestStreak,
+            lastActiveDate: snapshot.lastActiveDate,
+            updatedAt: new Date().toISOString()
+          }
+        };
+
+        await db.saveUsers(users);
+      }
+    } catch (streakErr) {
+      console.error('[POST /api/attempts/:id/submit] streak sync failed:', streakErr);
+    }
+
     res.json({ completed: true, score, total });
   } catch {
     res.status(500).json({ error: 'Server error' });
@@ -204,6 +231,7 @@ router.get('/', async (req, res) => {
         maxScore,
         percent,
         type: quiz.mode || 'topic',
+        topic: quiz.topic || '',
         date: a.completedAt || a.createdAt
       };
     });

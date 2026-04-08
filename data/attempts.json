@@ -271,5 +271,97 @@
     "completedAt": 1775612532640,
     "score": 1,
     "total": 1
+  },
+  {
+    "id": "006a30a1-9888-4446-8e01-0603e0b043ed",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "quizId": "quiz-003",
+    "quizTitle": "Mathematics - Basic",
+    "status": "completed",
+    "startedAt": 1775617897368,
+    "expiresAt": 1775619097368,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "60"
+      },
+      {
+        "questionId": "q2",
+        "selected": "20"
+      },
+      {
+        "questionId": "q3",
+        "selected": "12"
+      },
+      {
+        "questionId": "q4",
+        "selected": "50"
+      },
+      {
+        "questionId": "q5",
+        "selected": "25 cm²"
+      }
+    ],
+    "createdAt": 1775617897368,
+    "completedAt": 1775618016780,
+    "score": 5,
+    "total": 5
+  },
+  {
+    "id": "378c3948-87e7-4b50-9378-48cdcd3271fc",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775619213183,
+    "expiresAt": 1775620413183,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775619213183,
+    "completedAt": 1775619223179,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "3749f2dc-8d2f-4e54-8d68-abb1afe6860c",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "quizId": "bc4e8fdb-e68b-41e6-8b1d-428bed964403",
+    "quizTitle": "Jgsddjsgjcjj",
+    "status": "completed",
+    "startedAt": 1775622140279,
+    "expiresAt": 1775623340279,
+    "answers": [
+      {
+        "questionId": "1b952ec5-b9f3-476a-8783-b90a33bce20f",
+        "selected": "Nuclear resources to be used"
+      }
+    ],
+    "createdAt": 1775622140279,
+    "completedAt": 1775622150424,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "6b182095-ed39-445b-a208-81bd82f25c7d",
+    "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775622157923,
+    "expiresAt": 1775623357923,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775622157923,
+    "completedAt": 1775622164975,
+    "score": 1,
+    "total": 1
   }
 ]

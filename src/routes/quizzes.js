@@ -7,9 +7,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const quizzes = await db.getQuizzes({ includeDeleted: false, includeUnpublished: false });
-    res.json(quizzes.map(({ id, title, questions }) => ({
+    res.json(quizzes.map(({ id, title, mode, questions }) => ({
       id,
       title,
+      mode,
       questionCount: (questions || []).length
     })));
   } catch {

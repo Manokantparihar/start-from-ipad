@@ -7,6 +7,22 @@ const db = require('../utils/db');
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
 
+function findUserFromTokenPayload(users, payload) {
+  const tokenUserId = payload.userId || payload.id;
+  if (tokenUserId) {
+    const byId = users.find((u) => u.id === tokenUserId);
+    if (byId) return byId;
+  }
+
+  const tokenEmail = String(payload.email || '').trim().toLowerCase();
+  if (tokenEmail) {
+    const byEmail = users.find((u) => String(u.email || '').trim().toLowerCase() === tokenEmail);
+    if (byEmail) return byEmail;
+  }
+
+  return null;
+}
+
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
@@ -74,7 +90,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user.id, name: user.name, email: user.email },
+      { userId: user.id, name: user.name, email: user.email, role: user.role || 'user' },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -103,6 +119,10 @@ router.post('/login', async (req, res) => {
 // Current user
 router.get('/me', async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
     const token = req.cookies.token;
 
     if (!token) {
@@ -110,16 +130,20 @@ router.get('/me', async (req, res) => {
     }
 
     const payload = jwt.verify(token, JWT_SECRET);
-    // Look up full user to include role
+    // Re-read latest user from DB (source of truth for role)
     const users = await db.getUsers();
-    const user = users.find(u => u.id === payload.userId);
+    const user = findUserFromTokenPayload(users, payload);
+
+    if (!user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     return res.json({
       user: {
-        id: payload.userId,
-        name: user ? user.name : payload.name,
-        email: user ? user.email : payload.email,
-        role: user ? (user.role || 'user') : 'user'
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role || 'user'
       }
     });
   } catch (error) {

@@ -11,6 +11,7 @@ const adminQuizRoutes = require('./src/routes/adminQuizzes');
 const profileRoutes = require('./src/routes/profile');
 const resourceRoutes = require('./src/routes/resources');
 const adminAnalyticsRoutes = require('./src/routes/adminAnalytics');
+const leaderboardRoutes = require('./src/routes/leaderboard');
 const adminImportExportRoutes = require('./src/routes/adminImportExport');
 const notificationRoutes = require('./src/routes/notifications');
 const adminNotificationRoutes = require('./src/routes/adminNotifications');
@@ -39,6 +40,7 @@ app.use('/api/attempts', attemptRoutes);
 app.use('/api/admin/quizzes', authMiddleware, isAdmin, adminQuizRoutes);
 // User profile – protected by auth
 app.use('/api/profile', authMiddleware, profileRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 // Resources: admin upload/delete under /api/admin/resources, public list/download under /api/resources
 app.use('/api/admin/resources', authMiddleware, isAdmin, resourceRoutes);
 app.use('/api/resources', resourceRoutes);

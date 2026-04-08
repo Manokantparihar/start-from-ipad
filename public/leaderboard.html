@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - RPSC/REET Prep</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
+    .animation-slideIn { animation: slideIn 0.3s ease-in; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-8">
+        <a href="index.html" class="text-2xl font-bold text-blue-600">📚 RPSC/REET</a>
+        <div class="hidden md:flex gap-6">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+          <a href="dashboard.html" class="text-gray-700 hover:text-blue-600 font-medium">My Dashboard</a>
+          <a href="quizzes.html?mode=daily" class="text-gray-700 hover:text-blue-600 font-medium">Daily Quiz</a>
+          <a href="quizzes.html?mode=topic" class="text-gray-700 hover:text-blue-600 font-medium">Topic Tests</a>
+          <a href="quizzes.html?mode=mock" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
+          <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">🧩 Quizzes</a>
+          <a href="leaderboard.html" class="text-blue-600 font-semibold underline underline-offset-2">🏆 Leaderboard</a>
+          <a href="resources.html" class="text-gray-700 hover:text-blue-600 font-medium">📄 Resources</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 text-sm font-medium">← Dashboard</a>
+        <a href="quizzes.html?mode=daily" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">Start Daily Quiz</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
+    <section class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Leaderboard</h1>
+      <p class="text-gray-500">Track overall performance, streak consistency, and topic-level progress.</p>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-blue-500">
+        <div class="text-sm text-gray-500 mb-1">Your Rank</div>
+        <div id="viewerRank" class="text-2xl font-bold text-blue-600">—</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-violet-500">
+        <div class="text-sm text-gray-500 mb-1">Current Streak</div>
+        <div id="viewerCurrentStreak" class="text-2xl font-bold text-violet-600">0</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-emerald-500">
+        <div class="text-sm text-gray-500 mb-1">Best Streak</div>
+        <div id="viewerBestStreak" class="text-2xl font-bold text-emerald-600">0</div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+      <div class="flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-2">
+          <button data-tab="overall" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Overall</button>
+          <button data-tab="streak" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Streak</button>
+          <button data-tab="topic" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">By Topic</button>
+        </div>
+        <div id="topicControls" class="hidden flex items-center gap-2">
+          <select id="topicSelect" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+          <button id="refreshTopicBtn" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">Refresh</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+        <div>
+          <h2 id="leaderboardTitle" class="font-semibold text-gray-800">Overall Leaderboard</h2>
+          <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by average score, then completed quizzes.</p>
+        </div>
+        <span id="leaderboardMeta" class="text-xs text-gray-400"></span>
+      </div>
+
+      <div id="loadingState" class="px-6 py-16 text-center text-gray-500">
+        Loading leaderboard…
+      </div>
+
+      <div id="emptyState" class="hidden px-6 py-16 text-center">
+        <div class="text-5xl mb-4">🏆</div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Not enough data yet</h3>
+        <p id="emptyMessage" class="text-gray-500">Complete a few quizzes to populate this leaderboard.</p>
+      </div>
+
+      <div id="tableWrap" class="hidden overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr id="tableHeadRow"></tr>
+          </thead>
+          <tbody id="leaderboardBody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      tab: 'overall',
+      topics: [],
+      selectedTopic: ''
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupTabButtons();
+      document.getElementById('topicSelect').addEventListener('change', async (event) => {
+        state.selectedTopic = event.target.value;
+        if (state.tab === 'topic') {
+          await loadTopicLeaderboard();
+        }
+      });
+      document.getElementById('refreshTopicBtn').addEventListener('click', loadTopicLeaderboard);
+      await loadTab('overall');
+    });
+
+    function setupTabButtons() {
+      document.querySelectorAll('.leaderboard-tab').forEach((button) => {
+        button.addEventListener('click', async () => {
+          await loadTab(button.dataset.tab);
+        });
+      });
+    }
+
+    function setActiveTab(tab) {
+      state.tab = tab;
+      document.querySelectorAll('.leaderboard-tab').forEach((button) => {
+        const isActive = button.dataset.tab === tab;
+        button.className = isActive
+          ? 'leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white'
+          : 'leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200';
+      });
+      document.getElementById('topicControls').classList.toggle('hidden', tab !== 'topic');
+    }
+
+    async function loadTab(tab) {
+      setActiveTab(tab);
+      showLoading();
+
+      if (tab === 'overall') {
+        await loadOverallLeaderboard();
+      } else if (tab === 'streak') {
+        await loadStreakLeaderboard();
+      } else {
+        await loadTopicLeaderboard();
+      }
+    }
+
+    function showLoading() {
+      document.getElementById('loadingState').classList.remove('hidden');
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('tableWrap').classList.add('hidden');
+    }
+
+    async function loadOverallLeaderboard() {
+      try {
+        const res = await fetch('/api/leaderboard/overall?limit=10', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load overall leaderboard');
+        const data = await res.json();
+        document.getElementById('leaderboardTitle').textContent = 'Overall Leaderboard';
+        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by average score, then completed quizzes.';
+        renderViewer(data.viewer);
+        renderTable(data.leaderboard || [], 'overall');
+        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+      } catch {
+        renderEmpty('Unable to load the overall leaderboard right now.');
+      }
+    }
+
+    async function loadStreakLeaderboard() {
+      try {
+        const res = await fetch('/api/leaderboard/streak?limit=10', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load streak leaderboard');
+        const data = await res.json();
+        document.getElementById('leaderboardTitle').textContent = 'Streak Leaderboard';
+        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by current streak, then best streak.';
+        renderViewer(data.viewer);
+        renderTable(data.leaderboard || [], 'streak');
+        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+      } catch {
+        renderEmpty('Unable to load the streak leaderboard right now.');
+      }
+    }
+
+    async function loadTopicLeaderboard() {
+      try {
+        const topicListRes = await fetch('/api/leaderboard/topic', { credentials: 'include' });
+        if (!topicListRes.ok) throw new Error('Failed to load topics');
+        const topicListData = await topicListRes.json();
+        state.topics = topicListData.topics || [];
+
+        const topicSelect = document.getElementById('topicSelect');
+        if (state.topics.length === 0) {
+          renderEmpty('No topic data is available yet. Start some topic quizzes first.');
+          topicSelect.innerHTML = '<option value="">No topics available</option>';
+          return;
+        }
+
+        if (!state.selectedTopic || !state.topics.some((topic) => topic.key === state.selectedTopic)) {
+          state.selectedTopic = state.topics[0].key;
+        }
+
+        topicSelect.innerHTML = state.topics.map((topic) => (
+          `<option value="${escapeHtml(topic.key)}" ${topic.key === state.selectedTopic ? 'selected' : ''}>${escapeHtml(topic.label)}</option>`
+        )).join('');
+
+        const res = await fetch(`/api/leaderboard/topic?topic=${encodeURIComponent(state.selectedTopic)}&limit=10`, { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load topic leaderboard');
+        const data = await res.json();
+
+        document.getElementById('leaderboardTitle').textContent = `Topic Leaderboard: ${data.selectedTopic?.label || state.selectedTopic}`;
+        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by average score within the selected topic.';
+        renderViewer(data.viewer);
+        renderTable(data.leaderboard || [], 'topic');
+        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+      } catch {
+        renderEmpty('Unable to load the topic leaderboard right now.');
+      }
+    }
+
+    function renderViewer(viewer) {
+      document.getElementById('viewerRank').textContent = viewer && viewer.rank ? `#${viewer.rank}` : '—';
+      document.getElementById('viewerCurrentStreak').textContent = viewer ? String(viewer.currentStreak ?? 0) : '0';
+      document.getElementById('viewerBestStreak').textContent = viewer ? String(viewer.bestStreak ?? 0) : '0';
+    }
+
+    function renderTable(rows, mode) {
+      document.getElementById('loadingState').classList.add('hidden');
+      const tableWrap = document.getElementById('tableWrap');
+      const emptyState = document.getElementById('emptyState');
+      const body = document.getElementById('leaderboardBody');
+      const headRow = document.getElementById('tableHeadRow');
+
+      if (!rows || rows.length === 0) {
+        renderEmpty('No entries yet for this leaderboard.');
+        return;
+      }
+
+      const isStreak = mode === 'streak';
+      const headers = isStreak
+        ? ['Rank', 'User', 'Current Streak', 'Best Streak', 'Last Active']
+        : ['Rank', 'User', 'Average Score', 'Completed'];
+
+      headRow.innerHTML = headers.map((header) => `<th class="px-6 py-3 text-left font-semibold text-gray-600">${header}</th>`).join('');
+
+      body.innerHTML = rows.map((row) => {
+        const highlight = row.isCurrentUser ? 'bg-blue-50' : '';
+        const avatar = row.profileImage
+          ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="w-10 h-10 rounded-full object-cover border border-gray-200">`
+          : `<div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-semibold">${escapeHtml((row.name || 'U').slice(0, 1).toUpperCase())}</div>`;
+
+        if (isStreak) {
+          return `
+            <tr class="${highlight}">
+              <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  ${avatar}
+                  <div>
+                    <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
+                    <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
+              <td class="px-6 py-4 text-gray-700">${row.bestStreak ?? 0}</td>
+              <td class="px-6 py-4 text-gray-500">${row.lastActiveDate || '—'}</td>
+            </tr>
+          `;
+        }
+
+        return `
+          <tr class="${highlight}">
+            <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                ${avatar}
+                <div>
+                  <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
+                  <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 font-semibold text-blue-600">${row.averageScore ?? 0}%</td>
+            <td class="px-6 py-4 text-gray-700">${row.totalCompleted ?? 0}</td>
+          </tr>
+        `;
+      }).join('');
+
+      emptyState.classList.add('hidden');
+      tableWrap.classList.remove('hidden');
+    }
+
+    function renderEmpty(message) {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('tableWrap').classList.add('hidden');
+      const emptyState = document.getElementById('emptyState');
+      document.getElementById('emptyMessage').textContent = message;
+      emptyState.classList.remove('hidden');
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

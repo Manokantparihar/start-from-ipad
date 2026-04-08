@@ -18,6 +18,7 @@
           <a href="quizzes.html?mode=topic" class="text-gray-700 hover:text-blue-600 font-medium">Topic Tests</a>
           <a href="quizzes.html?mode=mock" class="text-gray-700 hover:text-blue-600 font-medium">Mock Tests</a>
           <a href="quizzes.html" class="text-gray-700 hover:text-blue-600 font-medium">Quizzes</a>
+          <a href="leaderboard.html" class="text-gray-700 hover:text-blue-600 font-medium">🏆 Leaderboard</a>
           <a href="resources.html" class="text-gray-700 hover:text-blue-600 font-medium">📄 Resources</a>
           <a id="adminNavLink" href="/admin/" style="display:none;" class="text-blue-700 hover:text-blue-900 font-medium">⚙️ Admin Panel</a>
         </div>
@@ -45,6 +46,10 @@
     <section class="mb-10">
       <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome back</h2>
       <p class="text-gray-600">Choose a learning path and start preparing.</p>
+      <div class="mt-5 flex flex-wrap gap-3">
+        <a href="quizzes.html?mode=daily" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">Start Daily Quiz</a>
+        <a href="dashboard.html" class="px-5 py-2.5 bg-gray-100 text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-200 font-medium text-sm">Go to My Dashboard</a>
+      </div>
     </section>
 
     <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
@@ -114,6 +119,106 @@
   </div>
 
   <script>
+    function getAttemptPercent(attempt) {
+      if (!attempt || !attempt.total) return null;
+      return Math.round((Number(attempt.score || 0) / Number(attempt.total || 1)) * 100);
+    }
+
+    function getAttemptType(attempt) {
+      if (attempt.quizType) return String(attempt.quizType).toLowerCase();
+      const text = `${attempt.quizTitle || ''} ${attempt.quizId || ''}`.toLowerCase();
+      if (text.includes('mock')) return 'mock';
+      if (text.includes('topic')) return 'topic';
+      if (text.includes('daily')) return 'daily';
+      return 'quiz';
+    }
+
+    function typeLabel(type) {
+      const t = String(type || '').toLowerCase();
+      if (t === 'daily') return 'Daily Quiz';
+      if (t === 'topic') return 'Topic Test';
+      if (t === 'mock') return 'Mock Test';
+      return 'Quiz';
+    }
+
+    function getWeakTopicLabel(completedAttempts) {
+      if (!completedAttempts.length) return '-';
+
+      const groups = new Map();
+
+      for (const a of completedAttempts) {
+        const percent = getAttemptPercent(a);
+        if (percent === null) continue;
+
+        const topic = String(a.quizTopic || '').trim();
+        const type = getAttemptType(a);
+        const key = topic || typeLabel(type);
+
+        if (!groups.has(key)) groups.set(key, { totalPct: 0, count: 0 });
+        const g = groups.get(key);
+        g.totalPct += percent;
+        g.count += 1;
+      }
+
+      if (!groups.size) return '-';
+
+      let weakestKey = null;
+      let weakestAvg = Infinity;
+
+      for (const [key, value] of groups.entries()) {
+        const avg = value.totalPct / value.count;
+        if (avg < weakestAvg) {
+          weakestAvg = avg;
+          weakestKey = key;
+        }
+      }
+
+      if (!weakestKey || !Number.isFinite(weakestAvg)) return '-';
+      return `${weakestKey} (${Math.round(weakestAvg)}%)`;
+    }
+
+    function renderRecentPerformance(attempts) {
+      const recentWrap = document.getElementById('recentQuizzes');
+      const completed = attempts
+        .filter((a) => a.status === 'completed' && Number(a.total) > 0)
+        .sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0))
+        .slice(0, 5);
+
+      if (!completed.length) {
+        recentWrap.innerHTML = '<p class="p-6 text-gray-500 text-center">No quizzes attempted yet. Start with a Daily Quiz!</p>';
+        return;
+      }
+
+      recentWrap.innerHTML = completed.map((a) => {
+        const percent = getAttemptPercent(a);
+        const dateText = new Date(a.completedAt || a.createdAt || Date.now()).toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+        const scoreText = `${Number(a.score || 0)}/${Number(a.total || 0)}`;
+        const detailsBtn = a.id
+          ? `<a href="dashboard.html" class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100">View Details</a>`
+          : '';
+
+        return `
+          <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <p class="font-semibold text-gray-800">${String(a.quizTitle || a.quizId || 'Quiz').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+              <p class="text-xs text-gray-500 mt-1">${typeLabel(getAttemptType(a))} • ${dateText}</p>
+            </div>
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="text-right">
+                <p class="text-sm font-semibold text-gray-700">${scoreText}</p>
+                <p class="text-xs text-gray-500">${percent !== null ? `${percent}%` : '-'}</p>
+              </div>
+              ${detailsBtn}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function buildInitialsAvatar(name) {
       const initials = String(name || 'U')
         .split(' ')
@@ -160,6 +265,9 @@
       document.getElementById('stat-attempts').textContent = String(attempts.length);
       document.getElementById('stat-avg-score').textContent = `${avgScore}%`;
       document.getElementById('stat-total-time').textContent = completed.length ? `${completed.length} done` : '-';
+      document.getElementById('stat-weak-topic').textContent = getWeakTopicLabel(completed);
+
+      renderRecentPerformance(attempts);
     }
 
     function setupEventListeners() {

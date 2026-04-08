@@ -136,9 +136,42 @@ router.get('/:id/download', async (req, res) => {
       return res.status(404).json({ error: 'File not found on server.' });
     }
 
+    const inline = req.query.inline === '1' || req.query.view === '1';
+
+    if (inline) {
+      res.setHeader(
+        'Content-Disposition',
+        `inline; filename="${encodeURIComponent(resource.origFilename)}"`
+      );
+      res.setHeader('Content-Type', 'application/pdf');
+      return res.sendFile(filePath);
+    }
+
+    // Force browser download for Download button flows.
+    return res.download(filePath, resource.origFilename);
+  } catch {
+    return res.status(500).json({ error: 'Server error.' });
+  }
+});
+
+// ─── GET /api/resources/:id/view ─────────────────────────────────────────────
+// Public (auth not required): open a file inline in browser.
+router.get('/:id/view', async (req, res) => {
+  try {
+    const resources = await db.getResources();
+    const resource = resources.find(r => r.id === req.params.id && !r.isDeleted);
+    if (!resource) {
+      return res.status(404).json({ error: 'Resource not found.' });
+    }
+
+    const filePath = path.join(__dirname, '../../uploads/resources', resource.filename);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found on server.' });
+    }
+
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="${encodeURIComponent(resource.origFilename)}"`
+      `inline; filename="${encodeURIComponent(resource.origFilename)}"`
     );
     res.setHeader('Content-Type', 'application/pdf');
     return res.sendFile(filePath);

@@ -620,5 +620,77 @@
       }
     ],
     "questionCount": 15
+  },
+  {
+    "id": "d8e5ab1f-3a3c-487d-9095-7344af8d1d41",
+    "title": "Science",
+    "slug": "science",
+    "description": "",
+    "mode": "topic",
+    "topic": "Light",
+    "difficulty": "easy",
+    "timeLimit": 5,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-08T03:38:59.020Z",
+    "updatedAt": "2026-04-08T03:38:59.020Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "ce5e51da-4b27-4299-a8a1-57c1312356e8",
+        "question": "What is the speed of light?",
+        "options": [
+          "2.99",
+          "3",
+          "8",
+          "5"
+        ],
+        "correctAnswer": "3",
+        "explanation": "The speed of light is 3",
+        "topic": "light",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 1
+  },
+  {
+    "id": "bc4e8fdb-e68b-41e6-8b1d-428bed964403",
+    "title": "Jgsddjsgjcjj",
+    "slug": "jgsddjsgjcjj",
+    "description": "djsgdmnmsnmcvc",
+    "mode": "daily",
+    "topic": "Current affairs, Rajasthan",
+    "difficulty": "medium",
+    "timeLimit": 5,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-08T03:42:57.227Z",
+    "updatedAt": "2026-04-08T03:42:57.227Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "1b952ec5-b9f3-476a-8783-b90a33bce20f",
+        "question": "What is the conflict between USA and Iran?",
+        "options": [
+          "It’s a trade deal",
+          "Nuclear war",
+          "Discrimination",
+          "Nuclear resources to be used"
+        ],
+        "correctAnswer": "Nuclear resources to be used",
+        "explanation": "jgdjgjdhgfjgjdgfjdfghffgjgfgffgfkjgfgfdjg",
+        "topic": "Current affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 1
   }
 ]

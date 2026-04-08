@@ -32,6 +32,7 @@
           <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"></div>
         </div>
         <button id="historyBtn" class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm font-medium">📋 History</button>
+        <a href="leaderboard.html" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 text-sm font-medium">🏆 Leaderboard</a>
         <a href="index.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 text-sm">← Dashboard</a>
       </div>
     </nav>
@@ -63,8 +64,8 @@
     <!-- Section: Quiz List -->
     <section id="quizListSection" class="hidden animation-fadeIn">
       <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Available Quizzes</h2>
-        <p class="text-gray-600">Select a quiz to start. Your progress is saved automatically.</p>
+        <h2 id="quizListHeading" class="text-3xl font-bold text-gray-800 mb-2">Available Quizzes</h2>
+        <p id="quizListDescription" class="text-gray-600">Select a quiz to start. Your progress is saved automatically.</p>
       </div>
       <div id="quizList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </section>
@@ -127,7 +128,35 @@
 
   <script>
     // ─── State ───────────────────────────────────────────────────────────────
+    const MODE_CONFIG = {
+      daily: {
+        title: 'Daily Quiz',
+        pageTitle: 'Daily Quiz',
+        heading: 'Available Daily Quizzes',
+        description: 'Choose a daily quiz to start your practice.'
+      },
+      topic: {
+        title: 'Topic Tests',
+        pageTitle: 'Topic Tests',
+        heading: 'Available Topic Tests',
+        description: 'Choose a topic test and focus on specific subjects.'
+      },
+      mock: {
+        title: 'Mock Tests',
+        pageTitle: 'Mock Tests',
+        heading: 'Available Mock Tests',
+        description: 'Choose a mock test for full-exam style practice.'
+      },
+      all: {
+        title: 'Quizzes',
+        pageTitle: 'Quizzes',
+        heading: 'Available Quizzes',
+        description: 'Select a quiz to start. Your progress is saved automatically.'
+      }
+    };
+
     let currentUser = null;
+    let currentMode = 'all';
     let currentAttemptId = null;
     let currentQuizData = null;   // { id, title, questions }
     let currentQuizId = null;
@@ -139,8 +168,24 @@
 
     // ─── Init ─────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
+      currentMode = getModeFromQuery();
+      applyModeContext();
       await checkAuth();
     });
+
+    function getModeFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const mode = (params.get('mode') || '').toLowerCase();
+      return MODE_CONFIG[mode] ? mode : 'all';
+    }
+
+    function applyModeContext() {
+      const cfg = MODE_CONFIG[currentMode] || MODE_CONFIG.all;
+      document.title = `${cfg.title} - RPSC/REET Prep`;
+      document.getElementById('pageTitle').textContent = cfg.pageTitle;
+      document.getElementById('quizListHeading').textContent = cfg.heading;
+      document.getElementById('quizListDescription').textContent = cfg.description;
+    }
 
     async function checkAuth() {
       try {
@@ -168,10 +213,16 @@
         const res = await fetch('/api/quizzes', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load quizzes');
         const quizzes = await res.json();
+        const visibleQuizzes = currentMode === 'all'
+          ? quizzes
+          : quizzes.filter(quiz => (quiz.mode || '').toLowerCase() === currentMode);
 
         const container = document.getElementById('quizList');
-        if (quizzes.length === 0) {
-          container.innerHTML = '<p class="col-span-2 text-center text-gray-500 py-8">No quizzes available yet.</p>';
+        if (visibleQuizzes.length === 0) {
+          const emptyText = currentMode === 'all'
+            ? 'No quizzes available yet.'
+            : `No ${MODE_CONFIG[currentMode].title.toLowerCase()} available yet.`;
+          container.innerHTML = `<p class="col-span-2 text-center text-gray-500 py-8">${escHtml(emptyText)}</p>`;
         } else {
           const colors = [
             'from-blue-500 to-blue-600',
@@ -179,7 +230,7 @@
             'from-green-500 to-green-600',
             'from-orange-500 to-orange-600'
           ];
-          container.innerHTML = quizzes.map((quiz, idx) => `
+          container.innerHTML = visibleQuizzes.map((quiz, idx) => `
             <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden">
               <div class="bg-gradient-to-r ${colors[idx % colors.length]} h-24 flex items-center justify-center">
                 <span class="text-4xl">📝</span>
@@ -365,7 +416,7 @@
           clearInterval(timerInterval);
           hide('quizSection');
           show('quizListSection');
-          document.getElementById('pageTitle').textContent = 'Quizzes';
+          document.getElementById('pageTitle').textContent = MODE_CONFIG[currentMode].pageTitle;
           currentAttemptId = null;
           currentQuizData = null;
         }
@@ -373,13 +424,13 @@
       document.getElementById('takeAnotherBtn').addEventListener('click', () => {
         hide('resultsSection');
         show('quizListSection');
-        document.getElementById('pageTitle').textContent = 'Quizzes';
+        document.getElementById('pageTitle').textContent = MODE_CONFIG[currentMode].pageTitle;
       });
       document.getElementById('viewHistoryBtn').addEventListener('click', showHistory);
       document.getElementById('backToQuizzesBtn').addEventListener('click', () => {
         hide('historySection');
         show('quizListSection');
-        document.getElementById('pageTitle').textContent = 'Quizzes';
+        document.getElementById('pageTitle').textContent = MODE_CONFIG[currentMode].pageTitle;
       });
 
       // Event delegation: start quiz buttons

@@ -180,11 +180,15 @@ function showBanner(msg, ok = true) {
 // ── Auth check ───────────────────────────────────────────────────────────────
 async function checkAuth() {
   try {
-    const res = await fetch('/api/profile', { credentials: 'include' });
+    const res = await fetch('/api/auth/me', {
+      credentials: 'include',
+      cache: 'no-store'
+    });
     if (!res.ok) throw new Error('not auth');
-    const user = await res.json();
+    const data = await res.json();
+    const user = data.user;
     if (user.role !== 'admin') throw new Error('not admin');
-    document.getElementById('userNameDisplay').textContent = user.username || user.name || '';
+    document.getElementById('userNameDisplay').textContent = user.name || user.email || '';
     document.getElementById('pageLoading').classList.add('hidden');
     document.getElementById('analyticsPanel').classList.remove('hidden');
     loadAll();
