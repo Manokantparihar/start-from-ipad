@@ -32,6 +32,14 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
+        <!-- Notification Bell -->
+        <div id="notifWidget" class="relative hidden">
+          <button id="notifBell" title="Notifications" class="relative p-1 rounded-full hover:bg-gray-100 text-xl">
+            🔔
+            <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none font-bold"></span>
+          </button>
+          <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"></div>
+        </div>
         <a href="profile.html" class="text-blue-600 font-semibold underline underline-offset-2">My Profile</a>
         <span id="userName" class="text-gray-700 font-medium"></span>
         <button id="logoutBtn" class="px-3 py-1 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 font-medium">Logout</button>
@@ -185,6 +193,22 @@
       </form>
     </section>
 
+    <!-- ── Notification Preferences ───────────────────────────────── -->
+    <section class="bg-white rounded-xl shadow-md p-6 mt-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Notification Preferences</h3>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-700">Email Notifications</p>
+          <p class="text-xs text-gray-400 mt-0.5">Receive emails for new quizzes, results, and announcements.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="emailNotifToggle" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
+      </div>
+      <div id="notifPrefBanner" class="hidden mt-3 px-4 py-2 rounded-lg text-sm font-medium"></div>
+    </section>
+
   </main>
 
   <script>
@@ -272,6 +296,9 @@
       document.getElementById('displayRole').textContent = user.role || 'user';
       document.getElementById('displayCreatedAt').textContent = formatDate(user.createdAt);
       renderAvatar(user.profileImage, user.name);
+      // Email notification toggle
+      const toggle = document.getElementById('emailNotifToggle');
+      if (toggle) toggle.checked = user.emailNotifications !== false;
     }
 
     // ── Load current user ──────────────────────────────────────────────────────
@@ -505,8 +532,36 @@
       window.location.href = 'index.html';
     });
 
+    // ── Email Notification Toggle ───────────────────────────────────────────────
+    const emailNotifToggle = document.getElementById('emailNotifToggle');
+    if (emailNotifToggle) {
+      emailNotifToggle.addEventListener('change', async () => {
+        const banner = document.getElementById('notifPrefBanner');
+        const enabled = emailNotifToggle.checked;
+        try {
+          const res = await fetch('/api/profile/notifications', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emailNotifications: enabled })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showBanner(banner, data.message || 'Preference saved.', true);
+          } else {
+            showBanner(banner, data.error || 'Could not save preference.', false);
+            emailNotifToggle.checked = !enabled; // revert
+          }
+        } catch {
+          showBanner(banner, 'Network error. Please try again.', false);
+          emailNotifToggle.checked = !enabled;
+        }
+      });
+    }
+
     // ── Init ───────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', loadProfile);
   </script>
+  <script src="/js/notifications.js"></script>
 </body>
 </html>

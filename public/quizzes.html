@@ -23,6 +23,14 @@
       <h1 class="text-lg font-semibold text-gray-800" id="pageTitle">Quizzes</h1>
       <div class="flex items-center gap-3">
         <span id="userNameDisplay" class="text-gray-600 text-sm font-medium hidden"></span>
+        <!-- Notification Bell -->
+        <div id="notifWidget" class="relative hidden">
+          <button id="notifBell" title="Notifications" class="relative p-1 rounded-full hover:bg-gray-100 text-xl">
+            🔔
+            <span id="notifBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none font-bold"></span>
+          </button>
+          <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"></div>
+        </div>
         <button id="historyBtn" class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm font-medium">📋 History</button>
         <a href="index.html" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 text-sm">← Dashboard</a>
       </div>
@@ -581,5 +589,6 @@
         .replace(/'/g, '&#039;');
     }
   </script>
+  <script src="/js/notifications.js"></script>
 </body>
 </html>
