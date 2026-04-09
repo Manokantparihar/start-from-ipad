@@ -23,14 +23,27 @@ const authMiddleware = require('./src/middlewares/auth');
 const isAdmin = require('./src/middlewares/isAdmin');
 const { syncUsersToGamification } = require('./src/utils/gamification');
 const db = require('./src/utils/db');
+const config = require('./src/config');
 
 const app = express();
-const PORT = process.env.PORT || 5500;
+const PORT = config.port;
+
+const corsOriginValidator = (origin, callback) => {
+  if (!origin) {
+    return callback(null, true);
+  }
+
+  if (config.corsAllowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+
+  return callback(new Error('CORS origin not allowed'));
+};
 
 // --- Middlewares ---
 app.use(
   cors({
-    origin: true,
+    origin: corsOriginValidator,
     credentials: true
   })
 );
@@ -71,10 +84,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Data Paths & Contact Setup ---
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = config.dataDir;
 const SUBMISSIONS_FILE = path.join(DATA_DIR, 'contact-submissions.jsonl');
-const CONTACT_TARGET_EMAIL =
-  process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com';
+const CONTACT_TARGET_EMAIL = config.contactTargetEmail;
 
 // Make sure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
