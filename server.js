@@ -15,6 +15,8 @@ const leaderboardRoutes = require('./src/routes/leaderboard');
 const adminImportExportRoutes = require('./src/routes/adminImportExport');
 const notificationRoutes = require('./src/routes/notifications');
 const adminNotificationRoutes = require('./src/routes/adminNotifications');
+const adminCoursesRoutes = require('./src/routes/adminCourses');
+const coursesRoutes = require('./src/routes/courses');
 const meRoutes = require('./src/routes/me');
 const rewardsRoutes = require('./src/routes/rewards');
 const authMiddleware = require('./src/middlewares/auth');
@@ -48,6 +50,9 @@ app.use('/api/leaderboard', leaderboardRoutes);
 // Resources: admin upload/delete under /api/admin/resources, public list/download under /api/resources
 app.use('/api/admin/resources', authMiddleware, isAdmin, resourceRoutes);
 app.use('/api/resources', resourceRoutes);
+// Courses + lessons: admin management and public listing/detail
+app.use('/api/admin/courses', authMiddleware, isAdmin, adminCoursesRoutes);
+app.use('/api/courses', coursesRoutes);
 // Analytics – admin only
 app.use('/api/admin/analytics', authMiddleware, isAdmin, adminAnalyticsRoutes);
 // Import / Export – admin only

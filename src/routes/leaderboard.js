@@ -5,7 +5,7 @@ const {
   buildLeaderboardResponse,
   normalizeTopicKey
 } = require('../utils/leaderboard');
-const { getUserGroupIds } = require('../utils/gamification');
+const { getMasteryRank, getUserGroupIds } = require('../utils/gamification');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
@@ -187,14 +187,20 @@ router.get('/group/:groupId', async (req, res) => {
         userId: user.id,
         name: user.name || 'Unknown',
         profileImage: user.profileImage || null,
+        accuracyPercent: Number(user.accuracyPercent) || 0,
+        masteryLevel: user.masteryLevel || user.currentTier || 'Beginner',
+        rankScore: Number(user.rankScore) || 0,
         totalXp: Number(user.totalXp) || 0,
         weeklyXp: Number(user.weeklyXp) || 0,
         currentStreak: Number(user.currentStreak) || 0,
-        tier: user.currentTier || 'Bronze'
+        tier: user.masteryLevel || user.currentTier || 'Beginner'
       }))
       .sort((a, b) => {
-        if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+        const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+        if (masteryDiff !== 0) return masteryDiff;
+        if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
         if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+        if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
         return a.name.localeCompare(b.name);
       })
       .map((entry, index) => ({

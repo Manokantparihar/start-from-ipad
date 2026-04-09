@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Dashboard – RPSC/REET Prep</title>
+  <title>My Dashboard - RPSC/REET Prep</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -11,22 +11,18 @@
     .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
     .animation-slideIn { animation: slideIn 0.3s ease-in; }
     .modal-backdrop { backdrop-filter: blur(2px); }
-    .row-details { display: none; }
-    .row-details.open { display: table-row; }
   </style>
 </head>
 <body class="bg-gray-50">
   <div id="appNavbar"></div>
 
-  <!-- Loading Screen -->
   <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
     <div class="text-center">
       <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p class="text-gray-500">Loading your dashboard…</p>
+      <p class="text-gray-500">Loading your dashboard...</p>
     </div>
   </div>
 
-  <!-- Error Screen -->
   <div id="errorScreen" class="hidden flex items-center justify-center min-h-screen">
     <div class="text-center bg-white rounded-xl shadow-md p-10 max-w-md">
       <div class="text-5xl mb-4">🔒</div>
@@ -36,311 +32,96 @@
     </div>
   </div>
 
-  <!-- Main Dashboard (hidden until authenticated) -->
-  <main id="dashboardMain" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
-
-    <div class="mb-8">
+  <main id="dashboardMain" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
+    <div class="mb-6">
       <h2 class="text-3xl font-bold text-gray-800 mb-1">My Dashboard</h2>
-      <p class="text-gray-500">Track your quiz attempts, scores, and progress.</p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <a href="quizzes.html?mode=daily" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">Start Daily Quiz</a>
-        <a href="quizzes.html" class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm">Go to My Quizzes</a>
-      </div>
+      <p class="text-gray-600 text-sm">Clean performance analytics and attempt history</p>
     </div>
 
-    <!-- Global error/info banner -->
     <div id="globalBanner" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-medium"></div>
 
-    <section id="eventBanner" class="hidden mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 p-5 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p class="text-xs uppercase tracking-wide text-amber-700 font-semibold">Seasonal Event</p>
-          <h3 id="eventBannerTitle" class="text-lg font-bold text-amber-900 mt-1">No active event</h3>
-          <p id="eventBannerMeta" class="text-sm text-amber-800 mt-1"></p>
-        </div>
-        <div class="text-right">
-          <div id="eventBannerProgress" class="text-2xl font-bold text-amber-700">0/0</div>
-          <div class="text-xs text-amber-700">Event Progress</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Summary Stats -->
-    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+    <!-- Key Metrics (4 cards) -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-blue-500">
-        <div class="text-2xl font-bold text-blue-600" id="statTotal">—</div>
-        <div class="text-gray-500 text-sm mt-1">Total Attempts</div>
+        <div class="text-2xl font-bold text-blue-600" id="statAccuracy">-</div>
+        <div class="text-gray-500 text-sm mt-1">Accuracy</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-green-500">
-        <div class="text-2xl font-bold text-green-600" id="statAvg">—</div>
-        <div class="text-gray-500 text-sm mt-1">Average Score</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-purple-500">
-        <div class="text-2xl font-bold text-purple-600" id="statWeak">—</div>
-        <div class="text-gray-500 text-sm mt-1">Weak Topic</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-orange-500">
-        <div class="text-2xl font-bold text-orange-600" id="statCompleted">—</div>
+        <div class="text-2xl font-bold text-green-600" id="statCompleted">-</div>
         <div class="text-gray-500 text-sm mt-1">Completed</div>
       </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-emerald-500">
-        <div class="text-2xl font-bold text-emerald-600" id="statBest">—</div>
-        <div class="text-gray-500 text-sm mt-1">Best Score</div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-orange-500">
+        <div class="text-2xl font-bold text-orange-600 truncate" id="statWeak">-</div>
+        <div class="text-gray-500 text-sm mt-1">Weak Area</div>
       </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-cyan-500">
-        <div class="text-2xl font-bold text-cyan-600" id="statLatest">—</div>
-        <div class="text-gray-500 text-sm mt-1">Latest Score</div>
-      </div>
-    </section>
-
-    <!-- Gamification Overview -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-800 text-lg">Active XP Boost</h3>
-            <p class="text-sm text-gray-500 mt-1">Boosted XP applies on completed quizzes only.</p>
-          </div>
-          <div class="text-right">
-            <div id="boostMultiplierValue" class="text-2xl font-bold text-rose-600">x1</div>
-            <div class="text-sm text-gray-500">Multiplier</div>
-          </div>
-        </div>
-        <div class="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-4">
-          <div id="boostTitle" class="font-semibold text-rose-800">No active boost</div>
-          <div id="boostMeta" class="text-sm text-rose-700 mt-1">Redeem a Double XP token from the shop.</div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-800 text-lg">XP Wallet</h3>
-            <p class="text-sm text-gray-500 mt-1">Spend XP in the reward shop.</p>
-          </div>
-          <div class="text-right">
-            <div id="xpBalanceValue" class="text-2xl font-bold text-emerald-600">0</div>
-            <div class="text-sm text-gray-500">Balance</div>
-          </div>
-        </div>
-        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-          <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3">
-            <div class="text-gray-500">Spent XP</div>
-            <div id="xpSpentValue" class="text-lg font-semibold text-emerald-700">0</div>
-          </div>
-          <div class="rounded-lg bg-sky-50 border border-sky-100 p-3">
-            <div class="text-gray-500">Redeems</div>
-            <div id="redeemCountValue" class="text-lg font-semibold text-sky-700">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-800 text-lg">Group Rank</h3>
-            <p class="text-sm text-gray-500 mt-1">Your classroom competition snapshot.</p>
-          </div>
-          <div class="text-right">
-            <div id="groupRankValue" class="text-2xl font-bold text-indigo-600">—</div>
-            <div class="text-sm text-gray-500">Best group rank</div>
-          </div>
-        </div>
-        <div id="groupPreview" class="mt-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-800">
-          No group joined yet.
-        </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-purple-500">
+        <div class="text-2xl font-bold text-purple-600" id="statMastery">-</div>
+        <div class="text-gray-500 text-sm mt-1">Mastery</div>
       </div>
     </section>
 
-    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div>
-          <h3 class="font-semibold text-gray-800 text-lg">Reward Shop</h3>
-          <p class="text-sm text-gray-500">Redeem boosts, utilities, and cosmetic unlocks with XP.</p>
-        </div>
-        <div class="text-sm text-gray-500">Quick redeem supported for basic rewards</div>
+    <!-- Compact Summary Row -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div>
+        <span class="text-gray-500">Best Score:</span>
+        <span class="font-semibold text-gray-800 ml-2" id="statBest">-</span>
       </div>
-      <div id="rewardShopList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <p class="text-gray-500 text-sm">Loading rewards…</p>
+      <div>
+        <span class="text-gray-500">Latest Score:</span>
+        <span class="font-semibold text-gray-800 ml-2" id="statLatest">-</span>
       </div>
-    </section>
-
-    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-      <h3 class="font-semibold text-gray-800 text-lg">Latest Achievement</h3>
-      <div id="achievementBanner" class="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-        <div id="achievementTitle" class="font-semibold text-emerald-800">No achievement yet</div>
-        <div id="achievementMeta" class="text-sm text-emerald-700 mt-1">Keep practicing to unlock your next badge.</div>
+      <div>
+        <span class="text-gray-500">Streak:</span>
+        <span class="font-semibold text-gray-800 ml-2" id="statStreak">-</span>
       </div>
-    </section>
-
-    <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-      <h3 class="font-semibold text-gray-800 text-lg">Badge Collection</h3>
-      <p class="text-sm text-gray-500 mt-1">Badges now include category and rarity.</p>
-      <div id="badgeCollection" class="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        <p class="text-gray-500 text-sm">No badges yet.</p>
+      <div>
+        <span class="text-gray-500">Rank:</span>
+        <span class="font-semibold text-gray-800 ml-2" id="statRank">-</span>
       </div>
     </section>
 
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-800 text-lg">XP & Level Progress</h3>
-            <p class="text-sm text-gray-500 mt-1">Only completed quizzes award XP.</p>
-          </div>
-          <div class="text-right">
-            <div id="gamificationXpValue" class="text-2xl font-bold text-blue-600">0 XP</div>
-            <div id="gamificationLevelValue" class="text-sm text-gray-500">Level 1</div>
-          </div>
-        </div>
-
-        <div class="mt-5 grid grid-cols-2 gap-3">
-          <div class="rounded-xl bg-blue-50 border border-blue-100 p-4">
-            <div class="text-xs uppercase tracking-wide text-blue-600 font-semibold">XP Earned</div>
-            <div id="gamificationTotalXp" class="text-xl font-bold text-blue-700 mt-1">0</div>
-          </div>
-          <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-4">
-            <div class="text-xs uppercase tracking-wide text-indigo-600 font-semibold">Next Level</div>
-            <div id="gamificationXpToNext" class="text-xl font-bold text-indigo-700 mt-1">50 XP</div>
-          </div>
-        </div>
-
-        <div class="mt-5">
-          <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-            <span id="gamificationProgressText">0 / 50 XP to next level</span>
-            <span id="gamificationLevelRangeText">Level 1</span>
-          </div>
-          <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-            <div id="gamificationProgressBar" class="h-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300" style="width:0%"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 class="font-semibold text-gray-800 text-lg">Streak & Badge</h3>
-            <p class="text-sm text-gray-500 mt-1">Daily consistency drives streaks.</p>
-          </div>
-          <div class="text-right">
-            <div class="text-2xl font-bold text-indigo-600" id="gamificationCurrentStreak">0</div>
-            <div class="text-sm text-gray-500">Current streak</div>
-          </div>
-        </div>
-
-        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-          <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-3">
-            <div class="text-gray-500">Best streak</div>
-            <div id="gamificationBestStreak" class="text-lg font-semibold text-indigo-700">0</div>
-          </div>
-          <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-3">
-            <div class="text-gray-500">Badges</div>
-            <div id="gamificationBadgeCount" class="text-lg font-semibold text-emerald-700">0</div>
-          </div>
-        </div>
-
-        <div class="mt-5 border-t border-gray-100 pt-4">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Latest badge</p>
-          <div id="latestBadgeCard" class="mt-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4">
-            <div id="latestBadgeTitle" class="font-semibold text-gray-800">No badge yet</div>
-            <div id="latestBadgeDescription" class="text-sm text-gray-500 mt-1">Complete your first quiz to unlock a badge.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Standing & Leaderboard Preview -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-      <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-indigo-500">
-          <div class="text-sm text-gray-500 mb-1">Current Streak</div>
-          <div class="text-2xl font-bold text-indigo-600" id="userCurrentStreak">0</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-violet-500">
-          <div class="text-sm text-gray-500 mb-1">Best Streak</div>
-          <div class="text-2xl font-bold text-violet-600" id="userBestStreak">0</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-emerald-500">
-          <div class="text-sm text-gray-500 mb-1">User Rank</div>
-          <div class="text-2xl font-bold text-emerald-600" id="userRank">—</div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
-          <div>
-            <h3 class="font-semibold text-gray-800">Leaderboard Preview</h3>
-            <p class="text-xs text-gray-500 mt-0.5">Top 5 overall performers</p>
-          </div>
-          <a href="leaderboard.html" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View full leaderboard</a>
-        </div>
-        <div id="leaderboardPreviewList" class="divide-y divide-gray-100">
-          <p class="px-6 py-10 text-center text-gray-500">Loading leaderboard…</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Recent Performance -->
-    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 class="font-semibold text-gray-700">Recent Performance</h3>
-        <span id="recentCount" class="text-xs text-gray-400"></span>
-      </div>
-      <div id="recentPerformanceList" class="divide-y divide-gray-100">
-        <p class="px-6 py-10 text-center text-gray-500">No quizzes attempted yet. Start with Daily Quiz.</p>
-      </div>
-    </section>
-
-    <!-- Filter & Export Row -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-      <div class="flex flex-wrap gap-3 items-end">
-        <!-- Search -->
+      <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
         <div class="flex-1 min-w-48">
-          <label class="block text-xs font-medium text-gray-500 mb-1">Search by Quiz</label>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Search</label>
           <input
             id="filterSearch"
             type="text"
-            placeholder="Quiz title…"
+            placeholder="Quiz title..."
             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>
-        <!-- Type filter -->
         <div>
           <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
           <select id="filterType" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-            <option value="">All Types</option>
-            <option value="mock">Mock Test</option>
-            <option value="topic">Topic Test</option>
-            <option value="daily">Daily Quiz</option>
+            <option value="">All</option>
+            <option value="mock">Mock</option>
+            <option value="topic">Topic</option>
+            <option value="daily">Daily</option>
           </select>
         </div>
-        <!-- Status filter -->
         <div>
           <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
           <select id="filterStatus" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-            <option value="">All Statuses</option>
+            <option value="">All</option>
             <option value="completed">Completed</option>
             <option value="in-progress">In Progress</option>
             <option value="expired">Expired</option>
           </select>
         </div>
-        <!-- Clear filters -->
-        <button id="clearFiltersBtn" class="px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50">Clear</button>
-        <!-- Export CSV -->
-        <button id="exportCsvBtn" class="ml-auto flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm">
-          ⬇ Export CSV
+        <button id="clearFiltersBtn" class="px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">Clear</button>
+        <button id="exportCsvBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm whitespace-nowrap">
+          📊 Export CSV
         </button>
       </div>
     </section>
 
-    <!-- Attempts Table -->
-    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 class="font-semibold text-gray-700">Attempt History</h3>
-        <span id="filteredCount" class="text-xs text-gray-400"></span>
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-800">Attempt History</h3>
+        <span id="filteredCount" class="text-xs text-gray-500 block mt-1"></span>
       </div>
 
-      <!-- Table (desktop) -->
       <div class="overflow-x-auto">
         <table id="attemptsTable" class="min-w-full text-sm hidden">
           <thead class="bg-gray-50 border-b border-gray-100">
@@ -358,7 +139,6 @@
         </table>
       </div>
 
-      <!-- Empty state -->
       <div id="emptyState" class="hidden text-center py-16 px-6">
         <div class="text-5xl mb-4">📭</div>
         <h3 class="text-lg font-semibold text-gray-700 mb-2">No attempts yet</h3>
@@ -370,20 +150,16 @@
         </div>
       </div>
 
-      <!-- No results after filter -->
       <div id="noResults" class="hidden text-center py-10 px-6">
         <div class="text-3xl mb-3">🔍</div>
         <p class="text-gray-500">No attempts match your filters.</p>
         <button id="clearFiltersBtn2" class="mt-3 text-blue-600 text-sm underline">Clear filters</button>
       </div>
     </section>
-
   </main>
 
-  <!-- View Details Modal -->
   <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop bg-black/50 px-4 py-6">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animation-fadeIn">
-      <!-- Modal Header -->
       <div class="flex items-start justify-between p-6 border-b border-gray-100">
         <div class="flex-1 min-w-0">
           <h3 id="modalTitle" class="text-lg font-bold text-gray-800 truncate">Attempt Details</h3>
@@ -391,17 +167,12 @@
         </div>
         <button id="modalCloseBtn" class="ml-4 text-gray-400 hover:text-gray-600 text-2xl leading-none flex-shrink-0" aria-label="Close">✕</button>
       </div>
-      <!-- Modal Score Summary -->
       <div id="modalScore" class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-6 text-sm"></div>
-      <!-- Modal Loading -->
       <div id="modalLoading" class="flex items-center justify-center py-10">
         <div class="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
-      <!-- Modal Error -->
       <div id="modalError" class="hidden px-6 py-4 text-red-600 text-sm"></div>
-      <!-- Modal Breakdown List -->
       <div id="modalBreakdown" class="hidden overflow-y-auto flex-1 divide-y divide-gray-100"></div>
-      <!-- Modal Footer -->
       <div class="px-6 py-4 border-t border-gray-100 text-right">
         <button id="modalCloseFooterBtn" class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm">Close</button>
       </div>
@@ -410,12 +181,9 @@
 
   <script src="/js/modules/navbar.js"></script>
   <script>
-    // ── State ──────────────────────────────────────────────────────────────────
     let allAttempts = [];
     let filteredAttempts = [];
-    let currentUser = null;
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
     function showBanner(el, message, type) {
       el.textContent = message;
       el.className =
@@ -426,27 +194,31 @@
     }
 
     function formatDate(ts) {
-      if (!ts) return '—';
+      if (!ts) return '-';
       try {
         return new Date(ts).toLocaleDateString(undefined, {
           year: 'numeric', month: 'short', day: 'numeric',
           hour: '2-digit', minute: '2-digit'
         });
-      } catch { return '—'; }
+      } catch {
+        return '-';
+      }
     }
 
     function formatDateShort(ts) {
-      if (!ts) return '—';
+      if (!ts) return '-';
       try {
         return new Date(ts).toLocaleDateString(undefined, {
           year: 'numeric', month: 'short', day: 'numeric'
         });
-      } catch { return '—'; }
+      } catch {
+        return '-';
+      }
     }
 
     function typeBadge(type) {
       const map = {
-        mock:  { label: 'Mock',  cls: 'bg-orange-100 text-orange-700' },
+        mock: { label: 'Mock', cls: 'bg-orange-100 text-orange-700' },
         topic: { label: 'Topic', cls: 'bg-purple-100 text-purple-700' },
         daily: { label: 'Daily', cls: 'bg-blue-100 text-blue-700' }
       };
@@ -456,11 +228,11 @@
 
     function statusBadge(status) {
       const map = {
-        completed:   { label: 'Completed',   cls: 'bg-green-100 text-green-700' },
+        completed: { label: 'Completed', cls: 'bg-green-100 text-green-700' },
         'in-progress': { label: 'In Progress', cls: 'bg-yellow-100 text-yellow-700' },
-        expired:     { label: 'Expired',     cls: 'bg-red-100 text-red-700' }
+        expired: { label: 'Expired', cls: 'bg-red-100 text-red-700' }
       };
-      const s = map[status] || { label: status || '—', cls: 'bg-gray-100 text-gray-600' };
+      const s = map[status] || { label: status || '-', cls: 'bg-gray-100 text-gray-600' };
       return `<span class="px-2 py-0.5 rounded-full text-xs font-medium ${s.cls}">${s.label}</span>`;
     }
 
@@ -473,7 +245,7 @@
     function getWeakTopicLabel(completedAttempts) {
       const topicGroups = new Map();
 
-      completedAttempts.forEach(a => {
+      completedAttempts.forEach((a) => {
         const topic = String(a.topic || '').trim();
         if (!topic) return;
         if (!topicGroups.has(topic)) {
@@ -484,7 +256,6 @@
         bucket.count += 1;
       });
 
-      // Need at least 2 topics to meaningfully identify a weak topic.
       if (topicGroups.size < 2) return 'Not enough data';
 
       let weakestTopic = null;
@@ -501,365 +272,33 @@
       return weakestTopic || 'Not enough data';
     }
 
-    function formatLeaderboardRank(rank) {
-      return rank ? `#${rank}` : '—';
-    }
-
-    function formatRarityLabel(rarity) {
-      const value = String(rarity || 'common').toLowerCase();
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    }
-
-    function rarityClass(rarity) {
-      const value = String(rarity || 'common').toLowerCase();
-      if (value === 'legendary') return 'bg-amber-100 text-amber-800 border-amber-200';
-      if (value === 'epic') return 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200';
-      if (value === 'rare') return 'bg-sky-100 text-sky-800 border-sky-200';
-      return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-
-    function renderEventBanner(user) {
-      const banner = document.getElementById('eventBanner');
-      const activeEvents = Array.isArray(user?.activeEvents) ? user.activeEvents : [];
-      if (activeEvents.length === 0) {
-        banner.classList.add('hidden');
-        return;
-      }
-
-      const event = activeEvents[0];
-      banner.classList.remove('hidden');
-      document.getElementById('eventBannerTitle').textContent = event.title || 'Active Event';
-      document.getElementById('eventBannerMeta').textContent = `${event.startDate || '—'} to ${event.endDate || '—'} · +${event.bonusXp || 0} XP each`;
-      document.getElementById('eventBannerProgress').textContent = `${event.progress || 0}/${event.target || 0}`;
-    }
-
-    function renderBoostCard(user) {
-      const boost = user?.activeBoost || null;
-      const multiplierEl = document.getElementById('boostMultiplierValue');
-      const titleEl = document.getElementById('boostTitle');
-      const metaEl = document.getElementById('boostMeta');
-
-      if (!boost || Number(boost.remainingUses) <= 0) {
-        multiplierEl.textContent = 'x1';
-        titleEl.textContent = 'No active boost';
-        metaEl.textContent = 'Redeem a Double XP token from the shop.';
-        return;
-      }
-
-      multiplierEl.textContent = `x${Number(boost.multiplier) || 1}`;
-      titleEl.textContent = boost.title || 'XP Boost';
-      metaEl.textContent = `${Math.max(0, Number(boost.remainingUses) || 0)} use(s) left`;
-    }
-
-    function renderWallet(user) {
-      const balance = Math.max(0, Number(user?.xpBalance) || 0);
-      const spent = Math.max(0, Number(user?.totalXp) - balance);
-      const redemptions = Array.isArray(user?.rewardRedemptions) ? user.rewardRedemptions : [];
-      document.getElementById('xpBalanceValue').textContent = String(balance);
-      document.getElementById('xpSpentValue').textContent = String(spent);
-      document.getElementById('redeemCountValue').textContent = String(redemptions.length);
-    }
-
-    function renderGroupPreview(groups = []) {
-      const best = Array.isArray(groups)
-        ? groups.slice().sort((a, b) => (Number(a.yourRank) || 999) - (Number(b.yourRank) || 999))[0]
-        : null;
-      const rankValue = best && best.yourRank ? `#${best.yourRank}` : '—';
-      document.getElementById('groupRankValue').textContent = rankValue;
-      const preview = document.getElementById('groupPreview');
-
-      if (!best) {
-        preview.textContent = 'No group joined yet.';
-        return;
-      }
-
-      preview.innerHTML = `
-        <div class="font-semibold">${escapeHtml(best.name || 'Group')}</div>
-        <div class="mt-1">Rank ${rankValue} of ${best.memberCount || 0} members</div>
-      `;
-    }
-
-    function renderAchievement(user) {
-      const latest = user?.latestBadge || null;
-      const titleEl = document.getElementById('achievementTitle');
-      const metaEl = document.getElementById('achievementMeta');
-      const card = document.getElementById('achievementBanner');
-
-      if (!latest) {
-        titleEl.textContent = 'No achievement yet';
-        metaEl.textContent = 'Keep practicing to unlock your next badge.';
-        card.className = 'mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4';
-        return;
-      }
-
-      titleEl.textContent = latest.title || 'Achievement unlocked';
-      metaEl.textContent = `${latest.description || ''} · ${formatRarityLabel(latest.rarity)} · ${latest.category || 'general'}`;
-      card.className = `mt-3 rounded-xl border p-4 ${rarityClass(latest.rarity)}`;
-    }
-
-    function renderBadgeCollection(user) {
-      const wrap = document.getElementById('badgeCollection');
-      const badges = Array.isArray(user?.badges) ? [...user.badges] : [];
-
-      if (badges.length === 0) {
-        wrap.innerHTML = '<p class="text-gray-500 text-sm">No badges yet.</p>';
-        return;
-      }
-
-      badges.sort((a, b) => Date.parse(b.unlockedAt || 0) - Date.parse(a.unlockedAt || 0));
-      wrap.innerHTML = badges.slice(0, 9).map((badge) => `
-        <div class="rounded-xl border p-3 ${rarityClass(badge.rarity)}">
-          <div class="flex items-center justify-between gap-2">
-            <div class="font-semibold">${escapeHtml(badge.title || badge.id)}</div>
-            <span class="text-xs uppercase tracking-wide font-semibold">${escapeHtml(formatRarityLabel(badge.rarity))}</span>
-          </div>
-          <div class="text-xs mt-1 opacity-90">${escapeHtml(badge.description || '')}</div>
-          <div class="text-[11px] mt-2 opacity-80">${escapeHtml(badge.category || 'general')}</div>
-        </div>
-      `).join('');
-    }
-
-    async function loadRewardsShop() {
-      const list = document.getElementById('rewardShopList');
-      try {
-        const res = await fetch('/api/rewards', { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to load rewards');
-        const payload = await res.json();
-        const rewards = Array.isArray(payload.rewards) ? payload.rewards : [];
-
-        if (rewards.length === 0) {
-          list.innerHTML = '<p class="text-gray-500 text-sm">No rewards available.</p>';
-          return;
-        }
-
-        list.innerHTML = rewards.map((reward) => `
-          <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <div class="flex items-center justify-between gap-2">
-              <h4 class="font-semibold text-gray-800">${escapeHtml(reward.title || reward.id)}</h4>
-              <span class="text-xs px-2 py-0.5 rounded-full border ${rarityClass(reward.rarity)}">${escapeHtml(formatRarityLabel(reward.rarity))}</span>
-            </div>
-            <p class="text-sm text-gray-600 mt-2">${escapeHtml(reward.description || '')}</p>
-            <div class="mt-3 flex items-center justify-between">
-              <span class="text-sm font-semibold text-emerald-700">${Number(reward.costXp) || 0} XP</span>
-              <button class="quick-redeem-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700" data-reward-id="${escapeHtml(reward.id)}">Quick Redeem</button>
-            </div>
-          </div>
-        `).join('');
-
-        list.querySelectorAll('.quick-redeem-btn').forEach((button) => {
-          button.addEventListener('click', async () => {
-            const rewardId = button.dataset.rewardId;
-            button.disabled = true;
-            button.textContent = 'Redeeming...';
-            try {
-              const redeemRes = await fetch('/api/rewards/redeem', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rewardId })
-              });
-              const result = await redeemRes.json().catch(() => ({}));
-              if (!redeemRes.ok) {
-                throw new Error(result.error || 'Redeem failed');
-              }
-              showBanner(document.getElementById('globalBanner'), result.message || 'Redeemed successfully', 'success');
-              await loadDashboardDataOnly();
-            } catch (error) {
-              showBanner(document.getElementById('globalBanner'), error.message || 'Redeem failed', 'error');
-            } finally {
-              button.disabled = false;
-              button.textContent = 'Quick Redeem';
-            }
-          });
-        });
-      } catch (error) {
-        list.innerHTML = '<p class="text-red-600 text-sm">Could not load rewards.</p>';
-      }
-    }
-
-    function renderGamificationSummary(user) {
-      const totalXp = Number(user?.totalXp) || 0;
-      const currentLevel = Number(user?.currentLevel) || 1;
-      const xpToNextLevel = Number(user?.xpToNextLevel);
-      const progress = Number(user?.currentLevelProgress);
-      const currentLevelXp = Number(user?.currentLevelXp) || 0;
-      const nextLevelXp = Number(user?.nextLevelXp) || 0;
-      const currentStreak = Number(user?.currentStreak) || 0;
-      const bestStreak = Number(user?.bestStreak) || 0;
-      const badges = Array.isArray(user?.badges) ? user.badges : [];
-      const latestBadge = user?.latestBadge || badges[badges.length - 1] || null;
-
-      document.getElementById('gamificationXpValue').textContent = `${totalXp} XP`;
-      document.getElementById('gamificationLevelValue').textContent = `Level ${currentLevel}`;
-      document.getElementById('gamificationTotalXp').textContent = String(totalXp);
-      document.getElementById('gamificationXpToNext').textContent = `${Math.max(0, xpToNextLevel || 0)} XP`;
-      document.getElementById('gamificationCurrentStreak').textContent = String(currentStreak);
-      document.getElementById('gamificationBestStreak').textContent = String(bestStreak);
-      document.getElementById('gamificationBadgeCount').textContent = String(badges.length);
-      document.getElementById('gamificationProgressText').textContent = `${Math.max(0, totalXp - currentLevelXp)} / ${Math.max(nextLevelXp - currentLevelXp, 1)} XP to next level`;
-      document.getElementById('gamificationLevelRangeText').textContent = `Level ${currentLevel}`;
-      document.getElementById('gamificationProgressBar').style.width = `${Math.max(0, Math.min(100, progress || 0))}%`;
-
-      const latestBadgeTitle = document.getElementById('latestBadgeTitle');
-      const latestBadgeDescription = document.getElementById('latestBadgeDescription');
-      if (latestBadge) {
-        latestBadgeTitle.textContent = latestBadge.title || 'Badge unlocked';
-        latestBadgeDescription.textContent = latestBadge.description || 'Keep going to earn more badges.';
-        document.getElementById('latestBadgeCard').className = 'mt-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4';
-      } else {
-        latestBadgeTitle.textContent = 'No badge yet';
-        latestBadgeDescription.textContent = 'Complete your first quiz to unlock a badge.';
-        document.getElementById('latestBadgeCard').className = 'mt-2 rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4';
-      }
-    }
-
-    async function loadDashboardDataOnly() {
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) throw new Error('Not authenticated');
-      const meData = await meRes.json();
-      currentUser = meData.user;
-
-      renderGamificationSummary(currentUser);
-      renderEventBanner(currentUser);
-      renderBoostCard(currentUser);
-      renderWallet(currentUser);
-      renderAchievement(currentUser);
-      renderBadgeCollection(currentUser);
-
-      try {
-        const groupsRes = await fetch('/api/me/groups', { credentials: 'include' });
-        const groupsPayload = groupsRes.ok ? await groupsRes.json() : { groups: [] };
-        renderGroupPreview(groupsPayload.groups || []);
-      } catch {
-        renderGroupPreview([]);
-      }
-
-      await loadRewardsShop();
-    }
-
-    function renderStandingCards(viewer) {
-      document.getElementById('userCurrentStreak').textContent = viewer ? String(viewer.currentStreak ?? 0) : '0';
-      document.getElementById('userBestStreak').textContent = currentUser ? String(currentUser.bestStreak ?? 0) : '0';
-      document.getElementById('userRank').textContent = viewer && viewer.rank ? formatLeaderboardRank(viewer.rank) : '—';
-    }
-
-    function renderLeaderboardPreview(entries) {
-      const list = document.getElementById('leaderboardPreviewList');
-
-      if (!entries || entries.length === 0) {
-        list.innerHTML = `
-          <div class="px-6 py-10 text-center">
-            <div class="text-4xl mb-3">🏆</div>
-            <p class="text-gray-500">No leaderboard data yet. Complete quizzes to appear here.</p>
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = entries.map((entry) => {
-        const highlight = entry.isCurrentUser ? 'bg-blue-50' : 'hover:bg-gray-50';
-        const avatar = entry.profileImage
-          ? `<img src="${entry.profileImage}" alt="${escapeHtml(entry.name)}" class="w-10 h-10 rounded-full object-cover border border-gray-200">`
-          : `<div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-semibold">${escapeHtml((entry.name || 'U').slice(0, 1).toUpperCase())}</div>`;
-
-        return `
-          <div class="px-6 py-4 flex items-center justify-between gap-4 ${highlight}">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-8 text-center font-bold text-gray-500">${formatLeaderboardRank(entry.rank)}</div>
-              ${avatar}
-              <div class="min-w-0">
-                <p class="font-semibold text-gray-800 truncate">${escapeHtml(entry.name || 'Unknown')}</p>
-                <p class="text-xs text-gray-500 mt-0.5">${entry.isCurrentUser ? 'You' : 'Active learner'}</p>
-              </div>
-            </div>
-            <div class="text-right shrink-0">
-              <p class="font-bold text-blue-600">${entry.totalXp ?? 0} XP</p>
-              <p class="text-xs text-gray-500">Streak ${entry.currentStreak ?? 0}</p>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function scoreText(a) {
-      if (a.maxScore > 0 && (a.status === 'completed' || a.status === 'expired')) {
-        return `${a.score}/${a.maxScore}`;
-      }
-      return '—';
-    }
-
-    function percentText(a) {
-      if (a.maxScore > 0 && (a.status === 'completed' || a.status === 'expired')) {
-        return `${a.percent}%`;
-      }
-      return '—';
-    }
-
-    function renderRecentPerformance(attempts) {
-      const listEl = document.getElementById('recentPerformanceList');
-      const countEl = document.getElementById('recentCount');
-
-      if (attempts.length === 0) {
-        countEl.textContent = '';
-        listEl.innerHTML = '<p class="px-6 py-10 text-center text-gray-500">No quizzes attempted yet. Start with Daily Quiz.</p>';
-        return;
-      }
-
-      const latestFive = [...attempts]
-        .sort((a, b) => Number(b.date || 0) - Number(a.date || 0))
-        .slice(0, 5);
-
-      countEl.textContent = `Latest ${latestFive.length} attempt${latestFive.length !== 1 ? 's' : ''}`;
-
-      listEl.innerHTML = latestFive.map(a => `
-        <div class="px-6 py-4 grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
-          <div class="min-w-0">
-            <p class="font-medium text-gray-800 truncate" title="${escapeHtml(a.quizTitle || '')}">${escapeHtml(a.quizTitle || 'Unknown Quiz')}</p>
-            <p class="text-xs text-gray-500 mt-1">${formatDateShort(a.date)}</p>
-          </div>
-          <div class="text-sm text-gray-700"><span class="text-gray-500">Score:</span> ${scoreText(a)}</div>
-          <div class="text-sm ${a.maxScore > 0 ? percentColor(a.percent) : 'text-gray-400'}"><span class="text-gray-500 font-normal">Percent:</span> ${percentText(a)}</div>
-          <div>${typeBadge(a.type)}</div>
-          <div>${statusBadge(a.status)}</div>
-        </div>
-      `).join('');
-    }
-
-    // ── Summary stats ──────────────────────────────────────────────────────────
-    function renderStats(attempts) {
-      const total = attempts.length;
-      const completed = attempts.filter(a => a.status === 'completed' && a.maxScore > 0);
-      const avg = completed.length
+    function renderStats(user, attempts) {
+      const completed = attempts.filter((a) => a.status === 'completed' && a.maxScore > 0);
+      const avgFromAttempts = completed.length
         ? Math.round(completed.reduce((sum, a) => sum + a.percent, 0) / completed.length)
         : null;
+      const accuracy = Number.isFinite(Number(user?.accuracyPercent))
+        ? Math.max(0, Math.min(100, Number(user.accuracyPercent)))
+        : avgFromAttempts;
       const weakTopic = getWeakTopicLabel(completed);
-      const best = completed.length ? Math.max(...completed.map(a => a.percent)) : null;
+      const best = completed.length ? Math.max(...completed.map((a) => a.percent)) : null;
       const latest = completed.length
         ? [...completed].sort((a, b) => Number(b.date || 0) - Number(a.date || 0))[0]
         : null;
+      const mastery = String(user?.masteryLevel || user?.currentTier || 'Beginner');
+      const streak = Math.max(0, Number(user?.currentStreak) || 0);
+      const rank = Number(user?.weeklyRank) > 0 ? `#${Number(user.weeklyRank)}` : 'Unranked';
 
-      document.getElementById('statTotal').textContent = total;
-      document.getElementById('statAvg').textContent = avg !== null ? `${avg}%` : '—';
-      document.getElementById('statWeak').textContent = weakTopic;
+      document.getElementById('statAccuracy').textContent = accuracy !== null ? `${accuracy}%` : '-';
       document.getElementById('statCompleted').textContent = completed.length;
-      document.getElementById('statBest').textContent = best !== null ? `${best}%` : '—';
-      document.getElementById('statLatest').textContent = latest ? `${latest.percent}%` : '—';
+      document.getElementById('statWeak').textContent = weakTopic !== 'Not enough data' && weakTopic !== '-' ? weakTopic : '-';
+      document.getElementById('statMastery').textContent = mastery;
+      document.getElementById('statBest').textContent = best !== null ? `${best}%` : '-';
+      document.getElementById('statLatest').textContent = latest ? `${latest.percent}%` : '-';
+      document.getElementById('statStreak').textContent = `${streak} day${streak === 1 ? '' : 's'}`;
+      document.getElementById('statRank').textContent = rank;
     }
 
-    async function loadLeaderboardPreview() {
-      try {
-        const res = await fetch('/api/leaderboard/overall?limit=5', { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to load leaderboard');
-        const data = await res.json();
-        renderStandingCards(data.viewer);
-        renderLeaderboardPreview(data.leaderboard || []);
-      } catch {
-        renderStandingCards(null);
-        renderLeaderboardPreview([]);
-      }
-    }
-
-    // ── Table rendering ────────────────────────────────────────────────────────
     function renderTable(attempts) {
       const tbody = document.getElementById('attemptsBody');
       const table = document.getElementById('attemptsTable');
@@ -890,21 +329,21 @@
       table.classList.remove('hidden');
       countEl.textContent = `Showing ${attempts.length} of ${allAttempts.length} attempt${allAttempts.length !== 1 ? 's' : ''}`;
 
-      attempts.forEach(a => {
-        const scoreText = a.status === 'completed' || a.status === 'expired'
-          ? `${a.score ?? '—'}/${a.maxScore ?? '—'}`
-          : '—';
-        const pctText = a.status === 'completed' && a.maxScore > 0
+      attempts.forEach((a) => {
+        const score = a.status === 'completed' || a.status === 'expired'
+          ? `${a.score ?? '-'}/${a.maxScore ?? '-'}`
+          : '-';
+        const pct = a.status === 'completed' && a.maxScore > 0
           ? `<span class="${percentColor(a.percent)}">${a.percent}%</span>`
-          : '<span class="text-gray-400">—</span>';
+          : '<span class="text-gray-400">-</span>';
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50 transition-colors';
         tr.innerHTML = `
           <td class="px-6 py-4 font-medium text-gray-800 max-w-xs truncate" title="${escapeHtml(a.quizTitle || '')}">${escapeHtml(a.quizTitle || 'Unknown Quiz')}</td>
           <td class="px-6 py-4 text-gray-500 whitespace-nowrap">${formatDateShort(a.date)}</td>
-          <td class="px-6 py-4 text-gray-700">${scoreText}</td>
-          <td class="px-6 py-4">${pctText}</td>
+          <td class="px-6 py-4 text-gray-700">${score}</td>
+          <td class="px-6 py-4">${pct}</td>
           <td class="px-6 py-4">${typeBadge(a.type)}</td>
           <td class="px-6 py-4">${statusBadge(a.status)}</td>
           <td class="px-6 py-4 text-right">
@@ -917,19 +356,17 @@
         tbody.appendChild(tr);
       });
 
-      // Attach view-details listeners
-      tbody.querySelectorAll('.view-details-btn').forEach(btn => {
+      tbody.querySelectorAll('.view-details-btn').forEach((btn) => {
         btn.addEventListener('click', () => openDetailModal(btn.dataset.id));
       });
     }
 
-    // ── Filter logic ───────────────────────────────────────────────────────────
     function applyFilters() {
       const search = document.getElementById('filterSearch').value.trim().toLowerCase();
-      const type   = document.getElementById('filterType').value;
+      const type = document.getElementById('filterType').value;
       const status = document.getElementById('filterStatus').value;
 
-      filteredAttempts = allAttempts.filter(a => {
+      filteredAttempts = allAttempts.filter((a) => {
         if (search && !(a.quizTitle || '').toLowerCase().includes(search)) return false;
         if (type && a.type !== type) return false;
         if (status && a.status !== status) return false;
@@ -947,7 +384,6 @@
       renderTable(filteredAttempts);
     }
 
-    // ── CSV Export ─────────────────────────────────────────────────────────────
     function exportCsv() {
       const rows = filteredAttempts.length > 0 ? filteredAttempts : allAttempts;
       if (rows.length === 0) {
@@ -957,7 +393,7 @@
 
       const headers = ['Quiz Title', 'Date', 'Score', 'Max Score', 'Percent (%)', 'Type', 'Status'];
       const lines = [headers];
-      rows.forEach(a => {
+      rows.forEach((a) => {
         lines.push([
           a.quizTitle || '',
           formatDateShort(a.date),
@@ -969,7 +405,7 @@
         ].map(csvCell));
       });
 
-      const csv = lines.map(row => row.join(',')).join('\r\n');
+      const csv = lines.map((row) => row.join(',')).join('\r\n');
       const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -997,7 +433,6 @@
         .replace(/"/g, '&quot;');
     }
 
-    // ── Detail Modal ───────────────────────────────────────────────────────────
     async function openDetailModal(attemptId) {
       const modal = document.getElementById('detailModal');
       const loading = document.getElementById('modalLoading');
@@ -1007,12 +442,11 @@
       const titleEl = document.getElementById('modalTitle');
       const metaEl = document.getElementById('modalMeta');
 
-      // Reset modal
       loading.classList.remove('hidden');
       errorEl.classList.add('hidden');
       breakdown.classList.add('hidden');
       scoreEl.innerHTML = '';
-      titleEl.textContent = 'Loading…';
+      titleEl.textContent = 'Loading...';
       metaEl.textContent = '';
       breakdown.innerHTML = '';
 
@@ -1030,13 +464,12 @@
         const typeLabel = (data.type || 'quiz').charAt(0).toUpperCase() + (data.type || 'quiz').slice(1);
         metaEl.textContent = `${formatDate(data.date)}  ·  ${typeLabel}`;
 
-        // Score summary
         const scoreColor = data.status === 'completed' && data.maxScore > 0
           ? (data.percent >= 75 ? 'text-green-600' : data.percent >= 50 ? 'text-yellow-600' : 'text-red-600')
           : 'text-gray-600';
 
         scoreEl.innerHTML = `
-          <div><span class="text-gray-500">Status:</span> <span class="font-medium capitalize">${data.status || '—'}</span></div>
+          <div><span class="text-gray-500">Status:</span> <span class="font-medium capitalize">${data.status || '-'}</span></div>
           ${data.maxScore > 0 ? `
             <div><span class="text-gray-500">Score:</span> <span class="font-medium">${data.score}/${data.maxScore}</span></div>
             <div><span class="text-gray-500">Percentage:</span> <span class="font-semibold ${scoreColor}">${data.percent}%</span></div>
@@ -1055,7 +488,6 @@
           return;
         }
 
-        // Render breakdown
         breakdown.innerHTML = '';
         data.breakdown.forEach((item, idx) => {
           const div = document.createElement('div');
@@ -1067,10 +499,10 @@
 
           let qStatus = '';
           if (!isAnswered) qStatus = '<span class="text-xs text-gray-400 font-medium">Not Answered</span>';
-          else if (isCorrect) qStatus = '<span class="text-xs text-green-600 font-medium">✓ Correct</span>';
-          else qStatus = '<span class="text-xs text-red-600 font-medium">✗ Wrong</span>';
+          else if (isCorrect) qStatus = '<span class="text-xs text-green-600 font-medium">Correct</span>';
+          else qStatus = '<span class="text-xs text-red-600 font-medium">Wrong</span>';
 
-          const optionsHtml = (item.options || []).map(opt => {
+          const optionsHtml = (item.options || []).map((opt) => {
             let cls = 'flex items-center gap-2 text-sm py-1 px-2 rounded ';
             if (opt === item.correctAnswer && opt === userSelected) cls += 'bg-green-50 text-green-700 font-medium';
             else if (opt === item.correctAnswer) cls += 'bg-green-50 text-green-700 font-medium';
@@ -1092,7 +524,7 @@
               ${qStatus}
             </div>
             <div class="space-y-0.5 mb-2">${optionsHtml}</div>
-            ${item.explanation ? `<p class="text-xs text-gray-500 mt-2 italic">💡 ${escapeHtml(item.explanation)}</p>` : ''}
+            ${item.explanation ? `<p class="text-xs text-gray-500 mt-2 italic">${escapeHtml(item.explanation)}</p>` : ''}
           `;
           breakdown.appendChild(div);
         });
@@ -1111,9 +543,7 @@
       modal.classList.remove('flex');
     }
 
-    // ── Load data & boot ───────────────────────────────────────────────────────
     async function loadDashboard() {
-      // Auth check
       let user = null;
       try {
         const meRes = await fetch('/api/auth/me', { credentials: 'include' });
@@ -1127,30 +557,11 @@
         return;
       }
 
-      // Set user info
-      currentUser = user;
       await Navbar.mount('#appNavbar', {
         active: 'dashboard',
         user
       });
-      renderGamificationSummary(user);
-      renderEventBanner(user);
-      renderBoostCard(user);
-      renderWallet(user);
-      renderAchievement(user);
-      renderBadgeCollection(user);
 
-      try {
-        const groupsRes = await fetch('/api/me/groups', { credentials: 'include' });
-        const groupsPayload = groupsRes.ok ? await groupsRes.json() : { groups: [] };
-        renderGroupPreview(groupsPayload.groups || []);
-      } catch {
-        renderGroupPreview([]);
-      }
-
-      await loadRewardsShop();
-
-      // Fetch attempts
       try {
         const attRes = await fetch('/api/attempts', { credentials: 'include' });
         if (!attRes.ok) {
@@ -1158,7 +569,6 @@
           throw new Error(errData.error || 'Failed to load attempts');
         }
         allAttempts = await attRes.json();
-        // Ensure it's an array (backward compat with paginated format)
         if (!Array.isArray(allAttempts)) {
           allAttempts = allAttempts.attempts || [];
         }
@@ -1172,40 +582,29 @@
       }
 
       filteredAttempts = [...allAttempts];
-
-      // Render
-      renderStats(allAttempts);
-      await loadLeaderboardPreview();
-      renderRecentPerformance(allAttempts);
+      renderStats(user, allAttempts);
       renderTable(filteredAttempts);
 
-      // Show main
       document.getElementById('loadingScreen').classList.add('hidden');
       document.getElementById('dashboardMain').classList.remove('hidden');
     }
 
-    // ── Event Listeners ────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
       await Navbar.mount('#appNavbar', { active: 'dashboard' });
       await loadDashboard();
 
-      // Filters
       document.getElementById('filterSearch').addEventListener('input', applyFilters);
       document.getElementById('filterType').addEventListener('change', applyFilters);
       document.getElementById('filterStatus').addEventListener('change', applyFilters);
       document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
       document.getElementById('clearFiltersBtn2').addEventListener('click', clearFilters);
-
-      // Export
       document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
 
-      // Modal close
       document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
       document.getElementById('modalCloseFooterBtn').addEventListener('click', closeModal);
       document.getElementById('detailModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeModal();
       });
-
     });
   </script>
   <script src="/js/notifications.js"></script>

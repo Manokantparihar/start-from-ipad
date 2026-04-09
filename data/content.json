@@ -360,6 +360,315 @@
           "Revise after 24 hours and mark weak points."
         ]
       }
+    ],
+    "courses": [
+      {
+        "slug": "rpsc-prelims-foundation",
+        "title": "RPSC Prelims Foundation",
+        "summary": "A guided prep track that blends notes, revision rhythm, and practice checkpoints for the first stage of competitive exam prep.",
+        "type": "course",
+        "buttonLabel": "Open Course",
+        "category": "Courses",
+        "readTime": "6 weeks",
+        "difficulty": "Structured",
+        "resourceTip": "Complete modules in order and keep the final quiz for last.",
+        "fullContent": [
+          "Start with a clear study map and baseline quiz.",
+          "Use quick resources for reading, then switch to quizzes for recall.",
+          "Track lesson completion locally so progress is always visible.",
+          "Finish each module with a focused revision checkpoint."
+        ],
+        "nextSteps": [
+          "Open the orientation module and review the course roadmap.",
+          "Mark the first resource lesson complete after reading it.",
+          "Attempt the baseline quiz before moving to the next module."
+        ],
+        "progress": {
+          "percent": 42,
+          "completedLessons": 5,
+          "totalLessons": 12,
+          "completedLessonIds": [
+            "rpsc-orientation-roadmap",
+            "rpsc-orientation-ssc-notes",
+            "rpsc-core-bed-notes",
+            "rpsc-core-study-guides",
+            "rpsc-daily-baseline-quiz"
+          ],
+          "lastOpenedAt": "2026-04-09T08:00:00.000Z"
+        },
+        "attachments": [
+          {
+            "title": "SSC Notes",
+            "resourceSlug": "ssc-notes",
+            "note": "Core reference for the first module"
+          },
+          {
+            "title": "B.Ed Notes",
+            "resourceSlug": "bed-notes",
+            "note": "Pedagogy foundation"
+          },
+          {
+            "title": "Study Guides",
+            "resourceSlug": "study-guides",
+            "note": "Weekly revision rhythm"
+          }
+        ],
+        "relatedQuizzes": [
+          {
+            "quizId": "quiz-001",
+            "title": "General Knowledge - Basic"
+          },
+          {
+            "quizId": "quiz-002",
+            "title": "Rajasthan GK"
+          }
+        ],
+        "modules": [
+          {
+            "id": "rpsc-module-orientation",
+            "title": "Module 1: Orientation",
+            "summary": "Set up the prep rhythm, understand the roadmap, and complete a baseline check.",
+            "lessons": [
+              {
+                "id": "rpsc-orientation-roadmap",
+                "order": 1,
+                "title": "Study roadmap overview",
+                "description": "Read the weekly flow and understand how the course is structured.",
+                "kind": "overview"
+              },
+              {
+                "id": "rpsc-orientation-ssc-notes",
+                "order": 2,
+                "title": "Open SSC Notes",
+                "description": "Use the first quick resource to build your base.",
+                "kind": "resource",
+                "resourceSlug": "ssc-notes"
+              },
+              {
+                "id": "rpsc-daily-baseline-quiz",
+                "order": 3,
+                "title": "Baseline GK quiz",
+                "description": "Measure starting level with a simple published quiz.",
+                "kind": "quiz",
+                "quizId": "quiz-001"
+              }
+            ]
+          },
+          {
+            "id": "rpsc-module-core-revision",
+            "title": "Module 2: Core Revision",
+            "summary": "Read, consolidate, and revisit the highest-value notes before moving on.",
+            "lessons": [
+              {
+                "id": "rpsc-core-bed-notes",
+                "order": 1,
+                "title": "B.Ed notes walkthrough",
+                "description": "Cover pedagogy essentials and classroom frameworks.",
+                "kind": "resource",
+                "resourceSlug": "bed-notes"
+              },
+              {
+                "id": "rpsc-core-study-guides",
+                "order": 2,
+                "title": "Weekly study guides",
+                "description": "Turn study guidance into a repeatable weekly system.",
+                "kind": "resource",
+                "resourceSlug": "study-guides"
+              },
+              {
+                "id": "rpsc-core-quiz-checkpoint",
+                "order": 3,
+                "title": "Rajasthan GK checkpoint",
+                "description": "Lock in the revision through a topic test.",
+                "kind": "quiz",
+                "quizId": "quiz-002"
+              }
+            ]
+          },
+          {
+            "id": "rpsc-module-rhythm",
+            "title": "Module 3: Daily Rhythm",
+            "summary": "Build a consistent review loop with current affairs and revision habits.",
+            "lessons": [
+              {
+                "id": "rpsc-rhythm-routine",
+                "order": 1,
+                "title": "Lock the daily routine",
+                "description": "Use the study routine guide to keep the prep repeatable.",
+                "kind": "resource",
+                "resourceSlug": "daily-study-routine"
+              },
+              {
+                "id": "rpsc-rhythm-strategy",
+                "order": 2,
+                "title": "Exam strategy update",
+                "description": "Read the current revision strategy and adjust pace.",
+                "kind": "resource",
+                "resourceSlug": "exam-strategy-update"
+              },
+              {
+                "id": "rpsc-rhythm-recap",
+                "order": 3,
+                "title": "Daily recap quiz",
+                "description": "Reinforce the rhythm with a short daily quiz.",
+                "kind": "quiz",
+                "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "current-affairs-sprint",
+        "title": "Current Affairs Sprint",
+        "summary": "A fast-moving course for daily current affairs, revision checkpoints, and quiz-based recall.",
+        "type": "course",
+        "buttonLabel": "Continue Course",
+        "category": "Courses",
+        "readTime": "4 weeks",
+        "difficulty": "Fast Track",
+        "resourceTip": "Read one module daily and finish with the quiz block.",
+        "fullContent": [
+          "Daily current affairs scanning with short notes.",
+          "Weekly consolidation using guided summaries.",
+          "Quiz checkpoints that keep the course active.",
+          "A repeatable review loop that is easy to track."
+        ],
+        "nextSteps": [
+          "Open the latest current affairs module.",
+          "Mark the first reading lesson complete.",
+          "Use the related quiz as your weekly checkpoint."
+        ],
+        "progress": {
+          "percent": 18,
+          "completedLessons": 2,
+          "totalLessons": 11,
+          "completedLessonIds": [
+            "ca-intro-news-roundup",
+            "ca-daily-quiz"
+          ],
+          "lastOpenedAt": "2026-04-09T09:00:00.000Z"
+        },
+        "attachments": [
+          {
+            "title": "Exam Strategy Update",
+            "resourceSlug": "exam-strategy-update",
+            "note": "Current strategy reading"
+          },
+          {
+            "title": "New Study Method",
+            "resourceSlug": "new-study-method",
+            "note": "Revision workflow"
+          },
+          {
+            "title": "AI Tools Guide",
+            "resourceSlug": "ai-tools-guide",
+            "note": "Safe study support"
+          }
+        ],
+        "relatedQuizzes": [
+          {
+            "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
+            "title": "Geography Quiz"
+          },
+          {
+            "quizId": "quiz-001",
+            "title": "General Knowledge - Basic"
+          }
+        ],
+        "modules": [
+          {
+            "id": "ca-module-daily-scan",
+            "title": "Module 1: Daily Scan",
+            "summary": "Capture news, trends, and one-line facts without getting overloaded.",
+            "lessons": [
+              {
+                "id": "ca-intro-news-roundup",
+                "order": 1,
+                "title": "Current affairs roundup",
+                "description": "Read the day’s highlights and add short notes.",
+                "kind": "resource",
+                "resourceSlug": "exam-strategy-update"
+              },
+              {
+                "id": "ca-day-summary",
+                "order": 2,
+                "title": "Create a summary card",
+                "description": "Turn key points into a compact recap for revision.",
+                "kind": "task"
+              },
+              {
+                "id": "ca-daily-quiz",
+                "order": 3,
+                "title": "Daily GK quiz",
+                "description": "Check recall using the general knowledge quiz.",
+                "kind": "quiz",
+                "quizId": "quiz-001"
+              }
+            ]
+          },
+          {
+            "id": "ca-module-weekly-synthesis",
+            "title": "Module 2: Weekly Synthesis",
+            "summary": "Connect daily updates into a bigger weekly revision pattern.",
+            "lessons": [
+              {
+                "id": "ca-weekly-method",
+                "order": 1,
+                "title": "Revision method update",
+                "description": "Use the new study method to keep the pace stable.",
+                "kind": "resource",
+                "resourceSlug": "new-study-method"
+              },
+              {
+                "id": "ca-ai-tools",
+                "order": 2,
+                "title": "AI tools checklist",
+                "description": "Review how to use AI safely for summaries and practice.",
+                "kind": "resource",
+                "resourceSlug": "ai-tools-guide"
+              },
+              {
+                "id": "ca-weekly-recap",
+                "order": 3,
+                "title": "Weekly recap task",
+                "description": "Build a one-page synthesis note for the week.",
+                "kind": "task"
+              }
+            ]
+          },
+          {
+            "id": "ca-module-checkpoint",
+            "title": "Module 3: Checkpoint",
+            "summary": "Use quizzes and guided notes to measure improvement and keep momentum.",
+            "lessons": [
+              {
+                "id": "ca-checkpoint-geography",
+                "order": 1,
+                "title": "Geography checkpoint quiz",
+                "description": "Test recall after the current affairs sprint.",
+                "kind": "quiz",
+                "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547"
+              },
+              {
+                "id": "ca-checkpoint-guide",
+                "order": 2,
+                "title": "Daily study routine review",
+                "description": "Re-anchor the sprint inside a repeatable daily routine.",
+                "kind": "resource",
+                "resourceSlug": "daily-study-routine"
+              },
+              {
+                "id": "ca-checkpoint-plan",
+                "order": 3,
+                "title": "Make a next-week plan",
+                "description": "Write the next steps before moving to another module.",
+                "kind": "task"
+              }
+            ]
+          }
+        ]
+      }
     ]
   }
 }

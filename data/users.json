@@ -9,21 +9,21 @@
     "profileImage": "/uploads/avatars/cb370536-35ed-4e83-b730-7070f92e1e04.jpeg",
     "updatedAt": "2026-04-08T22:48:45.636Z",
     "streak": {
-      "currentStreak": 2,
-      "bestStreak": 2,
-      "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T22:30:01.669Z"
+      "currentStreak": 3,
+      "bestStreak": 3,
+      "lastActiveDate": "2026-04-09",
+      "updatedAt": "2026-04-09T13:01:06.191Z"
     },
-    "totalXp": 245,
+    "totalXp": 312,
     "currentLevel": 4,
-    "xpToNextLevel": 105,
+    "xpToNextLevel": 38,
     "currentLevelXp": 225,
     "nextLevelXp": 350,
-    "currentLevelProgress": 16,
-    "completedQuizCount": 8,
-    "currentStreak": 2,
-    "bestStreak": 2,
-    "lastActiveDate": "2026-04-08",
+    "currentLevelProgress": 70,
+    "completedQuizCount": 10,
+    "currentStreak": 3,
+    "bestStreak": 3,
+    "lastActiveDate": "2026-04-09",
     "badges": [
       {
         "id": "first-quiz",
@@ -42,14 +42,6 @@
         "unlockedAt": "2026-04-07T20:35:55.983Z"
       },
       {
-        "id": "event-champion",
-        "title": "Event Champion",
-        "description": "Complete at least one seasonal event objective.",
-        "category": "event",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-07T20:53:29.511Z"
-      },
-      {
         "id": "five-quizzes",
         "title": "5 Quizzes Completed",
         "description": "Complete five quizzes.",
@@ -58,51 +50,35 @@
         "unlockedAt": "2026-04-08T03:33:43.179Z"
       },
       {
-        "id": "100-xp-club",
-        "title": "100 XP Club",
-        "description": "Earn 100 XP.",
-        "category": "general",
-        "rarity": "common",
-        "unlockedAt": "2026-04-08T03:33:43.179Z"
-      },
-      {
-        "id": "topic-explorer",
-        "title": "Topic Explorer",
-        "description": "Complete quizzes from three different topics.",
-        "category": "exploration",
+        "id": "three-day-streak",
+        "title": "3 Day Streak",
+        "description": "Complete quizzes on three consecutive calendar days.",
+        "category": "streak",
         "rarity": "rare",
-        "unlockedAt": "2026-04-08T15:05:54.783Z"
-      },
-      {
-        "id": "top-10-weekly",
-        "title": "Top 10 Weekly",
-        "description": "Finish in the top 10 of the weekly leaderboard.",
-        "category": "leaderboard",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:31:28.333Z"
+        "unlockedAt": "2026-04-09T09:41:59.755Z"
       }
     ],
     "latestBadge": {
-      "id": "top-10-weekly",
-      "title": "Top 10 Weekly",
-      "description": "Finish in the top 10 of the weekly leaderboard.",
-      "category": "leaderboard",
-      "rarity": "epic",
-      "unlockedAt": "2026-04-08T18:31:28.333Z"
+      "id": "three-day-streak",
+      "title": "3 Day Streak",
+      "description": "Complete quizzes on three consecutive calendar days.",
+      "category": "streak",
+      "rarity": "rare",
+      "unlockedAt": "2026-04-09T09:41:59.755Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
-    "xpBalance": 245,
+    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "xpBalance": 312,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 193,
-    "weeklyCompletedQuizzes": 8,
-    "weeklyRank": 2,
+    "weeklyXp": 250,
+    "weeklyCompletedQuizzes": 10,
+    "weeklyRank": 1,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Silver",
+    "currentTier": "Gold",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -131,7 +107,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 8,
+        "progress": 10,
         "target": 2,
         "completed": true
       }
@@ -158,9 +134,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 8,
+        "progress": 10,
         "target": 2,
-        "bonusXpEarned": 40,
+        "bonusXpEarned": 50,
         "completed": true,
         "badgeAwardedAt": "2026-04-07T20:53:29.511Z"
       }
@@ -257,10 +233,53 @@
           "new-topic"
         ],
         "rewardXpEarned": 21
+      },
+      {
+        "dateKey": "2026-04-09",
+        "missions": [
+          {
+            "id": "complete-two-quizzes",
+            "completed": true,
+            "rewardXp": 8,
+            "rewardEarned": true,
+            "progress": {
+              "value": 2,
+              "target": 2
+            },
+            "completedAt": "2026-04-09T09:42:36.165Z"
+          },
+          {
+            "id": "score-80-plus",
+            "completed": true,
+            "rewardXp": 6,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-09T09:42:36.165Z"
+          },
+          {
+            "id": "new-topic",
+            "completed": false,
+            "rewardXp": 7,
+            "rewardEarned": false,
+            "progress": {
+              "value": 0,
+              "target": 1
+            },
+            "completedAt": null
+          }
+        ],
+        "completedMissionIds": [
+          "complete-two-quizzes",
+          "score-80-plus"
+        ],
+        "rewardXpEarned": 14
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-08",
+      "dateKey": "2026-04-09",
       "missions": [
         {
           "id": "complete-two-quizzes",
@@ -268,10 +287,10 @@
           "rewardXp": 8,
           "rewardEarned": true,
           "progress": {
-            "value": 5,
+            "value": 2,
             "target": 2
           },
-          "completedAt": "2026-04-08T22:30:01.666Z"
+          "completedAt": "2026-04-09T09:42:36.165Z"
         },
         {
           "id": "score-80-plus",
@@ -282,33 +301,32 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-08T22:30:01.666Z"
+          "completedAt": "2026-04-09T09:42:36.165Z"
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T22:30:01.666Z"
+          "completedAt": null
         }
       ],
       "completedMissionIds": [
         "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
+        "score-80-plus"
       ],
-      "rewardXpEarned": 21
+      "rewardXpEarned": 14
     },
     "totalSpentXp": 0,
-    "baseXp": 151,
+    "baseXp": 194,
     "boostXp": 0,
     "weekendBonusXp": 0,
-    "eventBonusXp": 52,
-    "missionBonusXp": 42
+    "eventBonusXp": 62,
+    "missionBonusXp": 56
   },
   {
     "id": "401f86e2-8e13-4199-b271-f5be696d2f58",
@@ -318,7 +336,7 @@
     "role": "user",
     "createdAt": "2026-04-07T20:37:24.804Z",
     "profileImage": "/uploads/avatars/401f86e2-8e13-4199-b271-f5be696d2f58.jpeg",
-    "updatedAt": "2026-04-08T00:46:14.515Z",
+    "updatedAt": "2026-04-09T10:33:31.366Z",
     "totalXp": 159,
     "currentLevel": 3,
     "xpToNextLevel": 66,
@@ -339,14 +357,6 @@
         "unlockedAt": "2026-04-07T22:20:26.919Z"
       },
       {
-        "id": "event-champion",
-        "title": "Event Champion",
-        "description": "Complete at least one seasonal event objective.",
-        "category": "event",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T01:39:16.034Z"
-      },
-      {
         "id": "perfect-score",
         "title": "Perfect Score",
         "description": "Score 100% in a completed quiz.",
@@ -361,39 +371,23 @@
         "category": "general",
         "rarity": "common",
         "unlockedAt": "2026-04-08T04:22:44.975Z"
-      },
-      {
-        "id": "100-xp-club",
-        "title": "100 XP Club",
-        "description": "Earn 100 XP.",
-        "category": "general",
-        "rarity": "common",
-        "unlockedAt": "2026-04-08T04:22:44.975Z"
-      },
-      {
-        "id": "top-10-weekly",
-        "title": "Top 10 Weekly",
-        "description": "Finish in the top 10 of the weekly leaderboard.",
-        "category": "leaderboard",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:31:28.333Z"
       }
     ],
     "streak": {
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T22:30:01.669Z"
+      "updatedAt": "2026-04-09T13:01:06.191Z"
     },
     "latestBadge": {
-      "id": "top-10-weekly",
-      "title": "Top 10 Weekly",
-      "description": "Finish in the top 10 of the weekly leaderboard.",
-      "category": "leaderboard",
-      "rarity": "epic",
-      "unlockedAt": "2026-04-08T18:31:28.333Z"
+      "id": "five-quizzes",
+      "title": "5 Quizzes Completed",
+      "description": "Complete five quizzes.",
+      "category": "general",
+      "rarity": "common",
+      "unlockedAt": "2026-04-08T04:22:44.975Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
+    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
     "xpBalance": 159,
     "streakFreeze": {
       "maxCount": 1,
@@ -559,48 +553,44 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-08",
+      "dateKey": "2026-04-09",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": true,
+          "completed": false,
           "rewardXp": 8,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 4,
+            "value": 0,
             "target": 2
           },
-          "completedAt": "2026-04-08T04:22:44.975Z"
+          "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T04:22:44.975Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T04:22:44.975Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 21
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
     "totalSpentXp": 0,
     "baseXp": 101,
@@ -644,31 +634,23 @@
         "category": "performance",
         "rarity": "rare",
         "unlockedAt": "2026-04-08T01:42:12.640Z"
-      },
-      {
-        "id": "top-10-weekly",
-        "title": "Top 10 Weekly",
-        "description": "Finish in the top 10 of the weekly leaderboard.",
-        "category": "leaderboard",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:31:28.333Z"
       }
     ],
     "streak": {
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T22:30:01.669Z"
+      "updatedAt": "2026-04-09T13:01:06.191Z"
     },
     "latestBadge": {
-      "id": "top-10-weekly",
-      "title": "Top 10 Weekly",
-      "description": "Finish in the top 10 of the weekly leaderboard.",
-      "category": "leaderboard",
-      "rarity": "epic",
-      "unlockedAt": "2026-04-08T18:31:28.333Z"
+      "id": "perfect-score",
+      "title": "Perfect Score",
+      "description": "Score 100% in a completed quiz.",
+      "category": "performance",
+      "rarity": "rare",
+      "unlockedAt": "2026-04-08T01:42:12.640Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
+    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
     "xpBalance": 46,
     "streakFreeze": {
       "maxCount": 1,
@@ -793,7 +775,7 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-08",
+      "dateKey": "2026-04-09",
       "missions": [
         {
           "id": "complete-two-quizzes",
@@ -801,39 +783,36 @@
           "rewardXp": 8,
           "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 2
           },
           "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T01:42:12.640Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T01:42:12.640Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 13
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
     "totalSpentXp": 0,
     "baseXp": 28,
@@ -853,7 +832,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T22:30:01.669Z"
+      "updatedAt": "2026-04-09T13:01:06.191Z"
     },
     "profileImage": "/uploads/avatars/b4c7947b-6a72-4378-8338-7c20413af1a0.jpeg",
     "updatedAt": "2026-04-08T11:46:28.527Z",
@@ -884,33 +863,17 @@
         "category": "performance",
         "rarity": "rare",
         "unlockedAt": "2026-04-08T11:43:06.071Z"
-      },
-      {
-        "id": "event-champion",
-        "title": "Event Champion",
-        "description": "Complete at least one seasonal event objective.",
-        "category": "event",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T11:43:31.793Z"
-      },
-      {
-        "id": "top-10-weekly",
-        "title": "Top 10 Weekly",
-        "description": "Finish in the top 10 of the weekly leaderboard.",
-        "category": "leaderboard",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:31:28.333Z"
       }
     ],
     "latestBadge": {
-      "id": "top-10-weekly",
-      "title": "Top 10 Weekly",
-      "description": "Finish in the top 10 of the weekly leaderboard.",
-      "category": "leaderboard",
-      "rarity": "epic",
-      "unlockedAt": "2026-04-08T18:31:28.333Z"
+      "id": "perfect-score",
+      "title": "Perfect Score",
+      "description": "Score 100% in a completed quiz.",
+      "category": "performance",
+      "rarity": "rare",
+      "unlockedAt": "2026-04-08T11:43:06.071Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
+    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
     "xpBalance": 84,
     "streakFreeze": {
       "maxCount": 1,
@@ -1036,48 +999,44 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-08",
+      "dateKey": "2026-04-09",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": true,
+          "completed": false,
           "rewardXp": 8,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 2,
+            "value": 0,
             "target": 2
           },
-          "completedAt": "2026-04-08T11:43:31.793Z"
+          "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T11:43:31.793Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T11:43:31.793Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 21
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
     "totalSpentXp": 0,
     "baseXp": 53,
@@ -1093,12 +1052,12 @@
     "password": "$2b$10$krPSfl71Dt3b5isVXJev2uiL1HLXE0m0JvM/i7rDf90j4XPZ1CNCy",
     "role": "user",
     "createdAt": "2026-04-08T17:37:03.002Z",
-    "totalXp": 244,
-    "currentLevel": 4,
-    "xpToNextLevel": 106,
-    "currentLevelXp": 225,
-    "nextLevelXp": 350,
-    "currentLevelProgress": 15,
+    "totalXp": 219,
+    "currentLevel": 3,
+    "xpToNextLevel": 6,
+    "currentLevelXp": 125,
+    "nextLevelXp": 225,
+    "currentLevelProgress": 94,
     "completedQuizCount": 8,
     "currentStreak": 1,
     "bestStreak": 1,
@@ -1113,14 +1072,6 @@
         "unlockedAt": "2026-04-08T17:38:24.273Z"
       },
       {
-        "id": "top-10-weekly",
-        "title": "Top 10 Weekly",
-        "description": "Finish in the top 10 of the weekly leaderboard.",
-        "category": "leaderboard",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:31:28.333Z"
-      },
-      {
         "id": "perfect-score",
         "title": "Perfect Score",
         "description": "Score 100% in a completed quiz.",
@@ -1129,65 +1080,41 @@
         "unlockedAt": "2026-04-08T18:35:36.457Z"
       },
       {
-        "id": "event-champion",
-        "title": "Event Champion",
-        "description": "Complete at least one seasonal event objective.",
-        "category": "event",
-        "rarity": "epic",
-        "unlockedAt": "2026-04-08T18:35:36.457Z"
-      },
-      {
-        "id": "100-xp-club",
-        "title": "100 XP Club",
-        "description": "Earn 100 XP.",
-        "category": "xp",
-        "rarity": "common",
-        "unlockedAt": "2026-04-08T18:36:08.938Z"
-      },
-      {
         "id": "five-quizzes",
         "title": "5 Quizzes Completed",
         "description": "Complete five quizzes.",
         "category": "milestone",
         "rarity": "common",
         "unlockedAt": "2026-04-08T18:37:21.275Z"
-      },
-      {
-        "id": "topic-explorer",
-        "title": "Topic Explorer",
-        "description": "Complete quizzes from three different topics.",
-        "category": "exploration",
-        "rarity": "rare",
-        "unlockedAt": "2026-04-08T22:06:47.510Z"
       }
     ],
     "streak": {
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-08T22:30:01.669Z"
+      "updatedAt": "2026-04-09T13:01:06.191Z"
     },
     "latestBadge": {
-      "id": "topic-explorer",
-      "title": "Topic Explorer",
-      "description": "Complete quizzes from three different topics.",
-      "category": "exploration",
-      "rarity": "rare",
-      "unlockedAt": "2026-04-08T22:06:47.510Z"
+      "id": "five-quizzes",
+      "title": "5 Quizzes Completed",
+      "description": "Complete five quizzes.",
+      "category": "milestone",
+      "rarity": "common",
+      "unlockedAt": "2026-04-08T18:37:21.275Z"
     },
-    "gamificationUpdatedAt": "2026-04-08T22:30:01.669Z",
+    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
     "profileImage": "/uploads/avatars/5b24cef1-e655-4eb2-9d50-6c96405eb6da.jpeg",
     "updatedAt": "2026-04-08T22:26:17.636Z",
-    "xpBalance": 184,
+    "xpBalance": 219,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 204,
+    "weeklyXp": 179,
     "weeklyCompletedQuizzes": 8,
-    "weeklyRank": 1,
+    "weeklyRank": 2,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Silver",
     "activeBoost": null,
@@ -1252,33 +1179,8 @@
         "badgeAwardedAt": "2026-04-08T18:35:36.457Z"
       }
     ],
-    "rewardRedemptions": [
-      {
-        "id": "34da8450-052e-42a4-9e02-6f3d285b57d7",
-        "rewardId": "double-xp-next-quiz",
-        "title": "Double XP (Next 1 Quiz)",
-        "costXp": 60,
-        "redeemedAt": "2026-04-08T18:38:19.337Z",
-        "effect": {
-          "type": "xp-boost-token",
-          "multiplier": 2,
-          "uses": 1
-        },
-        "metadata": {
-          "type": "boost",
-          "rarity": "rare"
-        }
-      }
-    ],
-    "consumedBoostHistory": [
-      {
-        "redemptionId": "34da8450-052e-42a4-9e02-6f3d285b57d7",
-        "rewardId": "double-xp-next-quiz",
-        "usedAt": "2026-04-08T22:06:16.479Z",
-        "multiplier": 2,
-        "remainingUses": 0
-      }
-    ],
+    "rewardRedemptions": [],
+    "consumedBoostHistory": [],
     "weeklyGroupRanks": [],
     "groupIds": [],
     "dailyMissionHistory": [
@@ -1328,52 +1230,48 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-08",
+      "dateKey": "2026-04-09",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": true,
+          "completed": false,
           "rewardXp": 8,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 8,
+            "value": 0,
             "target": 2
           },
-          "completedAt": "2026-04-08T22:06:47.510Z"
+          "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T22:06:47.510Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-08T22:06:47.510Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 21
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
-    "totalSpentXp": 60,
+    "totalSpentXp": 0,
     "baseXp": 158,
-    "boostXp": 25,
+    "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 40,
     "missionBonusXp": 21

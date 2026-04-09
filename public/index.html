@@ -3,50 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RPSC/REET Prep - Dashboard</title>
+  <title>RPSC/REET Prep - Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animation-slideIn { animation: slideIn 0.3s ease-in; }
+  </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-slate-50">
   <div id="appNavbar"></div>
 
-  <main id="dashboard" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <section class="mb-10">
-      <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome back</h2>
-      <p class="text-gray-600">Choose a learning path and start preparing.</p>
-      <div class="mt-5 flex flex-wrap gap-3">
-        <a href="quizzes.html?mode=daily" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">Start Daily Quiz</a>
-        <a href="dashboard.html" class="px-5 py-2.5 bg-gray-100 text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-200 font-medium text-sm">Go to My Dashboard</a>
-      </div>
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
+    <section class="mb-8 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 px-6 py-7 text-white shadow-[0_28px_70px_-40px_rgba(15,23,42,0.75)] sm:px-8">
+      <p class="text-[11px] uppercase tracking-[0.2em] text-blue-100 font-semibold">Welcome back</p>
+      <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Ready for your next attempt?</h1>
+      <p class="mt-3 max-w-2xl text-sm text-blue-100 sm:text-base">Stay consistent and move your accuracy up with focused daily practice.</p>
+      <a href="quizzes.html?mode=all" class="mt-6 inline-flex items-center rounded-xl bg-white px-6 py-3 text-sm font-bold text-slate-900 hover:bg-slate-100">Start Quiz</a>
     </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-600">
-        <div class="text-3xl font-bold text-blue-600" id="stat-attempts">-</div>
-        <div class="text-gray-600 text-sm mt-2">Quizzes Attempted</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-600">
-        <div class="text-3xl font-bold text-green-600" id="stat-avg-score">-</div>
-        <div class="text-gray-600 text-sm mt-2">Average Score</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-600">
-        <div class="text-3xl font-bold text-purple-600" id="stat-total-time">-</div>
-        <div class="text-gray-600 text-sm mt-2">Quizzes Completed</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-600">
-        <div class="text-3xl font-bold text-orange-600" id="stat-weak-topic">-</div>
-        <div class="text-gray-600 text-sm mt-2">Weak Topic</div>
-      </div>
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <article class="rounded-2xl border border-slate-200 bg-white p-5">
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Streak</p>
+        <p class="mt-2 text-3xl font-black text-orange-600" id="streakCount">0</p>
+        <p class="text-xs text-slate-500 mt-2" id="streakMilestone">Keep it going!</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-200 bg-white p-5">
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Rank Hint</p>
+        <p class="mt-2 text-2xl font-black text-indigo-700" id="rankHint">Build momentum</p>
+        <p class="text-xs text-slate-500 mt-2" id="rankMeta">Complete more quizzes to enter weekly ranking.</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-200 bg-white p-5">
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Accuracy Summary</p>
+        <p class="mt-2 text-3xl font-black text-emerald-600" id="accuracyValue">0%</p>
+        <p class="text-xs text-slate-500 mt-2" id="accuracyMeta">No attempts yet</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-200 bg-white p-5">
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Area to Improve</p>
+        <p class="mt-2 text-lg font-bold text-violet-700 break-words" id="weakTopic">No data yet</p>
+        <p class="text-xs text-slate-500 mt-2">Lowest performing area from completed quizzes.</p>
+      </article>
     </section>
 
+    <!-- Quick Actions Section -->
     <section>
-      <h3 class="text-2xl font-bold text-gray-800 mb-6">Recent Performance</h3>
-      <div class="bg-white rounded-xl shadow-md overflow-hidden">
-        <div id="recentQuizzes" class="divide-y divide-gray-200">
-          <p class="p-6 text-gray-500 text-center">No quizzes attempted yet. Start with a Daily Quiz!</p>
-        </div>
+      <h2 class="text-xl font-bold text-slate-900 mb-4">Quick Actions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <!-- Daily Quiz Card -->
+        <a href="quizzes.html?mode=daily" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
+          <div class="text-4xl mb-3">📅</div>
+          <h3 class="font-semibold text-slate-800 mb-1">Daily</h3>
+          <p class="text-sm text-slate-600">Daily revision set</p>
+          <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Start now →</p>
+        </a>
+
+        <!-- Topic Tests Card -->
+        <a href="quizzes.html?mode=topic" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
+          <div class="text-4xl mb-3">🎯</div>
+          <h3 class="font-semibold text-slate-800 mb-1">Topic</h3>
+          <p class="text-sm text-slate-600">Focused topic practice</p>
+          <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Explore →</p>
+        </a>
+
+        <!-- Mock Tests Card -->
+        <a href="quizzes.html?mode=mock" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
+          <div class="text-4xl mb-3">🚀</div>
+          <h3 class="font-semibold text-slate-800 mb-1">Mock</h3>
+          <p class="text-sm text-slate-600">Full exam simulation</p>
+          <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Take test →</p>
+        </a>
       </div>
     </section>
   </main>
+
+  <div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+    <div class="w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl">
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="space-y-6">
+        <h2 class="text-3xl font-bold">Welcome</h2>
+
+        <input id="loginEmail" type="email" placeholder="Email" class="w-full p-3 border rounded" required />
+        <input id="loginPassword" type="password" placeholder="Password" class="w-full p-3 border rounded" required />
+
+        <button class="w-full bg-blue-600 text-white py-3 rounded">Login</button>
+
+        <p class="text-center">
+          New user?
+          <button type="button" id="showSignup" class="text-blue-600">Sign up</button>
+        </p>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" class="space-y-6 hidden">
+        <h2 class="text-3xl font-bold">Create Account</h2>
+
+        <input id="signupName" type="text" placeholder="Name" class="w-full p-3 border rounded" required />
+        <input id="signupEmail" type="email" placeholder="Email" class="w-full p-3 border rounded" required />
+        <input id="signupPassword" type="password" placeholder="Password" class="w-full p-3 border rounded" required />
+
+        <button class="w-full bg-green-600 text-white py-3 rounded">Sign up</button>
+
+        <p class="text-center">
+          Already have an account?
+          <button type="button" id="showLogin" class="text-blue-600">Login</button>
+        </p>
+      </form>
+
+    </div>
+  </div>
 
   <div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
     <div class="w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl">
@@ -109,8 +176,8 @@
       return 'Quiz';
     }
 
-    function getWeakTopicLabel(completedAttempts) {
-      if (!completedAttempts.length) return '-';
+    function getWeakTopicWithPercent(completedAttempts) {
+      if (!completedAttempts.length) return { topic: 'No data yet', percent: null };
 
       const groups = new Map();
 
@@ -128,7 +195,7 @@
         g.count += 1;
       }
 
-      if (!groups.size) return '-';
+      if (!groups.size) return { topic: 'No data yet', percent: null };
 
       let weakestKey = null;
       let weakestAvg = Infinity;
@@ -141,61 +208,43 @@
         }
       }
 
-      if (!weakestKey || !Number.isFinite(weakestAvg)) return '-';
-      return `${weakestKey} (${Math.round(weakestAvg)}%)`;
+      if (!weakestKey || !Number.isFinite(weakestAvg)) return { topic: 'No data yet', percent: null };
+      
+      return { 
+        topic: weakestKey, 
+        percent: Math.round(weakestAvg) 
+      };
     }
 
-    function renderRecentPerformance(attempts) {
-      const recentWrap = document.getElementById('recentQuizzes');
-      const completed = attempts
-        .filter((a) => a.status === 'completed' && Number(a.total) > 0)
-        .sort((a, b) => new Date(b.completedAt || b.createdAt || 0) - new Date(a.completedAt || a.createdAt || 0))
-        .slice(0, 5);
+    function getStreakMilestone(streak) {
+      if (streak === 0) return 'Start your streak!';
+      if (streak === 3) return '🎉 3-day streak unlocked!';
+      if (streak === 7) return '🌟 7-day streak! Keep going!';
+      if (streak === 30) return '👑 30-day streak! You\'re amazing!';
+      if (streak % 7 === 0 && streak > 7) return `⭐ ${streak}-day streak! Incredible!`;
+      return 'Keep it going!';
+    }
 
-      if (!completed.length) {
-        recentWrap.innerHTML = '<p class="p-6 text-gray-500 text-center">No quizzes attempted yet. Start with a Daily Quiz!</p>';
-        return;
+    function getRankHint(user) {
+      const rank = Number(user?.weeklyRank) || 0;
+      if (rank > 0 && rank <= 3) {
+        return {
+          hint: `Top ${rank}`,
+          meta: 'You are in podium contention this week.'
+        };
       }
 
-      recentWrap.innerHTML = completed.map((a) => {
-        const percent = getAttemptPercent(a);
-        const dateText = new Date(a.completedAt || a.createdAt || Date.now()).toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        });
-        const scoreText = `${Number(a.score || 0)}/${Number(a.total || 0)}`;
-        const detailsBtn = a.id
-          ? `<a href="dashboard.html" class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100">View Details</a>`
-          : '';
+      if (rank > 0) {
+        return {
+          hint: `#${rank}`,
+          meta: 'Improve accuracy to climb faster.'
+        };
+      }
 
-        return `
-          <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-              <p class="font-semibold text-gray-800">${String(a.quizTitle || a.quizId || 'Quiz').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-              <p class="text-xs text-gray-500 mt-1">${typeLabel(getAttemptType(a))} • ${dateText}</p>
-            </div>
-            <div class="flex items-center gap-3 sm:gap-4">
-              <div class="text-right">
-                <p class="text-sm font-semibold text-gray-700">${scoreText}</p>
-                <p class="text-xs text-gray-500">${percent !== null ? `${percent}%` : '-'}</p>
-              </div>
-              ${detailsBtn}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function buildInitialsAvatar(name) {
-      const initials = String(name || 'U')
-        .split(' ')
-        .map((part) => part[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
-      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><rect width='100%' height='100%' fill='#64748b'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='14' font-family='Arial'>${initials}</text></svg>`;
-      return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+      return {
+        hint: 'Unranked',
+        meta: 'Complete more quizzes to enter weekly ranking.'
+      };
     }
 
     async function initializeDashboard() {
@@ -214,6 +263,23 @@
         user
       });
 
+      // Update streak indicator
+      const currentStreak = user.currentStreak || 0;
+      document.getElementById('streakCount').textContent = currentStreak;
+      document.getElementById('streakMilestone').textContent = getStreakMilestone(currentStreak);
+
+      const rankHint = getRankHint(user);
+      document.getElementById('rankHint').textContent = rankHint.hint;
+      document.getElementById('rankMeta').textContent = rankHint.meta;
+
+      const accuracy = Math.max(0, Math.min(100, Number(user.accuracyPercent) || 0));
+      const attempted = Number(user.totalQuestionsAnswered) || 0;
+      document.getElementById('accuracyValue').textContent = `${accuracy}%`;
+      document.getElementById('accuracyMeta').textContent = attempted > 0
+        ? `${attempted} questions evaluated`
+        : 'No attempts yet';
+
+      // Fetch attempts for weak topic calculation
       let attempts = [];
       try {
         const attemptsRes = await fetch('/api/attempts', { credentials: 'include' });
@@ -223,16 +289,11 @@
       }
 
       const completed = attempts.filter((a) => a.status === 'completed' && a.total > 0);
-      const avgScore = completed.length
-        ? Math.round(completed.reduce((sum, a) => sum + Math.round((a.score / a.total) * 100), 0) / completed.length)
-        : 0;
-
-      document.getElementById('stat-attempts').textContent = String(attempts.length);
-      document.getElementById('stat-avg-score').textContent = `${avgScore}%`;
-      document.getElementById('stat-total-time').textContent = completed.length ? `${completed.length} done` : '-';
-      document.getElementById('stat-weak-topic').textContent = getWeakTopicLabel(completed);
-
-      renderRecentPerformance(attempts);
+      const weakTopic = getWeakTopicWithPercent(completed);
+      
+      if (weakTopic.percent !== null) {
+        document.getElementById('weakTopic').textContent = `${weakTopic.topic} (${weakTopic.percent}%)`;
+      }
     }
 
     function setupEventListeners() {

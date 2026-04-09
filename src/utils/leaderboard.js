@@ -1,10 +1,11 @@
 const {
   getAttemptPercent,
   getCurrentWeekRange,
-  getTierForXp,
+  getMasteryLevel,
+  getMasteryRank,
+  getRankScore,
   isCompletedAttempt,
   previousDateKey,
-  summarizeUserForLeaderboard,
   toUtcDateKey
 } = require('./gamification');
 
@@ -95,13 +96,21 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
         profileImage: user.profileImage || null,
         totalXp: Number(user.totalXp) || 0,
         weeklyXp: Number(user.weeklyXp) || 0,
+        accuracyPercent: Number(user.accuracyPercent) || 0,
+        weeklyAccuracyPercent: Number(user.weeklyAccuracyPercent) || 0,
+        masteryLevel: user.masteryLevel || user.currentTier || 'Beginner',
+        rankScore: Number(user.rankScore) || 0,
         weeklyCompletedQuizzes: Number(user.weeklyCompletedQuizzes) || 0,
         currentStreak: Number(user.currentStreak ?? user.streak?.currentStreak) || 0,
         bestStreak: Number(user.bestStreak ?? user.streak?.bestStreak) || 0,
         totalCompleted: 0,
         totalScore: 0,
+        totalCorrect: 0,
+        totalQuestions: 0,
+        weeklyCorrect: 0,
+        weeklyQuestions: 0,
         dateKeys: new Set(),
-        currentTier: user.currentTier || getTierForXp(user.totalXp)
+        currentTier: user.masteryLevel || user.currentTier || 'Beginner'
       });
     }
     return summaries.get(userId);
@@ -132,9 +141,17 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
     const summary = ensureSummary(attempt.userId);
     summary.totalCompleted += 1;
     summary.totalScore += getAttemptPercent(attempt);
+    summary.totalCorrect += Math.max(0, Number(attempt.score) || 0);
+    summary.totalQuestions += Math.max(0, Number(attempt.total) || 0);
 
     const dateKey = toUtcDateKey(attempt.completedAt || attempt.createdAt || attempt.startedAt);
     if (dateKey) summary.dateKeys.add(dateKey);
+
+    const { weekStartDateKey, weekEndDateKey } = getCurrentWeekRange(new Date());
+    if (dateKey && dateKey >= weekStartDateKey && dateKey < weekEndDateKey) {
+      summary.weeklyCorrect += Math.max(0, Number(attempt.score) || 0);
+      summary.weeklyQuestions += Math.max(0, Number(attempt.total) || 0);
+    }
 
     if (topic.key) {
       if (!summary.topics) summary.topics = new Map();
@@ -148,6 +165,19 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
   }
 
   const rows = Array.from(summaries.values()).map((summary) => {
+    const calculatedAccuracy = summary.totalQuestions > 0
+      ? Math.round((summary.totalCorrect / summary.totalQuestions) * 100)
+      : 0;
+    const effectiveAccuracy = Number.isFinite(Number(summary.accuracyPercent)) && Number(summary.accuracyPercent) > 0
+      ? Math.max(0, Math.min(100, Number(summary.accuracyPercent)))
+      : calculatedAccuracy;
+    const weeklyAccuracy = summary.weeklyQuestions > 0
+      ? Math.round((summary.weeklyCorrect / summary.weeklyQuestions) * 100)
+      : (Number(summary.weeklyAccuracyPercent) || 0);
+    const masteryLevel = getMasteryLevel({
+      accuracyPercent: effectiveAccuracy,
+      completedQuizCount: summary.totalCompleted
+    });
     const averageScore = summary.totalCompleted > 0
       ? Math.round(summary.totalScore / summary.totalCompleted)
       : 0;
@@ -159,13 +189,22 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
       profileImage: summary.profileImage,
       totalXp: summary.totalXp,
       weeklyXp: summary.weeklyXp,
+      accuracyPercent: effectiveAccuracy,
+      weeklyAccuracyPercent: Math.max(0, Math.min(100, Number(weeklyAccuracy) || 0)),
+      masteryLevel,
+      rankScore: getRankScore({
+        accuracyPercent: effectiveAccuracy,
+        masteryLevel,
+        currentStreak: summary.currentStreak || streakMetrics.currentStreak,
+        completedQuizCount: summary.totalCompleted
+      }),
       weeklyCompletedQuizzes: summary.weeklyCompletedQuizzes,
       averageScore,
       totalCompleted: summary.totalCompleted,
       currentStreak: summary.currentStreak || streakMetrics.currentStreak,
       bestStreak: summary.bestStreak || streakMetrics.bestStreak,
       lastActiveDate: streakMetrics.lastActiveDate,
-      currentTier: summary.currentTier,
+      currentTier: masteryLevel,
       topics: summary.topics || new Map()
     };
   });
@@ -180,16 +219,20 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
 
 function sortWeeklyRows(rows) {
   return [...rows].sort((a, b) => {
-    if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+    if (b.weeklyAccuracyPercent !== a.weeklyAccuracyPercent) return b.weeklyAccuracyPercent - a.weeklyAccuracyPercent;
     if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
-    if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+    const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+    if (masteryDiff !== 0) return masteryDiff;
+    if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     return a.name.localeCompare(b.name);
   });
 }
 
 function sortOverallRows(rows) {
   return [...rows].sort((a, b) => {
-    if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+    const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+    if (masteryDiff !== 0) return masteryDiff;
+    if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     return a.name.localeCompare(b.name);
@@ -200,6 +243,9 @@ function sortStreakRows(rows) {
   return [...rows].sort((a, b) => {
     if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     if (b.bestStreak !== a.bestStreak) return b.bestStreak - a.bestStreak;
+    const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+    if (masteryDiff !== 0) return masteryDiff;
+    if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     return a.name.localeCompare(b.name);
   });
@@ -207,6 +253,7 @@ function sortStreakRows(rows) {
 
 function sortTopicRows(rows) {
   return [...rows].sort((a, b) => {
+    if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
@@ -220,10 +267,14 @@ function stripLeaderboardRow(row, rank, includeStreak = false, isCurrentUser = f
     name: row.name,
     profileImage: row.profileImage || null,
     totalXp: row.totalXp || 0,
+    accuracyPercent: row.accuracyPercent || 0,
+    weeklyAccuracyPercent: row.weeklyAccuracyPercent || 0,
+    masteryLevel: row.masteryLevel || row.currentTier || 'Beginner',
+    rankScore: row.rankScore || 0,
     weeklyXp: row.weeklyXp || 0,
     weeklyCompletedQuizzes: row.weeklyCompletedQuizzes || 0,
     currentStreak: row.currentStreak || 0,
-    tier: row.currentTier || getTierForXp(row.totalXp || 0),
+    tier: row.masteryLevel || row.currentTier || 'Beginner',
     isCurrentUser: Boolean(isCurrentUser)
   };
 

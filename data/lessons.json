@@ -1,0 +1,48 @@
+[
+  {
+    "id": "1263e83a-d780-4389-99bb-9e4571353219",
+    "courseId": "b5b95fbd-62d1-4105-bdd4-3608e13f171e",
+    "title": "Course schedule",
+    "description": "Course schedule",
+    "type": "schedule",
+    "order": 1,
+    "origFilename": "Schedule e 2025'.pdf",
+    "filename": "ea4c0ac1-2bf1-4bea-a85b-58bb917028a2.pdf",
+    "filePath": "/uploads/lessons/ea4c0ac1-2bf1-4bea-a85b-58bb917028a2.pdf",
+    "size": 274470,
+    "createdAt": "2026-04-09T11:23:31.472Z",
+    "updatedAt": "2026-04-09T11:25:37.597Z",
+    "isDeleted": true,
+    "deletedAt": "2026-04-09T11:25:37.597Z"
+  },
+  {
+    "id": "747016ff-88c3-4f07-95a9-7cd70258d10e",
+    "courseId": "5597f175-a545-4823-8d07-ab9fb0eddb10",
+    "title": "The most recent report by the National Institute of",
+    "description": "I’m just just leaving my moms moms and and I’m I’m on on a a road road now",
+    "type": "pdf",
+    "order": 1,
+    "origFilename": "bed-notes.pdf",
+    "filename": "1efccd2f-9657-4f95-ba80-58d894e38fe6.pdf",
+    "filePath": "/uploads/lessons/1efccd2f-9657-4f95-ba80-58d894e38fe6.pdf",
+    "size": 141467,
+    "createdAt": "2026-04-09T11:37:05.942Z",
+    "updatedAt": "2026-04-09T11:37:05.942Z",
+    "isDeleted": false
+  },
+  {
+    "id": "91fb3734-6532-4cd4-a0c5-cf6d9f25f098",
+    "courseId": "5597f175-a545-4823-8d07-ab9fb0eddb10",
+    "title": "Fghjjdgfgjffhffhf",
+    "description": "Dghjkliiytkiyrtutdfkilofyfgil;ygj",
+    "type": "note",
+    "order": 1,
+    "origFilename": "2024 (2) answer key .pdf",
+    "filename": "4b235b09-af01-426e-9f47-f527fc2a0051.pdf",
+    "filePath": "/uploads/lessons/4b235b09-af01-426e-9f47-f527fc2a0051.pdf",
+    "size": 276624,
+    "createdAt": "2026-04-09T11:49:41.556Z",
+    "updatedAt": "2026-04-09T11:49:41.556Z",
+    "isDeleted": false
+  }
+]

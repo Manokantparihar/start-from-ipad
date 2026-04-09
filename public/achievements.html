@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements - RPSC/REET Prep</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3); } 50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); } }
+    .animation-slideIn { animation: slideIn 0.3s ease-in; }
+    .badge-unlocked:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.2s ease; }
+    .badge-locked { opacity: 0.6; }
+    .next-goal-glow { animation: glow 2s infinite; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50">
+  <div id="appNavbar"></div>
+
+  <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-500">Loading achievements...</p>
+    </div>
+  </div>
+
+  <div id="errorScreen" class="hidden flex items-center justify-center min-h-screen px-4">
+    <div class="text-center bg-white rounded-xl shadow-md p-8 max-w-md w-full">
+      <h2 class="text-xl font-bold text-gray-800 mb-2">Login Required</h2>
+      <p class="text-gray-500 mb-6">Please log in to view your achievements.</p>
+      <a href="index.html" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Go to Login</a>
+    </div>
+  </div>
+
+  <main id="achievementsMain" class="hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
+    <!-- Header -->
+    <section class="mb-10">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Your Achievements</h1>
+      <p class="text-gray-600">Earn badges through consistency, accuracy, and mastery.</p>
+      <p class="text-xs text-gray-500 mt-2">Badges are achievement-based only. No purchases, no reward shop unlocks.</p>
+    </section>
+
+    <!-- Progress & Streak Row -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-7 hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <h2 class="font-bold text-gray-800 text-lg">📊 Accuracy Progress</h2>
+            <p class="text-sm text-gray-500 mt-1">Build exam confidence through consistent performance</p>
+          </div>
+          <div class="text-right">
+            <div id="accuracyTotal" class="text-3xl font-bold text-blue-600">0%</div>
+            <div class="text-xs text-gray-500">overall accuracy</div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Mastery Level</span>
+            <span id="masteryLevel" class="font-semibold text-gray-700">Beginner</span>
+          </div>
+          <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+            <div id="accuracyProgressBar" class="h-4 rounded-full bg-gradient-to-r from-blue-500 via-teal-500 to-emerald-500 transition-all duration-500" style="width:0%"></div>
+          </div>
+          <p id="progressSummaryText" class="text-xs text-gray-600">0 correct answers from 0 attempted questions</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-7 hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <h2 class="font-bold text-gray-800 text-lg">🔥 Streaks</h2>
+            <p class="text-sm text-gray-500 mt-1">Keep momentum alive</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="rounded-xl bg-orange-50 border border-orange-200 p-4">
+            <div class="text-xs uppercase tracking-wide text-orange-600 font-bold mb-1">Current</div>
+            <div id="currentStreak" class="text-3xl font-bold text-orange-600">0</div>
+            <div class="text-xs text-orange-600 mt-1">days</div>
+          </div>
+          <div class="rounded-xl bg-rose-50 border border-rose-200 p-4">
+            <div class="text-xs uppercase tracking-wide text-rose-600 font-bold mb-1">Best</div>
+            <div id="bestStreak" class="text-3xl font-bold text-rose-600">0</div>
+            <div class="text-xs text-rose-600 mt-1">days</div>
+          </div>
+        </div>
+        <p id="streakHint" class="text-xs text-gray-600 leading-relaxed"></p>
+      </div>
+    </section>
+
+    <!-- Next Goal Section -->
+    <section id="nextGoalSection" class="hidden mb-8">
+      <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border-2 border-indigo-200 p-7 next-goal-glow">
+        <h2 class="font-bold text-gray-800 text-lg mb-4">🎯 Next Goal</h2>
+        <div class="flex items-start gap-6">
+          <div class="text-5xl flex-shrink-0" id="nextGoalIcon">🏅</div>
+          <div class="flex-1">
+            <h3 id="nextGoalTitle" class="font-bold text-gray-800 text-lg mb-2">Next Badge</h3>
+            <p id="nextGoalDesc" class="text-sm text-gray-600 mb-4">Keep going to unlock this badge</p>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span id="nextGoalProgress" class="font-medium text-gray-700">0 / 5 complete</span>
+                <span id="nextGoalPct" class="text-indigo-600 font-bold">0%</span>
+              </div>
+              <div class="w-full bg-white rounded-full h-3 overflow-hidden border border-indigo-200">
+                <div id="nextGoalBar" class="h-3 rounded-full bg-gradient-to-r from-indigo-400 to-blue-500 transition-all duration-500" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recently Unlocked Section -->
+    <section id="recentlyUnlockedSection" class="hidden mb-8">
+      <h2 class="font-bold text-gray-800 text-lg mb-4">✨ Recently Unlocked</h2>
+      <div id="recentBadges" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- All Badges Section -->
+    <section>
+      <div class="flex items-center justify-between gap-3 mb-6">
+        <h2 class="font-bold text-gray-800 text-lg">🏆 Badge Collection</h2>
+        <span id="badgeCounts" class="text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1 rounded-full">0 / 6</span>
+      </div>
+      <div id="badgeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+  </main>
+
+  <script src="/js/modules/navbar.js"></script>
+  <script>
+    const ACHIEVEMENT_BADGES = [
+      { id: 'first-quiz', title: 'First Step', description: 'Complete your first quiz.', rarity: 'common', icon: '🎯', unlock_at: 1 },
+      { id: 'five-quizzes', title: 'Quiz Master', description: 'Complete 5 quizzes.', rarity: 'common', icon: '📚', unlock_at: 5 },
+      { id: 'perfect-score', title: 'Perfection', description: 'Score 100% in a quiz.', rarity: 'rare', icon: '⭐', unlock_at: 1, type: 'score' },
+      { id: 'three-day-streak', title: '3-Day Streak', description: 'Complete quizzes on 3 days in a row.', rarity: 'rare', icon: '🔥', unlock_at: 3 },
+      { id: 'seven-day-streak', title: 'Week Warrior', description: 'Complete quizzes on 7 days in a row.', rarity: 'epic', icon: '🚀', unlock_at: 7 },
+      { id: '30-day-streak', title: 'Legendary', description: 'Complete quizzes on 30 days in a row.', rarity: 'legendary', icon: '👑', unlock_at: 30 }
+    ];
+
+    function rarityColor(rarity) {
+      const val = String(rarity || 'common').toLowerCase();
+      if (val === 'legendary') return { border: 'border-amber-300', bg: 'bg-amber-50', text: 'text-amber-900' };
+      if (val === 'epic') return { border: 'border-fuchsia-300', bg: 'bg-fuchsia-50', text: 'text-fuchsia-900' };
+      if (val === 'rare') return { border: 'border-sky-300', bg: 'bg-sky-50', text: 'text-sky-900' };
+      return { border: 'border-gray-300', bg: 'bg-gray-50', text: 'text-gray-700' };
+    }
+
+    function formatRarity(rarity) {
+      const val = String(rarity || 'common').toLowerCase();
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    }
+
+    function getNextStreakTarget(currentStreak) {
+      if (currentStreak < 3) return 3;
+      if (currentStreak < 7) return 7;
+      if (currentStreak < 30) return 30;
+      return null;
+    }
+
+    function renderProgress(user) {
+      const accuracyPercent = Math.max(0, Math.min(100, Number(user?.accuracyPercent) || 0));
+      const masteryLevel = String(user?.masteryLevel || user?.currentTier || 'Beginner');
+      const totalCorrect = Math.max(0, Number(user?.totalCorrectAnswers) || 0);
+      const totalQuestions = Math.max(0, Number(user?.totalQuestionsAnswered) || 0);
+
+      document.getElementById('accuracyTotal').textContent = `${accuracyPercent}%`;
+      document.getElementById('masteryLevel').textContent = masteryLevel;
+      document.getElementById('progressSummaryText').textContent = `${totalCorrect} correct answers from ${totalQuestions} attempted questions`;
+      document.getElementById('accuracyProgressBar').style.width = `${accuracyPercent}%`;
+    }
+
+    function renderStreak(user) {
+      const current = Number(user?.currentStreak) || 0;
+      const best = Number(user?.bestStreak) || 0;
+      const nextTarget = getNextStreakTarget(current);
+
+      document.getElementById('currentStreak').textContent = current;
+      document.getElementById('bestStreak').textContent = best;
+      
+      if (nextTarget) {
+        const daysLeft = nextTarget - current;
+        document.getElementById('streakHint').textContent = `${daysLeft} day${daysLeft !== 1 ? 's' : ''} away from unlocking the ${nextTarget}-day streak badge!`;
+      } else {
+        document.getElementById('streakHint').textContent = '🌟 You\'ve unlocked all streak milestones! Keep the momentum alive!';
+      }
+    }
+
+    function calculateBadgeProgress(badge, user, attempts) {
+      const unlocked = Array.isArray(user?.badges) ? user.badges : [];
+      const isUnlocked = unlocked.some((b) => b.id === badge.id);
+      
+      if (isUnlocked) return { current: badge.unlock_at, total: badge.unlock_at, pct: 100, text: 'Unlocked' };
+
+      const completed = attempts.filter((a) => a.status === 'completed').length;
+      const currentStreak = Number(user?.currentStreak) || 0;
+      let progress = 0;
+
+      if (badge.id === 'first-quiz') progress = Math.min(1, completed);
+      else if (badge.id === 'five-quizzes') progress = Math.min(5, completed);
+      else if (badge.id === 'three-day-streak') progress = Math.min(3, currentStreak);
+      else if (badge.id === 'seven-day-streak') progress = Math.min(7, currentStreak);
+      else if (badge.id === '30-day-streak') progress = Math.min(30, currentStreak);
+      else if (badge.id === 'perfect-score') progress = 0; // Hidden progress until unlocked
+
+      const pct = Math.round((progress / badge.unlock_at) * 100);
+      return { current: progress, total: badge.unlock_at, pct: Math.min(100, pct), text: `${progress}/${badge.unlock_at}` };
+    }
+
+    function findNextBadge(user, attempts) {
+      const unlocked = Array.isArray(user?.badges) ? user.badges : [];
+      const unlockedIds = new Set(unlocked.map((b) => b.id));
+
+      for (const badge of ACHIEVEMENT_BADGES) {
+        if (!unlockedIds.has(badge.id)) {
+          const prog = calculateBadgeProgress(badge, user, attempts);
+          if (prog.pct < 100) return { badge, progress: prog };
+        }
+      }
+      return null;
+    }
+
+    function findRecentBadges(user) {
+      const unlocked = Array.isArray(user?.badges) ? user.badges : [];
+      return unlocked
+        .map((ub) => {
+          const badge = ACHIEVEMENT_BADGES.find((b) => b.id === ub.id);
+          return { badge, unlockedAt: new Date(ub.unlockedAt || Date.now()) };
+        })
+        .sort((a, b) => b.unlockedAt - a.unlockedAt)
+        .slice(0, 3);
+    }
+
+    function renderNextGoal(user, attempts) {
+      const next = findNextBadge(user, attempts);
+      const section = document.getElementById('nextGoalSection');
+
+      if (!next) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      const { badge, progress } = next;
+      document.getElementById('nextGoalIcon').textContent = badge.icon;
+      document.getElementById('nextGoalTitle').textContent = badge.title;
+      document.getElementById('nextGoalDesc').textContent = badge.description;
+      document.getElementById('nextGoalProgress').textContent = `${progress.current} / ${progress.total} complete`;
+      document.getElementById('nextGoalPct').textContent = `${progress.pct}%`;
+      document.getElementById('nextGoalBar').style.width = `${progress.pct}%`;
+
+      section.classList.remove('hidden');
+    }
+
+    function renderRecentBadges(user) {
+      const recent = findRecentBadges(user);
+      const section = document.getElementById('recentlyUnlockedSection');
+
+      if (recent.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      const colors = { commonColor: 'border-gray-300 bg-gray-50', rareColor: 'border-sky-300 bg-sky-50', epicColor: 'border-fuchsia-300 bg-fuchsia-50', legendaryColor: 'border-amber-300 bg-amber-50' };
+      document.getElementById('recentBadges').innerHTML = recent
+        .map(({ badge, unlockedAt }) => {
+          const color = rarityColor(badge.rarity);
+          const dateStr = unlockedAt.toLocaleDateString();
+          return `
+            <div class="rounded-2xl border-2 ${color.border} ${color.bg} p-5 badge-unlocked">
+              <div class="text-4xl mb-3">${badge.icon}</div>
+              <h3 class="font-bold ${color.text}">${badge.title}</h3>
+              <p class="text-xs mt-1 ${color.text} opacity-75">Unlocked ${dateStr}</p>
+            </div>
+          `;
+        })
+        .join('');
+
+      section.classList.remove('hidden');
+    }
+
+    function renderBadges(user, attempts) {
+      const unlocked = Array.isArray(user?.badges) ? user.badges : [];
+      const unlockedMap = new Map(unlocked.map((badge) => [badge.id, badge]));
+      const unlockedCount = ACHIEVEMENT_BADGES.filter((badge) => unlockedMap.has(badge.id)).length;
+
+      document.getElementById('badgeCounts').textContent = `${unlockedCount} / ${ACHIEVEMENT_BADGES.length}`;
+
+      const grid = document.getElementById('badgeGrid');
+      grid.innerHTML = ACHIEVEMENT_BADGES.map((badge) => {
+        const earned = unlockedMap.get(badge.id);
+        const color = rarityColor(badge.rarity);
+        const progress = calculateBadgeProgress(badge, user, attempts);
+
+        if (earned) {
+          const dateStr = new Date(earned.unlockedAt || Date.now()).toLocaleDateString();
+          return `
+            <div class="rounded-2xl border-2 ${color.border} ${color.bg} p-5 badge-unlocked cursor-pointer hover:shadow-lg">
+              <div class="text-5xl mb-3">${badge.icon}</div>
+              <h3 class="font-bold ${color.text}">${badge.title}</h3>
+              <p class="text-xs mt-1 ${color.text} opacity-75">${badge.description}</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-xs font-bold ${color.text} uppercase">${formatRarity(badge.rarity)}</span>
+                <span class="text-xs ${color.text} opacity-75">✓ ${dateStr}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="rounded-2xl border-2 ${color.border} ${color.bg} p-5 badge-locked opacity-60">
+            <div class="text-5xl mb-3 grayscale opacity-50">${badge.icon}</div>
+            <h3 class="font-bold ${color.text}">${badge.title}</h3>
+            <p class="text-xs mt-1 ${color.text} opacity-75">${badge.description}</p>
+            <div class="mt-3 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold ${color.text} uppercase">${formatRarity(badge.rarity)}</span>
+                <span class="font-bold ${color.text}">${progress.pct}%</span>
+              </div>
+              <div class="w-full bg-white rounded-full h-2 overflow-hidden border ${color.border}">
+                <div class="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-500 transition-all duration-500" style="width:${progress.pct}%"></div>
+              </div>
+              <p class="text-xs ${color.text} opacity-75">${progress.text}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadAchievements() {
+      let user = null;
+      let attempts = [];
+
+      try {
+        const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!meRes.ok) throw new Error('Not authenticated');
+        const payload = await meRes.json();
+        user = payload.user;
+      } catch {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('errorScreen').classList.remove('hidden');
+        document.getElementById('errorScreen').classList.add('flex');
+        return;
+      }
+
+      try {
+        const attRes = await fetch('/api/attempts', { credentials: 'include' });
+        if (attRes.ok) attempts = await attRes.json() || [];
+      } catch {
+        attempts = [];
+      }
+
+      await Navbar.mount('#appNavbar', { active: 'achievements', user });
+
+      renderProgress(user);
+      renderStreak(user);
+      renderNextGoal(user, attempts);
+      renderRecentBadges(user);
+      renderBadges(user, attempts);
+
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('achievementsMain').classList.remove('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Navbar.mount('#appNavbar', { active: 'achievements' });
+      await loadAchievements();
+    });
+  </script>
+  <script src="/js/notifications.js"></script>
+</body>
+</html>

@@ -34,6 +34,18 @@ const upload = multer({
   }
 });
 
+const uploadJson = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['application/json', 'text/plain'];
+    const okMime = allowed.includes(file.mimetype);
+    const okExt = /\.json$/i.test(file.originalname);
+    if (okMime || okExt) return cb(null, true);
+    cb(new Error('Only JSON files are accepted.'));
+  }
+});
+
 // ─── CSV UTILITIES ────────────────────────────────────────────────────────────
 
 /**
@@ -117,6 +129,106 @@ function toCSV(rows, headers) {
     headers.map(h => escapeCSV(row[h])).join(',')
   );
   return [head, ...body].join('\n');
+}
+
+function parseJsonArray(text) {
+  let payload;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    throw new Error('Invalid JSON format.');
+  }
+
+  if (!Array.isArray(payload)) {
+    throw new Error('JSON must contain an array.');
+  }
+
+  return payload;
+}
+
+function normalizeCourseImportItem(item, index) {
+  const errors = [];
+  const row = index + 1;
+  const id = String(item?.id || '').trim();
+  const title = String(item?.title || '').trim();
+  const status = String(item?.status || 'draft').toLowerCase();
+  const category = String(item?.category || 'General').trim();
+  const description = String(item?.description || '').trim();
+
+  if (!id) errors.push({ row, field: 'id', message: 'id is required.' });
+  if (!title) errors.push({ row, field: 'title', message: 'title is required.' });
+  if (!['draft', 'published'].includes(status)) {
+    errors.push({ row, field: 'status', message: 'status must be draft or published.' });
+  }
+
+  return {
+    errors,
+    value: {
+      id,
+      title,
+      description,
+      category,
+      status,
+      createdAt: item?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      isDeleted: false
+    }
+  };
+}
+
+function normalizeLessonImportItem(item, index, validCourseIds, existingLessonIds) {
+  const errors = [];
+  const row = index + 1;
+
+  const id = String(item?.id || '').trim();
+  const courseId = String(item?.courseId || '').trim();
+  const title = String(item?.title || '').trim();
+  const type = String(item?.type || 'pdf').toLowerCase();
+  const description = String(item?.description || '').trim();
+  const order = Number(item?.order);
+  const origFilename = String(item?.origFilename || '').trim();
+  const filename = String(item?.filename || '').trim();
+  const filePath = String(item?.filePath || '').trim();
+  const size = Number(item?.size || 0);
+
+  if (!id) errors.push({ row, field: 'id', message: 'id is required.' });
+  if (id && existingLessonIds.has(id)) {
+    errors.push({ row, field: 'id', message: `duplicate lesson id \"${id}\" already exists.` });
+  }
+  if (!courseId) errors.push({ row, field: 'courseId', message: 'courseId is required.' });
+  if (courseId && !validCourseIds.has(courseId)) {
+    errors.push({ row, field: 'courseId', message: `courseId \"${courseId}\" does not exist.` });
+  }
+  if (!title) errors.push({ row, field: 'title', message: 'title is required.' });
+  if (!['pdf', 'note', 'current-affairs', 'schedule'].includes(type)) {
+    errors.push({ row, field: 'type', message: 'type must be PDF, Note, Current Affairs, or Schedule.' });
+  }
+  if (!origFilename || !filename || !filePath) {
+    errors.push({ row, field: 'file', message: 'origFilename, filename, and filePath are required.' });
+  }
+  if (!Number.isFinite(order) || order <= 0) {
+    errors.push({ row, field: 'order', message: 'order must be a positive number.' });
+  }
+
+  return {
+    errors,
+    value: {
+      id,
+      courseId,
+      title,
+      description,
+      type,
+      order: Math.floor(order),
+      origFilename,
+      filename,
+      filePath,
+      size: Number.isFinite(size) ? Math.max(0, size) : 0,
+      createdAt: item?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isDeleted: false
+    }
+  };
 }
 
 // ─── QUIZ CSV FORMAT ──────────────────────────────────────────────────────────
@@ -442,6 +554,169 @@ router.get('/export/attempts', async (req, res) => {
   }
 });
 
+router.get('/export/courses', async (_req, res) => {
+  try {
+    const courses = (await db.getCourses()).filter((entry) => !entry.isDeleted);
+    const filename = `courses-export-${new Date().toISOString().slice(0, 10)}.json`;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(JSON.stringify(courses, null, 2));
+  } catch (err) {
+    console.error('Export courses error:', err);
+    res.status(500).json({ error: 'Server error during courses export.' });
+  }
+});
+
+router.get('/export/lessons', async (_req, res) => {
+  try {
+    const lessons = (await db.getLessons()).filter((entry) => !entry.isDeleted);
+    const filename = `lessons-export-${new Date().toISOString().slice(0, 10)}.json`;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(JSON.stringify(lessons, null, 2));
+  } catch (err) {
+    console.error('Export lessons error:', err);
+    res.status(500).json({ error: 'Server error during lessons export.' });
+  }
+});
+
+router.post('/import/courses', uploadJson.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded. Send a JSON file as multipart field "file".' });
+    }
+
+    const items = parseJsonArray(req.file.buffer.toString('utf8'));
+    const errors = [];
+    const normalized = [];
+    const seenIds = new Set();
+
+    items.forEach((item, idx) => {
+      const parsed = normalizeCourseImportItem(item, idx);
+      parsed.errors.forEach((error) => errors.push(error));
+      if (parsed.value.id) {
+        if (seenIds.has(parsed.value.id)) {
+          errors.push({ row: idx + 1, field: 'id', message: `duplicate id \"${parsed.value.id}\" inside import file.` });
+        }
+        seenIds.add(parsed.value.id);
+      }
+      normalized.push(parsed.value);
+    });
+
+    if (req.query.preview === '1') {
+      return res.json({
+        preview: true,
+        rowCount: items.length,
+        importCount: normalized.length,
+        errors,
+        courses: normalized
+      });
+    }
+
+    if (errors.length) {
+      return res.status(400).json({
+        error: 'Validation errors found. Fix them or use ?preview=1 to inspect.',
+        errors
+      });
+    }
+
+    const existingCourses = await db.getCourses();
+    const existingById = new Map(existingCourses.map((entry) => [entry.id, entry]));
+    const merged = [...existingCourses];
+    let inserted = 0;
+    let updated = 0;
+
+    normalized.forEach((course) => {
+      if (existingById.has(course.id)) {
+        updated += 1;
+        const idx = merged.findIndex((entry) => entry.id === course.id);
+        merged[idx] = {
+          ...merged[idx],
+          ...course,
+          createdAt: merged[idx].createdAt || course.createdAt,
+          isDeleted: false,
+          updatedAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        };
+      } else {
+        inserted += 1;
+        merged.push(course);
+      }
+    });
+
+    await db.saveCourses(merged);
+
+    return res.status(201).json({
+      imported: normalized.length,
+      inserted,
+      updated
+    });
+  } catch (err) {
+    console.error('Import courses error:', err);
+    return res.status(400).json({ error: err.message || 'Import failed.' });
+  }
+});
+
+router.post('/import/lessons', uploadJson.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded. Send a JSON file as multipart field "file".' });
+    }
+
+    const [items, existingCourses, existingLessons] = await Promise.all([
+      Promise.resolve(parseJsonArray(req.file.buffer.toString('utf8'))),
+      db.getCourses(),
+      db.getLessons()
+    ]);
+
+    const validCourseIds = new Set(existingCourses.filter((entry) => !entry.isDeleted).map((entry) => entry.id));
+    const existingLessonIds = new Set(existingLessons.filter((entry) => !entry.isDeleted).map((entry) => entry.id));
+    const seenImportIds = new Set();
+    const errors = [];
+    const normalized = [];
+
+    items.forEach((item, idx) => {
+      const parsed = normalizeLessonImportItem(item, idx, validCourseIds, existingLessonIds);
+      parsed.errors.forEach((error) => errors.push(error));
+      if (parsed.value.id) {
+        if (seenImportIds.has(parsed.value.id)) {
+          errors.push({ row: idx + 1, field: 'id', message: `duplicate id \"${parsed.value.id}\" inside import file.` });
+        }
+        seenImportIds.add(parsed.value.id);
+      }
+      normalized.push(parsed.value);
+    });
+
+    if (req.query.preview === '1') {
+      return res.json({
+        preview: true,
+        rowCount: items.length,
+        importCount: normalized.length,
+        errors,
+        lessons: normalized
+      });
+    }
+
+    if (errors.length) {
+      return res.status(400).json({
+        error: 'Validation errors found. Fix them or use ?preview=1 to inspect.',
+        errors
+      });
+    }
+
+    const merged = [...existingLessons, ...normalized];
+    await db.saveLessons(merged);
+
+    return res.status(201).json({
+      imported: normalized.length,
+      inserted: normalized.length
+    });
+  } catch (err) {
+    console.error('Import lessons error:', err);
+    return res.status(400).json({ error: err.message || 'Import failed.' });
+  }
+});
+
 // Multer error handler (file-too-large, wrong type)
 // eslint-disable-next-line no-unused-vars
 router.use((err, _req, res, _next) => {
@@ -449,6 +724,9 @@ router.use((err, _req, res, _next) => {
     return res.status(400).json({ error: 'File too large. Maximum allowed size is 5 MB.' });
   }
   if (err.message === 'Only CSV files are accepted.') {
+    return res.status(400).json({ error: err.message });
+  }
+  if (err.message === 'Only JSON files are accepted.') {
     return res.status(400).json({ error: err.message });
   }
   console.error('Import/Export middleware error:', err);

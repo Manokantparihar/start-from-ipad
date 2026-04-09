@@ -26,6 +26,7 @@
     const path = getCurrentPath();
     if (path === 'index.html') return 'home';
     if (path === 'dashboard.html') return 'dashboard';
+    if (path === 'achievements.html') return 'achievements';
     if (path === 'leaderboard.html') return 'leaderboard';
     if (path === 'resources.html') return 'resources';
     if (path === 'profile.html') return 'profile';
@@ -136,6 +137,7 @@
         <div class="flex items-center gap-6">
           <a href="index.html" class="${linkClass(active === 'home')}">Home</a>
           <a href="dashboard.html" class="${linkClass(active === 'dashboard')}">Dashboard</a>
+          <a href="achievements.html" class="${linkClass(active === 'achievements')}">Achievements</a>
 
           <div class="relative group" data-dropdown="practice">
             <button
@@ -192,6 +194,7 @@
       <div class="flex flex-col gap-1">
         <a href="index.html" class="rounded-lg px-3 py-2 text-sm ${active === 'home' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Home</a>
         <a href="dashboard.html" class="rounded-lg px-3 py-2 text-sm ${active === 'dashboard' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Dashboard</a>
+        <a href="achievements.html" class="rounded-lg px-3 py-2 text-sm ${active === 'achievements' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Achievements</a>
 
         <button
           id="mobilePracticeToggle"

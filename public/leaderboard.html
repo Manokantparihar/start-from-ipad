@@ -16,24 +16,48 @@
   <div id="appNavbar"></div>
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
-    <section class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">Leaderboard</h1>
-      <p class="text-gray-500">Track overall performance, streak consistency, and topic-level progress.</p>
+    <section class="relative mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 px-6 py-7 text-white shadow-[0_24px_60px_-32px_rgba(15,23,42,0.8)] sm:px-8 sm:py-8">
+      <div class="absolute -right-24 -top-20 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl"></div>
+      <div class="absolute -bottom-24 right-10 h-48 w-48 rounded-full bg-indigo-400/20 blur-3xl"></div>
+      <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-blue-100">
+            Competition mode
+          </div>
+          <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Leaderboard</h1>
+          <p class="mt-3 max-w-xl text-sm leading-6 text-blue-100 sm:text-base">Track rank pressure, streak consistency, and topic performance while you fight for podium control.</p>
+          <p id="heroHint" class="mt-4 inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white">Complete 1 quiz to stay #1.</p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3 lg:w-[31rem]">
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Your rank</div>
+            <div id="viewerRank" class="mt-2 text-3xl font-black text-white">—</div>
+            <div id="viewerPlacementHint" class="mt-1 text-xs text-blue-100">Find your place in the race.</div>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Current streak</div>
+            <div id="viewerCurrentStreak" class="mt-2 text-3xl font-black text-white">🔥 0-day streak</div>
+            <div class="mt-1 text-xs text-blue-100">Keep the streak alive.</div>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Competitive pulse</div>
+            <div id="competitivePulse" class="mt-2 text-xl font-black text-white">Stay sharp. Podium spots move fast.</div>
+            <div id="competitivePulseHint" class="mt-1 text-xs text-blue-100">One strong quiz can flip the top 3.</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-blue-500">
-        <div class="text-sm text-gray-500 mb-1">Your Rank</div>
-        <div id="viewerRank" class="text-2xl font-bold text-blue-600">—</div>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-violet-500">
-        <div class="text-sm text-gray-500 mb-1">Current Streak</div>
-        <div id="viewerCurrentStreak" class="text-2xl font-bold text-violet-600">0</div>
-      </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-sky-500">
-          <div class="text-sm text-gray-500 mb-1">Your XP</div>
-          <div id="viewerXp" class="text-2xl font-bold text-sky-600">0</div>
+    <section class="mb-6">
+      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Top 3 contenders</h2>
+          <p id="top3Subtitle" class="text-sm text-gray-500">The players setting the pace right now.</p>
         </div>
+        <span id="leaderboardMeta" class="text-xs font-medium text-gray-400"></span>
+      </div>
+      <div id="top3Grid" class="grid gap-4 md:grid-cols-3"></div>
     </section>
 
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
@@ -41,7 +65,7 @@
         <div class="flex flex-wrap gap-2">
           <button data-tab="overall" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Overall</button>
           <button data-tab="streak" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Streak</button>
-          <button data-tab="topic" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">By Topic</button>
+          <button data-tab="topic" class="leaderboard-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">Topic</button>
         </div>
         <div id="topicControls" class="hidden flex items-center gap-2">
           <select id="topicSelect" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
@@ -54,9 +78,8 @@
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
         <div>
           <h2 id="leaderboardTitle" class="font-semibold text-gray-800">Overall Leaderboard</h2>
-           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by XP, then completed quizzes.</p>
+           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by mastery, accuracy, then consistency.</p>
         </div>
-        <span id="leaderboardMeta" class="text-xs text-gray-400"></span>
       </div>
 
       <div id="loadingState" class="px-6 py-16 text-center text-gray-500">
@@ -85,7 +108,10 @@
     const state = {
       tab: 'overall',
       topics: [],
-      selectedTopic: ''
+      selectedTopic: '',
+      leaderboardRows: [],
+      viewer: null,
+      mode: 'overall'
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -141,14 +167,13 @@
 
     async function loadOverallLeaderboard() {
       try {
-        const res = await fetch('/api/leaderboard/overall?limit=10', { credentials: 'include' });
+        const res = await fetch('/api/leaderboard/overall?limit=25', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load overall leaderboard');
         const data = await res.json();
+        state.mode = 'overall';
         document.getElementById('leaderboardTitle').textContent = 'Overall Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by average score, then completed quizzes.';
-        renderViewer(data.viewer);
-        renderTable(data.leaderboard || [], 'overall');
-        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy and streak consistency.';
+        renderLeaderboard(data.leaderboard || [], data.viewer, 'overall');
       } catch {
         renderEmpty('Unable to load the overall leaderboard right now.');
       }
@@ -156,14 +181,13 @@
 
     async function loadStreakLeaderboard() {
       try {
-        const res = await fetch('/api/leaderboard/streak?limit=10', { credentials: 'include' });
+        const res = await fetch('/api/leaderboard/streak?limit=25', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load streak leaderboard');
         const data = await res.json();
+        state.mode = 'streak';
         document.getElementById('leaderboardTitle').textContent = 'Streak Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by current streak, then best streak.';
-        renderViewer(data.viewer);
-        renderTable(data.leaderboard || [], 'streak');
-        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by current streak and pressure to hold rank.';
+        renderLeaderboard(data.leaderboard || [], data.viewer, 'streak');
       } catch {
         renderEmpty('Unable to load the streak leaderboard right now.');
       }
@@ -191,24 +215,50 @@
           `<option value="${escapeHtml(topic.key)}" ${topic.key === state.selectedTopic ? 'selected' : ''}>${escapeHtml(topic.label)}</option>`
         )).join('');
 
-        const res = await fetch(`/api/leaderboard/topic?topic=${encodeURIComponent(state.selectedTopic)}&limit=10`, { credentials: 'include' });
+        const res = await fetch(`/api/leaderboard/topic?topic=${encodeURIComponent(state.selectedTopic)}&limit=25`, { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load topic leaderboard');
         const data = await res.json();
+        state.mode = 'topic';
 
         document.getElementById('leaderboardTitle').textContent = `Topic Leaderboard: ${data.selectedTopic?.label || state.selectedTopic}`;
-        document.getElementById('leaderboardSubtitle').textContent = 'Sorted by average score within the selected topic.';
-        renderViewer(data.viewer);
-        renderTable(data.leaderboard || [], 'topic');
-        document.getElementById('leaderboardMeta').textContent = data.leaderboard?.length ? `${data.leaderboard.length} rows` : '';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by score inside the selected topic.';
+        renderLeaderboard(data.leaderboard || [], data.viewer, 'topic');
       } catch {
         renderEmpty('Unable to load the topic leaderboard right now.');
       }
     }
 
-    function renderViewer(viewer) {
-      document.getElementById('viewerRank').textContent = viewer && viewer.rank ? `#${viewer.rank}` : '—';
-      document.getElementById('viewerXp').textContent = viewer ? String(viewer.totalXp ?? 0) : '0';
-      document.getElementById('viewerCurrentStreak').textContent = viewer ? String(viewer.currentStreak ?? 0) : '0';
+    function renderLeaderboard(rows, viewer, mode) {
+      const normalizedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
+      state.leaderboardRows = normalizedRows;
+      state.viewer = viewer || null;
+      state.mode = mode;
+
+      renderHero(normalizedRows, viewer, mode);
+      renderTopThree(normalizedRows, viewer, mode);
+      renderTable(normalizedRows, mode);
+
+      document.getElementById('leaderboardMeta').textContent = normalizedRows.length ? `${normalizedRows.length} rows shown` : '';
+      document.getElementById('top3Subtitle').textContent = getTopThreeSubtitle(mode);
+    }
+
+    function renderHero(rows, viewer, mode) {
+      const viewerRank = viewer?.rank ? `#${viewer.rank}` : '—';
+
+      document.getElementById('viewerRank').textContent = viewerRank;
+      document.getElementById('viewerCurrentStreak').textContent = viewer ? `🔥 ${viewer.currentStreak ?? 0}-day streak` : '🔥 0-day streak';
+      document.getElementById('viewerPlacementHint').textContent = getPlacementHint(viewer, mode);
+      document.getElementById('competitivePulse').textContent = getCompetitivePulse(viewer, mode);
+      document.getElementById('competitivePulseHint').textContent = getCompetitivePulseHint(viewer, rows, mode);
+      document.getElementById('heroHint').textContent = getMotivationHint(viewer, rows, mode);
+    }
+
+    function renderTopThree(rows, viewer, mode) {
+      const topThree = [1, 2, 3].map((rank) => rows.find((row) => Number(row.rank) === rank) || null);
+      const top3Grid = document.getElementById('top3Grid');
+      const metric = getModeMetric(mode);
+
+      top3Grid.innerHTML = topThree.map((row, index) => getTopThreeCard(row, index + 1, metric)).join('');
     }
 
     function renderTable(rows, mode) {
@@ -224,70 +274,85 @@
       }
 
       const isTopic = mode === 'topic';
-      const headers = isTopic
-        ? ['Rank', 'User', 'Average Score', 'Completed']
-        : ['Rank', 'User', 'XP', 'Current Streak'];
+      const headers = ['Rank', 'User', isTopic ? 'Topic Score / Completed' : 'Accuracy / Streak'];
 
-      headRow.innerHTML = headers.map((header) => `<th class="px-6 py-3 text-left font-semibold text-gray-600">${header}</th>`).join('');
+      headRow.innerHTML = headers.map((header, index) => {
+        const alignClass = index === 0 ? 'text-center' : 'text-left';
+        const emphasisClass = index === 0 ? 'text-gray-800' : 'text-gray-600';
+        return `<th class="px-6 py-3 ${alignClass} font-semibold ${emphasisClass}">${header}</th>`;
+      }).join('');
 
       body.innerHTML = rows.map((row) => {
-        const highlight = row.isCurrentUser ? 'bg-blue-50' : '';
+        const rowClasses = row.isCurrentUser
+          ? 'bg-blue-50/90 ring-1 ring-inset ring-blue-200'
+          : 'hover:bg-slate-50 transition-colors duration-150';
         const avatar = row.profileImage
           ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="w-10 h-10 rounded-full object-cover border border-gray-200">`
           : `<div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-semibold">${escapeHtml((row.name || 'U').slice(0, 1).toUpperCase())}</div>`;
+        const rankPill = row.isCurrentUser
+          ? `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-blue-600 px-3 py-1 text-xs font-black text-white shadow-sm">#${row.rank}</span>`
+          : `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">#${row.rank}</span>`;
+        const nameTone = row.isCurrentUser ? 'text-blue-900' : 'text-gray-800';
+        const subtitle = row.isCurrentUser ? 'You' : 'Active learner';
 
         if (isTopic) {
           return `
-            <tr class="${highlight}">
-              <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+            <tr class="${rowClasses}">
+              <td class="px-6 py-4 text-center align-middle">${rankPill}</td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   ${avatar}
                   <div>
-                    <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
-                    <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                    <p class="font-semibold ${nameTone}">${escapeHtml(row.name || 'Unknown')}</p>
+                    <p class="text-xs text-gray-500">${subtitle}</p>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 font-semibold text-blue-600">${row.averageScore ?? 0}%</td>
-              <td class="px-6 py-4 text-gray-700">${row.totalCompleted ?? 0}</td>
+              <td class="px-6 py-4">
+                <div class="font-semibold ${row.isCurrentUser ? 'text-blue-700' : 'text-blue-600'}">${row.averageScore ?? 0}%</div>
+                <div class="text-xs text-gray-500">${row.totalCompleted ?? 0} completed</div>
+              </td>
             </tr>
           `;
         }
 
         if (mode === 'streak') {
           return `
-            <tr class="${highlight}">
-              <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+            <tr class="${rowClasses}">
+              <td class="px-6 py-4 text-center align-middle">${rankPill}</td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   ${avatar}
                   <div>
-                    <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
-                    <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                    <p class="font-semibold ${nameTone}">${escapeHtml(row.name || 'Unknown')}</p>
+                    <p class="text-xs text-gray-500">${subtitle}</p>
                   </div>
                 </div>
               </td>
-                <td class="px-6 py-4 font-semibold text-sky-600">${row.totalXp ?? 0}</td>
-                <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
+              <td class="px-6 py-4">
+                <div class="font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}%</div>
+                <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-violet-700' : 'text-violet-600'}">🔥 ${row.currentStreak ?? 0}-day streak</div>
+              </td>
             </tr>
           `;
         }
 
         return `
-          <tr class="${highlight}">
-            <td class="px-6 py-4 font-semibold text-gray-700">#${row.rank}</td>
+          <tr class="${rowClasses}">
+            <td class="px-6 py-4 text-center align-middle">${rankPill}</td>
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
                 ${avatar}
                 <div>
-                  <p class="font-semibold text-gray-800">${escapeHtml(row.name || 'Unknown')}</p>
-                  <p class="text-xs text-gray-500">${row.isCurrentUser ? 'You' : 'Active learner'}</p>
+                  <p class="font-semibold ${nameTone}">${escapeHtml(row.name || 'Unknown')}</p>
+                  <p class="text-xs text-gray-500">${subtitle}</p>
                 </div>
               </div>
             </td>
-              <td class="px-6 py-4 font-semibold text-sky-600">${row.totalXp ?? 0}</td>
-              <td class="px-6 py-4 font-semibold text-violet-600">${row.currentStreak ?? 0}</td>
+            <td class="px-6 py-4">
+              <div class="font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}%</div>
+              <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-violet-700' : 'text-violet-600'}">🔥 ${row.currentStreak ?? 0}-day streak</div>
+            </td>
           </tr>
         `;
       }).join('');
@@ -299,9 +364,157 @@
     function renderEmpty(message) {
       document.getElementById('loadingState').classList.add('hidden');
       document.getElementById('tableWrap').classList.add('hidden');
+      document.getElementById('top3Grid').innerHTML = '';
+      document.getElementById('viewerRank').textContent = '—';
+      document.getElementById('viewerCurrentStreak').textContent = '🔥 0-day streak';
+      document.getElementById('competitivePulse').textContent = 'Stay sharp. Podium spots move fast.';
+      document.getElementById('viewerPlacementHint').textContent = 'Find your place in the race.';
+      document.getElementById('competitivePulseHint').textContent = 'One strong quiz can flip the top 3.';
+      document.getElementById('heroHint').textContent = 'Complete 1 quiz to stay #1.';
       const emptyState = document.getElementById('emptyState');
       document.getElementById('emptyMessage').textContent = message;
       emptyState.classList.remove('hidden');
+    }
+
+    function getTopThreeCard(row, rank, metric) {
+      const cardTone = rank === 1
+        ? 'from-amber-50 to-yellow-100 border-amber-200 text-amber-950 shadow-[0_16px_40px_-26px_rgba(180,83,9,0.5)]'
+        : rank === 2
+          ? 'from-slate-50 to-slate-100 border-slate-200 text-slate-900 shadow-[0_16px_40px_-26px_rgba(71,85,105,0.35)]'
+          : 'from-orange-50 to-amber-100 border-orange-200 text-orange-950 shadow-[0_16px_40px_-26px_rgba(194,65,12,0.35)]';
+      const avatar = row?.profileImage
+        ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-sm">`
+        : `<div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/80 text-sm font-black text-slate-700 ring-2 ring-white shadow-sm">${escapeHtml((row?.name || 'U').slice(0, 1).toUpperCase())}</div>`;
+      const label = row ? `#${rank}` : 'Locked';
+      const value = row ? getModeMetricValue(row, metric) : '—';
+      const detail = row ? getModeDetail(row, metric) : 'No contender yet';
+      const currentUserBadge = row && row.isCurrentUser ? '<span class="rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">You</span>' : '';
+      const accent = rank === 1 ? 'Crown leader' : rank === 2 ? 'Silver chaser' : 'Bronze contender';
+      const compare = row ? metric.helper(row) : 'Waiting for the next challenger';
+
+      return `
+        <article class="rounded-2xl border bg-gradient-to-br p-5 ${cardTone} ${row && row.isCurrentUser ? 'ring-2 ring-blue-500' : ''} transition-transform duration-200 hover:-translate-y-1">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-current/60">${accent}</div>
+              <div class="mt-2 inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-sm font-black text-current shadow-sm">${label}</div>
+            </div>
+            ${currentUserBadge}
+          </div>
+          <div class="mt-5 flex items-center gap-3">
+            ${avatar}
+            <div class="min-w-0">
+              <p class="truncate text-lg font-black text-current">${escapeHtml(row ? row.name || 'Unknown' : 'Pending')}</p>
+              <p class="text-xs font-medium text-current/70">${detail}</p>
+            </div>
+          </div>
+          <div class="mt-5 flex items-end justify-between gap-3 border-t border-current/10 pt-4">
+            <div>
+              <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-current/55">${metric.label}</div>
+              <div class="mt-1 text-3xl font-black text-current">${value}</div>
+            </div>
+            <div class="text-right text-xs font-medium text-current/70">${compare}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function getModeMetric(mode) {
+      if (mode === 'topic') {
+        return {
+          label: 'Average score',
+          helper: (row) => `${row.totalCompleted ?? 0} completions`
+        };
+      }
+
+      if (mode === 'streak') {
+        return {
+          label: 'Current streak',
+          helper: (row) => `${row.accuracyPercent ?? 0}% accuracy`
+        };
+      }
+
+      return {
+        label: 'Accuracy',
+        helper: (row) => `${row.currentStreak ?? 0}-day streak`
+      };
+    }
+
+    function getModeMetricValue(row, metric) {
+      if (!row) return '—';
+      if (metric.label === 'Average score') return `${row.averageScore ?? 0}%`;
+      if (metric.label === 'Current streak') return `${row.currentStreak ?? 0}`;
+      return `${row.accuracyPercent ?? 0}%`;
+    }
+
+    function getModeDetail(row, metric) {
+      if (!row) return 'No contender yet';
+      if (metric.label === 'Average score') return `${row.totalCompleted ?? 0} quiz${Number(row.totalCompleted ?? 0) === 1 ? '' : 'zes'} completed`;
+      if (metric.label === 'Current streak') return `${row.accuracyPercent ?? 0}% overall accuracy`;
+      return `${row.currentStreak ?? 0}-day streak in play`;
+    }
+
+    function getCompetitivePulse(viewer, mode) {
+      if (!viewer || !viewer.rank) {
+        return mode === 'topic'
+          ? 'Enter this topic board to start climbing.'
+          : 'Stay sharp. Podium spots move fast.';
+      }
+
+      if (viewer.rank === 1) return 'You are the benchmark. Defend #1.';
+      if (viewer.rank <= 3) return `Podium pressure is on at #${viewer.rank}.`;
+      return `You are in pursuit from #${viewer.rank}.`;
+    }
+
+    function getCompetitivePulseHint(viewer, rows, mode) {
+      if (!viewer || !viewer.rank) {
+        return mode === 'topic'
+          ? 'Select a topic and post your first score.'
+          : 'One strong quiz can flip the top 3.';
+      }
+
+      const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
+      const above = viewer.rank > 1 ? orderedRows.find((row) => Number(row.rank) === Number(viewer.rank) - 1) : null;
+
+      if (viewer.rank === 1) return 'Hold consistency to keep challengers behind.';
+      if (above?.name) return `Chase ${above.name} for the next jump.`;
+      return 'Consistency moves you up the board.';
+    }
+
+    function getPlacementHint(viewer, mode) {
+      if (!viewer || !viewer.rank) {
+        return mode === 'topic' ? 'Earn a score to show up in the topic race.' : 'Build accuracy to show up in the race.';
+      }
+
+      if (viewer.rank === 1) return 'Holding the top spot right now.';
+      if (viewer.rank <= 3) return `Inside the podium at #${viewer.rank}.`;
+      return `Chasing the top 3 from #${viewer.rank}.`;
+    }
+
+    function getMotivationHint(viewer, rows, mode) {
+      if (!viewer || !viewer.rank) {
+        return mode === 'topic' ? 'Complete a topic quiz to enter the board.' : 'Complete a quiz to enter the board.';
+      }
+
+      const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
+      if (viewer.rank === 1) {
+        const nextRank = orderedRows.find((row) => Number(row.rank) === 2);
+        const gap = nextRank ? Math.max(Number(viewer.accuracyPercent ?? 0) - Number(nextRank.accuracyPercent ?? 0), 0) : 0;
+        if (gap <= 1) return 'Complete 1 quiz to stay #1.';
+        return 'Complete 1 quiz to protect your lead over #2.';
+      }
+
+      if (viewer.rank <= 3) {
+        return `Complete 1 quiz to challenge #${viewer.rank - 1}.`;
+      }
+
+      return 'One good quiz can push you closer to the podium.';
+    }
+
+    function getTopThreeSubtitle(mode) {
+      if (mode === 'topic') return 'Top scorers in the selected topic.';
+      if (mode === 'streak') return 'Longest streaks are setting the pace.';
+      return 'The accuracy leaders are on the podium below.';
     }
 
     function escapeHtml(value) {

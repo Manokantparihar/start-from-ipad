@@ -36,6 +36,8 @@
     "uploadedBy": "manokant",
     "uploadedById": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "uploadedAt": "2026-04-08T15:09:25.889Z",
-    "isDeleted": false
+    "isDeleted": true,
+    "deletedAt": "2026-04-09T11:12:05.358Z",
+    "deletedBy": "cb370536-35ed-4e83-b730-7070f92e1e04"
   }
 ]

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "b5b95fbd-62d1-4105-bdd4-3608e13f171e",
+    "title": "Science special",
+    "description": "It cover all general science topics",
+    "category": "General",
+    "status": "published",
+    "createdAt": "2026-04-09T11:21:04.210Z",
+    "updatedAt": "2026-04-09T11:25:37.597Z",
+    "lastUpdated": "2026-04-09T11:25:37.597Z",
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "isDeleted": true,
+    "deletedAt": "2026-04-09T11:25:37.597Z"
+  },
+  {
+    "id": "5597f175-a545-4823-8d07-ab9fb0eddb10",
+    "title": "The most common way to make money",
+    "description": "The first time the team team team team won an international championship is this week week week week and",
+    "category": "General",
+    "status": "published",
+    "createdAt": "2026-04-09T11:35:53.750Z",
+    "updatedAt": "2026-04-09T12:02:18.664Z",
+    "lastUpdated": "2026-04-09T12:02:18.664Z",
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "isDeleted": false
+  }
+]

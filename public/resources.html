@@ -3,138 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resources – RPSC/REET Prep</title>
+  <title>Resources - RPSC/REET Prep</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .animation-fadeIn { animation: fadeIn 0.3s ease-in; }
     .animation-slideIn { animation: slideIn 0.3s ease-in; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   </style>
 </head>
-<body class="bg-gray-50">
-
-  <!-- Navbar Mount Point -->
+<body class="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900">
   <div id="appNavbar"></div>
 
-  <!-- Loading Screen -->
-  <div id="loadingScreen" class="flex items-center justify-center min-h-screen">
+  <div id="loadingScreen" class="flex min-h-screen items-center justify-center">
     <div class="text-center">
-      <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p class="text-gray-500">Loading resources…</p>
+      <div class="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+      <p class="text-gray-500">Loading resources...</p>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <main id="mainContent" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animation-slideIn">
-
-    <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
-      <div>
-        <h2 class="text-3xl font-bold text-gray-800">📄 Study Resources</h2>
-        <p class="text-gray-500 text-sm mt-1">PDFs, notes and assignments shared by admin</p>
+  <main id="mainContent" class="hidden mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8 animation-slideIn">
+    <section class="rounded-3xl border border-slate-200/80 bg-white/95 px-5 py-6 shadow-sm sm:px-7">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Resources</h1>
+          <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">Quick resources for fast revision and structured courses for guided learning.</p>
+        </div>
+        <a id="adminResourcesLink" href="/admin/resources.html" class="hidden rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">Manage Resources</a>
       </div>
-      <a id="adminResourcesLink" href="/admin/resources.html"
-         class="hidden px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold">
-        ⚙️ Manage Resources
-      </a>
-    </div>
 
-    <!-- Error Banner -->
-    <div id="errorBanner" class="hidden mb-6 px-5 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium"></div>
+      <div class="mt-6 grid gap-3 lg:grid-cols-[minmax(0,1fr)_14rem_auto]">
+        <label class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-300 focus-within:bg-white">
+          <span class="text-slate-400">🔎</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Search title, description, or file name" class="w-full bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none">
+        </label>
+        <select id="categorySelect" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 focus:border-blue-300 focus:bg-white focus:outline-none">
+          <option value="all">All Categories</option>
+          <option value="notes">Notes</option>
+          <option value="current-affairs">Current Affairs</option>
+          <option value="schedules">Schedules</option>
+          <option value="courses">Courses</option>
+        </select>
+        <div class="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          <span id="resultCount" class="font-medium text-slate-800">0 items</span>
+          <span id="activeFilterLabel" class="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-500">All</span>
+        </div>
+      </div>
 
-    <!-- Resource List -->
-    <div id="resourceList" class="space-y-4"></div>
+      <div id="categoryFilters" class="mt-4 flex flex-wrap gap-2"></div>
+    </section>
 
-    <!-- Empty State -->
-    <div id="emptyState" class="hidden text-center py-20 bg-white rounded-xl shadow-sm">
-      <div class="text-5xl mb-4">📂</div>
-      <h3 class="text-xl font-semibold text-gray-700 mb-2">No resources yet</h3>
-      <p class="text-gray-400 text-sm">Study materials will appear here once the admin uploads them.</p>
-    </div>
+    <section class="rounded-3xl border border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-5 shadow-sm sm:px-7">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Practice Is Always Open</h2>
+          <p class="mt-1 text-sm text-slate-600">Courses are optional. You can take quizzes directly anytime from Practice.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="quizzes.html?mode=daily" class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50">Daily Quiz</a>
+          <a href="quizzes.html?mode=topic" class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50">Topic Tests</a>
+          <a href="quizzes.html?mode=mock" class="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50">Mock Tests</a>
+          <a href="quizzes.html?mode=all" class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700">All Quizzes</a>
+        </div>
+      </div>
+    </section>
 
+    <section class="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-6 shadow-sm sm:px-7">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Premium Preview</h2>
+          <p class="mt-1 text-sm text-slate-600">These modules are prepared for future subscription rollout. They stay locked for now and have no payment flow yet.</p>
+        </div>
+        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-500">No subscription yet</span>
+      </div>
+
+      <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="font-semibold text-slate-800">Premium Analytics</h3>
+          <p class="mt-1 text-sm text-slate-600">Detailed weak-area heatmaps and strategy diagnostics.</p>
+          <span class="mt-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Locked</span>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="font-semibold text-slate-800">Premium Courses</h3>
+          <p class="mt-1 text-sm text-slate-600">Extended course paths and mentor-curated modules.</p>
+          <span class="mt-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Locked</span>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="font-semibold text-slate-800">Advanced Mock Tests</h3>
+          <p class="mt-1 text-sm text-slate-600">Full-length adaptive mocks and time-pressure simulations.</p>
+          <span class="mt-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Locked</span>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="font-semibold text-slate-800">Exclusive Downloads</h3>
+          <p class="mt-1 text-sm text-slate-600">Premium-only notes and higher download allowances.</p>
+          <span class="mt-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Locked</span>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 class="font-semibold text-slate-800">Subscription Badges</h3>
+          <p class="mt-1 text-sm text-slate-600">Future profile/leaderboard badge states for plan tiers.</p>
+          <span class="mt-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">Locked</span>
+        </article>
+      </div>
+    </section>
+
+    <div id="errorBanner" class="hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-medium text-red-700"></div>
+
+    <section id="quickResourcesSection" class="space-y-4">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Quick Resources</h2>
+          <p class="text-sm text-slate-500">Notes, PDFs, current affairs, and schedules.</p>
+        </div>
+        <span id="quickCount" class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400"></span>
+      </div>
+      <div id="resourceList" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
+    </section>
+
+    <section id="coursesSection" class="space-y-4">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Courses</h2>
+          <p class="text-sm text-slate-500">Structured course tracks with progress and ordered lessons.</p>
+        </div>
+        <span id="courseCount" class="text-xs font-medium uppercase tracking-[0.18em] text-slate-400"></span>
+      </div>
+      <div id="courseList" class="grid gap-5 lg:grid-cols-2"></div>
+    </section>
+
+    <section id="emptyState" class="hidden rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-sm">
+      <div class="mb-4 text-5xl">📂</div>
+      <h3 class="mb-2 text-xl font-semibold text-slate-800">No items found</h3>
+      <p class="text-sm text-slate-500">Try another search or tab.</p>
+    </section>
   </main>
 
+  <script src="/js/modules/navbar.js"></script>
   <script>
-    const API = '';
+    const state = {
+      resources: [],
+      courses: [],
+      query: '',
+      filter: 'all',
+      user: null
+    };
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    const TABS = [
+      { key: 'all', label: 'All' },
+      { key: 'notes', label: 'Notes' },
+      { key: 'current-affairs', label: 'Current Affairs' },
+      { key: 'schedules', label: 'Schedules' },
+      { key: 'courses', label: 'Courses' }
+    ];
 
-    function showError(msg) {
-      const el = document.getElementById('errorBanner');
-      el.textContent = msg;
-      el.classList.remove('hidden');
-    }
-
-    function formatSize(bytes) {
-      if (bytes < 1024) return `${bytes} B`;
-      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-      return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-    }
-
-    function formatDate(iso) {
-      if (!iso) return '—';
-      return new Date(iso).toLocaleDateString('en-IN', {
-        year: 'numeric', month: 'short', day: 'numeric'
-      });
-    }
-
-    // ── Auth Check ────────────────────────────────────────────────────────────
-
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' });
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.user || null;
-      } catch {
-        return null;
-      }
-    }
-
-    // ── Render Resources ──────────────────────────────────────────────────────
-
-    function renderResources(resources) {
-      const list = document.getElementById('resourceList');
-      const empty = document.getElementById('emptyState');
-
-      if (!resources.length) {
-        empty.classList.remove('hidden');
-        list.innerHTML = '';
-        return;
-      }
-
-      empty.classList.add('hidden');
-      list.innerHTML = resources.map(r => `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-start gap-5 hover:shadow-md transition-shadow">
-          <div class="flex-shrink-0 w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-2xl">📄</div>
-          <div class="flex-1 min-w-0">
-            <h3 class="text-base font-semibold text-gray-800 truncate">${escHtml(r.title)}</h3>
-            ${r.description ? `<p class="text-sm text-gray-500 mt-0.5 line-clamp-2">${escHtml(r.description)}</p>` : ''}
-            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-gray-400">
-              <span>📁 ${escHtml(r.origFilename)}</span>
-              <span>📦 ${formatSize(r.size)}</span>
-              <span>📅 ${formatDate(r.uploadedAt)}</span>
-              <span>👤 ${escHtml(r.uploadedBy)}</span>
-            </div>
-          </div>
-          <div class="flex-shrink-0 flex items-center gap-2">
-            <a href="/api/resources/${r.id}/download?inline=1"
-               class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 text-sm font-medium flex items-center gap-1"
-               target="_blank" rel="noopener noreferrer">
-              👁 View
-            </a>
-            <a href="/api/resources/${r.id}/download"
-               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center gap-1"
-               download>
-              ⬇ Download
-            </a>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function escHtml(str) {
-      return String(str)
+    function escHtml(value) {
+      return String(value ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -142,46 +169,376 @@
         .replace(/'/g, '&#39;');
     }
 
-    // ── Load Resources ────────────────────────────────────────────────────────
+    function showError(message) {
+      const element = document.getElementById('errorBanner');
+      element.textContent = message;
+      element.classList.remove('hidden');
+    }
 
-    async function loadResources() {
+    function normalizeText(value) {
+      return String(value || '').toLowerCase().normalize('NFKC');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return '—';
+      return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function formatSize(bytes) {
+      const size = Number(bytes || 0);
+      if (!Number.isFinite(size) || size <= 0) return '—';
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    function decodeFileName(name) {
+      const raw = String(name || '').trim();
+      if (!raw) return '';
+
       try {
-        const res = await fetch(`${API}/api/resources`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to load resources');
-        const data = await res.json();
-        renderResources(data);
-      } catch (e) {
-        showError('Unable to load resources. Please try again later.');
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
       }
     }
 
-    // ── Init ──────────────────────────────────────────────────────────────────
+    function looksLikeUuidFileName(name) {
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.[a-z0-9]+$/i.test(String(name || '').trim());
+    }
+
+    function looksLikeMojibake(name) {
+      const value = String(name || '');
+      return /(Ã.|à¤|â€¦|â€™|â€œ|â€|Ð.|Ñ.)/.test(value);
+    }
+
+    function fallbackFileNameFromTitle(title, ext) {
+      const safeTitle = String(title || 'resource').trim() || 'resource';
+      const safeExt = ext || '.pdf';
+      return `${safeTitle}${safeExt}`;
+    }
+
+    function getDisplayFileName(resource) {
+      const preferred = decodeFileName(resource.origFilename || resource.filename || '');
+      const ext = preferred && preferred.includes('.')
+        ? `.${preferred.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '')}`
+        : '.pdf';
+
+      const clean = preferred
+        .replace(/^.*[\\/]/, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!clean) return fallbackFileNameFromTitle(resource.title, ext);
+      if (looksLikeUuidFileName(clean)) return fallbackFileNameFromTitle(resource.title, ext);
+      if (looksLikeMojibake(clean)) return fallbackFileNameFromTitle(resource.title, ext);
+
+      return clean;
+    }
+
+    function getResourceCategory(resource) {
+      const combined = [resource.title, resource.description, resource.origFilename, resource.filename]
+        .map(normalizeText)
+        .join(' ');
+
+      if (/(current\s*affairs|news|daily\s*update)/.test(combined)) return 'current-affairs';
+      if (/(schedule|timetable|planner|calendar|routine)/.test(combined)) return 'schedules';
+      if (/(note|notes|lecture|guide|summary|handout|worksheet)/.test(combined)) return 'notes';
+      return 'notes';
+    }
+
+    function tabLabel(tab) {
+      const map = {
+        all: 'All',
+        notes: 'Notes',
+        'current-affairs': 'Current Affairs',
+        schedules: 'Schedules',
+        courses: 'Courses'
+      };
+      return map[tab] || 'All';
+    }
+
+    function getProgressKey(courseId) {
+      return `course-progress:${courseId}`;
+    }
+
+    function getCourseProgress(course) {
+      const lessonCount = Math.max(0, Number(course.lessonCount) || 0);
+      try {
+        const payload = JSON.parse(localStorage.getItem(getProgressKey(course.id)) || 'null');
+        const ids = Array.isArray(payload?.completedLessonIds) ? payload.completedLessonIds : [];
+        const completedLessons = Math.min(ids.length, lessonCount);
+        const percent = lessonCount > 0 ? Math.round((completedLessons / lessonCount) * 100) : 0;
+        return {
+          completedLessons,
+          totalLessons: lessonCount,
+          percent,
+          lastOpenedAt: payload?.lastOpenedAt || null
+        };
+      } catch {
+        return {
+          completedLessons: 0,
+          totalLessons: lessonCount,
+          percent: 0,
+          lastOpenedAt: null
+        };
+      }
+    }
+
+    function renderTabs() {
+      const counts = {
+        all: state.resources.length + state.courses.length,
+        notes: state.resources.filter((item) => getResourceCategory(item) === 'notes').length,
+        'current-affairs': state.resources.filter((item) => getResourceCategory(item) === 'current-affairs').length,
+        schedules: state.resources.filter((item) => getResourceCategory(item) === 'schedules').length,
+        courses: state.courses.length
+      };
+
+      const container = document.getElementById('categoryFilters');
+      container.innerHTML = TABS.map((tab) => {
+        const active = state.filter === tab.key;
+        const count = counts[tab.key] || 0;
+        return `
+          <button type="button" data-filter="${escHtml(tab.key)}" class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${active ? 'border-blue-200 bg-blue-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:text-blue-700'}">
+            <span>${escHtml(tab.label)}</span>
+            <span class="rounded-full px-2 py-0.5 text-xs font-semibold ${active ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}">${count}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function matchesQuickResource(resource) {
+      const category = getResourceCategory(resource);
+      if (state.filter === 'notes' && category !== 'notes') return false;
+      if (state.filter === 'current-affairs' && category !== 'current-affairs') return false;
+      if (state.filter === 'schedules' && category !== 'schedules') return false;
+      if (state.filter === 'courses') return false;
+
+      if (!state.query) return true;
+      const searchSpace = [resource.title, resource.description, resource.origFilename, resource.filename, category]
+        .map(normalizeText)
+        .join(' ');
+      return searchSpace.includes(state.query);
+    }
+
+    function matchesCourse(course) {
+      if (state.filter !== 'all' && state.filter !== 'courses') return false;
+      if (!state.query) return true;
+      const searchSpace = [course.title, course.description, course.category]
+        .map(normalizeText)
+        .join(' ');
+      return searchSpace.includes(state.query);
+    }
+
+    function renderQuickResourceCard(resource) {
+      const displayFileName = getDisplayFileName(resource);
+      return `
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h3 class="truncate text-base font-semibold text-slate-900">${escHtml(resource.title || 'Untitled resource')}</h3>
+              <p class="mt-1 line-clamp-2 text-sm text-slate-600">${escHtml(resource.description || 'No description provided.')}</p>
+            </div>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${escHtml(tabLabel(getResourceCategory(resource)))}</span>
+          </div>
+
+          <div class="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600 sm:grid-cols-2">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">File</div>
+              <div class="mt-1 truncate font-medium text-slate-800" title="${escHtml(displayFileName || '—')}">${escHtml(displayFileName || '—')}</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Size</div>
+              <div class="mt-1 font-medium text-slate-800">${escHtml(formatSize(resource.size))}</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Uploaded by</div>
+              <div class="mt-1 font-medium text-slate-800">${escHtml(resource.uploadedBy || 'admin')}</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Uploaded on</div>
+              <div class="mt-1 font-medium text-slate-800">${escHtml(formatDate(resource.uploadedAt))}</div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <button type="button" data-action="view-resource" data-id="${escHtml(resource.id || '')}" class="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-200">View</button>
+            <button type="button" data-action="download-resource" data-id="${escHtml(resource.id || '')}" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">Download</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderCourseCard(course) {
+      const progress = getCourseProgress(course);
+      const actionLabel = progress.percent > 0 && progress.percent < 100 ? 'Continue' : 'Open';
+      return `
+        <article class="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 p-6 text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-7">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h3 class="truncate text-xl font-black tracking-tight sm:text-2xl">${escHtml(course.title || 'Untitled course')}</h3>
+              <p class="mt-2 line-clamp-2 text-sm leading-6 text-blue-100">${escHtml(course.description || 'No description available.')}</p>
+            </div>
+            <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-100">Course</span>
+          </div>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4 sm:p-5">
+              <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100">Lessons</div>
+              <div class="mt-2 text-2xl font-black">${progress.totalLessons}</div>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4 sm:p-5">
+              <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100">Progress</div>
+              <div class="mt-2 text-2xl font-black">${progress.percent}%</div>
+            </div>
+          </div>
+
+          <div class="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+            <div class="mb-2 flex items-center justify-between text-xs text-blue-100">
+              <span>${progress.completedLessons} / ${progress.totalLessons} completed</span>
+              <span>${progress.lastOpenedAt ? `Last opened ${formatDate(progress.lastOpenedAt)}` : 'Not started yet'}</span>
+            </div>
+            <div class="h-3 w-full overflow-hidden rounded-full bg-white/10">
+              <div class="h-3 rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400" style="width:${progress.percent}%"></div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-xs font-medium uppercase tracking-[0.18em] text-blue-100">Structured exam prep path</p>
+            <a href="course.html?course=${encodeURIComponent(course.id)}" class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-100">${actionLabel} Course</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderView() {
+      const quickResources = state.resources.filter(matchesQuickResource);
+      const courses = state.courses.filter(matchesCourse);
+      const totalVisible = quickResources.length + courses.length;
+
+      document.getElementById('resourceList').innerHTML = quickResources.map(renderQuickResourceCard).join('');
+      document.getElementById('courseList').innerHTML = courses.map(renderCourseCard).join('');
+
+      document.getElementById('quickCount').textContent = `${quickResources.length} available`;
+      document.getElementById('courseCount').textContent = `${courses.length} available`;
+      document.getElementById('resultCount').textContent = `${totalVisible} item${totalVisible === 1 ? '' : 's'}`;
+      document.getElementById('activeFilterLabel').textContent = tabLabel(state.filter);
+
+      const quickHidden = state.filter === 'courses' || quickResources.length === 0;
+      const courseHidden = state.filter !== 'courses' && state.filter !== 'all' ? true : courses.length === 0;
+
+      document.getElementById('quickResourcesSection').classList.toggle('hidden', quickHidden);
+      document.getElementById('coursesSection').classList.toggle('hidden', courseHidden);
+      document.getElementById('emptyState').classList.toggle('hidden', totalVisible > 0);
+    }
+
+    async function loadCatalog() {
+      try {
+        const [resourcesRes, coursesRes] = await Promise.all([
+          fetch('/api/resources', { credentials: 'include' }),
+          fetch('/api/courses', { credentials: 'include' })
+        ]);
+
+        if (!resourcesRes.ok) throw new Error('Failed to load resources');
+        if (!coursesRes.ok) throw new Error('Failed to load courses');
+
+        const resourcesData = await resourcesRes.json();
+        const coursesData = await coursesRes.json();
+
+        state.resources = Array.isArray(resourcesData) ? resourcesData : [];
+        state.courses = Array.isArray(coursesData) ? coursesData : [];
+
+        renderTabs();
+        const categorySelect = document.getElementById('categorySelect');
+        if (categorySelect) categorySelect.value = state.filter;
+        renderView();
+      } catch {
+        showError('Unable to load resources right now. Please try again later.');
+      }
+    }
+
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!response.ok) return null;
+        const payload = await response.json();
+        return payload.user || null;
+      } catch {
+        return null;
+      }
+    }
+
+    document.addEventListener('input', (event) => {
+      if (event.target && event.target.id === 'searchInput') {
+        state.query = normalizeText(event.target.value.trim());
+        renderView();
+      }
+    });
+
+    document.addEventListener('change', (event) => {
+      if (event.target && event.target.id === 'categorySelect') {
+        state.filter = event.target.value || 'all';
+        renderTabs();
+        renderView();
+      }
+    });
+
+    function onDocumentClick(event) {
+      const button = event.target.closest('[data-filter]');
+      if (button) {
+        state.filter = button.dataset.filter || 'all';
+        const categorySelect = document.getElementById('categorySelect');
+        if (categorySelect) categorySelect.value = state.filter;
+        renderTabs();
+        renderView();
+        return;
+      }
+
+      const action = event.target.closest('[data-action]');
+      if (!action) return;
+
+      const actionType = action.dataset.action;
+      const resourceId = action.dataset.id;
+      if (!resourceId) {
+        showError('Invalid resource link. Please refresh and try again.');
+        return;
+      }
+
+      if (actionType === 'view-resource') {
+        window.open(`/api/resources/${encodeURIComponent(resourceId)}/view`, '_blank', 'noopener');
+        return;
+      }
+
+      if (actionType === 'download-resource') {
+        window.location.href = `/api/resources/${encodeURIComponent(resourceId)}/download`;
+      }
+    }
 
     async function init() {
       const user = await checkAuth();
+      state.user = user;
 
-      const loading = document.getElementById('loadingScreen');
-      const main = document.getElementById('mainContent');
-      loading.classList.add('hidden');
-      main.classList.remove('hidden');
-
-      if (user) {
-        if (user.role === 'admin') {
-          document.getElementById('adminResourcesLink').classList.remove('hidden');
-        }
+      if (user && user.role === 'admin') {
+        document.getElementById('adminResourcesLink').classList.remove('hidden');
       }
 
-      // Mount navbar before loading resources
       if (window.Navbar) {
         Navbar.mount('#appNavbar', { active: 'resources', user });
       }
 
-      await loadResources();
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+
+      await loadCatalog();
     }
 
-    init();
+    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('click', onDocumentClick);
+      init();
+    });
   </script>
-    <script src="/js/modules/navbar.js"></script>
   <script src="/js/notifications.js"></script>
 </body>
 </html>

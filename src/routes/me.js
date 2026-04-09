@@ -3,6 +3,7 @@ const db = require('../utils/db');
 const {
   buildPublicGamification,
   getCurrentWeekRange,
+  getMasteryRank,
   getUserGroupIds,
   getUserMissionStateForDate,
   toUtcDateKey
@@ -72,9 +73,16 @@ router.get('/groups', async (req, res) => {
         const members = users
           .filter((member) => Array.isArray(group.members) && group.members.includes(member.id))
           .sort((a, b) => {
-            const xpA = Number(a.totalXp) || 0;
-            const xpB = Number(b.totalXp) || 0;
-            if (xpB !== xpA) return xpB - xpA;
+            const masteryA = a.masteryLevel || a.currentTier || 'Beginner';
+            const masteryB = b.masteryLevel || b.currentTier || 'Beginner';
+            const masteryDiff = getMasteryRank(masteryB) - getMasteryRank(masteryA);
+            if (masteryDiff !== 0) return masteryDiff;
+            const accuracyA = Number(a.accuracyPercent) || 0;
+            const accuracyB = Number(b.accuracyPercent) || 0;
+            if (accuracyB !== accuracyA) return accuracyB - accuracyA;
+            const streakA = Number(a.currentStreak) || 0;
+            const streakB = Number(b.currentStreak) || 0;
+            if (streakB !== streakA) return streakB - streakA;
             return String(a.name || '').localeCompare(String(b.name || ''));
           });
 
@@ -89,6 +97,8 @@ router.get('/groups', async (req, res) => {
           topMembers: members.slice(0, 3).map((member, index) => ({
             rank: index + 1,
             name: member.name || 'Unknown',
+            accuracyPercent: Number(member.accuracyPercent) || 0,
+            masteryLevel: member.masteryLevel || member.currentTier || 'Beginner',
             totalXp: Number(member.totalXp) || 0,
             profileImage: member.profileImage || null,
             isCurrentUser: member.id === user.id

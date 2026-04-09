@@ -658,5 +658,59 @@
     "completedAt": 1775687401666,
     "score": 1,
     "total": 1
+  },
+  {
+    "id": "d28bbeec-0b4c-45af-9462-9495a157529f",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-003",
+    "quizTitle": "Mathematics - Basic",
+    "status": "completed",
+    "startedAt": 1775727691137,
+    "expiresAt": 1775728891137,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "60"
+      },
+      {
+        "questionId": "q2",
+        "selected": "20"
+      },
+      {
+        "questionId": "q3",
+        "selected": "12"
+      },
+      {
+        "questionId": "q4",
+        "selected": "50"
+      },
+      {
+        "questionId": "q5",
+        "selected": "20 cm²"
+      }
+    ],
+    "createdAt": 1775727691137,
+    "completedAt": 1775727719755,
+    "score": 4,
+    "total": 5
+  },
+  {
+    "id": "371f2811-f0f2-4da6-8e7b-83dd662641fa",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775727751649,
+    "expiresAt": 1775728951649,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775727751649,
+    "completedAt": 1775727756165,
+    "score": 1,
+    "total": 1
   }
 ]

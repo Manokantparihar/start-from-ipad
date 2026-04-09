@@ -191,6 +191,12 @@ function normalizeQuestion(q) {
 const getResources = () => readFile('resources');
 const saveResources = (resources) => writeFile('resources', resources);
 
+// COURSES / LESSONS
+const getCourses = () => readFile('courses');
+const saveCourses = (courses) => writeFile('courses', courses);
+const getLessons = () => readFile('lessons');
+const saveLessons = (lessons) => writeFile('lessons', lessons);
+
 // NOTIFICATIONS
 const getNotifications = () => readFile('notifications');
 const saveNotifications = (notifications) => writeFile('notifications', notifications);
@@ -228,6 +234,10 @@ module.exports = {
   saveAttempts,
   getResources,
   saveResources,
+  getCourses,
+  saveCourses,
+  getLessons,
+  saveLessons,
   getNotifications,
   saveNotifications,
   getNotificationLogs,

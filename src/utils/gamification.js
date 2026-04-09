@@ -1,6 +1,14 @@
 const LEVEL_BASE_XP = 50;
 const LEVEL_XP_INCREMENT = 25;
 
+const MASTERY_LEVELS = ['Beginner', 'Improving', 'Strong', 'Mastered'];
+const MASTERY_RANK_BY_LEVEL = {
+  Beginner: 1,
+  Improving: 2,
+  Strong: 3,
+  Mastered: 4
+};
+
 const TIER_THRESHOLDS = [
   { tier: 'Diamond', minXp: 700 },
   { tier: 'Gold', minXp: 300 },
@@ -45,27 +53,6 @@ const BADGES = [
     rarity: 'common'
   },
   {
-    id: 'three-day-streak',
-    title: '3 Day Streak',
-    description: 'Complete quizzes on three consecutive calendar days.',
-    category: 'streak',
-    rarity: 'rare'
-  },
-  {
-    id: '100-xp-club',
-    title: '100 XP Club',
-    description: 'Earn 100 XP.',
-    category: 'xp',
-    rarity: 'common'
-  },
-  {
-    id: 'ten-day-streak',
-    title: '10 Day Streak',
-    description: 'Keep your streak alive for ten days.',
-    category: 'streak',
-    rarity: 'epic'
-  },
-  {
     id: 'perfect-score',
     title: 'Perfect Score',
     description: 'Score 100% in a completed quiz.',
@@ -73,52 +60,17 @@ const BADGES = [
     rarity: 'rare'
   },
   {
-    id: 'topic-explorer',
-    title: 'Topic Explorer',
-    description: 'Complete quizzes from three different topics.',
-    category: 'exploration',
+    id: 'three-day-streak',
+    title: '3 Day Streak',
+    description: 'Complete quizzes on three consecutive calendar days.',
+    category: 'streak',
     rarity: 'rare'
   },
   {
-    id: 'consistent-learner',
-    title: 'Consistent Learner',
-    description: 'Complete quizzes on five different days.',
-    category: 'consistency',
-    rarity: 'rare'
-  },
-  {
-    id: 'top-10-weekly',
-    title: 'Top 10 Weekly',
-    description: 'Finish in the top 10 of the weekly leaderboard.',
-    category: 'leaderboard',
-    rarity: 'epic'
-  },
-  {
-    id: 'event-champion',
-    title: 'Event Champion',
-    description: 'Complete at least one seasonal event objective.',
-    category: 'event',
-    rarity: 'epic'
-  },
-  {
-    id: 'marathon-finisher',
-    title: 'Marathon Finisher',
-    description: 'Complete marathon-style event requirements.',
-    category: 'event',
-    rarity: 'legendary'
-  },
-  {
-    id: 'group-winner',
-    title: 'Group Winner',
-    description: 'Rank #1 in one of your groups.',
-    category: 'group',
-    rarity: 'epic'
-  },
-  {
-    id: '500-xp-club',
-    title: '500 XP Club',
-    description: 'Earn 500 total XP.',
-    category: 'xp',
+    id: 'seven-day-streak',
+    title: '7 Day Streak',
+    description: 'Keep your streak alive for seven days.',
+    category: 'streak',
     rarity: 'epic'
   },
   {
@@ -130,7 +82,38 @@ const BADGES = [
   }
 ];
 
+const BADGE_ID_SET = new Set(BADGES.map((badge) => badge.id));
+
 const DEFAULT_WEEKEND_BONUS_MULTIPLIER = 1;
+
+function computeAccuracyPercent(totalCorrect = 0, totalQuestions = 0) {
+  const correct = Math.max(0, Number(totalCorrect) || 0);
+  const questions = Math.max(0, Number(totalQuestions) || 0);
+  if (questions <= 0) return 0;
+  return Math.min(100, Math.round((correct / questions) * 100));
+}
+
+function getMasteryLevel({ accuracyPercent = 0, completedQuizCount = 0 } = {}) {
+  const accuracy = Math.max(0, Math.min(100, Number(accuracyPercent) || 0));
+  const completed = Math.max(0, Number(completedQuizCount) || 0);
+
+  if (accuracy >= 90 && completed >= 20) return 'Mastered';
+  if (accuracy >= 75 && completed >= 8) return 'Strong';
+  if (accuracy >= 55 && completed >= 3) return 'Improving';
+  return 'Beginner';
+}
+
+function getMasteryRank(level) {
+  return MASTERY_RANK_BY_LEVEL[level] || 1;
+}
+
+function getRankScore({ accuracyPercent = 0, masteryLevel = 'Beginner', currentStreak = 0, completedQuizCount = 0 } = {}) {
+  const masteryRank = getMasteryRank(masteryLevel);
+  const accuracy = Math.max(0, Math.min(100, Number(accuracyPercent) || 0));
+  const streak = Math.max(0, Number(currentStreak) || 0);
+  const completed = Math.max(0, Number(completedQuizCount) || 0);
+  return (masteryRank * 100000) + (accuracy * 1000) + (streak * 10) + Math.min(completed, 999);
+}
 
 function toUtcDateKey(ts) {
   if (!ts) return null;
@@ -181,8 +164,11 @@ function getCurrentWeekRange(now = new Date()) {
 
 function getTierForXp(totalXp) {
   const xp = Math.max(0, Number(totalXp) || 0);
-  const matched = TIER_THRESHOLDS.find((entry) => xp >= entry.minXp) || TIER_THRESHOLDS[TIER_THRESHOLDS.length - 1];
-  return matched.tier;
+  // Legacy fallback for older callers still passing XP.
+  if (xp >= 700) return 'Mastered';
+  if (xp >= 300) return 'Strong';
+  if (xp >= 100) return 'Improving';
+  return 'Beginner';
 }
 
 function getAttemptPercent(attempt) {
@@ -365,11 +351,14 @@ function buildGroupRankings({ users = [], groups = [] } = {}) {
       .map((user) => ({
         userId: user.id,
         name: user.name || 'Unknown',
-        totalXp: Number(user.totalXp) || 0,
+        accuracyPercent: Number(user.accuracyPercent) || 0,
+        masteryLevel: user.masteryLevel || user.currentTier || 'Beginner',
         currentStreak: Number(user.currentStreak) || 0
       }))
       .sort((a, b) => {
-        if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+        const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+        if (masteryDiff !== 0) return masteryDiff;
+        if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
         if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
         return a.name.localeCompare(b.name);
       })
@@ -554,7 +543,7 @@ function normalizeBadgeList(badges) {
   if (!Array.isArray(badges)) return [];
 
   return badges
-    .filter((badge) => badge && badge.id)
+    .filter((badge) => badge && badge.id && BADGE_ID_SET.has(String(badge.id)))
     .map((badge) => ({
       id: badge.id,
       title: badge.title || badge.id,
@@ -621,6 +610,8 @@ function buildGamificationSnapshot({
   let eventBonusXp = 0;
   let missionBonusXp = 0;
   let completedQuizCount = 0;
+  let totalCorrectAnswers = 0;
+  let totalQuestionsAnswered = 0;
   let currentStreak = 0;
   let bestStreak = 0;
   let lastActiveDate = null;
@@ -632,25 +623,18 @@ function buildGamificationSnapshot({
 
   let weeklyXp = 0;
   let weeklyCompletedQuizzes = 0;
+  let weeklyCorrectAnswers = 0;
+  let weeklyQuestionsAnswered = 0;
 
   let firstQuizAt = null;
   let fiveQuizzesAt = null;
   let threeDayStreakAt = null;
-  let tenDayStreakAt = null;
+  let sevenDayStreakAt = null;
   let perfectScoreAt = null;
-  let topicExplorerAt = null;
-  let consistentLearnerAt = null;
-  let hundredXpClubAt = null;
-  let fiveHundredXpClubAt = null;
   let thirtyDayStreakAt = null;
-  let groupWinnerAt = null;
 
-  const rewardRedemptions = normalizeRewardRedemptions(user.rewardRedemptions);
-  const boostTokens = getBoostTokensFromRedemptions(rewardRedemptions);
-  const pendingBoostTokens = boostTokens.map((token) => ({ ...token }));
-  let activeBoostToken = null;
+  const rewardRedemptions = [];
 
-  const nowIso = new Date(now).toISOString();
   const weekendMultiplier = getWeekendBonusMultiplier(config);
   const eventProgressById = new Map(normalizedEvents.map((event) => [event.id, {
     eventId: event.id,
@@ -663,21 +647,6 @@ function buildGamificationSnapshot({
   }]));
 
   const consumedBoostHistory = [];
-
-  function activateNextBoost(attemptIso) {
-    if (activeBoostToken && activeBoostToken.remainingUses > 0) return;
-    activeBoostToken = null;
-    for (let i = 0; i < pendingBoostTokens.length; i += 1) {
-      const candidate = pendingBoostTokens[i];
-      if (candidate.remainingUses <= 0) continue;
-      const redeemedTime = Date.parse(candidate.redeemedAt || 0) || 0;
-      const attemptTime = Date.parse(attemptIso || 0) || Date.now();
-      if (redeemedTime <= attemptTime) {
-        activeBoostToken = candidate;
-        return;
-      }
-    }
-  }
 
   for (const dateKey of uniqueDayKeys) {
     const dayAttempts = missionTimeline.attemptsByDay.get(dateKey) || [];
@@ -704,8 +673,8 @@ function buildGamificationSnapshot({
       if (currentStreak >= 3 && !threeDayStreakAt) {
         threeDayStreakAt = new Date(dayAttempts[dayAttempts.length - 1]?.completedAt || Date.now()).toISOString();
       }
-      if (currentStreak >= 10 && !tenDayStreakAt) {
-        tenDayStreakAt = new Date(dayAttempts[dayAttempts.length - 1]?.completedAt || Date.now()).toISOString();
+      if (currentStreak >= 7 && !sevenDayStreakAt) {
+        sevenDayStreakAt = new Date(dayAttempts[dayAttempts.length - 1]?.completedAt || Date.now()).toISOString();
       }
       if (currentStreak >= 30 && !thirtyDayStreakAt) {
         thirtyDayStreakAt = new Date(dayAttempts[dayAttempts.length - 1]?.completedAt || Date.now()).toISOString();
@@ -726,11 +695,11 @@ function buildGamificationSnapshot({
       if (!fiveQuizzesAt && completedQuizCount >= 5) fiveQuizzesAt = completedAtIso;
       if (!perfectScoreAt && percent === 100) perfectScoreAt = completedAtIso;
 
+      totalCorrectAnswers += Math.max(0, Number(attempt.score) || 0);
+      totalQuestionsAnswered += Math.max(0, Number(attempt.total) || 0);
+
       if (topic.key && !seenTopics.has(topic.key)) {
         seenTopics.add(topic.key);
-        if (!topicExplorerAt && seenTopics.size >= 3) {
-          topicExplorerAt = completedAtIso;
-        }
       }
 
       let rawAttemptXp = 10;
@@ -743,29 +712,14 @@ function buildGamificationSnapshot({
 
       baseXp += rawAttemptXp;
 
-      activateNextBoost(completedAtIso);
-      const tokenMultiplier = activeBoostToken ? activeBoostToken.multiplier : 1;
       const weekendMultiplierApplied = isWeekendDateKey(dateKey) ? weekendMultiplier : 1;
-      const combinedMultiplier = tokenMultiplier * weekendMultiplierApplied;
+      const combinedMultiplier = weekendMultiplierApplied;
 
       const boostedAttemptXp = Math.round(rawAttemptXp * combinedMultiplier);
-      const boostDelta = Math.max(0, Math.round(rawAttemptXp * (tokenMultiplier - 1)));
-      const weekendDelta = Math.max(0, boostedAttemptXp - rawAttemptXp - boostDelta);
+      const weekendDelta = Math.max(0, boostedAttemptXp - rawAttemptXp);
 
-      boostXp += boostDelta;
       weekendBonusXp += weekendDelta;
       totalXp += boostedAttemptXp;
-
-      if (activeBoostToken && activeBoostToken.remainingUses > 0) {
-        activeBoostToken.remainingUses -= 1;
-        consumedBoostHistory.push({
-          redemptionId: activeBoostToken.redemptionId,
-          rewardId: activeBoostToken.rewardId,
-          usedAt: completedAtIso,
-          multiplier: activeBoostToken.multiplier,
-          remainingUses: activeBoostToken.remainingUses
-        });
-      }
 
       for (const event of normalizedEvents) {
         if (!doesAttemptMatchEvent({ attempt, quizMap, event })) continue;
@@ -785,6 +739,8 @@ function buildGamificationSnapshot({
       if (isInCurrentWeek) {
         weeklyXp += boostedAttemptXp;
         weeklyCompletedQuizzes += 1;
+        weeklyCorrectAnswers += Math.max(0, Number(attempt.score) || 0);
+        weeklyQuestionsAnswered += Math.max(0, Number(attempt.total) || 0);
       }
     }
 
@@ -796,22 +752,6 @@ function buildGamificationSnapshot({
         weeklyXp += missionState.rewardXpEarned;
       }
 
-      if (!hundredXpClubAt && totalXp >= 100) {
-        hundredXpClubAt = dayAttempts[dayAttempts.length - 1]
-          ? new Date(dayAttempts[dayAttempts.length - 1].completedAt || Date.now()).toISOString()
-          : nowIso;
-      }
-      if (!fiveHundredXpClubAt && totalXp >= 500) {
-        fiveHundredXpClubAt = dayAttempts[dayAttempts.length - 1]
-          ? new Date(dayAttempts[dayAttempts.length - 1].completedAt || Date.now()).toISOString()
-          : nowIso;
-      }
-    }
-
-    if (!consistentLearnerAt && uniqueDayKeys.indexOf(dateKey) >= 4) {
-      consistentLearnerAt = dayAttempts[dayAttempts.length - 1]
-        ? new Date(dayAttempts[dayAttempts.length - 1].completedAt || Date.now()).toISOString()
-        : nowIso;
     }
   }
 
@@ -832,8 +772,11 @@ function buildGamificationSnapshot({
       };
     });
 
-  const completedEventEntries = Array.from(eventProgressById.values()).filter((entry) => entry.completed);
   const levelProgress = getLevelProgress(totalXp);
+  const accuracyPercent = computeAccuracyPercent(totalCorrectAnswers, totalQuestionsAnswered);
+  const weeklyAccuracyPercent = computeAccuracyPercent(weeklyCorrectAnswers, weeklyQuestionsAnswered);
+  const masteryLevel = getMasteryLevel({ accuracyPercent, completedQuizCount });
+  const rankScore = getRankScore({ accuracyPercent, masteryLevel, currentStreak, completedQuizCount });
   const badges = [];
 
   function pushBadge(id, unlockedAt, overrideMeta = null) {
@@ -852,48 +795,10 @@ function buildGamificationSnapshot({
 
   pushBadge('first-quiz', firstQuizAt);
   pushBadge('five-quizzes', fiveQuizzesAt);
-  pushBadge('three-day-streak', threeDayStreakAt);
-  pushBadge('ten-day-streak', tenDayStreakAt);
-  pushBadge('30-day-streak', thirtyDayStreakAt);
   pushBadge('perfect-score', perfectScoreAt);
-  pushBadge('topic-explorer', topicExplorerAt);
-  pushBadge('consistent-learner', consistentLearnerAt);
-  pushBadge('100-xp-club', hundredXpClubAt);
-  pushBadge('500-xp-club', fiveHundredXpClubAt);
-
-  if (
-    Number.isFinite(Number(weeklyRank))
-    && Number(weeklyRank) > 0
-    && Number(weeklyRank) <= 10
-    && weeklyCompletedQuizzes > 0
-  ) {
-    pushBadge('top-10-weekly', nowIso);
-  }
-
-  if (completedEventEntries.length > 0) {
-    pushBadge('event-champion', completedEventEntries[0].badgeAwardedAt || nowIso);
-  }
-
-  // Marathon finisher unlock: complete any active/inactive event with id containing marathon/marathon-like and hit target.
-  const marathonHit = normalizedEvents.find((event) => {
-    const key = `${event.id} ${event.title}`.toLowerCase();
-    const progress = eventProgressById.get(event.id);
-    return /marathon/.test(key) && progress && progress.completed;
-  });
-  if (marathonHit) {
-    pushBadge('marathon-finisher', (eventProgressById.get(marathonHit.id)?.badgeAwardedAt) || nowIso);
-  }
-
-  if (Array.isArray(weeklyGroupRanks) && weeklyGroupRanks.some((entry) => Number(entry.rank) === 1)) {
-    groupWinnerAt = nowIso;
-    pushBadge('group-winner', groupWinnerAt);
-  }
-
-  for (const event of normalizedEvents) {
-    const progress = eventProgressById.get(event.id);
-    if (!progress?.completed || !event.badgeReward) continue;
-    pushBadge(event.badgeReward.id, progress.badgeAwardedAt || nowIso, event.badgeReward);
-  }
+  pushBadge('three-day-streak', threeDayStreakAt);
+  pushBadge('seven-day-streak', sevenDayStreakAt);
+  pushBadge('30-day-streak', thirtyDayStreakAt);
 
   const todayState = daySummaries.get(missionTimeline.todayKey) || evaluateMissionsForDay({
     dateKey: missionTimeline.todayKey,
@@ -902,21 +807,9 @@ function buildGamificationSnapshot({
     quizMap
   });
 
-  const reusableBoostToken = pendingBoostTokens.find((token) => token.remainingUses > 0) || null;
-  const activeBoost = reusableBoostToken
-    ? {
-      rewardId: reusableBoostToken.rewardId,
-      title: reusableBoostToken.title,
-      multiplier: reusableBoostToken.multiplier,
-      remainingUses: reusableBoostToken.remainingUses,
-      startedAt: reusableBoostToken.redeemedAt,
-      expiresAt: null,
-      source: 'reward-shop'
-    }
-    : null;
-
-  const totalSpentXp = rewardRedemptions.reduce((sum, entry) => sum + (Number(entry.costXp) || 0), 0);
-  const xpBalance = Math.max(0, totalXp - totalSpentXp);
+  const activeBoost = null;
+  const totalSpentXp = 0;
+  const xpBalance = totalXp;
 
   return {
     totalXp,
@@ -933,6 +826,11 @@ function buildGamificationSnapshot({
     nextLevelXp: levelProgress.nextLevelXp,
     currentLevelProgress: levelProgress.currentLevelProgress,
     completedQuizCount,
+    totalCorrectAnswers,
+    totalQuestionsAnswered,
+    accuracyPercent,
+    masteryLevel,
+    rankScore,
     currentStreak,
     bestStreak,
     lastActiveDate,
@@ -947,10 +845,11 @@ function buildGamificationSnapshot({
     activeEvents,
     eventProgress: Array.from(eventProgressById.values()),
     weeklyXp,
+    weeklyAccuracyPercent,
     weeklyCompletedQuizzes,
     weeklyRank: Number.isFinite(Number(weeklyRank)) ? Number(weeklyRank) : null,
     weekKey,
-    currentTier: getTierForXp(totalXp),
+    currentTier: masteryLevel,
     badges,
     rewardRedemptions,
     groupIds: getUserGroupIds(user, groups),
@@ -986,7 +885,20 @@ function normalizeGamificationFields(user = {}) {
   const currentStreak = Math.max(0, Number(user.currentStreak ?? user.streak?.currentStreak) || 0);
   const bestStreak = Math.max(0, Number(user.bestStreak ?? user.streak?.bestStreak) || 0);
   const completedQuizCount = Math.max(0, Number(user.completedQuizCount) || 0);
+  const totalCorrectAnswers = Math.max(0, Number(user.totalCorrectAnswers) || 0);
+  const totalQuestionsAnswered = Math.max(0, Number(user.totalQuestionsAnswered) || 0);
+  const fallbackAccuracy = Number(user.averageScore) || 0;
+  const accuracyPercent = Number.isFinite(Number(user.accuracyPercent))
+    ? Math.max(0, Math.min(100, Number(user.accuracyPercent)))
+    : (totalQuestionsAnswered > 0 ? computeAccuracyPercent(totalCorrectAnswers, totalQuestionsAnswered) : Math.max(0, Math.min(100, fallbackAccuracy)));
+  const masteryLevel = MASTERY_LEVELS.includes(String(user.masteryLevel))
+    ? String(user.masteryLevel)
+    : (MASTERY_LEVELS.includes(String(user.currentTier)) ? String(user.currentTier) : getMasteryLevel({ accuracyPercent, completedQuizCount }));
+  const rankScore = Math.max(0, Number(user.rankScore) || getRankScore({ accuracyPercent, masteryLevel, currentStreak, completedQuizCount }));
   const weeklyXp = Math.max(0, Number(user.weeklyXp) || 0);
+  const weeklyAccuracyPercent = Number.isFinite(Number(user.weeklyAccuracyPercent))
+    ? Math.max(0, Math.min(100, Number(user.weeklyAccuracyPercent)))
+    : 0;
   const weeklyCompletedQuizzes = Math.max(0, Number(user.weeklyCompletedQuizzes) || 0);
   const rewardRedemptions = normalizeRewardRedemptions(user.rewardRedemptions);
   const activeEvents = Array.isArray(user.activeEvents) ? user.activeEvents : [];
@@ -1041,6 +953,11 @@ function normalizeGamificationFields(user = {}) {
     nextLevelXp: Number(user.nextLevelXp) || levelProgress.nextLevelXp,
     currentLevelProgress: Number(user.currentLevelProgress) || levelProgress.currentLevelProgress,
     completedQuizCount,
+    totalCorrectAnswers,
+    totalQuestionsAnswered,
+    accuracyPercent,
+    masteryLevel,
+    rankScore,
     currentStreak,
     bestStreak,
     lastActiveDate: user.lastActiveDate || user.streak?.lastActiveDate || null,
@@ -1051,10 +968,11 @@ function normalizeGamificationFields(user = {}) {
       lastConsumedOn: freeze.lastConsumedOn || null
     },
     weeklyXp,
+    weeklyAccuracyPercent,
     weeklyCompletedQuizzes,
     weeklyRank: Number(user.weeklyRank) > 0 ? Number(user.weeklyRank) : null,
     weekKey: typeof user.weekKey === 'string' ? user.weekKey : getCurrentWeekRange(new Date()).weekKey,
-    currentTier: user.currentTier || getTierForXp(totalXp),
+    currentTier: masteryLevel,
     badges: normalizeBadgeList(user.badges),
     activeBoost,
     activeEvents,
@@ -1088,6 +1006,14 @@ function mergeGamificationIntoUser(user, snapshot) {
     nextLevelXp: Number(snapshot.nextLevelXp) || 0,
     currentLevelProgress: Number(snapshot.currentLevelProgress) || 0,
     completedQuizCount: Number(snapshot.completedQuizCount) || 0,
+    totalCorrectAnswers: Number(snapshot.totalCorrectAnswers) || 0,
+    totalQuestionsAnswered: Number(snapshot.totalQuestionsAnswered) || 0,
+    accuracyPercent: Math.max(0, Math.min(100, Number(snapshot.accuracyPercent) || 0)),
+    masteryLevel: snapshot.masteryLevel || getMasteryLevel({
+      accuracyPercent: Number(snapshot.accuracyPercent) || 0,
+      completedQuizCount: Number(snapshot.completedQuizCount) || 0
+    }),
+    rankScore: Math.max(0, Number(snapshot.rankScore) || 0),
     currentStreak: Number(snapshot.currentStreak) || 0,
     bestStreak: Number(snapshot.bestStreak) || 0,
     lastActiveDate: snapshot.lastActiveDate || null,
@@ -1098,10 +1024,11 @@ function mergeGamificationIntoUser(user, snapshot) {
       lastConsumedOn: snapshot.streakFreeze?.lastConsumedOn || null
     },
     weeklyXp: Number(snapshot.weeklyXp) || 0,
+    weeklyAccuracyPercent: Math.max(0, Math.min(100, Number(snapshot.weeklyAccuracyPercent) || 0)),
     weeklyCompletedQuizzes: Number(snapshot.weeklyCompletedQuizzes) || 0,
     weeklyRank: Number(snapshot.weeklyRank) > 0 ? Number(snapshot.weeklyRank) : null,
     weekKey: snapshot.weekKey || getCurrentWeekRange(new Date()).weekKey,
-    currentTier: snapshot.currentTier || getTierForXp(snapshot.totalXp),
+    currentTier: snapshot.masteryLevel || snapshot.currentTier || 'Beginner',
     activeBoost: snapshot.activeBoost || null,
     activeEvents: Array.isArray(snapshot.activeEvents) ? snapshot.activeEvents : [],
     eventProgress: Array.isArray(snapshot.eventProgress) ? snapshot.eventProgress : [],
@@ -1137,11 +1064,17 @@ function buildPublicGamification(user = {}) {
     xpToNextLevel: normalized.xpToNextLevel,
     currentLevelProgress: normalized.currentLevelProgress,
     completedQuizCount: normalized.completedQuizCount,
+    totalCorrectAnswers: normalized.totalCorrectAnswers,
+    totalQuestionsAnswered: normalized.totalQuestionsAnswered,
+    accuracyPercent: normalized.accuracyPercent,
+    masteryLevel: normalized.masteryLevel,
+    rankScore: normalized.rankScore,
     currentStreak: normalized.currentStreak,
     bestStreak: normalized.bestStreak,
     lastActiveDate: normalized.lastActiveDate,
     streakFreeze: normalized.streakFreeze,
     weeklyXp: normalized.weeklyXp,
+    weeklyAccuracyPercent: normalized.weeklyAccuracyPercent,
     weeklyCompletedQuizzes: normalized.weeklyCompletedQuizzes,
     weeklyRank: normalized.weeklyRank,
     currentTier: normalized.currentTier,
@@ -1166,6 +1099,9 @@ function summarizeUserForLeaderboard(user = {}, currentUserId = null) {
     profileImage: user.profileImage || null,
     totalXp: normalized.totalXp,
     weeklyXp: normalized.weeklyXp,
+    accuracyPercent: normalized.accuracyPercent,
+    masteryLevel: normalized.masteryLevel,
+    rankScore: normalized.rankScore,
     weeklyCompletedQuizzes: normalized.weeklyCompletedQuizzes,
     currentStreak: normalized.currentStreak,
     bestStreak: normalized.bestStreak,
@@ -1211,11 +1147,11 @@ async function syncUsersToGamification({
     .map((entry) => ({
       id: entry.user.id,
       name: entry.user.name || 'Unknown',
-      weeklyXp: Number(entry.snapshot.weeklyXp) || 0,
+      weeklyAccuracyPercent: Number(entry.snapshot.weeklyAccuracyPercent) || 0,
       weeklyCompletedQuizzes: Number(entry.snapshot.weeklyCompletedQuizzes) || 0
     }))
     .sort((a, b) => {
-      if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+      if (b.weeklyAccuracyPercent !== a.weeklyAccuracyPercent) return b.weeklyAccuracyPercent - a.weeklyAccuracyPercent;
       if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
       return a.name.localeCompare(b.name);
     });
@@ -1236,16 +1172,19 @@ async function syncUsersToGamification({
         return {
           userId: memberId,
           name: user.name || 'Unknown',
-          weeklyXp: Number(snapshot.weeklyXp) || 0,
+          weeklyAccuracyPercent: Number(snapshot.weeklyAccuracyPercent) || 0,
           weeklyCompletedQuizzes: Number(snapshot.weeklyCompletedQuizzes) || 0,
-          totalXp: Number(snapshot.totalXp) || 0
+          accuracyPercent: Number(snapshot.accuracyPercent) || 0,
+          masteryLevel: snapshot.masteryLevel || 'Beginner'
         };
       })
       .filter(Boolean)
       .sort((a, b) => {
-        if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+        if (b.weeklyAccuracyPercent !== a.weeklyAccuracyPercent) return b.weeklyAccuracyPercent - a.weeklyAccuracyPercent;
         if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
-        if (b.totalXp !== a.totalXp) return b.totalXp - a.totalXp;
+        const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
+        if (masteryDiff !== 0) return masteryDiff;
+        if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
         return a.name.localeCompare(b.name);
       });
 
@@ -1269,20 +1208,8 @@ async function syncUsersToGamification({
       weeklyRank,
       weeklyGroupRanks,
       groupIds: getUserGroupIds(entry.user, normalizedGroups),
-      currentTier: getTierForXp(entry.snapshot.totalXp),
-      badges: mergeBadges(
-        entry.snapshot.badges,
-        weeklyRank && weeklyRank <= 10 && (Number(entry.snapshot.weeklyCompletedQuizzes) || 0) > 0
-          ? [{
-            id: 'top-10-weekly',
-            title: 'Top 10 Weekly',
-            description: 'Finish in the top 10 of the weekly leaderboard.',
-            category: 'leaderboard',
-            rarity: 'epic',
-            unlockedAt: new Date(now).toISOString()
-          }]
-          : []
-      )
+      currentTier: entry.snapshot.masteryLevel || 'Beginner',
+      masteryLevel: entry.snapshot.masteryLevel || 'Beginner'
     };
 
     return mergeGamificationIntoUser(entry.user, snapshotWithWeeklyRank);
@@ -1306,6 +1233,7 @@ module.exports = {
   LEVEL_BASE_XP,
   LEVEL_XP_INCREMENT,
   MISSION_DEFINITIONS,
+  MASTERY_LEVELS,
   TIER_THRESHOLDS,
   buildGamificationSnapshot,
   buildPublicGamification,
@@ -1313,6 +1241,9 @@ module.exports = {
   getCompletedAttempts,
   getCurrentWeekRange,
   getLatestBadge,
+  getMasteryLevel,
+  getMasteryRank,
+  getRankScore,
   getLevelProgress,
   getUserGroupIds,
   getTierForXp,
