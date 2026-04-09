@@ -712,5 +712,24 @@
     "completedAt": 1775727756165,
     "score": 1,
     "total": 1
+  },
+  {
+    "id": "9f0045ac-5cc0-45bb-9f69-79febc209125",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775773564438,
+    "expiresAt": 1775774764438,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775773564438,
+    "completedAt": 1775773573770,
+    "score": 1,
+    "total": 1
   }
 ]

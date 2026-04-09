@@ -112,42 +112,7 @@
         </p>
       </form>
 
-    </div>
-  </div>
-
-  <div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
-    <div class="w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl">
-
-      <!-- LOGIN FORM -->
-      <form id="loginForm" class="space-y-6">
-        <h2 class="text-3xl font-bold">Welcome</h2>
-
-        <input id="loginEmail" type="email" placeholder="Email" class="w-full p-3 border rounded" required />
-        <input id="loginPassword" type="password" placeholder="Password" class="w-full p-3 border rounded" required />
-
-        <button class="w-full bg-blue-600 text-white py-3 rounded">Login</button>
-
-        <p class="text-center">
-          New user?
-          <button type="button" id="showSignup" class="text-blue-600">Sign up</button>
-        </p>
-      </form>
-
-      <!-- SIGNUP FORM -->
-      <form id="signupForm" class="space-y-6 hidden">
-        <h2 class="text-3xl font-bold">Create Account</h2>
-
-        <input id="signupName" type="text" placeholder="Name" class="w-full p-3 border rounded" required />
-        <input id="signupEmail" type="email" placeholder="Email" class="w-full p-3 border rounded" required />
-        <input id="signupPassword" type="password" placeholder="Password" class="w-full p-3 border rounded" required />
-
-        <button class="w-full bg-green-600 text-white py-3 rounded">Sign up</button>
-
-        <p class="text-center">
-          Already have an account?
-          <button type="button" id="showLogin" class="text-blue-600">Login</button>
-        </p>
-      </form>
+      <p id="authStatus" class="mt-4 text-center text-sm text-slate-600"></p>
 
     </div>
   </div>
@@ -247,8 +212,29 @@
       };
     }
 
+    function getApiBaseUrl() {
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+
+      if (protocol === 'file:') {
+        return 'http://localhost:5500';
+      }
+
+      const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1';
+      if (isLocalHost && port && port !== '5500') {
+        return 'http://localhost:5500';
+      }
+
+      return '';
+    }
+
+    function apiUrl(path) {
+      return `${getApiBaseUrl()}${path}`;
+    }
+
     async function initializeDashboard() {
-      const meResponse = await fetch('/api/auth/me', { credentials: 'include' });
+      const meResponse = await fetch(apiUrl('/api/auth/me'), { credentials: 'include' });
 
       if (!meResponse.ok) {
         document.getElementById('loginModal').classList.remove('hidden');
@@ -282,7 +268,7 @@
       // Fetch attempts for weak topic calculation
       let attempts = [];
       try {
-        const attemptsRes = await fetch('/api/attempts', { credentials: 'include' });
+        const attemptsRes = await fetch(apiUrl('/api/attempts'), { credentials: 'include' });
         if (attemptsRes.ok) attempts = await attemptsRes.json();
       } catch (_) {
         attempts = [];
@@ -299,17 +285,37 @@
     function setupEventListeners() {
       const loginFormEl = document.getElementById('loginForm');
       const signupFormEl = document.getElementById('signupForm');
+      const authStatusEl = document.getElementById('authStatus');
+
+      if (!loginFormEl || !signupFormEl) {
+        return;
+      }
+
+      const setAuthStatus = (message, isError = false) => {
+        if (!authStatusEl) return;
+        authStatusEl.textContent = message || '';
+        authStatusEl.className = `mt-4 text-center text-sm ${isError ? 'text-red-600' : 'text-slate-600'}`;
+      };
+
+      const parseError = async (response, fallback) => {
+        try {
+          const payload = await response.json();
+          return payload?.error || payload?.message || fallback;
+        } catch (_) {
+          return fallback;
+        }
+      };
 
       const showLoginForm = () => {
-        if (!loginFormEl || !signupFormEl) return;
         loginFormEl.classList.remove('hidden');
         signupFormEl.classList.add('hidden');
+        setAuthStatus('');
       };
 
       const showSignupForm = () => {
-        if (!loginFormEl || !signupFormEl) return;
         loginFormEl.classList.add('hidden');
         signupFormEl.classList.remove('hidden');
+        setAuthStatus('');
       };
 
       const showSignupBtn = document.getElementById('showSignup');
@@ -322,35 +328,85 @@
         showLoginBtn.addEventListener('click', showLoginForm);
       }
 
-      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      loginFormEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, password })
-        });
-        if (res.ok) location.reload();
+
+        const submitBtn = loginFormEl.querySelector('button[type="submit"], button:not([type])');
+        if (submitBtn) submitBtn.disabled = true;
+        setAuthStatus('Logging in...');
+
+        try {
+          const res = await fetch(apiUrl('/api/auth/login'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+          });
+
+          if (!res.ok) {
+            const errorMessage = await parseError(res, 'Login failed. Please try again.');
+            setAuthStatus(errorMessage, true);
+            return;
+          }
+
+          setAuthStatus('Login successful. Redirecting...');
+          location.reload();
+        } catch (_) {
+          setAuthStatus('Network error. Please check connection and retry.', true);
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
       });
 
-      document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      signupFormEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('signupName').value.trim();
         const email = document.getElementById('signupEmail').value.trim();
         const password = document.getElementById('signupPassword').value;
 
-        const res = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password })
-        });
+        const submitBtn = signupFormEl.querySelector('button[type="submit"], button:not([type])');
+        if (submitBtn) submitBtn.disabled = true;
+        setAuthStatus('Creating account...');
 
-        if (res.ok) {
-          showLoginForm();
-          document.getElementById('loginEmail').value = email;
-          document.getElementById('loginPassword').value = '';
+        try {
+          const res = await fetch(apiUrl('/api/auth/register'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ name, email, password })
+          });
+
+          if (!res.ok) {
+            const errorMessage = await parseError(res, 'Signup failed. Please try again.');
+            setAuthStatus(errorMessage, true);
+            return;
+          }
+
+          setAuthStatus('Account created. Logging you in...');
+
+          const loginRes = await fetch(apiUrl('/api/auth/login'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+          });
+
+          if (!loginRes.ok) {
+            setAuthStatus('Account created. Please login manually.', false);
+            showLoginForm();
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = '';
+            return;
+          }
+
+          setAuthStatus('Signup successful. Redirecting...');
+          location.reload();
+        } catch (_) {
+          setAuthStatus('Network error. Please check connection and retry.', true);
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
         }
       });
     }
