@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const db = require('../utils/db');
+const config = require('../config');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
+const JWT_SECRET = config.jwtSecret;
 
 function findUserFromTokenPayload(users, decoded) {
   const tokenUserId = decoded.userId || decoded.id;

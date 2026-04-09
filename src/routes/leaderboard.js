@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../utils/db');
+const config = require('../config');
 const {
   buildLeaderboardResponse,
   normalizeTopicKey
@@ -8,7 +9,7 @@ const {
 const { getMasteryRank, getUserGroupIds } = require('../utils/gamification');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
+const JWT_SECRET = config.jwtSecret;
 
 function getOptionalViewerUserId(req) {
   const token = req.cookies?.token;

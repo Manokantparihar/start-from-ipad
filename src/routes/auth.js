@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
 const { buildPublicGamification } = require('../utils/gamification');
+const config = require('../config');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
+const JWT_SECRET = config.jwtSecret;
 
 function findUserFromTokenPayload(users, payload) {
   const tokenUserId = payload.userId || payload.id;
