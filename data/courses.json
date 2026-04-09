@@ -19,8 +19,33 @@
     "category": "General",
     "status": "published",
     "createdAt": "2026-04-09T11:35:53.750Z",
-    "updatedAt": "2026-04-09T12:02:18.664Z",
-    "lastUpdated": "2026-04-09T12:02:18.664Z",
+    "updatedAt": "2026-04-09T19:11:07.863Z",
+    "lastUpdated": "2026-04-09T19:11:07.863Z",
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "isDeleted": false
+  },
+  {
+    "id": "eddc99b7-8ef6-4668-af2d-da4b5aabe108",
+    "title": "Geography",
+    "description": "",
+    "category": "general",
+    "status": "published",
+    "createdAt": "2026-04-09T19:08:39.373Z",
+    "updatedAt": "2026-04-09T19:10:15.253Z",
+    "lastUpdated": "2026-04-09T19:10:15.253Z",
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "isDeleted": true,
+    "deletedAt": "2026-04-09T19:10:15.253Z"
+  },
+  {
+    "id": "751387b5-8076-443f-9b13-7afd2940ad0b",
+    "title": "Mathematics",
+    "description": "",
+    "category": "Maths",
+    "status": "published",
+    "createdAt": "2026-04-09T19:14:19.416Z",
+    "updatedAt": "2026-04-09T19:15:04.629Z",
+    "lastUpdated": "2026-04-09T19:15:04.629Z",
     "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "isDeleted": false
   }

@@ -9,6 +9,7 @@
     .banner { transition: opacity 0.25s; }
     .hidden { display: none !important; }
     .modal-backdrop { background: rgba(15, 23, 42, 0.45); }
+    .field-error { font-size: 12px; color: #b91c1c; margin-top: 4px; }
   </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -112,6 +113,7 @@
         <div>
           <label class="mb-1 block text-sm font-semibold text-gray-700">Course Title</label>
           <input id="courseTitleInput" type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+          <p id="courseTitleError" class="field-error hidden"></p>
         </div>
         <div>
           <label class="mb-1 block text-sm font-semibold text-gray-700">Description</label>
@@ -121,6 +123,7 @@
           <div>
             <label class="mb-1 block text-sm font-semibold text-gray-700">Category</label>
             <input id="courseCategoryInput" type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="General">
+            <p class="mt-1 text-xs text-gray-400">Future-ready label support: free / premium / visibility can be added later.</p>
           </div>
           <div>
             <label class="mb-1 block text-sm font-semibold text-gray-700">Status</label>
@@ -132,7 +135,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" data-close="courseModal" class="rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Cancel</button>
-          <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Save</button>
+          <button id="courseSubmitBtn" type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Save</button>
         </div>
       </form>
     </div>
@@ -149,6 +152,7 @@
         <div>
           <label class="mb-1 block text-sm font-semibold text-gray-700">Lesson Title</label>
           <input id="lessonTitleInput" type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+          <p id="lessonTitleError" class="field-error hidden"></p>
         </div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
@@ -169,6 +173,7 @@
           <label class="mb-1 block text-sm font-semibold text-gray-700">Upload File (PDF)</label>
           <input id="lessonFileInput" type="file" accept="application/pdf,.pdf" class="w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-blue-700 hover:file:bg-blue-100">
           <p id="lessonFileHint" class="mt-1 text-xs text-gray-400">Required for new lesson.</p>
+          <p id="lessonFileError" class="field-error hidden"></p>
         </div>
         <div>
           <label class="mb-1 block text-sm font-semibold text-gray-700">Description</label>
@@ -177,10 +182,11 @@
         <div>
           <label class="mb-1 block text-sm font-semibold text-gray-700">Order</label>
           <input id="lessonOrderInput" type="number" min="1" value="1" class="w-36 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <p id="lessonOrderError" class="field-error hidden"></p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" data-close="lessonModal" class="rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Cancel</button>
-          <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Save Lesson</button>
+          <button id="lessonSubmitBtn" type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Save Lesson</button>
         </div>
       </form>
     </div>
@@ -342,14 +348,74 @@
 
     function openModal(id) {
       document.getElementById(id).classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeModal(id) {
       document.getElementById(id).classList.add('hidden');
+      if (!Array.from(document.querySelectorAll('.modal-backdrop')).some((modal) => !modal.classList.contains('hidden'))) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    function clearFieldError(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = '';
+      el.classList.add('hidden');
+    }
+
+    function setFieldError(id, message) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = message;
+      el.classList.remove('hidden');
+    }
+
+    function clearCourseErrors() {
+      clearFieldError('courseTitleError');
+    }
+
+    function clearLessonErrors() {
+      clearFieldError('lessonTitleError');
+      clearFieldError('lessonFileError');
+      clearFieldError('lessonOrderError');
+    }
+
+    function setButtonBusy(buttonId, isBusy, busyLabel) {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+      if (!button.dataset.defaultLabel) button.dataset.defaultLabel = button.textContent;
+      button.disabled = isBusy;
+      button.classList.toggle('opacity-70', isBusy);
+      button.classList.toggle('cursor-not-allowed', isBusy);
+      button.textContent = isBusy ? busyLabel : button.dataset.defaultLabel;
+    }
+
+    async function runActionWithBusy(target, busyLabel, work) {
+      const isButton = target instanceof HTMLButtonElement;
+      if (isButton) {
+        if (target.disabled) return;
+        if (!target.dataset.defaultLabel) target.dataset.defaultLabel = target.textContent;
+        target.disabled = true;
+        target.classList.add('opacity-70', 'cursor-not-allowed');
+        target.textContent = busyLabel;
+      }
+
+      try {
+        await work();
+      } finally {
+        if (isButton) {
+          target.disabled = false;
+          target.classList.remove('opacity-70', 'cursor-not-allowed');
+          target.textContent = target.dataset.defaultLabel || '';
+        }
+      }
     }
 
     function resetCourseForm() {
       state.editingCourseId = null;
+      clearCourseErrors();
       document.getElementById('courseModalTitle').textContent = 'New Course';
       document.getElementById('courseIdInput').value = '';
       document.getElementById('courseTitleInput').value = '';
@@ -374,6 +440,7 @@
 
     function resetLessonForm() {
       state.editingLessonId = null;
+      clearLessonErrors();
       document.getElementById('lessonModalTitle').textContent = 'Add Lesson';
       document.getElementById('lessonIdInput').value = '';
       document.getElementById('lessonTitleInput').value = '';
@@ -409,6 +476,8 @@
 
     async function saveCourse(event) {
       event.preventDefault();
+      clearCourseErrors();
+
       const payload = {
         title: document.getElementById('courseTitleInput').value.trim(),
         description: document.getElementById('courseDescriptionInput').value.trim(),
@@ -417,7 +486,14 @@
       };
 
       if (!payload.title) {
-        showBanner('Course title is required.', 'error');
+        setFieldError('courseTitleError', 'Course title is required.');
+        document.getElementById('courseTitleInput').focus();
+        return;
+      }
+
+      if (payload.title.length > 200) {
+        setFieldError('courseTitleError', 'Course title must be at most 200 characters.');
+        document.getElementById('courseTitleInput').focus();
         return;
       }
 
@@ -426,6 +502,7 @@
       const method = isEdit ? 'PUT' : 'POST';
 
       try {
+        setButtonBusy('courseSubmitBtn', true, isEdit ? 'Updating...' : 'Saving...');
         const response = await fetch(url, {
           method,
           credentials: 'include',
@@ -445,32 +522,54 @@
         showBanner(isEdit ? 'Course updated.' : 'Course created.');
       } catch (error) {
         showBanner(error.message, 'error');
+      } finally {
+        setButtonBusy('courseSubmitBtn', false, 'Saving...');
       }
     }
 
     async function saveLesson(event) {
       event.preventDefault();
+      clearLessonErrors();
       const lessonTitle = document.getElementById('lessonTitleInput').value.trim();
       const courseId = document.getElementById('lessonCourseInput').value;
       const file = document.getElementById('lessonFileInput').files[0];
+      const order = Number(document.getElementById('lessonOrderInput').value);
 
       if (!lessonTitle) {
-        showBanner('Lesson title is required.', 'error');
+        setFieldError('lessonTitleError', 'Lesson title is required.');
+        document.getElementById('lessonTitleInput').focus();
         return;
       }
       if (!courseId) {
         showBanner('Please select a course.', 'error');
         return;
       }
+      if (!Number.isFinite(order) || order <= 0) {
+        setFieldError('lessonOrderError', 'Order must be a positive number.');
+        document.getElementById('lessonOrderInput').focus();
+        return;
+      }
+      if (file) {
+        const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+        if (!isPdf) {
+          setFieldError('lessonFileError', 'Only PDF files are allowed.');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          setFieldError('lessonFileError', 'File is too large. Maximum size is 10 MB.');
+          return;
+        }
+      }
 
       try {
+        setButtonBusy('lessonSubmitBtn', true, state.editingLessonId ? 'Updating...' : 'Saving...');
         if (state.editingLessonId) {
           const payload = {
             title: lessonTitle,
             courseId,
             type: document.getElementById('lessonTypeInput').value,
             description: document.getElementById('lessonDescriptionInput').value.trim(),
-            order: Number(document.getElementById('lessonOrderInput').value) || 1
+            order
           };
 
           const updateResponse = await fetch(`/api/admin/courses/lessons/${state.editingLessonId}`, {
@@ -497,7 +596,7 @@
           showBanner('Lesson updated.');
         } else {
           if (!file) {
-            showBanner('Lesson file is required for new lessons.', 'error');
+            setFieldError('lessonFileError', 'Lesson file is required for new lessons.');
             return;
           }
 
@@ -506,7 +605,7 @@
           formData.append('courseId', courseId);
           formData.append('type', document.getElementById('lessonTypeInput').value);
           formData.append('description', document.getElementById('lessonDescriptionInput').value.trim());
-          formData.append('order', String(Number(document.getElementById('lessonOrderInput').value) || 1));
+          formData.append('order', String(order));
           formData.append('file', file);
 
           const createResponse = await fetch('/api/admin/courses/lessons', {
@@ -527,6 +626,8 @@
         }
       } catch (error) {
         showBanner(error.message, 'error');
+      } finally {
+        setButtonBusy('lessonSubmitBtn', false, 'Saving...');
       }
     }
 
@@ -596,6 +697,7 @@
               <td class="px-3 py-2 text-gray-600">${esc(lesson.type)}</td>
               <td class="px-3 py-2 text-gray-600">${esc(lesson.origFilename || '—')}</td>
               <td class="px-3 py-2 text-right whitespace-nowrap">
+                <a href="${esc(lesson.viewUrl || '#')}" target="_blank" rel="noopener noreferrer" class="rounded bg-gray-100 px-2 py-1 text-xs text-gray-700 hover:bg-gray-200">View</a>
                 <button data-action="edit-lesson" data-lesson='${JSON.stringify(lesson).replace(/'/g, '&apos;')}' class="rounded bg-blue-50 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100">Edit</button>
                 <button data-action="replace-lesson-file" data-id="${esc(lesson.id)}" class="rounded bg-indigo-50 px-2 py-1 text-xs text-indigo-700 hover:bg-indigo-100">Replace file</button>
                 <button data-action="move-lesson" data-id="${esc(lesson.id)}" data-direction="up" class="rounded bg-gray-100 px-2 py-1 text-xs text-gray-700 hover:bg-gray-200">↑</button>
@@ -722,20 +824,15 @@
     }
 
     async function onDocumentClick(event) {
-      const modalContent = event.target.closest('[data-modal-content]');
-      if (modalContent) {
+      const closeTarget = event.target.closest('[data-close]');
+      if (closeTarget) {
+        closeModal(closeTarget.dataset.close);
         return;
       }
 
       const backdrop = event.target.closest('.modal-backdrop');
-      if (backdrop && !backdrop.classList.contains('hidden')) {
+      if (backdrop && event.target === backdrop && !backdrop.classList.contains('hidden')) {
         closeModal(backdrop.id);
-        return;
-      }
-
-      const closeTarget = event.target.closest('[data-close]');
-      if (closeTarget) {
-        closeModal(closeTarget.dataset.close);
         return;
       }
 
@@ -747,37 +844,59 @@
       if (action === 'edit-course') {
         const course = state.courses.find((entry) => entry.id === actionTarget.dataset.id);
         if (course) openCourseForm(course);
+        return;
       }
 
       if (action === 'view-course') {
-        await viewCourseDetail(actionTarget.dataset.id);
+        await runActionWithBusy(actionTarget, 'Loading...', async () => {
+          await viewCourseDetail(actionTarget.dataset.id);
+        });
+        return;
       }
 
       if (action === 'add-lesson') {
         openLessonForm(actionTarget.dataset.id);
+        return;
       }
 
       if (action === 'toggle-course') {
         const course = state.courses.find((entry) => entry.id === actionTarget.dataset.id);
-        if (course) await toggleCourseStatus(course);
+        if (course) {
+          await runActionWithBusy(actionTarget, 'Saving...', async () => {
+            await toggleCourseStatus(course);
+          });
+        }
+        return;
       }
 
       if (action === 'delete-course') {
         const course = state.courses.find((entry) => entry.id === actionTarget.dataset.id);
-        if (course) await deleteCourse(course);
+        if (course) {
+          await runActionWithBusy(actionTarget, 'Deleting...', async () => {
+            await deleteCourse(course);
+          });
+        }
+        return;
       }
 
       if (action === 'move-lesson') {
-        await moveLesson(actionTarget.dataset.id, actionTarget.dataset.direction);
+        await runActionWithBusy(actionTarget, 'Moving...', async () => {
+          await moveLesson(actionTarget.dataset.id, actionTarget.dataset.direction);
+        });
+        return;
       }
 
       if (action === 'delete-lesson') {
-        await deleteLesson(actionTarget.dataset.id, actionTarget.dataset.title || 'lesson');
+        await runActionWithBusy(actionTarget, 'Deleting...', async () => {
+          await deleteLesson(actionTarget.dataset.id, actionTarget.dataset.title || 'lesson');
+        });
+        return;
       }
 
       if (action === 'replace-lesson-file') {
         state.replaceLessonId = actionTarget.dataset.id;
         document.getElementById('replaceFileInput').click();
+        return;
       }
 
       if (action === 'edit-lesson') {
@@ -788,29 +907,42 @@
         } catch {
           showBanner('Unable to load lesson payload.', 'error');
         }
+        return;
       }
 
       if (action === 'import-courses') {
         state.manageImportType = 'courses';
         document.getElementById('manageFileInput').click();
+        return;
       }
 
       if (action === 'import-lessons') {
         state.manageImportType = 'lessons';
         document.getElementById('manageFileInput').click();
+        return;
       }
 
       if (action === 'export-courses') {
-        await runExport('courses');
+        await runActionWithBusy(actionTarget, 'Exporting...', async () => {
+          await runExport('courses');
+        });
+        return;
       }
 
       if (action === 'export-lessons') {
-        await runExport('lessons');
+        await runActionWithBusy(actionTarget, 'Exporting...', async () => {
+          await runExport('lessons');
+        });
       }
     }
 
     function setupEventListeners() {
       document.addEventListener('click', onDocumentClick);
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        const openModal = Array.from(document.querySelectorAll('.modal-backdrop')).find((modal) => !modal.classList.contains('hidden'));
+        if (openModal) closeModal(openModal.id);
+      });
 
       document.getElementById('courseForm').addEventListener('submit', saveCourse);
       document.getElementById('lessonForm').addEventListener('submit', saveLesson);
@@ -858,6 +990,16 @@
         event.target.value = '';
         state.replaceLessonId = null;
         if (!file || !lessonId) return;
+
+        const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+        if (!isPdf) {
+          showBanner('Only PDF files are allowed.', 'error');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          showBanner('File is too large. Maximum size is 10 MB.', 'error');
+          return;
+        }
 
         try {
           const formData = new FormData();

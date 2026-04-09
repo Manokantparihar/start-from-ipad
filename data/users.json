@@ -12,7 +12,7 @@
       "currentStreak": 3,
       "bestStreak": 3,
       "lastActiveDate": "2026-04-09",
-      "updatedAt": "2026-04-09T13:01:06.191Z"
+      "updatedAt": "2026-04-09T18:51:53.475Z"
     },
     "totalXp": 312,
     "currentLevel": 4,
@@ -66,7 +66,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-09T09:41:59.755Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
     "xpBalance": 312,
     "streakFreeze": {
       "maxCount": 1,
@@ -76,9 +76,9 @@
     },
     "weeklyXp": 250,
     "weeklyCompletedQuizzes": 10,
-    "weeklyRank": 1,
+    "weeklyRank": 4,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Gold",
+    "currentTier": "Improving",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -326,7 +326,13 @@
     "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 62,
-    "missionBonusXp": 56
+    "missionBonusXp": 56,
+    "totalCorrectAnswers": 29,
+    "totalQuestionsAnswered": 39,
+    "accuracyPercent": 74,
+    "masteryLevel": "Improving",
+    "rankScore": 274040,
+    "weeklyAccuracyPercent": 74
   },
   {
     "id": "401f86e2-8e13-4199-b271-f5be696d2f58",
@@ -377,7 +383,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T13:01:06.191Z"
+      "updatedAt": "2026-04-09T18:51:53.475Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -387,7 +393,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T04:22:44.975Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
     "xpBalance": 159,
     "streakFreeze": {
       "maxCount": 1,
@@ -397,9 +403,9 @@
     },
     "weeklyXp": 122,
     "weeklyCompletedQuizzes": 5,
-    "weeklyRank": 3,
+    "weeklyRank": 5,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Silver",
+    "currentTier": "Improving",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -597,7 +603,13 @@
     "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 37,
-    "missionBonusXp": 21
+    "missionBonusXp": 21,
+    "totalCorrectAnswers": 15,
+    "totalQuestionsAnswered": 26,
+    "accuracyPercent": 58,
+    "masteryLevel": "Improving",
+    "rankScore": 258025,
+    "weeklyAccuracyPercent": 58
   },
   {
     "id": "b29f88dc-d9e1-4895-9733-273d1286b287",
@@ -640,7 +652,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T13:01:06.191Z"
+      "updatedAt": "2026-04-09T18:51:53.475Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -650,7 +662,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T01:42:12.640Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
     "xpBalance": 46,
     "streakFreeze": {
       "maxCount": 1,
@@ -660,9 +672,9 @@
     },
     "weeklyXp": 41,
     "weeklyCompletedQuizzes": 1,
-    "weeklyRank": 5,
+    "weeklyRank": 2,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Bronze",
+    "currentTier": "Beginner",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -819,7 +831,13 @@
     "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 5,
-    "missionBonusXp": 13
+    "missionBonusXp": 13,
+    "totalCorrectAnswers": 1,
+    "totalQuestionsAnswered": 1,
+    "accuracyPercent": 100,
+    "masteryLevel": "Beginner",
+    "rankScore": 200011,
+    "weeklyAccuracyPercent": 100
   },
   {
     "id": "b4c7947b-6a72-4378-8338-7c20413af1a0",
@@ -832,7 +850,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T13:01:06.191Z"
+      "updatedAt": "2026-04-09T18:51:53.475Z"
     },
     "profileImage": "/uploads/avatars/b4c7947b-6a72-4378-8338-7c20413af1a0.jpeg",
     "updatedAt": "2026-04-08T11:46:28.527Z",
@@ -873,7 +891,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T11:43:06.071Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
     "xpBalance": 84,
     "streakFreeze": {
       "maxCount": 1,
@@ -883,9 +901,9 @@
     },
     "weeklyXp": 74,
     "weeklyCompletedQuizzes": 2,
-    "weeklyRank": 4,
+    "weeklyRank": 1,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Bronze",
+    "currentTier": "Beginner",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -1043,7 +1061,13 @@
     "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 10,
-    "missionBonusXp": 21
+    "missionBonusXp": 21,
+    "totalCorrectAnswers": 2,
+    "totalQuestionsAnswered": 2,
+    "accuracyPercent": 100,
+    "masteryLevel": "Beginner",
+    "rankScore": 200012,
+    "weeklyAccuracyPercent": 100
   },
   {
     "id": "5b24cef1-e655-4eb2-9d50-6c96405eb6da",
@@ -1092,7 +1116,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T13:01:06.191Z"
+      "updatedAt": "2026-04-09T18:51:53.475Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -1102,7 +1126,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T18:37:21.275Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T13:01:06.191Z",
+    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
     "profileImage": "/uploads/avatars/5b24cef1-e655-4eb2-9d50-6c96405eb6da.jpeg",
     "updatedAt": "2026-04-08T22:26:17.636Z",
     "xpBalance": 219,
@@ -1114,9 +1138,9 @@
     },
     "weeklyXp": 179,
     "weeklyCompletedQuizzes": 8,
-    "weeklyRank": 2,
+    "weeklyRank": 3,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Silver",
+    "currentTier": "Strong",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -1274,6 +1298,12 @@
     "boostXp": 0,
     "weekendBonusXp": 0,
     "eventBonusXp": 40,
-    "missionBonusXp": 21
+    "missionBonusXp": 21,
+    "totalCorrectAnswers": 11,
+    "totalQuestionsAnswered": 14,
+    "accuracyPercent": 79,
+    "masteryLevel": "Strong",
+    "rankScore": 379018,
+    "weeklyAccuracyPercent": 79
   }
 ]

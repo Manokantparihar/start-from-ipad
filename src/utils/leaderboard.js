@@ -221,8 +221,10 @@ function sortWeeklyRows(rows) {
   return [...rows].sort((a, b) => {
     if (b.weeklyAccuracyPercent !== a.weeklyAccuracyPercent) return b.weeklyAccuracyPercent - a.weeklyAccuracyPercent;
     if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
+    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
     if (masteryDiff !== 0) return masteryDiff;
+    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     return a.name.localeCompare(b.name);
   });
@@ -233,8 +235,9 @@ function sortOverallRows(rows) {
     const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
     if (masteryDiff !== 0) return masteryDiff;
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
-    if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
+    if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     return a.name.localeCompare(b.name);
   });
 }
@@ -254,9 +257,10 @@ function sortStreakRows(rows) {
 function sortTopicRows(rows) {
   return [...rows].sort((a, b) => {
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
+    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
     if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
-    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     return a.name.localeCompare(b.name);
   });
 }

@@ -12,6 +12,8 @@ const router = express.Router();
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const MAX_TITLE_LENGTH = 200;
 const MAX_DESCRIPTION_LENGTH = 1000;
+const VALID_ACCESS_TIERS = ['free', 'premium'];
+const VALID_VISIBILITY = ['public', 'private'];
 
 // ─── Upload Directory ─────────────────────────────────────────────────────────
 
@@ -42,6 +44,16 @@ const upload = multer({
   }
 });
 
+function normalizeAccessTier(value) {
+  const tier = String(value || 'free').trim().toLowerCase();
+  return VALID_ACCESS_TIERS.includes(tier) ? tier : 'free';
+}
+
+function normalizeVisibility(value) {
+  const visibility = String(value || 'public').trim().toLowerCase();
+  return VALID_VISIBILITY.includes(visibility) ? visibility : 'public';
+}
+
 // ─── POST /api/admin/resources ────────────────────────────────────────────────
 // Admin-only: upload a new PDF/note/assignment.
 // authMiddleware + isAdmin are applied in server.js when mounting this router.
@@ -59,7 +71,7 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: 'No file provided.' });
     }
 
-    const { title, description } = req.body;
+    const { title, description, accessTier, visibility } = req.body;
     if (!title || !String(title).trim()) {
       // Remove the orphaned file before rejecting – verify path stays within RESOURCES_DIR
       const safeOrphanPath = path.resolve(RESOURCES_DIR, path.basename(req.file.filename));
@@ -80,6 +92,8 @@ router.post('/', (req, res) => {
         id: uuidv4(),
         title: String(title).trim().slice(0, MAX_TITLE_LENGTH),
         description: description ? String(description).trim().slice(0, MAX_DESCRIPTION_LENGTH) : '',
+        accessTier: normalizeAccessTier(accessTier),
+        visibility: normalizeVisibility(visibility),
         origFilename: req.file.originalname,
         filename: req.file.filename,
         filePath: `/uploads/resources/${req.file.filename}`,
@@ -110,6 +124,8 @@ router.get('/', async (req, res) => {
         id: r.id,
         title: r.title,
         description: r.description,
+        accessTier: normalizeAccessTier(r.accessTier),
+        visibility: normalizeVisibility(r.visibility),
         origFilename: r.origFilename,
         size: r.size,
         uploadedBy: r.uploadedBy,
