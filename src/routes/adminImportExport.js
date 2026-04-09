@@ -12,8 +12,16 @@
 const express = require('express');
 const multer = require('multer');
 const db = require('../utils/db');
+const config = require('../config');
+const { createRateLimiter } = require('../middlewares/rateLimit');
 
 const router = express.Router();
+const importRateLimiter = createRateLimiter({
+  windowMs: config.importRateLimitWindowMs,
+  maxRequests: config.importRateLimitMaxRequests,
+  message: 'Too many import requests, please try again later.'
+});
+router.use('/import', importRateLimiter);
 
 // ─── MULTER (memory storage – files never touch disk) ─────────────────────────
 const upload = multer({

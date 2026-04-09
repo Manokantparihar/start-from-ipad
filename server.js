@@ -1,8 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const path = require('path');
 const fs = require('fs');
+const fsPromises = require('fs').promises;
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/routes/auth');
 const quizRoutes = require('./src/routes/quizzes');
@@ -23,23 +25,53 @@ const authMiddleware = require('./src/middlewares/auth');
 const isAdmin = require('./src/middlewares/isAdmin');
 const { syncUsersToGamification } = require('./src/utils/gamification');
 const db = require('./src/utils/db');
+const config = require('./src/config');
+const { createRateLimiter } = require('./src/middlewares/rateLimit');
 
 const app = express();
-const PORT = process.env.PORT || 5500;
+const PORT = config.port;
+const authRateLimiter = createRateLimiter({
+  windowMs: config.authRateLimitWindowMs,
+  maxRequests: config.authRateLimitMaxRequests,
+  message: 'Too many auth requests, please try again later.'
+});
+const contactRateLimiter = createRateLimiter({
+  windowMs: config.contactRateLimitWindowMs,
+  maxRequests: config.contactRateLimitMaxRequests,
+  message: 'Too many contact submissions, please try again later.'
+});
+
+const corsOriginValidator = (origin, callback) => {
+  if (!origin) {
+    return callback(null, true);
+  }
+
+  if (config.corsAllowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+
+  return callback(new Error('CORS origin not allowed'));
+};
 
 // --- Middlewares ---
 app.use(
   cors({
-    origin: true,
+    origin: corsOriginValidator,
     credentials: true
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+  })
+);
+app.use(express.json({ limit: config.payloadLimit }));
+app.use(express.urlencoded({ extended: true, limit: config.payloadLimit }));
 app.use(cookieParser());
 
 // --- Routes ---
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRateLimiter, authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
 // Admin quiz management – protected by auth + isAdmin
@@ -71,10 +103,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Data Paths & Contact Setup ---
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = config.dataDir;
 const SUBMISSIONS_FILE = path.join(DATA_DIR, 'contact-submissions.jsonl');
-const CONTACT_TARGET_EMAIL =
-  process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com';
+const CONTACT_TARGET_EMAIL = config.contactTargetEmail;
 
 // Make sure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -122,7 +153,7 @@ const forwardViaAjaxEndpoint = async ({ name, email, message }) => {
 };
 
 // Contact API Route
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', contactRateLimiter, async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -139,7 +170,7 @@ app.post('/api/contact', async (req, res) => {
       message
     };
 
-    fs.appendFileSync(SUBMISSIONS_FILE, `${JSON.stringify(record)}\n`, 'utf8');
+    await fsPromises.appendFile(SUBMISSIONS_FILE, `${JSON.stringify(record)}\n`, 'utf8');
 
     const forwarded = await forwardViaAjaxEndpoint({ name, email, message });
 

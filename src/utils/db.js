@@ -4,22 +4,47 @@ const { v4: uuidv4 } = require('uuid');
 const { normalizeGamificationFields } = require('./gamification');
 
 const DATA_DIR = path.join(__dirname, '../../data');
+const writeQueues = new Map();
 
 // Generic read
 async function readFile(filename) {
+  const filePath = path.join(DATA_DIR, `${filename}.json`);
   try {
-    const filePath = path.join(DATA_DIR, `${filename}.json`);
     const data = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(data || '[]');
+    return JSON.parse(data);
   } catch (error) {
-    return [];
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
   }
 }
 
 // Generic write
 async function writeFile(filename, data) {
   const filePath = path.join(DATA_DIR, `${filename}.json`);
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+  const existingQueue = writeQueues.get(filePath) || Promise.resolve();
+  const queuedWrite = existingQueue
+    .catch(() => {
+      // Keep queue alive even after a previous rejection.
+    })
+    .then(async () => {
+      const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+      const payload = JSON.stringify(data, null, 2);
+      await fs.writeFile(tempPath, payload, 'utf8');
+      await fs.rename(tempPath, filePath);
+    });
+
+  writeQueues.set(filePath, queuedWrite);
+  try {
+    await queuedWrite;
+  } finally {
+    if (writeQueues.get(filePath) === queuedWrite) {
+      writeQueues.delete(filePath);
+    }
+  }
 }
 
 function normalizeUser(user) {
