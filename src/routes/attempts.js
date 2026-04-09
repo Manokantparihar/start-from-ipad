@@ -29,6 +29,11 @@ router.post('/', async (req, res) => {
     );
 
     const now = Date.now();
+    const quizTimeLimitMinutes = Number(quiz.timeLimit);
+    const effectiveTimeLimitMinutes =
+      Number.isFinite(quizTimeLimitMinutes) && quizTimeLimitMinutes > 0
+        ? quizTimeLimitMinutes
+        : 20;
     const attempt = {
       id: uuidv4(),
       userId: req.userId,
@@ -36,7 +41,8 @@ router.post('/', async (req, res) => {
       quizTitle: quiz.title,
       status: 'in-progress',
       startedAt: now,
-      expiresAt: now + 20 * 60 * 1000, // 20 minutes
+      expiresAt: now + effectiveTimeLimitMinutes * 60 * 1000,
+      timeLimitMinutes: effectiveTimeLimitMinutes,
       answers: [],
       createdAt: now
     };

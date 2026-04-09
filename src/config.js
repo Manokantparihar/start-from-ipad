@@ -12,6 +12,11 @@ function splitCsv(value) {
     .filter(Boolean);
 }
 
+function parsePositiveInt(value, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function getAllowedCorsOrigins() {
   const configured = splitCsv(process.env.CORS_ALLOWED_ORIGINS);
 
@@ -45,7 +50,14 @@ const config = {
   dataDir: path.join(__dirname, '../data'),
   jwtSecret: process.env.JWT_SECRET || localDevJwtSecret,
   corsAllowedOrigins: getAllowedCorsOrigins(),
-  contactTargetEmail: process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com'
+  contactTargetEmail: process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com',
+  payloadLimit: process.env.PAYLOAD_LIMIT || '100kb',
+  authRateLimitWindowMs: parsePositiveInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+  authRateLimitMaxRequests: parsePositiveInt(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS, 25),
+  contactRateLimitWindowMs: parsePositiveInt(process.env.CONTACT_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+  contactRateLimitMaxRequests: parsePositiveInt(process.env.CONTACT_RATE_LIMIT_MAX_REQUESTS, 5),
+  importRateLimitWindowMs: parsePositiveInt(process.env.IMPORT_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+  importRateLimitMaxRequests: parsePositiveInt(process.env.IMPORT_RATE_LIMIT_MAX_REQUESTS, 20)
 };
 
 if (!config.jwtSecret && !isLocalDevelopment) {
