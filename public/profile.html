@@ -351,6 +351,13 @@
       avatarImg.src = avatarUrl;
     }
 
+    function emitNavbarUserUpdate(user) {
+      if (!user) return;
+      window.dispatchEvent(new CustomEvent('user:updated', {
+        detail: { user }
+      }));
+    }
+
     // ── Avatar rendering ───────────────────────────────────────────────────────
     function renderAvatar(profileImage, name, updatedAt) {
       const img = document.getElementById('avatarPreview');
@@ -458,8 +465,9 @@
 
         // Mount navbar with current user
         if (window.Navbar) {
-          Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
+          await Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
         }
+        emitNavbarUserUpdate(currentUser);
 
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('profileMain').classList.remove('hidden');
@@ -524,10 +532,7 @@
         currentUser.profileImage = data.profileImage;
         currentUser.updatedAt = data.updatedAt || new Date().toISOString();
         renderAvatar(currentUser.profileImage, currentUser.name, currentUser.updatedAt);
-        // Remount navbar to ensure fresh user data and proper image loading
-        if (window.Navbar) {
-          await Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
-        }
+        emitNavbarUserUpdate(currentUser);
         showBanner(banner, data.message || 'Avatar updated!', 'success');
         btn.classList.add('hidden');
         selectedAvatarFile = null;
@@ -598,10 +603,7 @@
         }
         currentUser = { ...currentUser, ...data.user };
         populateProfile(currentUser);
-        // Remount navbar after profile update to reflect any changes
-        if (window.Navbar) {
-          await Navbar.mount('#appNavbar', { active: 'profile', user: currentUser });
-        }
+        emitNavbarUserUpdate(currentUser);
         showBanner(banner, data.message || 'Profile updated!', 'success');
       } catch {
         showBanner(banner, 'Network error. Please try again.', 'error');

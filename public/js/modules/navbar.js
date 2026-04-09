@@ -6,11 +6,32 @@
 
 (function initNavbarModule(global) {
   const DEFAULT_LOGOUT_REDIRECT = 'index.html';
+  const NAV_ITEMS = [
+    { key: 'home', label: 'Home', href: 'index.html' },
+    { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html' },
+    { key: 'achievements', label: 'Achievements', href: 'achievements.html' },
+    { key: 'practice', label: 'Practice', type: 'dropdown' },
+    { key: 'leaderboard', label: 'Leaderboard', href: 'leaderboard.html' },
+    { key: 'resources', label: 'Resources', href: 'resources.html' }
+  ];
+  const PRACTICE_ITEMS = [
+    { label: 'Daily Quiz', href: 'quizzes.html?mode=daily' },
+    { label: 'Topic Tests', href: 'quizzes.html?mode=topic' },
+    { label: 'Mock Tests', href: 'quizzes.html?mode=mock' },
+    { label: 'All Quizzes', href: 'quizzes.html?mode=all' }
+  ];
+  const FUTURE_RESERVED_SECTIONS = ['premium', 'plans', 'subscription', 'pro-analytics'];
 
   function linkClass(isActive) {
     return isActive
-      ? 'text-blue-600 font-semibold'
-      : 'text-gray-700 hover:text-blue-600 font-medium';
+      ? 'text-blue-700 font-semibold'
+      : 'text-slate-700 hover:text-blue-700 font-medium';
+  }
+
+  function mobileLinkClass(isActive) {
+    return isActive
+      ? 'bg-blue-50 text-blue-700 font-semibold'
+      : 'text-slate-700 hover:bg-slate-50';
   }
 
   function normalizeHref(href) {
@@ -31,7 +52,20 @@
     if (path === 'resources.html') return 'resources';
     if (path === 'profile.html') return 'profile';
     if (path === 'quizzes.html') return 'practice';
+    if (path === 'daily-quiz.html') return 'practice';
+    if (path === 'topic-tests.html') return 'practice';
+    if (path === 'mock-tests.html') return 'practice';
     return 'home';
+  }
+
+  function normalizeActiveKey(active) {
+    const normalized = String(active || '').toLowerCase();
+    if (!normalized) return inferActiveKey();
+    if (normalized === 'quizzes') return 'practice';
+    if (normalized === 'daily-quiz') return 'practice';
+    if (normalized === 'topic-tests') return 'practice';
+    if (normalized === 'mock-tests') return 'practice';
+    return normalized;
   }
 
   function getInitials(name) {
@@ -111,12 +145,53 @@
       }
   }
 
+  function buildDesktopLinks(active) {
+    return NAV_ITEMS.map((item) => {
+      if (item.type !== 'dropdown') {
+        return `<a href="${item.href}" class="${linkClass(active === item.key)} transition-colors">${item.label}</a>`;
+      }
+
+      return `
+<div class="relative" data-dropdown="practice">
+  <button
+    id="practiceMenuBtn"
+    type="button"
+    class="inline-flex items-center gap-1 ${linkClass(active === 'practice')} transition-colors"
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-controls="practiceMenu"
+  >
+    Practice
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+  <div id="practiceMenu" class="hidden absolute left-0 mt-2 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-xl" role="menu">
+    ${PRACTICE_ITEMS.map((practiceItem) => `<a href="${practiceItem.href}" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">${practiceItem.label}</a>`).join('')}
+  </div>
+</div>`;
+    }).join('');
+  }
+
+  function buildMobileLinks(active) {
+    const baseItems = NAV_ITEMS.filter((item) => item.type !== 'dropdown');
+    return baseItems.map((item) => (
+      `<a href="${item.href}" class="rounded-lg px-3 py-2 text-sm ${mobileLinkClass(active === item.key)}">${item.label}</a>`
+    )).join('');
+  }
+
+  function buildPracticeMobileLinks() {
+    return PRACTICE_ITEMS.map((practiceItem) => (
+      `<a href="${practiceItem.href}" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">${practiceItem.label}</a>`
+    )).join('');
+  }
+
   function buildMarkup(config) {
-    const active = config.active || inferActiveKey();
+    const active = normalizeActiveKey(config.active);
 
     return `
 <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3" aria-label="Main navigation">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5" aria-label="Main navigation" data-future-sections="${FUTURE_RESERVED_SECTIONS.join(',')}">
     <div class="flex items-center justify-between gap-4">
       <a href="index.html" class="text-xl sm:text-2xl font-bold text-blue-600 whitespace-nowrap">RPSC/REET</a>
 
@@ -133,41 +208,16 @@
         </svg>
       </button>
 
-      <div class="hidden md:flex flex-1 items-center justify-between gap-6">
-        <div class="flex items-center gap-6">
-          <a href="index.html" class="${linkClass(active === 'home')}">Home</a>
-          <a href="dashboard.html" class="${linkClass(active === 'dashboard')}">Dashboard</a>
-          <a href="achievements.html" class="${linkClass(active === 'achievements')}">Achievements</a>
-
-          <div class="relative group" data-dropdown="practice">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 ${linkClass(active === 'practice')}"
-              aria-expanded="false"
-              aria-haspopup="true"
-            >
-              Practice
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto absolute left-0 mt-2 w-52 rounded-xl border border-gray-100 bg-white p-2 shadow-xl transition" role="menu">
-              <a href="quizzes.html?mode=daily" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Daily Quiz</a>
-              <a href="quizzes.html?mode=topic" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Topic Tests</a>
-              <a href="quizzes.html?mode=mock" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Mock Tests</a>
-              <a href="quizzes.html" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">All Quizzes</a>
-            </div>
-          </div>
-
-          <a href="leaderboard.html" class="${linkClass(active === 'leaderboard')}">Leaderboard</a>
-          <a href="resources.html" class="${linkClass(active === 'resources')}">Resources</a>
+      <div class="hidden md:flex flex-1 items-center justify-between gap-8">
+        <div class="flex items-center gap-7 text-[15px]">
+          ${buildDesktopLinks(active)}
         </div>
 
         <div class="relative" data-dropdown="profile">
           <button
             id="profileMenuBtn"
             type="button"
-            class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
             aria-expanded="false"
             aria-haspopup="true"
           >
@@ -181,9 +231,9 @@
             </svg>
           </button>
 
-          <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-gray-100 bg-white p-2 shadow-xl" role="menu">
-            <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${active === 'profile' ? 'text-blue-700 bg-blue-50' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}" role="menuitem">My Profile</a>
-            <a id="profileAdminLink" href="/admin/" class="hidden rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Admin Panel</a>
+          <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl" role="menu">
+            <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${active === 'profile' ? 'text-blue-700 bg-blue-50' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'}" role="menuitem">My Profile</a>
+            <a id="profileAdminLink" href="/admin/" class="hidden rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Admin Panel</a>
             <button id="profileLogoutBtn" type="button" class="mt-1 w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50" role="menuitem">Logout</button>
           </div>
         </div>
@@ -192,14 +242,12 @@
 
     <div id="navMobileMenu" class="hidden md:hidden mt-3 rounded-xl border border-gray-200 bg-white p-3">
       <div class="flex flex-col gap-1">
-        <a href="index.html" class="rounded-lg px-3 py-2 text-sm ${active === 'home' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Home</a>
-        <a href="dashboard.html" class="rounded-lg px-3 py-2 text-sm ${active === 'dashboard' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Dashboard</a>
-        <a href="achievements.html" class="rounded-lg px-3 py-2 text-sm ${active === 'achievements' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Achievements</a>
+        ${buildMobileLinks(active)}
 
         <button
           id="mobilePracticeToggle"
           type="button"
-          class="mt-1 flex items-center justify-between rounded-lg px-3 py-2 text-sm ${active === 'practice' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}"
+          class="mt-1 flex items-center justify-between rounded-lg px-3 py-2 text-sm ${mobileLinkClass(active === 'practice')}"
           aria-expanded="false"
         >
           <span>Practice</span>
@@ -208,18 +256,12 @@
           </svg>
         </button>
         <div id="mobilePracticeMenu" class="hidden ml-3 border-l border-gray-200 pl-3">
-          <a href="quizzes.html?mode=daily" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">Daily Quiz</a>
-          <a href="quizzes.html?mode=topic" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">Topic Tests</a>
-          <a href="quizzes.html?mode=mock" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">Mock Tests</a>
-          <a href="quizzes.html" class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">All Quizzes</a>
+          ${buildPracticeMobileLinks()}
         </div>
 
-        <a href="leaderboard.html" class="rounded-lg px-3 py-2 text-sm ${active === 'leaderboard' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Leaderboard</a>
-        <a href="resources.html" class="rounded-lg px-3 py-2 text-sm ${active === 'resources' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">Resources</a>
-
         <div class="mt-2 border-t border-gray-100 pt-2">
-          <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${active === 'profile' ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">My Profile</a>
-          <a id="mobileProfileAdminLink" href="/admin/" class="hidden block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">Admin Panel</a>
+          <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${mobileLinkClass(active === 'profile')}">My Profile</a>
+          <a id="mobileProfileAdminLink" href="/admin/" class="hidden block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">Admin Panel</a>
           <button id="mobileProfileLogoutBtn" type="button" class="w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50">Logout</button>
         </div>
       </div>
@@ -258,28 +300,50 @@
     profileBtn.setAttribute('aria-expanded', 'false');
   }
 
+  function closePracticeMenu(practiceMenu, practiceBtn) {
+    if (!practiceMenu || !practiceBtn) return;
+    practiceMenu.classList.add('hidden');
+    practiceBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  function applyAdminLinksVisibility(mountNode, isAdmin) {
+    const profileAdminLink = mountNode.querySelector('#profileAdminLink');
+    const mobileProfileAdminLink = mountNode.querySelector('#mobileProfileAdminLink');
+    if (isAdmin) {
+      profileAdminLink && profileAdminLink.classList.remove('hidden');
+      mobileProfileAdminLink && mobileProfileAdminLink.classList.remove('hidden');
+      return;
+    }
+    profileAdminLink && profileAdminLink.classList.add('hidden');
+    mobileProfileAdminLink && mobileProfileAdminLink.classList.add('hidden');
+  }
+
   async function mount(target, options = {}) {
     const mountNode = typeof target === 'string' ? document.querySelector(target) : target;
     if (!mountNode) {
       throw new Error('Navbar mount target not found');
     }
 
+    if (mountNode.__navbarAbortController) {
+      mountNode.__navbarAbortController.abort();
+    }
+
+    const eventController = new AbortController();
+    const { signal } = eventController;
+    mountNode.__navbarAbortController = eventController;
+
     mountNode.innerHTML = buildMarkup(options);
 
     const user = await resolveUser(options.user);
-    const isAdmin = user && user.role === 'admin';
+    const isAdmin = !!(user && user.role === 'admin');
 
     applyProfileIdentity(mountNode, user);
-
-    const profileAdminLink = mountNode.querySelector('#profileAdminLink');
-    const mobileProfileAdminLink = mountNode.querySelector('#mobileProfileAdminLink');
-    if (isAdmin) {
-      profileAdminLink && profileAdminLink.classList.remove('hidden');
-      mobileProfileAdminLink && mobileProfileAdminLink.classList.remove('hidden');
-    }
+    applyAdminLinksVisibility(mountNode, isAdmin);
 
     const hamburgerBtn = mountNode.querySelector('#navHamburgerBtn');
     const mobileMenu = mountNode.querySelector('#navMobileMenu');
+    const practiceBtn = mountNode.querySelector('#practiceMenuBtn');
+    const practiceMenu = mountNode.querySelector('#practiceMenu');
     const mobilePracticeToggle = mountNode.querySelector('#mobilePracticeToggle');
     const mobilePracticeMenu = mountNode.querySelector('#mobilePracticeMenu');
 
@@ -287,13 +351,20 @@
       const isHidden = mobileMenu.classList.contains('hidden');
       mobileMenu.classList.toggle('hidden', !isHidden);
       hamburgerBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-    });
+    }, { signal });
+
+    practiceBtn && practiceBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isClosed = practiceMenu.classList.contains('hidden');
+      practiceMenu.classList.toggle('hidden', !isClosed);
+      practiceBtn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
+    }, { signal });
 
     mobilePracticeToggle && mobilePracticeToggle.addEventListener('click', () => {
       const isHidden = mobilePracticeMenu.classList.contains('hidden');
       mobilePracticeMenu.classList.toggle('hidden', !isHidden);
       mobilePracticeToggle.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-    });
+    }, { signal });
 
     const profileBtn = mountNode.querySelector('#profileMenuBtn');
     const profileMenu = mountNode.querySelector('#profileMenu');
@@ -302,23 +373,48 @@
       event.stopPropagation();
       const isClosed = profileMenu.classList.contains('hidden');
       profileMenu.classList.toggle('hidden', !isClosed);
+      if (isClosed) {
+        closePracticeMenu(practiceMenu, practiceBtn);
+      }
       profileBtn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
-    });
+    }, { signal });
 
     document.addEventListener('click', (event) => {
-      if (!profileMenu || !profileBtn) return;
-      if (!profileMenu.contains(event.target) && !profileBtn.contains(event.target)) {
+      if (profileMenu && profileBtn && !profileMenu.contains(event.target) && !profileBtn.contains(event.target)) {
         closeProfileMenu(profileMenu, profileBtn);
       }
-    });
+      if (practiceMenu && practiceBtn && !practiceMenu.contains(event.target) && !practiceBtn.contains(event.target)) {
+        closePracticeMenu(practiceMenu, practiceBtn);
+      }
+    }, { signal });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      closeProfileMenu(profileMenu, profileBtn);
+      closePracticeMenu(practiceMenu, practiceBtn);
+    }, { signal });
+
+    mobileMenu && mobileMenu.addEventListener('click', (event) => {
+      const targetLink = event.target.closest('a');
+      if (!targetLink) return;
+      mobileMenu.classList.add('hidden');
+      hamburgerBtn && hamburgerBtn.setAttribute('aria-expanded', 'false');
+    }, { signal });
 
     mountNode.querySelector('#profileLogoutBtn')?.addEventListener('click', () => {
       logout(options.logoutRedirect || DEFAULT_LOGOUT_REDIRECT);
-    });
+    }, { signal });
 
     mountNode.querySelector('#mobileProfileLogoutBtn')?.addEventListener('click', () => {
       logout(options.logoutRedirect || DEFAULT_LOGOUT_REDIRECT);
-    });
+    }, { signal });
+
+    window.addEventListener('user:updated', (event) => {
+      const eventUser = event && event.detail && event.detail.user;
+      if (!eventUser) return;
+      applyProfileIdentity(mountNode, eventUser);
+      applyAdminLinksVisibility(mountNode, eventUser.role === 'admin');
+    }, { signal });
   }
 
   global.Navbar = {

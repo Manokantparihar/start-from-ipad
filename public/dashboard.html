@@ -35,7 +35,7 @@
   <main id="dashboardMain" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
     <div class="mb-6">
       <h2 class="text-3xl font-bold text-gray-800 mb-1">My Dashboard</h2>
-      <p class="text-gray-600 text-sm">Clean performance analytics and attempt history</p>
+      <p class="text-gray-600 text-sm">Accuracy, mastery, rank, and improvement analytics</p>
     </div>
 
     <div id="globalBanner" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-medium"></div>
@@ -48,11 +48,11 @@
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-green-500">
         <div class="text-2xl font-bold text-green-600" id="statCompleted">-</div>
-        <div class="text-gray-500 text-sm mt-1">Completed</div>
+        <div class="text-gray-500 text-sm mt-1">Progress</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-orange-500">
         <div class="text-2xl font-bold text-orange-600 truncate" id="statWeak">-</div>
-        <div class="text-gray-500 text-sm mt-1">Weak Area</div>
+        <div class="text-gray-500 text-sm mt-1">Improvement Area</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 border-l-4 border-l-purple-500">
         <div class="text-2xl font-bold text-purple-600" id="statMastery">-</div>
@@ -63,19 +63,19 @@
     <!-- Compact Summary Row -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       <div>
-        <span class="text-gray-500">Best Score:</span>
+        <span class="text-gray-500">Best Accuracy:</span>
         <span class="font-semibold text-gray-800 ml-2" id="statBest">-</span>
       </div>
       <div>
-        <span class="text-gray-500">Latest Score:</span>
+        <span class="text-gray-500">Latest Accuracy:</span>
         <span class="font-semibold text-gray-800 ml-2" id="statLatest">-</span>
       </div>
       <div>
-        <span class="text-gray-500">Streak:</span>
+        <span class="text-gray-500">Streak Progress:</span>
         <span class="font-semibold text-gray-800 ml-2" id="statStreak">-</span>
       </div>
       <div>
-        <span class="text-gray-500">Rank:</span>
+        <span class="text-gray-500">Current Rank:</span>
         <span class="font-semibold text-gray-800 ml-2" id="statRank">-</span>
       </div>
     </section>
@@ -87,7 +87,7 @@
           <input
             id="filterSearch"
             type="text"
-            placeholder="Quiz title..."
+            placeholder="Search practice set..."
             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>
@@ -118,7 +118,7 @@
 
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="font-semibold text-gray-800">Attempt History</h3>
+        <h3 class="font-semibold text-gray-800">Progress History</h3>
         <span id="filteredCount" class="text-xs text-gray-500 block mt-1"></span>
       </div>
 
@@ -141,8 +141,8 @@
 
       <div id="emptyState" class="hidden text-center py-16 px-6">
         <div class="text-5xl mb-4">📭</div>
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">No attempts yet</h3>
-        <p class="text-gray-400 mb-6">Start a quiz to see your attempt history here.</p>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">No progress records yet</h3>
+        <p class="text-gray-400 mb-6">Start a quiz to begin tracking improvement and milestones.</p>
         <div class="flex flex-wrap gap-3 justify-center">
           <a href="quizzes.html?mode=daily" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm">Daily Quiz</a>
           <a href="quizzes.html?mode=topic" class="px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm">Topic Tests</a>
@@ -152,7 +152,7 @@
 
       <div id="noResults" class="hidden text-center py-10 px-6">
         <div class="text-3xl mb-3">🔍</div>
-        <p class="text-gray-500">No attempts match your filters.</p>
+        <p class="text-gray-500">No progress records match your filters.</p>
         <button id="clearFiltersBtn2" class="mt-3 text-blue-600 text-sm underline">Clear filters</button>
       </div>
     </section>

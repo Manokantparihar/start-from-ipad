@@ -16,8 +16,8 @@
   <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animation-slideIn">
     <section class="mb-8 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 px-6 py-7 text-white shadow-[0_28px_70px_-40px_rgba(15,23,42,0.75)] sm:px-8">
       <p class="text-[11px] uppercase tracking-[0.2em] text-blue-100 font-semibold">Welcome back</p>
-      <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Ready for your next attempt?</h1>
-      <p class="mt-3 max-w-2xl text-sm text-blue-100 sm:text-base">Stay consistent and move your accuracy up with focused daily practice.</p>
+      <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Ready for your next improvement milestone?</h1>
+      <p class="mt-3 max-w-2xl text-sm text-blue-100 sm:text-base">Build accuracy, mastery, and streak consistency with focused exam-prep practice.</p>
       <a href="quizzes.html?mode=all" class="mt-6 inline-flex items-center rounded-xl bg-white px-6 py-3 text-sm font-bold text-slate-900 hover:bg-slate-100">Start Quiz</a>
     </section>
 
@@ -29,21 +29,21 @@
       </article>
 
       <article class="rounded-2xl border border-slate-200 bg-white p-5">
-        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Rank Hint</p>
-        <p class="mt-2 text-2xl font-black text-indigo-700" id="rankHint">Build momentum</p>
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Rank &amp; Momentum</p>
+        <p class="mt-2 text-2xl font-black text-indigo-700" id="rankHint">Progress in motion</p>
         <p class="text-xs text-slate-500 mt-2" id="rankMeta">Complete more quizzes to enter weekly ranking.</p>
       </article>
 
       <article class="rounded-2xl border border-slate-200 bg-white p-5">
-        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Accuracy Summary</p>
+        <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Accuracy &amp; Mastery</p>
         <p class="mt-2 text-3xl font-black text-emerald-600" id="accuracyValue">0%</p>
-        <p class="text-xs text-slate-500 mt-2" id="accuracyMeta">No attempts yet</p>
+        <p class="text-xs text-slate-500 mt-2" id="accuracyMeta">No progress data yet</p>
       </article>
 
       <article class="rounded-2xl border border-slate-200 bg-white p-5">
         <p class="text-xs uppercase tracking-[0.18em] text-slate-500 font-semibold">Area to Improve</p>
         <p class="mt-2 text-lg font-bold text-violet-700 break-words" id="weakTopic">No data yet</p>
-        <p class="text-xs text-slate-500 mt-2">Lowest performing area from completed quizzes.</p>
+        <p class="text-xs text-slate-500 mt-2">Lowest-accuracy area identified from completed practice.</p>
       </article>
     </section>
 
@@ -55,7 +55,7 @@
         <a href="quizzes.html?mode=daily" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
           <div class="text-4xl mb-3">📅</div>
           <h3 class="font-semibold text-slate-800 mb-1">Daily</h3>
-          <p class="text-sm text-slate-600">Daily revision set</p>
+          <p class="text-sm text-slate-600">Daily accuracy check-in</p>
           <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Start now →</p>
         </a>
 
@@ -63,7 +63,7 @@
         <a href="quizzes.html?mode=topic" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
           <div class="text-4xl mb-3">🎯</div>
           <h3 class="font-semibold text-slate-800 mb-1">Topic</h3>
-          <p class="text-sm text-slate-600">Focused topic practice</p>
+          <p class="text-sm text-slate-600">Topic-wise improvement drills</p>
           <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Explore →</p>
         </a>
 
@@ -71,7 +71,7 @@
         <a href="quizzes.html?mode=mock" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow group">
           <div class="text-4xl mb-3">🚀</div>
           <h3 class="font-semibold text-slate-800 mb-1">Mock</h3>
-          <p class="text-sm text-slate-600">Full exam simulation</p>
+          <p class="text-sm text-slate-600">Full-length rank simulation</p>
           <p class="text-xs text-blue-600 font-medium mt-3 group-hover:text-blue-700">Take test →</p>
         </a>
       </div>
@@ -217,11 +217,11 @@
     }
 
     function getStreakMilestone(streak) {
-      if (streak === 0) return 'Start your streak!';
-      if (streak === 3) return '🎉 3-day streak unlocked!';
-      if (streak === 7) return '🌟 7-day streak! Keep going!';
-      if (streak === 30) return '👑 30-day streak! You\'re amazing!';
-      if (streak % 7 === 0 && streak > 7) return `⭐ ${streak}-day streak! Incredible!`;
+      if (streak === 0) return 'Start your first streak milestone.';
+      if (streak === 3) return '3-day milestone reached.';
+      if (streak === 7) return '7-day milestone reached. Keep climbing.';
+      if (streak === 30) return '30-day milestone reached. Elite consistency.';
+      if (streak % 7 === 0 && streak > 7) return `${streak}-day streak milestone reached.`;
       return 'Keep it going!';
     }
 
@@ -230,20 +230,20 @@
       if (rank > 0 && rank <= 3) {
         return {
           hint: `Top ${rank}`,
-          meta: 'You are in podium contention this week.'
+          meta: 'You are in top-tier rank contention this week.'
         };
       }
 
       if (rank > 0) {
         return {
           hint: `#${rank}`,
-          meta: 'Improve accuracy to climb faster.'
+          meta: 'Improve accuracy and consistency to climb faster.'
         };
       }
 
       return {
         hint: 'Unranked',
-        meta: 'Complete more quizzes to enter weekly ranking.'
+        meta: 'Complete more practice sets to enter weekly ranking.'
       };
     }
 
@@ -277,7 +277,7 @@
       document.getElementById('accuracyValue').textContent = `${accuracy}%`;
       document.getElementById('accuracyMeta').textContent = attempted > 0
         ? `${attempted} questions evaluated`
-        : 'No attempts yet';
+        : 'No progress data yet';
 
       // Fetch attempts for weak topic calculation
       let attempts = [];

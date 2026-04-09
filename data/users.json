@@ -12,7 +12,7 @@
       "currentStreak": 3,
       "bestStreak": 3,
       "lastActiveDate": "2026-04-09",
-      "updatedAt": "2026-04-09T18:51:53.475Z"
+      "updatedAt": "2026-04-09T20:17:04.629Z"
     },
     "totalXp": 312,
     "currentLevel": 4,
@@ -66,7 +66,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-09T09:41:59.755Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
+    "gamificationUpdatedAt": "2026-04-09T20:17:04.629Z",
     "xpBalance": 312,
     "streakFreeze": {
       "maxCount": 1,
@@ -383,7 +383,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T18:51:53.475Z"
+      "updatedAt": "2026-04-09T20:17:04.629Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -393,7 +393,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T04:22:44.975Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
+    "gamificationUpdatedAt": "2026-04-09T20:17:04.629Z",
     "xpBalance": 159,
     "streakFreeze": {
       "maxCount": 1,
@@ -652,7 +652,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T18:51:53.475Z"
+      "updatedAt": "2026-04-09T20:17:04.629Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -662,7 +662,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T01:42:12.640Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
+    "gamificationUpdatedAt": "2026-04-09T20:17:04.629Z",
     "xpBalance": 46,
     "streakFreeze": {
       "maxCount": 1,
@@ -850,7 +850,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T18:51:53.475Z"
+      "updatedAt": "2026-04-09T20:17:04.629Z"
     },
     "profileImage": "/uploads/avatars/b4c7947b-6a72-4378-8338-7c20413af1a0.jpeg",
     "updatedAt": "2026-04-08T11:46:28.527Z",
@@ -891,7 +891,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T11:43:06.071Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
+    "gamificationUpdatedAt": "2026-04-09T20:17:04.629Z",
     "xpBalance": 84,
     "streakFreeze": {
       "maxCount": 1,
@@ -1116,7 +1116,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-09T18:51:53.475Z"
+      "updatedAt": "2026-04-09T20:17:04.629Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -1126,7 +1126,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T18:37:21.275Z"
     },
-    "gamificationUpdatedAt": "2026-04-09T18:51:53.475Z",
+    "gamificationUpdatedAt": "2026-04-09T20:17:04.629Z",
     "profileImage": "/uploads/avatars/5b24cef1-e655-4eb2-9d50-6c96405eb6da.jpeg",
     "updatedAt": "2026-04-08T22:26:17.636Z",
     "xpBalance": 219,

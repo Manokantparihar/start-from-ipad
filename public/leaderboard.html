@@ -25,25 +25,25 @@
             Competition mode
           </div>
           <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Leaderboard</h1>
-          <p class="mt-3 max-w-xl text-sm leading-6 text-blue-100 sm:text-base">Track rank pressure, streak consistency, and topic performance while you fight for podium control.</p>
-          <p id="heroHint" class="mt-4 inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white">Complete 1 quiz to stay #1.</p>
+          <p class="mt-3 max-w-xl text-sm leading-6 text-blue-100 sm:text-base">Track rank movement, streak consistency, and topic accuracy to drive measurable improvement.</p>
+          <p id="heroHint" class="mt-4 inline-flex rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white">Complete 1 practice set to hold your rank.</p>
         </div>
 
         <div class="grid gap-3 sm:grid-cols-3 lg:w-[31rem]">
           <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
             <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Your rank</div>
             <div id="viewerRank" class="mt-2 text-3xl font-black text-white">—</div>
-            <div id="viewerPlacementHint" class="mt-1 text-xs text-blue-100">Find your place in the race.</div>
+            <div id="viewerPlacementHint" class="mt-1 text-xs text-blue-100">Find your position in the progression ladder.</div>
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
             <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Current streak</div>
             <div id="viewerCurrentStreak" class="mt-2 text-3xl font-black text-white">🔥 0-day streak</div>
-            <div class="mt-1 text-xs text-blue-100">Keep the streak alive.</div>
+            <div class="mt-1 text-xs text-blue-100">Keep consistency active.</div>
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
             <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-100">Competitive pulse</div>
-            <div id="competitivePulse" class="mt-2 text-xl font-black text-white">Stay sharp. Podium spots move fast.</div>
-            <div id="competitivePulseHint" class="mt-1 text-xs text-blue-100">One strong quiz can flip the top 3.</div>
+            <div id="competitivePulse" class="mt-2 text-xl font-black text-white">Stay sharp. Rank shifts quickly.</div>
+            <div id="competitivePulseHint" class="mt-1 text-xs text-blue-100">One strong attempt can change the top 3.</div>
           </div>
         </div>
       </div>
@@ -52,8 +52,8 @@
     <section class="mb-6">
       <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 class="text-lg font-bold text-gray-800">Top 3 contenders</h2>
-          <p id="top3Subtitle" class="text-sm text-gray-500">The players setting the pace right now.</p>
+          <h2 class="text-lg font-bold text-gray-800">Top 3 by Progress</h2>
+          <p id="top3Subtitle" class="text-sm text-gray-500">Learners setting the current benchmark.</p>
         </div>
         <span id="leaderboardMeta" class="text-xs font-medium text-gray-400"></span>
       </div>
@@ -78,7 +78,7 @@
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
         <div>
           <h2 id="leaderboardTitle" class="font-semibold text-gray-800">Overall Leaderboard</h2>
-           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by mastery, accuracy, then consistency.</p>
+           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by mastery, accuracy, and consistency signals.</p>
         </div>
       </div>
 
@@ -89,7 +89,7 @@
       <div id="emptyState" class="hidden px-6 py-16 text-center">
         <div class="text-5xl mb-4">🏆</div>
         <h3 class="text-lg font-semibold text-gray-700 mb-2">Not enough data yet</h3>
-         <p id="emptyMessage" class="text-gray-500">Complete a few quizzes to populate this leaderboard.</p>
+         <p id="emptyMessage" class="text-gray-500">Complete a few practice sets to populate this leaderboard.</p>
       </div>
 
       <div id="tableWrap" class="hidden overflow-x-auto">
@@ -172,7 +172,7 @@
         const data = await res.json();
         state.mode = 'overall';
         document.getElementById('leaderboardTitle').textContent = 'Overall Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy and streak consistency.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy, streak consistency, and progression pace.';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'overall');
       } catch {
         renderEmpty('Unable to load the overall leaderboard right now.');
@@ -186,7 +186,7 @@
         const data = await res.json();
         state.mode = 'streak';
         document.getElementById('leaderboardTitle').textContent = 'Streak Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by current streak and pressure to hold rank.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by current streak and rank stability.';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'streak');
       } catch {
         renderEmpty('Unable to load the streak leaderboard right now.');
@@ -221,7 +221,7 @@
         state.mode = 'topic';
 
         document.getElementById('leaderboardTitle').textContent = `Topic Leaderboard: ${data.selectedTopic?.label || state.selectedTopic}`;
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by score inside the selected topic.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy inside the selected topic.';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'topic');
       } catch {
         renderEmpty('Unable to load the topic leaderboard right now.');
@@ -367,10 +367,10 @@
       document.getElementById('top3Grid').innerHTML = '';
       document.getElementById('viewerRank').textContent = '—';
       document.getElementById('viewerCurrentStreak').textContent = '🔥 0-day streak';
-      document.getElementById('competitivePulse').textContent = 'Stay sharp. Podium spots move fast.';
-      document.getElementById('viewerPlacementHint').textContent = 'Find your place in the race.';
-      document.getElementById('competitivePulseHint').textContent = 'One strong quiz can flip the top 3.';
-      document.getElementById('heroHint').textContent = 'Complete 1 quiz to stay #1.';
+      document.getElementById('competitivePulse').textContent = 'Stay sharp. Rank shifts quickly.';
+      document.getElementById('viewerPlacementHint').textContent = 'Find your position in the progression ladder.';
+      document.getElementById('competitivePulseHint').textContent = 'One strong attempt can change the top 3.';
+      document.getElementById('heroHint').textContent = 'Complete 1 practice set to hold your rank.';
       const emptyState = document.getElementById('emptyState');
       document.getElementById('emptyMessage').textContent = message;
       emptyState.classList.remove('hidden');
@@ -458,19 +458,19 @@
       if (!viewer || !viewer.rank) {
         return mode === 'topic'
           ? 'Enter this topic board to start climbing.'
-          : 'Stay sharp. Podium spots move fast.';
+          : 'Stay sharp. Rank shifts quickly.';
       }
 
-      if (viewer.rank === 1) return 'You are the benchmark. Defend #1.';
-      if (viewer.rank <= 3) return `Podium pressure is on at #${viewer.rank}.`;
-      return `You are in pursuit from #${viewer.rank}.`;
+      if (viewer.rank === 1) return 'You set the benchmark. Defend #1 with consistency.';
+      if (viewer.rank <= 3) return `Strong position at #${viewer.rank}. Keep improving.`;
+      return `You are climbing from #${viewer.rank}.`;
     }
 
     function getCompetitivePulseHint(viewer, rows, mode) {
       if (!viewer || !viewer.rank) {
         return mode === 'topic'
           ? 'Select a topic and post your first score.'
-          : 'One strong quiz can flip the top 3.';
+          : 'One strong attempt can change the top 3.';
       }
 
       const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
@@ -483,38 +483,38 @@
 
     function getPlacementHint(viewer, mode) {
       if (!viewer || !viewer.rank) {
-        return mode === 'topic' ? 'Earn a score to show up in the topic race.' : 'Build accuracy to show up in the race.';
+        return mode === 'topic' ? 'Earn a score to appear in the topic rankings.' : 'Build accuracy to appear in the rankings.';
       }
 
-      if (viewer.rank === 1) return 'Holding the top spot right now.';
-      if (viewer.rank <= 3) return `Inside the podium at #${viewer.rank}.`;
+      if (viewer.rank === 1) return 'Holding the top rank right now.';
+      if (viewer.rank <= 3) return `Inside the top tier at #${viewer.rank}.`;
       return `Chasing the top 3 from #${viewer.rank}.`;
     }
 
     function getMotivationHint(viewer, rows, mode) {
       if (!viewer || !viewer.rank) {
-        return mode === 'topic' ? 'Complete a topic quiz to enter the board.' : 'Complete a quiz to enter the board.';
+        return mode === 'topic' ? 'Complete a topic quiz to enter the board.' : 'Complete a practice set to enter the board.';
       }
 
       const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
       if (viewer.rank === 1) {
         const nextRank = orderedRows.find((row) => Number(row.rank) === 2);
         const gap = nextRank ? Math.max(Number(viewer.accuracyPercent ?? 0) - Number(nextRank.accuracyPercent ?? 0), 0) : 0;
-        if (gap <= 1) return 'Complete 1 quiz to stay #1.';
-        return 'Complete 1 quiz to protect your lead over #2.';
+        if (gap <= 1) return 'Complete 1 practice set to hold #1.';
+        return 'Complete 1 practice set to protect your lead over #2.';
       }
 
       if (viewer.rank <= 3) {
-        return `Complete 1 quiz to challenge #${viewer.rank - 1}.`;
+        return `Complete 1 practice set to challenge #${viewer.rank - 1}.`;
       }
 
-      return 'One good quiz can push you closer to the podium.';
+      return 'One strong attempt can push you closer to the podium.';
     }
 
     function getTopThreeSubtitle(mode) {
       if (mode === 'topic') return 'Top scorers in the selected topic.';
       if (mode === 'streak') return 'Longest streaks are setting the pace.';
-      return 'The accuracy leaders are on the podium below.';
+      return 'The current accuracy leaders are on the podium below.';
     }
 
     function escapeHtml(value) {
