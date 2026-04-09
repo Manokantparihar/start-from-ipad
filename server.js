@@ -28,8 +28,21 @@ const config = require('./src/config');
 const app = express();
 const PORT = config.port;
 
+function isLocalhostOrigin(origin) {
+  try {
+    const url = new URL(origin);
+    return url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  } catch (_) {
+    return false;
+  }
+}
+
 const corsOriginValidator = (origin, callback) => {
   if (!origin) {
+    return callback(null, true);
+  }
+
+  if (config.isLocalDevelopment && isLocalhostOrigin(origin)) {
     return callback(null, true);
   }
 
