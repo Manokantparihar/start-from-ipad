@@ -25,19 +25,19 @@ const authMiddleware = require('./src/middlewares/auth');
 const isAdmin = require('./src/middlewares/isAdmin');
 const { syncUsersToGamification } = require('./src/utils/gamification');
 const db = require('./src/utils/db');
-const config = require('./src/config');
+const appConfig = require('./src/config');
 const { createRateLimiter } = require('./src/middlewares/rateLimit');
 
 const app = express();
-const PORT = config.port;
+const PORT = appConfig.port;
 const authRateLimiter = createRateLimiter({
-  windowMs: config.authRateLimitWindowMs,
-  maxRequests: config.authRateLimitMaxRequests,
+  windowMs: appConfig.authRateLimitWindowMs,
+  maxRequests: appConfig.authRateLimitMaxRequests,
   message: 'Too many auth requests, please try again later.'
 });
 const contactRateLimiter = createRateLimiter({
-  windowMs: config.contactRateLimitWindowMs,
-  maxRequests: config.contactRateLimitMaxRequests,
+  windowMs: appConfig.contactRateLimitWindowMs,
+  maxRequests: appConfig.contactRateLimitMaxRequests,
   message: 'Too many contact submissions, please try again later.'
 });
 
@@ -46,7 +46,7 @@ const corsOriginValidator = (origin, callback) => {
     return callback(null, true);
   }
 
-  if (config.corsAllowedOrigins.includes(origin)) {
+  if (appConfig.corsAllowedOrigins.includes(origin)) {
     return callback(null, true);
   }
 
@@ -66,8 +66,8 @@ app.use(
     crossOriginEmbedderPolicy: false
   })
 );
-app.use(express.json({ limit: config.payloadLimit }));
-app.use(express.urlencoded({ extended: true, limit: config.payloadLimit }));
+app.use(express.json({ limit: appConfig.payloadLimit }));
+app.use(express.urlencoded({ extended: true, limit: appConfig.payloadLimit }));
 app.use(cookieParser());
 
 // --- Routes ---
@@ -103,9 +103,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Data Paths & Contact Setup ---
-const DATA_DIR = config.dataDir;
+const DATA_DIR = appConfig.dataDir;
 const SUBMISSIONS_FILE = path.join(DATA_DIR, 'contact-submissions.jsonl');
-const CONTACT_TARGET_EMAIL = config.contactTargetEmail;
+const CONTACT_TARGET_EMAIL = appConfig.contactTargetEmail;
 
 // Make sure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -188,7 +188,7 @@ app.post('/api/contact', contactRateLimiter, async (req, res) => {
 });
 
 async function bootstrapGamification() {
-  const [users, attempts, quizzes, events, groups, config] = await Promise.all([
+  const [users, attempts, quizzes, events, groups, gamificationConfig] = await Promise.all([
     db.getUsers(),
     db.getAttempts(),
     db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
@@ -196,7 +196,14 @@ async function bootstrapGamification() {
     db.getGroups(),
     db.getGamificationConfig()
   ]);
-  const syncedUsers = await syncUsersToGamification({ users, attempts, quizzes, events, groups, config });
+  const syncedUsers = await syncUsersToGamification({
+    users,
+    attempts,
+    quizzes,
+    events,
+    groups,
+    config: gamificationConfig
+  });
   await db.saveUsers(syncedUsers);
 }
 
