@@ -12,15 +12,15 @@
       "currentStreak": 4,
       "bestStreak": 4,
       "lastActiveDate": "2026-04-11",
-      "updatedAt": "2026-04-11T12:45:05.320Z"
+      "updatedAt": "2026-04-11T13:38:51.515Z"
     },
-    "totalXp": 446,
-    "currentLevel": 5,
-    "xpToNextLevel": 54,
-    "currentLevelXp": 350,
-    "nextLevelXp": 500,
-    "currentLevelProgress": 64,
-    "completedQuizCount": 15,
+    "totalXp": 531,
+    "currentLevel": 6,
+    "xpToNextLevel": 144,
+    "currentLevelXp": 500,
+    "nextLevelXp": 675,
+    "currentLevelProgress": 18,
+    "completedQuizCount": 20,
     "currentStreak": 4,
     "bestStreak": 4,
     "lastActiveDate": "2026-04-11",
@@ -66,16 +66,16 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-09T09:41:59.755Z"
     },
-    "gamificationUpdatedAt": "2026-04-11T12:45:05.320Z",
-    "xpBalance": 446,
+    "gamificationUpdatedAt": "2026-04-11T13:38:51.515Z",
+    "xpBalance": 531,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 0,
       "usedCount": 1,
       "lastConsumedOn": "2026-04-10"
     },
-    "weeklyXp": 359,
-    "weeklyCompletedQuizzes": 15,
+    "weeklyXp": 419,
+    "weeklyCompletedQuizzes": 20,
     "weeklyRank": 4,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Improving",
@@ -107,7 +107,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 15,
+        "progress": 20,
         "target": 2,
         "completed": true
       }
@@ -134,9 +134,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 15,
+        "progress": 20,
         "target": 2,
-        "bonusXpEarned": 75,
+        "bonusXpEarned": 100,
         "completed": true,
         "badgeAwardedAt": "2026-04-07T20:53:29.511Z"
       }
@@ -286,10 +286,10 @@
             "rewardXp": 8,
             "rewardEarned": true,
             "progress": {
-              "value": 4,
+              "value": 9,
               "target": 2
             },
-            "completedAt": "2026-04-11T12:45:05.317Z"
+            "completedAt": "2026-04-11T13:38:51.512Z"
           },
           {
             "id": "score-80-plus",
@@ -300,7 +300,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-11T12:45:05.317Z"
+            "completedAt": "2026-04-11T13:38:51.512Z"
           },
           {
             "id": "new-topic",
@@ -330,10 +330,10 @@
           "rewardXp": 8,
           "rewardEarned": true,
           "progress": {
-            "value": 4,
+            "value": 9,
             "target": 2
           },
-          "completedAt": "2026-04-11T12:45:05.317Z"
+          "completedAt": "2026-04-11T13:38:51.512Z"
         },
         {
           "id": "score-80-plus",
@@ -344,7 +344,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-11T12:45:05.317Z"
+          "completedAt": "2026-04-11T13:38:51.512Z"
         },
         {
           "id": "new-topic",
@@ -365,17 +365,60 @@
       "rewardXpEarned": 14
     },
     "totalSpentXp": 0,
-    "baseXp": 277,
+    "baseXp": 327,
     "boostXp": 0,
-    "weekendBonusXp": 12,
-    "eventBonusXp": 87,
+    "weekendBonusXp": 22,
+    "eventBonusXp": 112,
     "missionBonusXp": 70,
-    "totalCorrectAnswers": 37,
-    "totalQuestionsAnswered": 50,
-    "accuracyPercent": 74,
+    "totalCorrectAnswers": 46,
+    "totalQuestionsAnswered": 72,
+    "accuracyPercent": 64,
     "masteryLevel": "Improving",
-    "rankScore": 274055,
-    "weeklyAccuracyPercent": 74
+    "rankScore": 264060,
+    "weeklyAccuracyPercent": 64,
+    "revision": {
+      "wrongQuestions": [
+        {
+          "questionId": "q3",
+          "question": "√144 = ?",
+          "options": [
+            "10",
+            "11",
+            "12",
+            "13"
+          ],
+          "correctAnswer": "12",
+          "topic": "General",
+          "subtopic": "",
+          "quizId": "quiz-003",
+          "quizTitle": "Mathematics - Basic",
+          "savedAt": "2026-04-11T13:38:51.513Z",
+          "lastSeenAt": "2026-04-11T13:38:51.512Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "q4",
+          "question": "25% of 200 = ?",
+          "options": [
+            "40",
+            "50",
+            "60",
+            "70"
+          ],
+          "correctAnswer": "50",
+          "topic": "General",
+          "subtopic": "",
+          "quizId": "quiz-003",
+          "quizTitle": "Mathematics - Basic",
+          "savedAt": "2026-04-11T13:38:51.513Z",
+          "lastSeenAt": "2026-04-11T13:38:51.513Z",
+          "timesWrong": 1,
+          "timesUnattempted": 0
+        }
+      ],
+      "bookmarks": []
+    }
   },
   {
     "id": "401f86e2-8e13-4199-b271-f5be696d2f58",
@@ -426,7 +469,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-11T12:45:05.320Z"
+      "updatedAt": "2026-04-11T13:38:51.516Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -436,7 +479,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T04:22:44.975Z"
     },
-    "gamificationUpdatedAt": "2026-04-11T12:45:05.320Z",
+    "gamificationUpdatedAt": "2026-04-11T13:38:51.516Z",
     "xpBalance": 159,
     "streakFreeze": {
       "maxCount": 1,
@@ -695,7 +738,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-11T12:45:05.320Z"
+      "updatedAt": "2026-04-11T13:38:51.516Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -705,7 +748,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T01:42:12.640Z"
     },
-    "gamificationUpdatedAt": "2026-04-11T12:45:05.320Z",
+    "gamificationUpdatedAt": "2026-04-11T13:38:51.516Z",
     "xpBalance": 46,
     "streakFreeze": {
       "maxCount": 1,
@@ -893,7 +936,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-11T12:45:05.320Z"
+      "updatedAt": "2026-04-11T13:38:51.516Z"
     },
     "profileImage": "/uploads/avatars/b4c7947b-6a72-4378-8338-7c20413af1a0.jpeg",
     "updatedAt": "2026-04-08T11:46:28.527Z",
@@ -934,7 +977,7 @@
       "rarity": "rare",
       "unlockedAt": "2026-04-08T11:43:06.071Z"
     },
-    "gamificationUpdatedAt": "2026-04-11T12:45:05.320Z",
+    "gamificationUpdatedAt": "2026-04-11T13:38:51.516Z",
     "xpBalance": 84,
     "streakFreeze": {
       "maxCount": 1,
@@ -1159,7 +1202,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-08",
-      "updatedAt": "2026-04-11T12:45:05.320Z"
+      "updatedAt": "2026-04-11T13:38:51.516Z"
     },
     "latestBadge": {
       "id": "five-quizzes",
@@ -1169,7 +1212,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-08T18:37:21.275Z"
     },
-    "gamificationUpdatedAt": "2026-04-11T12:45:05.320Z",
+    "gamificationUpdatedAt": "2026-04-11T13:38:51.516Z",
     "profileImage": "/uploads/avatars/5b24cef1-e655-4eb2-9d50-6c96405eb6da.jpeg",
     "updatedAt": "2026-04-11T11:45:40.977Z",
     "xpBalance": 219,

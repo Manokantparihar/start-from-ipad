@@ -173,6 +173,170 @@ function getRankingForSummary(summary, others) {
   };
 }
 
+function sanitizeQuestionEntry(entry = {}) {
+  const options = Array.isArray(entry.options) ? entry.options.map((opt) => String(opt)) : [];
+  return {
+    questionId: String(entry.questionId || '').trim(),
+    question: String(entry.question || '').trim(),
+    options,
+    correctAnswer: entry.correctAnswer === undefined || entry.correctAnswer === null ? '' : String(entry.correctAnswer),
+    topic: String(entry.topic || 'General').trim() || 'General',
+    subtopic: String(entry.subtopic || '').trim(),
+    quizId: String(entry.quizId || '').trim(),
+    quizTitle: String(entry.quizTitle || '').trim(),
+    savedAt: entry.savedAt || new Date().toISOString(),
+    lastSeenAt: entry.lastSeenAt || new Date().toISOString(),
+    timesWrong: Math.max(0, toNumber(entry.timesWrong, 0)),
+    timesUnattempted: Math.max(0, toNumber(entry.timesUnattempted, 0))
+  };
+}
+
+function ensureRevisionState(user = {}) {
+  const revision = user.revision && typeof user.revision === 'object' ? user.revision : {};
+  return {
+    wrongQuestions: Array.isArray(revision.wrongQuestions) ? revision.wrongQuestions.map(sanitizeQuestionEntry) : [],
+    bookmarks: Array.isArray(revision.bookmarks) ? revision.bookmarks.map(sanitizeQuestionEntry) : []
+  };
+}
+
+function buildTopicGroups(items = []) {
+  const groups = new Map();
+  items.forEach((item) => {
+    const topic = String(item.topic || 'General').trim() || 'General';
+    if (!groups.has(topic)) {
+      groups.set(topic, { topic, count: 0, questions: [] });
+    }
+    const bucket = groups.get(topic);
+    bucket.count += 1;
+    bucket.questions.push(item);
+  });
+  return Array.from(groups.values()).sort((a, b) => b.count - a.count || a.topic.localeCompare(b.topic));
+}
+
+function buildRevisionPayload(revisionState) {
+  const wrongQuestions = revisionState.wrongQuestions;
+  const bookmarks = revisionState.bookmarks;
+  const groupedByTopic = buildTopicGroups(wrongQuestions);
+  const lastWrongQuestions = [...wrongQuestions]
+    .sort((a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
+    .slice(0, 20);
+  const weakTopic = groupedByTopic[0]?.topic || null;
+  const weakTopicQuestions = weakTopic
+    ? wrongQuestions.filter((item) => item.topic === weakTopic).slice(0, 20)
+    : [];
+  const retryWrongQuestions = [...wrongQuestions]
+    .sort((a, b) => b.timesWrong - a.timesWrong || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
+    .slice(0, 20);
+  const retryUnattemptedQuestions = [...wrongQuestions]
+    .filter((item) => (item.timesUnattempted || 0) > 0)
+    .sort((a, b) => b.timesUnattempted - a.timesUnattempted || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
+    .slice(0, 20);
+
+  return {
+    totals: {
+      wrongQuestions: wrongQuestions.length,
+      bookmarkedQuestions: bookmarks.length,
+      topicsInRevision: groupedByTopic.length
+    },
+    groupedByTopic,
+    bookmarks,
+    revisionSets: {
+      lastWrongQuestions,
+      weakTopic,
+      weakTopicQuestions,
+      retryWrongQuestions,
+      retryUnattemptedQuestions
+    }
+  };
+}
+
+function upsertRevisionQuestion(wrongQuestions, nextEntry) {
+  const idx = wrongQuestions.findIndex((item) => item.questionId === nextEntry.questionId);
+  if (idx === -1) {
+    wrongQuestions.push(nextEntry);
+    return;
+  }
+
+  const current = wrongQuestions[idx];
+  wrongQuestions[idx] = {
+    ...current,
+    ...nextEntry,
+    timesWrong: Math.max(0, toNumber(current.timesWrong, 0) + toNumber(nextEntry.timesWrong, 0)),
+    timesUnattempted: Math.max(0, toNumber(current.timesUnattempted, 0) + toNumber(nextEntry.timesUnattempted, 0))
+  };
+}
+
+// GET /api/attempts/revision - revision dashboard payload
+router.get('/revision', async (req, res) => {
+  try {
+    const users = await db.getUsers();
+    const user = users.find((entry) => entry.id === req.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const revisionState = ensureRevisionState(user);
+    return res.json(buildRevisionPayload(revisionState));
+  } catch (err) {
+    console.error('[GET /api/attempts/revision]', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/attempts/revision/bookmarks - add bookmark
+router.post('/revision/bookmarks', async (req, res) => {
+  try {
+    const payload = sanitizeQuestionEntry(req.body || {});
+    if (!payload.questionId || !payload.question) {
+      return res.status(400).json({ error: 'questionId and question are required' });
+    }
+
+    const users = await db.getUsers();
+    const idx = users.findIndex((entry) => entry.id === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+
+    const revisionState = ensureRevisionState(users[idx]);
+    const exists = revisionState.bookmarks.some((item) => item.questionId === payload.questionId);
+    if (!exists) {
+      revisionState.bookmarks.push({
+        ...payload,
+        savedAt: new Date().toISOString(),
+        lastSeenAt: new Date().toISOString()
+      });
+    }
+
+    users[idx].revision = revisionState;
+    await db.saveUsers(users);
+
+    return res.status(exists ? 200 : 201).json({ saved: true });
+  } catch (err) {
+    console.error('[POST /api/attempts/revision/bookmarks]', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE /api/attempts/revision/bookmarks/:questionId - remove bookmark
+router.delete('/revision/bookmarks/:questionId', async (req, res) => {
+  try {
+    const questionId = String(req.params.questionId || '').trim();
+    if (!questionId) return res.status(400).json({ error: 'questionId is required' });
+
+    const users = await db.getUsers();
+    const idx = users.findIndex((entry) => entry.id === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+
+    const revisionState = ensureRevisionState(users[idx]);
+    const before = revisionState.bookmarks.length;
+    revisionState.bookmarks = revisionState.bookmarks.filter((item) => item.questionId !== questionId);
+
+    users[idx].revision = revisionState;
+    await db.saveUsers(users);
+
+    return res.json({ removed: before !== revisionState.bookmarks.length });
+  } catch (err) {
+    console.error('[DELETE /api/attempts/revision/bookmarks/:questionId]', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/attempts - start a new attempt
 router.post('/', async (req, res) => {
   try {
@@ -358,6 +522,31 @@ router.put('/:id/save', async (req, res) => {
     attempts[idx] = attempt;
     await db.saveAttempts(attempts);
 
+    const answersByQuestionId = new Map((attempt.answers || []).map((ans) => [ans.questionId, ans.selected]));
+    const revisionUpdates = [];
+    if (quiz && Array.isArray(quiz.questions)) {
+      quiz.questions.forEach((question) => {
+        const selected = answersByQuestionId.has(question.id) ? answersByQuestionId.get(question.id) : null;
+        const isAttempted = selected !== null && selected !== undefined && selected !== '';
+        const isCorrect = isAttempted && selected === question.correctAnswer;
+        if (isCorrect) return;
+
+        revisionUpdates.push(sanitizeQuestionEntry({
+          questionId: question.id,
+          question: question.question || question.text || '',
+          options: Array.isArray(question.options) ? question.options : [],
+          correctAnswer: question.correctAnswer,
+          topic: getQuestionTopic(question, quiz),
+          subtopic: question.subtopic || '',
+          quizId: attempt.quizId,
+          quizTitle: attempt.quizTitle,
+          lastSeenAt: new Date().toISOString(),
+          timesWrong: isAttempted ? 1 : 0,
+          timesUnattempted: isAttempted ? 0 : 1
+        }));
+      });
+    }
+
     res.json({ saved: true });
   } catch {
     res.status(500).json({ error: 'Server error' });
@@ -390,11 +579,33 @@ router.post('/:id/submit', async (req, res) => {
     const quiz = allQuizzes.find(q => q.id === attempt.quizId);
     let score = 0;
     let total = 0;
+    const revisionUpdates = [];
     if (quiz && quiz.questions) {
       total = quiz.questions.length;
       for (const q of quiz.questions) {
         const userAns = attempt.answers.find(a => a.questionId === q.id);
-        if (userAns && userAns.selected === q.correctAnswer) score++;
+        const selected = userAns ? userAns.selected : null;
+        const isAttempted = selected !== null && selected !== undefined && selected !== '';
+        const isCorrect = isAttempted && selected === q.correctAnswer;
+
+        if (isCorrect) {
+          score++;
+          continue;
+        }
+
+        revisionUpdates.push(sanitizeQuestionEntry({
+          questionId: q.id,
+          question: q.question || q.text || '',
+          options: Array.isArray(q.options) ? q.options : [],
+          correctAnswer: q.correctAnswer,
+          topic: getQuestionTopic(q, quiz),
+          subtopic: q.subtopic || '',
+          quizId: attempt.quizId,
+          quizTitle: attempt.quizTitle,
+          lastSeenAt: new Date().toISOString(),
+          timesWrong: isAttempted ? 1 : 0,
+          timesUnattempted: isAttempted ? 0 : 1
+        }));
       }
     }
     attempt.score = score;
@@ -411,6 +622,13 @@ router.post('/:id/submit', async (req, res) => {
         db.getGamificationConfig()
       ]);
       if (users.length > 0) {
+        const userIdx = users.findIndex((entry) => entry.id === req.userId);
+        if (userIdx !== -1 && revisionUpdates.length > 0) {
+          const revisionState = ensureRevisionState(users[userIdx]);
+          revisionUpdates.forEach((entry) => upsertRevisionQuestion(revisionState.wrongQuestions, entry));
+          users[userIdx].revision = revisionState;
+        }
+
         const syncedUsers = await syncUsersToGamification({
           users,
           attempts,
