@@ -22,6 +22,7 @@
   <!-- Custom history button (outside navbar) -->
   <div id="customQuizNav" class="hidden bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3 flex gap-3 max-w-7xl mx-auto">
     <button id="historyBtn" class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm font-medium">📋 History</button>
+    <button id="revisionBtn" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 text-sm font-medium">🧠 Review & Revise</button>
   </div>
   <h1 id="pageTitle" class="sr-only"></h1>
 
@@ -111,6 +112,36 @@
       <div id="historyList"></div>
     </section>
 
+    <!-- Section: Review & Revise -->
+    <section id="revisionSection" class="hidden animation-fadeIn">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">🧠 Review & Revise</h2>
+          <p class="text-sm text-gray-500 mt-1">Wrong questions, unattempted questions, bookmarks, and auto revision sets.</p>
+        </div>
+        <button id="backFromRevisionBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium">← Back to Quizzes</button>
+      </div>
+
+      <div id="revisionSummaryCards" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-4 mb-5">
+        <h3 class="font-semibold text-gray-800 mb-3">Auto Revision Sets</h3>
+        <div id="revisionSets" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="bg-white border border-gray-200 rounded-xl p-4">
+          <h3 class="font-semibold text-gray-800 mb-3">Wrong Questions by Topic</h3>
+          <div id="revisionByTopic" class="space-y-3"></div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4">
+          <h3 class="font-semibold text-gray-800 mb-3">Saved Questions</h3>
+          <div id="savedQuestions" class="space-y-3"></div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script src="/js/modules/navbar.js"></script>
@@ -157,6 +188,9 @@
     let saveDebounce = null;
     let availableQuizzes = [];
     let retrySession = null;
+    let currentResultData = null;
+    let revisionData = null;
+    let navButtonsBound = false;
 
     // ─── Init ─────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
@@ -164,6 +198,7 @@
         Navbar.mount('#appNavbar', { active: 'quizzes' });
       }
       document.getElementById('customQuizNav').classList.remove('hidden');
+      setupNavButtons();
       currentMode = getModeFromQuery();
       applyModeContext();
       await checkAuth();
@@ -247,7 +282,6 @@
           `).join('');
         }
         show('quizListSection');
-        setupNavButtons();
       } catch (err) {
         showError(err.message || 'Failed to load quizzes');
       }
@@ -400,7 +434,11 @@
 
     // ─── Navigation ───────────────────────────────────────────────────────────
     function setupNavButtons() {
+      if (navButtonsBound) return;
+      navButtonsBound = true;
+
       document.getElementById('historyBtn').addEventListener('click', showHistory);
+      document.getElementById('revisionBtn').addEventListener('click', showRevision);
       document.getElementById('prevQuestionBtn').addEventListener('click', () => {
         if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); }
       });
@@ -429,6 +467,11 @@
       document.getElementById('viewHistoryBtn').addEventListener('click', showHistory);
       document.getElementById('backToQuizzesBtn').addEventListener('click', () => {
         hide('historySection');
+        show('quizListSection');
+        document.getElementById('pageTitle').textContent = MODE_CONFIG[currentMode].pageTitle;
+      });
+      document.getElementById('backFromRevisionBtn').addEventListener('click', () => {
+        hide('revisionSection');
         show('quizListSection');
         document.getElementById('pageTitle').textContent = MODE_CONFIG[currentMode].pageTitle;
       });
@@ -557,7 +600,7 @@
 
     function retryWrongQuestions(resultData) {
       const wrong = Array.isArray(resultData.reviewItems)
-        ? resultData.reviewItems.filter((item) => item && item.isCorrect === false)
+        ? resultData.reviewItems.filter((item) => item && item.isAttempted && item.isCorrect === false)
         : [];
 
       if (wrong.length === 0) {
@@ -585,6 +628,36 @@
       renderQuickNav();
     }
 
+    function retryUnattemptedQuestions(resultData) {
+      const pending = Array.isArray(resultData.reviewItems)
+        ? resultData.reviewItems.filter((item) => item && !item.isAttempted)
+        : [];
+
+      if (pending.length === 0) {
+        alert('No unattempted questions to retry.');
+        return;
+      }
+
+      retrySession = { startedAt: Date.now() };
+      currentAttemptId = null;
+      currentQuizData = {
+        id: currentQuizId,
+        title: `${resultData.quizTitle || 'Quiz'} - Unattempted Questions Retry`,
+        topic: '',
+        questions: pending.map(normalizeQuestionForRetry)
+      };
+      currentQuestionIndex = 0;
+      userAnswers = {};
+      expiresAt = null;
+
+      hide('resultsSection');
+      show('quizSection');
+      document.getElementById('quizTitle').textContent = currentQuizData.title;
+      document.getElementById('pageTitle').textContent = currentQuizData.title;
+      renderQuestion();
+      renderQuickNav();
+    }
+
     function retryFullQuiz(resultData) {
       retrySession = null;
       hide('resultsSection');
@@ -593,10 +666,12 @@
     }
 
     function renderEnhancedResults(resultData) {
+      currentResultData = resultData;
+      const hasReviewItems = Array.isArray(resultData?.reviewItems) && resultData.reviewItems.length > 0;
       const container = document.getElementById('resultsContainer');
       container.innerHTML = QuizResults.render(resultData, {
         actions: {
-          review: true,
+          review: hasReviewItems,
           retryWrong: true,
           retryFull: true,
           recommended: false
@@ -607,6 +682,220 @@
         onReview: toggleReviewSection,
         onRetryWrong: () => retryWrongQuestions(resultData),
         onRetryFull: () => retryFullQuiz(resultData)
+      });
+
+      const extraActions = document.createElement('div');
+      extraActions.className = 'mt-4 flex flex-wrap gap-2';
+      extraActions.innerHTML = `
+        <button type="button" id="retryUnattemptedBtn" class="px-3 py-2 text-sm font-semibold rounded-lg bg-sky-100 text-sky-700 hover:bg-sky-200">Retry Unattempted Questions</button>
+        <button type="button" id="openRevisionFromResultBtn" class="px-3 py-2 text-sm font-semibold rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Open Review & Revise</button>
+      `;
+      container.appendChild(extraActions);
+
+      const retryUnattemptedBtn = container.querySelector('#retryUnattemptedBtn');
+      const openRevisionFromResultBtn = container.querySelector('#openRevisionFromResultBtn');
+      retryUnattemptedBtn?.addEventListener('click', () => retryUnattemptedQuestions(resultData));
+      openRevisionFromResultBtn?.addEventListener('click', showRevision);
+    }
+
+    function renderRevisionSummary(revision) {
+      const totals = revision?.totals || {};
+      const cards = [
+        { label: 'Wrong Bank', value: totals.wrongQuestions || 0, tone: 'text-rose-700 bg-rose-50 border-rose-100' },
+        { label: 'Saved Questions', value: totals.bookmarkedQuestions || 0, tone: 'text-emerald-700 bg-emerald-50 border-emerald-100' },
+        { label: 'Topics', value: totals.topicsInRevision || 0, tone: 'text-indigo-700 bg-indigo-50 border-indigo-100' },
+        { label: 'Revision Sets', value: 4, tone: 'text-sky-700 bg-sky-50 border-sky-100' }
+      ];
+
+      document.getElementById('revisionSummaryCards').innerHTML = cards.map((card) => `
+        <div class="rounded-xl border p-3 ${card.tone}">
+          <div class="text-xs uppercase tracking-wide font-semibold">${escHtml(card.label)}</div>
+          <div class="text-2xl font-bold mt-1">${escHtml(card.value)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderRevisionSets(revision) {
+      const sets = revision?.revisionSets || {};
+      const definitions = [
+        { key: 'lastWrongQuestions', title: 'Last Wrong Questions', questions: sets.lastWrongQuestions || [] },
+        { key: 'weakTopicQuestions', title: `Weak Topic Questions${sets.weakTopic ? ` (${sets.weakTopic})` : ''}`, questions: sets.weakTopicQuestions || [] },
+        { key: 'retryWrongQuestions', title: 'Retry Wrong Questions', questions: sets.retryWrongQuestions || [] },
+        { key: 'retryUnattemptedQuestions', title: 'Retry Unattempted Questions', questions: sets.retryUnattemptedQuestions || [] }
+      ];
+
+      document.getElementById('revisionSets').innerHTML = definitions.map((setDef) => {
+        const disabled = setDef.questions.length === 0;
+        return `
+          <div class="rounded-xl border border-gray-200 p-3 bg-white">
+            <div class="font-semibold text-gray-800">${escHtml(setDef.title)}</div>
+            <div class="text-sm text-gray-500 mt-1">${setDef.questions.length} question${setDef.questions.length === 1 ? '' : 's'}</div>
+            <button type="button" data-revision-set="${setDef.key}" class="mt-3 w-full px-3 py-2 rounded-lg text-sm font-semibold ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}" ${disabled ? 'disabled' : ''}>Start Set</button>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-revision-set]').forEach((btn) => {
+        btn.addEventListener('click', () => startRevisionSet(btn.dataset.revisionSet));
+      });
+    }
+
+    function revisionQuestionCard(question, source = '') {
+      return `
+        <div class="rounded-lg border border-gray-200 p-3 bg-gray-50">
+          <div class="text-xs text-gray-500 uppercase tracking-wide">${escHtml(question.topic || 'General')}${source ? ` • ${escHtml(source)}` : ''}</div>
+          <div class="font-medium text-gray-800 mt-1">${escHtml(question.question || 'Question')}</div>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <button type="button" data-bookmark-question="${escHtml(question.questionId)}" class="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Save</button>
+            <button type="button" data-remove-bookmark="${escHtml(question.questionId)}" class="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-rose-100 text-rose-700 hover:bg-rose-200">Remove</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRevisionTopics(revision) {
+      const grouped = Array.isArray(revision?.groupedByTopic) ? revision.groupedByTopic : [];
+      const container = document.getElementById('revisionByTopic');
+      if (grouped.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500">No wrong questions captured yet. Complete a quiz to build revision sets.</p>';
+        return;
+      }
+
+      container.innerHTML = grouped.map((group) => `
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <summary class="cursor-pointer font-semibold text-gray-800">${escHtml(group.topic)} <span class="text-gray-500 text-sm">(${group.count})</span></summary>
+          <div class="mt-3 space-y-2">${(group.questions || []).map((q) => revisionQuestionCard(q, 'Wrong Bank')).join('')}</div>
+        </details>
+      `).join('');
+
+      bindRevisionQuestionActions();
+    }
+
+    function renderSavedQuestions(revision) {
+      const saved = Array.isArray(revision?.bookmarks) ? revision.bookmarks : [];
+      const container = document.getElementById('savedQuestions');
+      if (saved.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500">No bookmarks yet. Save questions from review sets.</p>';
+        return;
+      }
+
+      container.innerHTML = saved.map((q) => revisionQuestionCard(q, 'Saved')).join('');
+      bindRevisionQuestionActions();
+    }
+
+    async function loadRevisionData() {
+      const res = await fetch('/api/attempts/revision', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to load revision sets');
+      revisionData = await res.json();
+      renderRevisionSummary(revisionData);
+      renderRevisionSets(revisionData);
+      renderRevisionTopics(revisionData);
+      renderSavedQuestions(revisionData);
+    }
+
+    async function showRevision() {
+      try {
+        hide('quizListSection');
+        hide('resultsSection');
+        hide('historySection');
+        showLoading('Loading revision sets...');
+        await loadRevisionData();
+        hide('loadingMsg');
+        show('revisionSection');
+        document.getElementById('pageTitle').textContent = 'Review & Revise';
+      } catch (err) {
+        hide('loadingMsg');
+        showError(err.message || 'Failed to load revision data');
+      }
+    }
+
+    function startRetrySessionWithQuestions(questions, title) {
+      if (!Array.isArray(questions) || questions.length === 0) {
+        alert('No questions available in this set.');
+        return;
+      }
+
+      retrySession = { startedAt: Date.now() };
+      currentAttemptId = null;
+      currentQuizData = {
+        id: currentQuizId || 'revision-set',
+        title,
+        topic: '',
+        questions: questions.map(normalizeQuestionForRetry)
+      };
+      userAnswers = {};
+      currentQuestionIndex = 0;
+      expiresAt = null;
+
+      hide('revisionSection');
+      hide('resultsSection');
+      show('quizSection');
+      document.getElementById('quizTitle').textContent = currentQuizData.title;
+      document.getElementById('pageTitle').textContent = currentQuizData.title;
+      renderQuestion();
+      renderQuickNav();
+    }
+
+    function startRevisionSet(setKey) {
+      const sets = revisionData?.revisionSets || {};
+      const map = {
+        lastWrongQuestions: { title: 'Revision - Last Wrong Questions', questions: sets.lastWrongQuestions || [] },
+        weakTopicQuestions: { title: `Revision - Weak Topic${sets.weakTopic ? ` (${sets.weakTopic})` : ''}`, questions: sets.weakTopicQuestions || [] },
+        retryWrongQuestions: { title: 'Revision - Retry Wrong Questions', questions: sets.retryWrongQuestions || [] },
+        retryUnattemptedQuestions: { title: 'Revision - Retry Unattempted Questions', questions: sets.retryUnattemptedQuestions || [] }
+      };
+      const chosen = map[setKey];
+      if (!chosen) return;
+      startRetrySessionWithQuestions(chosen.questions, chosen.title);
+    }
+
+    async function addBookmark(questionId) {
+      const allQuestions = [
+        ...(revisionData?.bookmarks || []),
+        ...((revisionData?.groupedByTopic || []).flatMap((group) => group.questions || [])),
+        ...(currentResultData?.reviewItems || [])
+      ];
+      const target = allQuestions.find((item) => String(item.questionId) === String(questionId));
+      if (!target) return;
+
+      const res = await fetch('/api/attempts/revision/bookmarks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(target)
+      });
+      if (!res.ok) throw new Error('Failed to save bookmark');
+      await loadRevisionData();
+    }
+
+    async function removeBookmark(questionId) {
+      const res = await fetch(`/api/attempts/revision/bookmarks/${encodeURIComponent(questionId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error('Failed to remove bookmark');
+      await loadRevisionData();
+    }
+
+    function bindRevisionQuestionActions() {
+      document.querySelectorAll('[data-bookmark-question]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          try {
+            await addBookmark(button.dataset.bookmarkQuestion);
+          } catch (err) {
+            alert(err.message || 'Failed to save bookmark');
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-remove-bookmark]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          try {
+            await removeBookmark(button.dataset.removeBookmark);
+          } catch (err) {
+            alert(err.message || 'Failed to remove bookmark');
+          }
+        });
       });
     }
 
@@ -709,6 +998,7 @@
       try {
         hide('quizListSection');
         hide('resultsSection');
+        hide('revisionSection');
         showLoading('Loading history...');
 
         const res = await fetch('/api/attempts', { credentials: 'include' });
@@ -768,6 +1058,7 @@
       hide('quizSection');
       hide('resultsSection');
       hide('historySection');
+      hide('revisionSection');
       hide('errorMsg');
       const el = document.getElementById('loadingMsg');
       el.innerHTML = `<div class="text-4xl mb-4">⏳</div><p class="text-gray-500">${escHtml(msg)}</p>`;

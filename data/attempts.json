@@ -835,5 +835,157 @@
     "completedAt": 1775911505317,
     "score": 0,
     "total": 1
+  },
+  {
+    "id": "975cd557-5a4f-4cf0-8262-a7db94424bf1",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775913154526,
+    "expiresAt": 1775914354526,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "बाड़मेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      }
+    ],
+    "createdAt": 1775913154526,
+    "completedAt": 1775913173716,
+    "score": 1,
+    "total": 4
+  },
+  {
+    "id": "84d22d48-2ae2-47cf-9a55-1a7e536dacbf",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-003",
+    "quizTitle": "Mathematics - Basic",
+    "status": "completed",
+    "startedAt": 1775913255089,
+    "expiresAt": 1775914455089,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "60"
+      },
+      {
+        "questionId": "q2",
+        "selected": "15"
+      },
+      {
+        "questionId": "q3",
+        "selected": "12"
+      },
+      {
+        "questionId": "q5",
+        "selected": "25 cm²"
+      }
+    ],
+    "createdAt": 1775913255089,
+    "completedAt": 1775913279721,
+    "score": 3,
+    "total": 5
+  },
+  {
+    "id": "2ccf49b3-1769-425d-bf28-5eb5bfccec29",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775913768022,
+    "expiresAt": 1775914968022,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "बाड़मेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      }
+    ],
+    "createdAt": 1775913768022,
+    "completedAt": 1775913783530,
+    "score": 1,
+    "total": 4
+  },
+  {
+    "id": "fcbb43a8-3bda-4652-ac9b-f9d158ae916b",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775913869355,
+    "expiresAt": 1775915069355,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "बाड़मेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "हाथी"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775913869355,
+    "completedAt": 1775913879863,
+    "score": 1,
+    "total": 4
+  },
+  {
+    "id": "3d07d980-d266-43ea-a6f4-a0f43a817749",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-003",
+    "quizTitle": "Mathematics - Basic",
+    "status": "completed",
+    "startedAt": 1775914708867,
+    "expiresAt": 1775915908867,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "60"
+      },
+      {
+        "questionId": "q2",
+        "selected": "20"
+      },
+      {
+        "questionId": "q4",
+        "selected": "40"
+      },
+      {
+        "questionId": "q5",
+        "selected": "25 cm²"
+      }
+    ],
+    "createdAt": 1775914708867,
+    "completedAt": 1775914731512,
+    "score": 3,
+    "total": 5
   }
 ]
