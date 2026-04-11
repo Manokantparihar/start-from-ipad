@@ -45,9 +45,9 @@ function buildAllUserStats(attempts) {
     const entry = map.get(a.userId) || { count: 0, scoreSum: 0, lastTs: null };
     entry.count += 1;
 
-    const total = a.total || a.maxScore || 0;
-    if (total > 0) {
-      entry.scoreSum += Math.round(((a.score || 0) / total) * 100);
+    const maxPossibleScore = a.total || a.maxScore || 0;
+    if (maxPossibleScore > 0) {
+      entry.scoreSum += Math.round(((a.score || 0) / maxPossibleScore) * 100);
     }
 
     const ts = a.submittedAt || a.createdAt || 0;

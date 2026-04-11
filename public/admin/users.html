@@ -273,7 +273,7 @@
         <td class="px-5 py-3">${roleBadge(user.role || 'user')}</td>
         <td class="px-5 py-3">${statusBadge(user.status)}</td>
         <td class="px-5 py-3 text-gray-700">${user.totalAttempts ?? '—'}</td>
-        <td class="px-5 py-3 text-gray-700">${user.avgScore !== null && user.avgScore !== undefined ? user.avgScore + '%' : '—'}</td>
+        <td class="px-5 py-3 text-gray-700">${user.avgScore != null ? user.avgScore + '%' : '—'}</td>
         <td class="px-5 py-3 text-gray-500 text-xs">${fmtDate(user.createdAt)}</td>
         <td class="px-5 py-3">
           <div class="flex flex-wrap gap-1">
@@ -303,6 +303,13 @@
 
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatAttemptScore(attempt) {
+    if (attempt.status !== 'completed') return attempt.status || '—';
+    const maxScore = attempt.total || attempt.maxScore || 0;
+    if (!maxScore) return '—';
+    return Math.round(((attempt.score || 0) / maxScore) * 100) + '%';
   }
 
   function handleTableAction(e) {
@@ -388,7 +395,7 @@
             ${recentAttempts.map(a => `
               <div class="flex justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
                 <span class="text-gray-700 truncate max-w-[60%]">${escHtml(a.quizTitle||a.quizId||'Quiz')}</span>
-                <span class="text-gray-500">${a.status === 'completed' && a.total ? Math.round(((a.score||0)/a.total)*100)+'%' : a.status}</span>
+                <span class="text-gray-500">${formatAttemptScore(a)}</span>
                 <span class="text-gray-400">${fmtDate(a.submittedAt||a.createdAt)}</span>
               </div>
             `).join('')}
