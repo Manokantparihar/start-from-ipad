@@ -731,5 +731,37 @@
     "completedAt": 1775773573770,
     "score": 1,
     "total": 1
+  },
+  {
+    "id": "2a4fc517-f2cc-4bcc-838d-894fe1eb0564",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775910403161,
+    "expiresAt": 1775911603161,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775910403161,
+    "completedAt": 1775910427589,
+    "score": 3,
+    "total": 4
   }
 ]
