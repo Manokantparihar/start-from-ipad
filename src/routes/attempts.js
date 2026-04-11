@@ -11,6 +11,168 @@ const router = express.Router();
 // All attempt routes require authentication
 router.use(auth);
 
+function toNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function getAttemptDurationSeconds(attempt) {
+  const startedAt = toNumber(attempt.startedAt, 0);
+  const completedAt = toNumber(attempt.completedAt || attempt.updatedAt || attempt.createdAt, 0);
+  if (startedAt > 0 && completedAt > startedAt) {
+    return Math.max(0, Math.round((completedAt - startedAt) / 1000));
+  }
+  return Math.max(0, toNumber(attempt.timeSpent, 0));
+}
+
+function getQuestionTopic(question, quiz) {
+  return String(question.topic || quiz.topic || 'General').trim() || 'General';
+}
+
+function buildAttemptSummary(attempt, quiz) {
+  const questions = Array.isArray(quiz?.questions) ? quiz.questions : [];
+  const answers = Array.isArray(attempt.answers) ? attempt.answers : [];
+  const answerMap = new Map(answers.map((answer) => [answer.questionId, answer.selected]));
+  const reviewItems = [];
+  const topicBuckets = new Map();
+
+  let correctAnswers = 0;
+  let incorrectAnswers = 0;
+  let unattemptedQuestions = 0;
+
+  const registerTopic = (topic, isCorrect, isAttempted) => {
+    const key = String(topic || 'General').trim() || 'General';
+    if (!topicBuckets.has(key)) {
+      topicBuckets.set(key, {
+        topic: key,
+        questionCount: 0,
+        correct: 0,
+        incorrect: 0,
+        unattempted: 0
+      });
+    }
+
+    const bucket = topicBuckets.get(key);
+    bucket.questionCount += 1;
+
+    if (!isAttempted) {
+      bucket.unattempted += 1;
+      return;
+    }
+
+    if (isCorrect) bucket.correct += 1;
+    else bucket.incorrect += 1;
+  };
+
+  for (const question of questions) {
+    const selected = answerMap.has(question.id) ? answerMap.get(question.id) : null;
+    const correctAnswer = question.correctAnswer;
+    const isAttempted = selected !== null && selected !== undefined && selected !== '';
+    const isCorrect = isAttempted && selected === correctAnswer;
+    const topic = getQuestionTopic(question, quiz);
+
+    if (isCorrect) correctAnswers += 1;
+    else if (isAttempted) incorrectAnswers += 1;
+    else unattemptedQuestions += 1;
+
+    registerTopic(topic, isCorrect, isAttempted);
+
+    reviewItems.push({
+      questionId: question.id,
+      question: String(question.question || question.text || '').trim(),
+      options: Array.isArray(question.options) ? question.options : [],
+      selected,
+      correctAnswer,
+      selectedText: selected === null || selected === undefined || selected === '' ? '' : String(selected),
+      correctText: correctAnswer === null || correctAnswer === undefined ? '' : String(correctAnswer),
+      isCorrect,
+      isAttempted,
+      topic,
+      subtopic: question.subtopic || '',
+      explanation: question.explanation || ''
+    });
+  }
+
+  const totalQuestions = questions.length;
+  const score = typeof attempt.score === 'number' ? attempt.score : correctAnswers;
+  const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+  const attempted = correctAnswers + incorrectAnswers;
+  const accuracy = attempted > 0 ? Math.round((correctAnswers / attempted) * 100) : 0;
+  const timeTakenSeconds = getAttemptDurationSeconds(attempt);
+  const averageTimePerQuestionSeconds = totalQuestions > 0 ? Math.round(timeTakenSeconds / totalQuestions) : 0;
+
+  const topicPerformance = Array.from(topicBuckets.values())
+    .map((entry) => ({
+      ...entry,
+      accuracy: entry.questionCount > 0 ? Math.round((entry.correct / entry.questionCount) * 100) : 0
+    }))
+    .sort((a, b) => {
+      if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
+      if (b.correct !== a.correct) return b.correct - a.correct;
+      return a.topic.localeCompare(b.topic);
+    });
+
+  return {
+    attemptId: attempt.id,
+    quizId: attempt.quizId,
+    quizTitle: attempt.quizTitle,
+    status: attempt.status,
+    score,
+    percentage,
+    accuracy,
+    totalQuestions,
+    correctAnswers,
+    incorrectAnswers,
+    unattemptedQuestions,
+    timeTakenSeconds,
+    averageTimePerQuestionSeconds,
+    topicPerformance,
+    strongestTopic: topicPerformance[0] || null,
+    weakestTopic: topicPerformance.length > 0 ? topicPerformance[topicPerformance.length - 1] : null,
+    reviewItems,
+    completedAt: attempt.completedAt || attempt.createdAt
+  };
+}
+
+function compareSummariesDesc(a, b) {
+  if (a.score !== b.score) return b.score - a.score;
+  if (a.percentage !== b.percentage) return b.percentage - a.percentage;
+  if (a.accuracy !== b.accuracy) return b.accuracy - a.accuracy;
+  if (a.timeTakenSeconds !== b.timeTakenSeconds) return a.timeTakenSeconds - b.timeTakenSeconds;
+  return toNumber(a.completedAt, 0) - toNumber(b.completedAt, 0);
+}
+
+function getRankingForSummary(summary, others) {
+  const rows = [...others, { userId: '__current__', summary }]
+    .sort((left, right) => compareSummariesDesc(left.summary, right.summary));
+
+  const rank = rows.findIndex((entry) => entry.userId === '__current__') + 1;
+  const totalParticipants = rows.length;
+  const top = rows[0]?.summary || summary;
+  const averageScore = totalParticipants > 0
+    ? Math.round(rows.reduce((sum, entry) => sum + toNumber(entry.summary.score, 0), 0) / totalParticipants)
+    : 0;
+  const averagePercentage = totalParticipants > 0
+    ? Math.round(rows.reduce((sum, entry) => sum + toNumber(entry.summary.percentage, 0), 0) / totalParticipants)
+    : 0;
+
+  return {
+    quizRank: rank,
+    percentile: totalParticipants > 0
+      ? Math.max(1, Math.round(((totalParticipants - rank + 1) / totalParticipants) * 100))
+      : 0,
+    totalParticipants,
+    topScore: {
+      score: top.score,
+      percentage: top.percentage
+    },
+    averageScore: {
+      score: averageScore,
+      percentage: averagePercentage
+    }
+  };
+}
+
 // POST /api/attempts - start a new attempt
 router.post('/', async (req, res) => {
   try {
@@ -52,6 +214,66 @@ router.post('/', async (req, res) => {
     res.json({ attemptId: attempt.id, expiresAt: attempt.expiresAt });
   } catch {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/attempts/:id/insights - rich result analytics for one attempt
+router.get('/:id/insights', async (req, res) => {
+  try {
+    const attempts = await db.getAttempts();
+    const attempt = attempts.find((entry) => entry.id === req.params.id && entry.userId === req.userId);
+    if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
+
+    const allQuizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
+    const quiz = allQuizzes.find((entry) => entry.id === attempt.quizId);
+    if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
+
+    const currentSummary = buildAttemptSummary(attempt, quiz);
+
+    const sameQuizAttempts = attempts.filter((entry) => (
+      entry.quizId === attempt.quizId &&
+      ['completed', 'expired'].includes(entry.status) &&
+      toNumber(entry.total, 0) > 0
+    ));
+
+    const bestByUser = new Map();
+    sameQuizAttempts.forEach((entry) => {
+      if (entry.userId === attempt.userId) return;
+      const summary = buildAttemptSummary(entry, quiz);
+      const existing = bestByUser.get(entry.userId);
+      if (!existing || compareSummariesDesc(summary, existing.summary) < 0) {
+        bestByUser.set(entry.userId, { userId: entry.userId, summary });
+      }
+    });
+
+    const ranking = getRankingForSummary(currentSummary, Array.from(bestByUser.values()));
+
+    const previousAttempt = sameQuizAttempts
+      .filter((entry) => entry.userId === attempt.userId && entry.id !== attempt.id)
+      .sort((a, b) => toNumber(b.completedAt || b.createdAt, 0) - toNumber(a.completedAt || a.createdAt, 0))[0] || null;
+
+    const previousSummary = previousAttempt ? buildAttemptSummary(previousAttempt, quiz) : null;
+    const previousRanking = previousSummary ? getRankingForSummary(previousSummary, Array.from(bestByUser.values())) : null;
+
+    const comparison = previousSummary ? {
+      previousAttemptId: previousSummary.attemptId,
+      scoreChange: currentSummary.score - previousSummary.score,
+      rankChange: (previousRanking?.quizRank || 0) - ranking.quizRank,
+      accuracyChange: currentSummary.accuracy - previousSummary.accuracy,
+      previousScore: previousSummary.score,
+      previousPercentage: previousSummary.percentage,
+      previousAccuracy: previousSummary.accuracy,
+      previousRank: previousRanking?.quizRank || null
+    } : null;
+
+    return res.json({
+      ...currentSummary,
+      ranking,
+      comparison
+    });
+  } catch (err) {
+    console.error('[GET /api/attempts/:id/insights]', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

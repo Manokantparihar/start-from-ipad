@@ -114,6 +114,7 @@
   </main>
 
   <script src="/js/modules/navbar.js"></script>
+  <script src="/js/modules/quizResults.js"></script>
 
   <script>
     // ─── State ───────────────────────────────────────────────────────────────
@@ -154,6 +155,8 @@
     let timerInterval = null;
     let expiresAt = null;
     let saveDebounce = null;
+    let availableQuizzes = [];
+    let retrySession = null;
 
     // ─── Init ─────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
@@ -208,6 +211,7 @@
         const res = await fetch('/api/quizzes', { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to load quizzes');
         const quizzes = await res.json();
+        availableQuizzes = Array.isArray(quizzes) ? quizzes : [];
         const visibleQuizzes = currentMode === 'all'
           ? quizzes
           : quizzes.filter(quiz => (quiz.mode || '').toLowerCase() === currentMode);
@@ -304,10 +308,11 @@
         `${((currentQuestionIndex + 1) / total) * 100}%`;
 
       const selected = userAnswers[q.id];
+      const questionText = q.text || q.question || '';
 
       document.getElementById('questionContainer').innerHTML = `
         <div class="mb-2 text-sm text-blue-600 font-semibold">Question ${currentQuestionIndex + 1}</div>
-        <h3 class="text-xl font-bold text-gray-800 mb-6">${escHtml(q.text)}</h3>
+        <h3 class="text-xl font-bold text-gray-800 mb-6">${escHtml(questionText)}</h3>
         <div class="space-y-3" id="optionsContainer">
           ${q.options.map(opt => `
             <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-all ${
@@ -459,9 +464,166 @@
       await submitQuiz();
     }
 
+    function normalizeQuestionForRetry(item) {
+      return {
+        id: item.questionId,
+        text: item.question || '',
+        options: Array.isArray(item.options) ? item.options : [],
+        correctAnswer: item.correctAnswer,
+        topic: item.topic || '',
+        subtopic: item.subtopic || '',
+        explanation: item.explanation || ''
+      };
+    }
+
+    function buildLocalResultFromRetry() {
+      const questions = Array.isArray(currentQuizData?.questions) ? currentQuizData.questions : [];
+      const reviewItems = questions.map((question) => {
+        const selected = userAnswers[question.id];
+        const isAttempted = selected !== undefined && selected !== null && selected !== '';
+        const isCorrect = isAttempted && selected === question.correctAnswer;
+        return {
+          questionId: question.id,
+          question: question.text || question.question || '',
+          options: question.options || [],
+          selected,
+          correctAnswer: question.correctAnswer,
+          selectedText: isAttempted ? String(selected) : '',
+          correctText: question.correctAnswer == null ? '' : String(question.correctAnswer),
+          isCorrect,
+          isAttempted,
+          topic: question.topic || currentQuizData.topic || 'General',
+          subtopic: question.subtopic || '',
+          explanation: question.explanation || ''
+        };
+      });
+
+      const totalQuestions = reviewItems.length;
+      const correctAnswers = reviewItems.filter((item) => item.isCorrect).length;
+      const incorrectAnswers = reviewItems.filter((item) => item.isAttempted && !item.isCorrect).length;
+      const unattemptedQuestions = reviewItems.filter((item) => !item.isAttempted).length;
+      const attempted = correctAnswers + incorrectAnswers;
+      const accuracy = attempted > 0 ? Math.round((correctAnswers / attempted) * 100) : 0;
+      const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+      const timeTakenSeconds = retrySession ? Math.max(0, Math.round((Date.now() - retrySession.startedAt) / 1000)) : 0;
+
+      const topicMap = new Map();
+      reviewItems.forEach((item) => {
+        const topic = String(item.topic || 'General').trim() || 'General';
+        if (!topicMap.has(topic)) {
+          topicMap.set(topic, { topic, questionCount: 0, correct: 0, incorrect: 0, unattempted: 0 });
+        }
+        const bucket = topicMap.get(topic);
+        bucket.questionCount += 1;
+        if (!item.isAttempted) bucket.unattempted += 1;
+        else if (item.isCorrect) bucket.correct += 1;
+        else bucket.incorrect += 1;
+      });
+
+      const topicPerformance = Array.from(topicMap.values()).map((bucket) => ({
+        ...bucket,
+        accuracy: bucket.questionCount > 0 ? Math.round((bucket.correct / bucket.questionCount) * 100) : 0
+      })).sort((a, b) => b.accuracy - a.accuracy);
+
+      return {
+        quizId: currentQuizId,
+        quizTitle: currentQuizData?.title || 'Quiz Retry',
+        score: correctAnswers,
+        percentage,
+        accuracy,
+        totalQuestions,
+        correctAnswers,
+        incorrectAnswers,
+        unattemptedQuestions,
+        timeTakenSeconds,
+        averageTimePerQuestionSeconds: totalQuestions > 0 ? Math.round(timeTakenSeconds / totalQuestions) : 0,
+        topicPerformance,
+        strongestTopic: topicPerformance[0] || null,
+        weakestTopic: topicPerformance.length > 0 ? topicPerformance[topicPerformance.length - 1] : null,
+        reviewItems,
+        ranking: null,
+        comparison: null
+      };
+    }
+
+    function toggleReviewSection() {
+      const reviewSection = document.getElementById('quizReviewSection');
+      if (!reviewSection) return;
+      reviewSection.classList.toggle('hidden');
+      if (!reviewSection.classList.contains('hidden')) {
+        reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function retryWrongQuestions(resultData) {
+      const wrong = Array.isArray(resultData.reviewItems)
+        ? resultData.reviewItems.filter((item) => item && item.isCorrect === false)
+        : [];
+
+      if (wrong.length === 0) {
+        alert('No wrong questions to retry.');
+        return;
+      }
+
+      retrySession = { startedAt: Date.now() };
+      currentAttemptId = null;
+      currentQuizData = {
+        id: currentQuizId,
+        title: `${resultData.quizTitle || 'Quiz'} - Wrong Questions Retry`,
+        topic: '',
+        questions: wrong.map(normalizeQuestionForRetry)
+      };
+      currentQuestionIndex = 0;
+      userAnswers = {};
+      expiresAt = null;
+
+      hide('resultsSection');
+      show('quizSection');
+      document.getElementById('quizTitle').textContent = currentQuizData.title;
+      document.getElementById('pageTitle').textContent = currentQuizData.title;
+      renderQuestion();
+      renderQuickNav();
+    }
+
+    function retryFullQuiz(resultData) {
+      retrySession = null;
+      hide('resultsSection');
+      const quizId = resultData?.quizId || currentQuizId;
+      if (quizId) startQuiz(quizId);
+    }
+
+    function renderEnhancedResults(resultData) {
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = QuizResults.render(resultData, {
+        actions: {
+          review: true,
+          retryWrong: true,
+          retryFull: true,
+          recommended: false
+        }
+      });
+
+      QuizResults.bindActions(container, {
+        onReview: toggleReviewSection,
+        onRetryWrong: () => retryWrongQuestions(resultData),
+        onRetryFull: () => retryFullQuiz(resultData)
+      });
+    }
+
     async function submitQuiz() {
       try {
         clearInterval(timerInterval);
+
+        if (retrySession) {
+          const retryResult = buildLocalResultFromRetry();
+          hide('quizSection');
+          show('resultsSection');
+          document.getElementById('pageTitle').textContent = 'Results';
+          renderEnhancedResults(retryResult);
+          retrySession = null;
+          return;
+        }
+
         showLoading('Submitting...');
 
         const res = await fetch(`/api/attempts/${currentAttemptId}/submit`, {
@@ -474,57 +636,49 @@
           const err = await res.json();
           throw new Error(err.error || 'Submit failed');
         }
-        const { score, total } = await res.json();
+
+        let resultData = null;
+        try {
+          const insightsRes = await fetch(`/api/attempts/${currentAttemptId}/insights`, { credentials: 'include' });
+          if (insightsRes.ok) resultData = await insightsRes.json();
+        } catch {
+          resultData = null;
+        }
+
+        if (!resultData) {
+          const { score, total } = await res.json();
+          const attempted = Object.keys(userAnswers).length;
+          resultData = {
+            quizId: currentQuizId,
+            quizTitle: currentQuizData?.title || 'Quiz',
+            score,
+            percentage: total > 0 ? Math.round((score / total) * 100) : 0,
+            accuracy: attempted > 0 ? Math.round((score / attempted) * 100) : 0,
+            totalQuestions: total,
+            correctAnswers: score,
+            incorrectAnswers: Math.max(0, attempted - score),
+            unattemptedQuestions: Math.max(0, total - attempted),
+            timeTakenSeconds: 0,
+            averageTimePerQuestionSeconds: 0,
+            topicPerformance: [],
+            strongestTopic: null,
+            weakestTopic: null,
+            reviewItems: [],
+            ranking: null,
+            comparison: null
+          };
+        }
 
         hide('loadingMsg');
         hide('quizSection');
         show('resultsSection');
         document.getElementById('pageTitle').textContent = 'Results';
-        showResults(score, total);
+        renderEnhancedResults(resultData);
         currentAttemptId = null;
       } catch (err) {
         hide('loadingMsg');
         showError(err.message || 'Failed to submit quiz');
       }
-    }
-
-    function showResults(score, total) {
-      const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
-      const colorClass = percentage >= 70 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600';
-      const colorHex = percentage >= 70 ? '22c55e' : percentage >= 50 ? 'eab308' : 'ef4444';
-      const feedback = percentage >= 70 ? '🎉 Excellent work! Keep it up!' :
-                       percentage >= 50 ? '👍 Good effort! Keep practicing!' :
-                                          '💪 Keep practicing, you\'ll get better!';
-
-      document.getElementById('resultsContainer').innerHTML = `
-        <div class="bg-white rounded-xl shadow-md p-8 text-center animation-slideIn">
-          <h2 class="text-3xl font-bold text-gray-800 mb-6">Quiz Complete!</h2>
-          <div class="mb-6">
-            <div class="inline-block relative w-40 h-40">
-              <svg class="w-40 h-40 transform -rotate-90">
-                <circle cx="80" cy="80" r="70" fill="none" stroke="#e5e7eb" stroke-width="12"/>
-                <circle cx="80" cy="80" r="70" fill="none" stroke="#${colorHex}" stroke-width="12"
-                  stroke-dasharray="${(percentage / 100) * 439.8}" stroke-dashoffset="0" stroke-linecap="round"/>
-              </svg>
-              <div class="absolute inset-0 flex items-center justify-center flex-col">
-                <div class="text-4xl font-bold ${colorClass}">${percentage}%</div>
-                <div class="text-xs text-gray-500">Score</div>
-              </div>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto mb-6">
-            <div class="bg-green-50 rounded-lg p-4">
-              <div class="text-3xl font-bold text-green-600">${score}</div>
-              <div class="text-sm text-gray-600">Correct</div>
-            </div>
-            <div class="bg-red-50 rounded-lg p-4">
-              <div class="text-3xl font-bold text-red-600">${total - score}</div>
-              <div class="text-sm text-gray-600">Wrong</div>
-            </div>
-          </div>
-          <p class="text-lg font-semibold text-gray-700">${feedback}</p>
-        </div>
-      `;
     }
 
     // ─── Timer ────────────────────────────────────────────────────────────────

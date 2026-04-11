@@ -763,5 +763,77 @@
     "completedAt": 1775910427589,
     "score": 3,
     "total": 4
+  },
+  {
+    "id": "1c1b29e2-9f10-44cb-adca-ba87181b7e3a",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775911284074,
+    "expiresAt": 1775912484074,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "36"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775911284074,
+    "completedAt": 1775911298789,
+    "score": 3,
+    "total": 4
+  },
+  {
+    "id": "dcc82f5e-25e9-49a5-8db5-7fa73df23b53",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775911383840,
+    "expiresAt": 1775911683840,
+    "timeLimitMinutes": 5,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "1722 meter"
+      }
+    ],
+    "createdAt": 1775911383840,
+    "completedAt": 1775911390141,
+    "score": 1,
+    "total": 1
+  },
+  {
+    "id": "4f20a904-2b50-491d-8b17-0aedf9b2ea9d",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "4165c38c-74b7-40b9-8009-1c8bf3b0c39d",
+    "quizTitle": "Daily quiz 01",
+    "status": "completed",
+    "startedAt": 1775911496120,
+    "expiresAt": 1775911796120,
+    "timeLimitMinutes": 5,
+    "answers": [
+      {
+        "questionId": "45fba74c-1025-4267-ad4e-e685ef257a6c",
+        "selected": "2002 meter"
+      }
+    ],
+    "createdAt": 1775911496120,
+    "completedAt": 1775911505317,
+    "score": 0,
+    "total": 1
   }
 ]
