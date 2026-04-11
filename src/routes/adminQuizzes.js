@@ -133,8 +133,9 @@ function sanitizeQuizBody(body) {
 
 /**
  * GET /api/admin/quizzes
- * List all quizzes (including drafts and soft-deleted).
- * Supports query: ?search=, ?mode=, ?topic=, ?status=published|draft|deleted
+ * List quizzes for admin panel.
+ * Default excludes soft-deleted items to keep the manager clean.
+ * Supports query: ?search=, ?mode=, ?topic=, ?status=published|draft|deleted|all
  */
 router.get('/', async (req, res) => {
   try {
@@ -146,7 +147,12 @@ router.get('/', async (req, res) => {
     if (status === 'published') quizzes = quizzes.filter(q => q.isPublished && !q.isDeleted);
     else if (status === 'draft') quizzes = quizzes.filter(q => !q.isPublished && !q.isDeleted);
     else if (status === 'deleted') quizzes = quizzes.filter(q => q.isDeleted);
-    // else return all
+    else if (status === 'all') {
+      // Explicitly include all rows.
+    } else {
+      // Default view: show active rows only.
+      quizzes = quizzes.filter(q => !q.isDeleted);
+    }
 
     if (search) {
       const term = search.toLowerCase();

@@ -5,8 +5,10 @@ const auth = require('../middlewares/auth');
 const {
   syncUsersToGamification
 } = require('../utils/gamification');
+const { buildAdaptiveRecommendation } = require('../utils/adaptiveLearning');
 
 const router = express.Router();
+const MIN_COMPETITIVE_QUIZ_PARTICIPANTS = 3;
 
 // All attempt routes require authentication
 router.use(auth);
@@ -145,6 +147,10 @@ function compareSummariesDesc(a, b) {
 function getRankingForSummary(summary, others) {
   const rows = [...others, { userId: '__current__', summary }]
     .sort((left, right) => compareSummariesDesc(left.summary, right.summary));
+
+  if (rows.length < MIN_COMPETITIVE_QUIZ_PARTICIPANTS) {
+    return null;
+  }
 
   const rank = rows.findIndex((entry) => entry.userId === '__current__') + 1;
   const totalParticipants = rows.length;
@@ -337,6 +343,102 @@ router.delete('/revision/bookmarks/:questionId', async (req, res) => {
   }
 });
 
+// POST /api/attempts/revision/reconcile - reconcile wrong bank after revision retry
+router.post('/revision/reconcile', async (req, res) => {
+  try {
+    const reviewItems = Array.isArray(req.body?.reviewItems) ? req.body.reviewItems : null;
+    if (!reviewItems) {
+      return res.status(400).json({ error: 'reviewItems must be an array' });
+    }
+
+    const context = req.body?.context || {};
+    const contextQuizId = String(context.quizId || '').trim();
+
+    const users = await db.getUsers();
+    const idx = users.findIndex((entry) => entry.id === req.userId);
+    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+
+    const revisionState = ensureRevisionState(users[idx]);
+    const solvedQuestionIds = new Set();
+    const stillWrongEntries = [];
+    const stillWrongTrack = [];
+
+    reviewItems.forEach((item) => {
+      const questionId = String(item?.questionId || '').trim();
+      if (!questionId) return;
+
+      const selected = item?.selected;
+      const isAttempted = selected !== null && selected !== undefined && selected !== '';
+      const isCorrect = Boolean(item?.isCorrect) || (isAttempted && selected === item?.correctAnswer);
+
+      if (isCorrect) {
+        solvedQuestionIds.add(questionId);
+        return;
+      }
+
+      const sanitized = sanitizeQuestionEntry({
+        questionId,
+        question: item?.question || '',
+        options: Array.isArray(item?.options) ? item.options : [],
+        correctAnswer: item?.correctAnswer,
+        topic: item?.topic || 'General',
+        subtopic: item?.subtopic || '',
+        quizId: String(item?.quizId || contextQuizId || '').trim(),
+        quizTitle: String(item?.quizTitle || '').trim(),
+        lastSeenAt: new Date().toISOString(),
+        timesWrong: isAttempted ? 1 : 0,
+        timesUnattempted: isAttempted ? 0 : 1
+      });
+
+      stillWrongEntries.push(sanitized);
+      stillWrongTrack.push({
+        questionId,
+        quizId: sanitized.quizId,
+        topic: sanitized.topic,
+        selectedAnswer: isAttempted ? String(selected) : '',
+        correctAnswer: sanitized.correctAnswer
+      });
+    });
+
+    if (solvedQuestionIds.size > 0) {
+      revisionState.wrongQuestions = revisionState.wrongQuestions.filter(
+        (entry) => !solvedQuestionIds.has(String(entry.questionId || '').trim())
+      );
+    }
+
+    stillWrongEntries.forEach((entry) => upsertRevisionQuestion(revisionState.wrongQuestions, entry));
+
+    users[idx].revision = revisionState;
+    await db.saveUsers(users);
+
+    try {
+      const currentWrongRows = await db.getWrongQuestions(req.userId);
+      if (solvedQuestionIds.size > 0) {
+        const rowsToRemove = currentWrongRows.filter((row) => solvedQuestionIds.has(String(row.questionId || '').trim()));
+        for (const row of rowsToRemove) {
+          await db.removeWrongQuestion(row.id);
+        }
+      }
+
+      for (const trackEntry of stillWrongTrack) {
+        await db.addWrongQuestion(req.userId, trackEntry);
+      }
+    } catch (syncErr) {
+      console.error('[POST /api/attempts/revision/reconcile] wrong-questions sync failed:', syncErr);
+    }
+
+    return res.json({
+      updated: true,
+      resolvedCount: solvedQuestionIds.size,
+      stillWrongCount: stillWrongEntries.length,
+      remainingWrongQuestions: revisionState.wrongQuestions.length
+    });
+  } catch (err) {
+    console.error('[POST /api/attempts/revision/reconcile]', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/attempts - start a new attempt
 router.post('/', async (req, res) => {
   try {
@@ -384,15 +486,21 @@ router.post('/', async (req, res) => {
 // GET /api/attempts/:id/insights - rich result analytics for one attempt
 router.get('/:id/insights', async (req, res) => {
   try {
-    const attempts = await db.getAttempts();
+    const [attempts, users, allQuizzes, wrongQuestions, bookmarks] = await Promise.all([
+      db.getAttempts(),
+      db.getUsers(),
+      db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
+      db.getWrongQuestions(req.userId),
+      db.getBookmarks(req.userId)
+    ]);
     const attempt = attempts.find((entry) => entry.id === req.params.id && entry.userId === req.userId);
     if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
 
-    const allQuizzes = await db.getQuizzes({ includeDeleted: true, includeUnpublished: true });
     const quiz = allQuizzes.find((entry) => entry.id === attempt.quizId);
     if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
 
     const currentSummary = buildAttemptSummary(attempt, quiz);
+    const user = users.find((entry) => entry.id === req.userId) || null;
 
     const sameQuizAttempts = attempts.filter((entry) => (
       entry.quizId === attempt.quizId &&
@@ -422,7 +530,9 @@ router.get('/:id/insights', async (req, res) => {
     const comparison = previousSummary ? {
       previousAttemptId: previousSummary.attemptId,
       scoreChange: currentSummary.score - previousSummary.score,
-      rankChange: (previousRanking?.quizRank || 0) - ranking.quizRank,
+      rankChange: previousRanking?.quizRank && ranking?.quizRank
+        ? previousRanking.quizRank - ranking.quizRank
+        : null,
       accuracyChange: currentSummary.accuracy - previousSummary.accuracy,
       previousScore: previousSummary.score,
       previousPercentage: previousSummary.percentage,
@@ -430,10 +540,23 @@ router.get('/:id/insights', async (req, res) => {
       previousRank: previousRanking?.quizRank || null
     } : null;
 
+    const adaptive = buildAdaptiveRecommendation({
+      userId: req.userId,
+      user,
+      attempts,
+      quizzes: allQuizzes,
+      wrongQuestions,
+      bookmarks,
+      currentSummary
+    });
+
     return res.json({
       ...currentSummary,
       ranking,
-      comparison
+      comparison,
+      adaptive,
+      recommendedNextQuiz: adaptive.recommendation,
+      topicPriorities: adaptive.priorityTopics
     });
   } catch (err) {
     console.error('[GET /api/attempts/:id/insights]', err);
@@ -580,6 +703,8 @@ router.post('/:id/submit', async (req, res) => {
     let score = 0;
     let total = 0;
     const revisionUpdates = [];
+    const wrongQuestionsToTrack = []; // For tracking in wrong-questions.json
+    
     if (quiz && quiz.questions) {
       total = quiz.questions.length;
       for (const q of quiz.questions) {
@@ -593,12 +718,13 @@ router.post('/:id/submit', async (req, res) => {
           continue;
         }
 
+        const topic = getQuestionTopic(q, quiz);
         revisionUpdates.push(sanitizeQuestionEntry({
           questionId: q.id,
           question: q.question || q.text || '',
           options: Array.isArray(q.options) ? q.options : [],
           correctAnswer: q.correctAnswer,
-          topic: getQuestionTopic(q, quiz),
+          topic,
           subtopic: q.subtopic || '',
           quizId: attempt.quizId,
           quizTitle: attempt.quizTitle,
@@ -606,6 +732,15 @@ router.post('/:id/submit', async (req, res) => {
           timesWrong: isAttempted ? 1 : 0,
           timesUnattempted: isAttempted ? 0 : 1
         }));
+
+        // Track for wrong-questions.json
+        wrongQuestionsToTrack.push({
+          questionId: q.id,
+          quizId: attempt.quizId,
+          topic,
+          selectedAnswer: selected || '',
+          correctAnswer: q.correctAnswer || ''
+        });
       }
     }
     attempt.score = score;
@@ -613,6 +748,16 @@ router.post('/:id/submit', async (req, res) => {
 
     attempts[idx] = attempt;
     await db.saveAttempts(attempts);
+
+    // Track wrong questions in wrong-questions.json for revision system
+    try {
+      for (const wrongQuestion of wrongQuestionsToTrack) {
+        await db.addWrongQuestion(req.userId, wrongQuestion);
+      }
+    } catch (revisionErr) {
+      console.error('[POST /api/attempts/:id/submit] tracking wrong questions failed:', revisionErr);
+      // Don't fail the submission if revision tracking fails
+    }
 
     try {
       const [users, events, groups, config] = await Promise.all([

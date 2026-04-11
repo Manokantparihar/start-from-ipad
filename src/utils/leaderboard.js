@@ -18,6 +18,8 @@ function normalizeTopicLabel(value) {
   return String(value || '').trim();
 }
 
+const MIN_COMPETITIVE_PARTICIPANTS = 2;
+
 function resolveQuizTopic(quiz) {
   const directTopic = normalizeTopicLabel(quiz?.topic);
   if (directTopic) {
@@ -299,8 +301,13 @@ function buildLeaderboardResponse({ mode, users, attempts, quizzes, limit = 10, 
       ? sortTopicRows(rows)
       : sortOverallRows(rows);
 
+  const competitiveRows = rankedRows.filter((row) => Number(row.totalCompleted) > 0);
+  const canAssignRanks = competitiveRows.length >= MIN_COMPETITIVE_PARTICIPANTS;
+  const rankedWithPositions = canAssignRanks
+    ? competitiveRows.map((row, index) => ({ ...row, rank: index + 1 }))
+    : competitiveRows.map((row) => ({ ...row, rank: null }));
+
   const effectiveLimit = Number.isFinite(Number(limit)) ? Math.max(1, Math.min(50, Number(limit))) : 10;
-  const rankedWithPositions = rankedRows.map((row, index) => ({ ...row, rank: index + 1 }));
   const limitedRows = rankedWithPositions.slice(0, effectiveLimit);
   const viewer = viewerUserId
     ? rankedWithPositions.find((row) => row.userId === viewerUserId) || null

@@ -229,7 +229,9 @@
     }
 
     function renderLeaderboard(rows, viewer, mode) {
-      const normalizedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
+      const normalizedRows = Array.isArray(rows)
+        ? [...rows].sort((a, b) => (Number(a.rank) || 0) - (Number(b.rank) || 0))
+        : [];
       state.leaderboardRows = normalizedRows;
       state.viewer = viewer || null;
       state.mode = mode;
@@ -243,7 +245,7 @@
     }
 
     function renderHero(rows, viewer, mode) {
-      const viewerRank = viewer?.rank ? `#${viewer.rank}` : '—';
+      const viewerRank = Number.isFinite(Number(viewer?.rank)) && Number(viewer.rank) > 0 ? `#${viewer.rank}` : '—';
 
       document.getElementById('viewerRank').textContent = viewerRank;
       document.getElementById('viewerCurrentStreak').textContent = viewer ? `🔥 ${viewer.currentStreak ?? 0}-day streak` : '🔥 0-day streak';
@@ -290,8 +292,8 @@
           ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="w-10 h-10 rounded-full object-cover border border-gray-200">`
           : `<div class="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-semibold">${escapeHtml((row.name || 'U').slice(0, 1).toUpperCase())}</div>`;
         const rankPill = row.isCurrentUser
-          ? `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-blue-600 px-3 py-1 text-xs font-black text-white shadow-sm">#${row.rank}</span>`
-          : `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">#${row.rank}</span>`;
+            ? `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-blue-600 px-3 py-1 text-xs font-black text-white shadow-sm">${Number.isFinite(Number(row.rank)) && Number(row.rank) > 0 ? `#${row.rank}` : '—'}</span>`
+            : `<span class="inline-flex min-w-10 items-center justify-center rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">${Number.isFinite(Number(row.rank)) && Number(row.rank) > 0 ? `#${row.rank}` : '—'}</span>`;
         const nameTone = row.isCurrentUser ? 'text-blue-900' : 'text-gray-800';
         const subtitle = row.isCurrentUser ? 'You' : 'Active learner';
 
@@ -455,10 +457,10 @@
     }
 
     function getCompetitivePulse(viewer, mode) {
-      if (!viewer || !viewer.rank) {
+      if (!viewer || !Number.isFinite(Number(viewer.rank)) || Number(viewer.rank) <= 0) {
         return mode === 'topic'
-          ? 'Enter this topic board to start climbing.'
-          : 'Stay sharp. Rank shifts quickly.';
+          ? 'Complete at least 2 topic attempts to unlock rank.'
+          : 'At least 2 quiz participants are needed to assign rank.';
       }
 
       if (viewer.rank === 1) return 'You set the benchmark. Defend #1 with consistency.';
@@ -467,10 +469,10 @@
     }
 
     function getCompetitivePulseHint(viewer, rows, mode) {
-      if (!viewer || !viewer.rank) {
+      if (!viewer || !Number.isFinite(Number(viewer.rank)) || Number(viewer.rank) <= 0) {
         return mode === 'topic'
-          ? 'Select a topic and post your first score.'
-          : 'One strong attempt can change the top 3.';
+          ? 'Once more than one learner has topic attempts, the board will rank automatically.'
+          : 'Rank appears after at least 2 learners have quiz attempts.';
       }
 
       const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
@@ -482,8 +484,8 @@
     }
 
     function getPlacementHint(viewer, mode) {
-      if (!viewer || !viewer.rank) {
-        return mode === 'topic' ? 'Earn a score to appear in the topic rankings.' : 'Build accuracy to appear in the rankings.';
+      if (!viewer || !Number.isFinite(Number(viewer.rank)) || Number(viewer.rank) <= 0) {
+        return mode === 'topic' ? 'Need at least 2 topic-attempt learners for ranking.' : 'Need at least 2 learners with attempts for ranking.';
       }
 
       if (viewer.rank === 1) return 'Holding the top rank right now.';
@@ -492,8 +494,8 @@
     }
 
     function getMotivationHint(viewer, rows, mode) {
-      if (!viewer || !viewer.rank) {
-        return mode === 'topic' ? 'Complete a topic quiz to enter the board.' : 'Complete a practice set to enter the board.';
+      if (!viewer || !Number.isFinite(Number(viewer.rank)) || Number(viewer.rank) <= 0) {
+        return mode === 'topic' ? 'Complete topic attempts with another learner to enable rankings.' : 'Complete quiz attempts with at least one other learner to enable rankings.';
       }
 
       const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];

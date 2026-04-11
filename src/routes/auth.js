@@ -5,9 +5,20 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
 const { buildPublicGamification } = require('../utils/gamification');
 const config = require('../config');
+const { createRateLimiter } = require('../middlewares/rateLimit');
 
 const router = express.Router();
 const JWT_SECRET = config.jwtSecret;
+const authMutationRateLimiter = createRateLimiter({
+  windowMs: config.authRateLimitWindowMs,
+  maxRequests: config.authRateLimitMaxRequests,
+  message: 'Too many auth requests, please try again later.'
+});
+const authSessionRateLimiter = createRateLimiter({
+  windowMs: 60 * 1000,
+  maxRequests: Math.max(config.authRateLimitMaxRequests * 3, 120),
+  message: 'Too many session checks, please try again later.'
+});
 
 function findUserFromTokenPayload(users, payload) {
   const tokenUserId = payload.userId || payload.id;
@@ -26,7 +37,7 @@ function findUserFromTokenPayload(users, payload) {
 }
 
 // Register a new user
-router.post('/register', async (req, res) => {
+router.post('/register', authMutationRateLimiter, async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -70,7 +81,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', authMutationRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -123,7 +134,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Current user
-router.get('/me', async (req, res) => {
+router.get('/me', authSessionRateLimiter, async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.set('Pragma', 'no-cache');

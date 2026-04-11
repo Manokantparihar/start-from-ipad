@@ -13,6 +13,7 @@
 
 const express = require('express');
 const db = require('../utils/db');
+const { syncUsersToGamification } = require('../utils/gamification');
 
 const router = express.Router();
 
@@ -71,6 +72,52 @@ function buildAllUserStats(attempts) {
  */
 function buildUserStats(userId, statsMap) {
   return statsMap.get(userId) || { totalAttempts: 0, avgScore: null, lastAttemptAt: null };
+}
+
+async function resyncGamificationAfterAttemptChanges(attemptsOverride = null) {
+  const [users, quizzes, events, groups, config] = await Promise.all([
+    db.getUsers(),
+    db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
+    db.getEvents(),
+    db.getGroups(),
+    db.getGamificationConfig()
+  ]);
+
+  const attempts = attemptsOverride || await db.getAttempts();
+  const syncedUsers = await syncUsersToGamification({
+    users,
+    attempts,
+    quizzes,
+    events,
+    groups,
+    config
+  });
+
+  if (Array.isArray(syncedUsers) && syncedUsers.length > 0) {
+    await db.saveUsers(syncedUsers);
+  }
+}
+
+async function clearUserRevisionWrongQuestions(userId, quizId = null) {
+  const users = await db.getUsers();
+  const idx = users.findIndex((entry) => entry.id === userId);
+  if (idx === -1) return;
+
+  const revision = users[idx].revision && typeof users[idx].revision === 'object'
+    ? users[idx].revision
+    : { wrongQuestions: [], bookmarks: [] };
+
+  if (quizId) {
+    revision.wrongQuestions = Array.isArray(revision.wrongQuestions)
+      ? revision.wrongQuestions.filter((entry) => String(entry.quizId || '') !== String(quizId))
+      : [];
+  } else {
+    revision.wrongQuestions = [];
+  }
+
+  users[idx].revision = revision;
+  users[idx].updatedAt = new Date().toISOString();
+  await db.saveUsers(users);
 }
 
 // ─── GET / ───────────────────────────────────────────────────────────────────
@@ -178,6 +225,64 @@ router.get('/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('[GET /api/admin/users/:id]', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── DELETE /:userId/attempts ───────────────────────────────────────────────
+// Delete all attempts for a specific user.
+router.delete('/:userId/attempts', async (req, res) => {
+  try {
+    const userId = String(req.params.userId || '').trim();
+    if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+    const users = await db.getUsers();
+    const user = users.find((entry) => entry.id === userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { deletedCount, attempts } = await db.deleteAttemptsByUser(userId);
+    await db.deleteWrongQuestionsByUser(userId);
+    await clearUserRevisionWrongQuestions(userId);
+    await resyncGamificationAfterAttemptChanges(attempts);
+
+    return res.json({
+      message: deletedCount > 0 ? 'All user attempts deleted.' : 'No attempts found for this user.',
+      deletedCount,
+      userId
+    });
+  } catch (error) {
+    console.error('[DELETE /api/admin/users/:userId/attempts]', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── DELETE /:userId/attempts/:quizId ──────────────────────────────────────
+// Delete attempts for a specific quiz for a specific user.
+router.delete('/:userId/attempts/:quizId', async (req, res) => {
+  try {
+    const userId = String(req.params.userId || '').trim();
+    const quizId = String(req.params.quizId || '').trim();
+    if (!userId || !quizId) {
+      return res.status(400).json({ error: 'userId and quizId are required' });
+    }
+
+    const users = await db.getUsers();
+    const user = users.find((entry) => entry.id === userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { deletedCount, attempts } = await db.deleteAttemptsByUserAndQuiz(userId, quizId);
+    await db.deleteWrongQuestionsByUserAndQuiz(userId, quizId);
+    await clearUserRevisionWrongQuestions(userId, quizId);
+    await resyncGamificationAfterAttemptChanges(attempts);
+
+    return res.json({
+      message: deletedCount > 0 ? 'User quiz attempts deleted.' : 'No matching attempts found.',
+      deletedCount,
+      userId,
+      quizId
+    });
+  } catch (error) {
+    console.error('[DELETE /api/admin/users/:userId/attempts/:quizId]', error);
     return res.status(500).json({ error: 'Server error' });
   }
 });

@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./src/routes/auth');
 const quizRoutes = require('./src/routes/quizzes');
 const attemptRoutes = require('./src/routes/attempts');
+const revisionRoutes = require('./src/routes/revision');
 const adminQuizRoutes = require('./src/routes/adminQuizzes');
 const profileRoutes = require('./src/routes/profile');
 const resourceRoutes = require('./src/routes/resources');
@@ -19,6 +20,7 @@ const notificationRoutes = require('./src/routes/notifications');
 const adminNotificationRoutes = require('./src/routes/adminNotifications');
 const adminCoursesRoutes = require('./src/routes/adminCourses');
 const adminUsersRoutes = require('./src/routes/adminUsers');
+const adminAttemptsRoutes = require('./src/routes/adminAttempts');
 const coursesRoutes = require('./src/routes/courses');
 const meRoutes = require('./src/routes/me');
 const rewardsRoutes = require('./src/routes/rewards');
@@ -31,11 +33,6 @@ const { createRateLimiter } = require('./src/middlewares/rateLimit');
 
 const app = express();
 const PORT = appConfig.port;
-const authRateLimiter = createRateLimiter({
-  windowMs: appConfig.authRateLimitWindowMs,
-  maxRequests: appConfig.authRateLimitMaxRequests,
-  message: 'Too many auth requests, please try again later.'
-});
 const contactRateLimiter = createRateLimiter({
   windowMs: appConfig.contactRateLimitWindowMs,
   maxRequests: appConfig.contactRateLimitMaxRequests,
@@ -102,9 +99,11 @@ app.use(express.urlencoded({ extended: true, limit: appConfig.payloadLimit }));
 app.use(cookieParser());
 
 // --- Routes ---
-app.use('/api/auth', authRateLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
+// Revision system – protected by auth
+app.use('/api/revision', authMiddleware, revisionRoutes);
 // Admin quiz management – protected by auth + isAdmin
 app.use('/api/admin/quizzes', authMiddleware, isAdmin, adminQuizRoutes);
 // User profile – protected by auth
@@ -117,6 +116,8 @@ app.use('/api/resources', resourceRoutes);
 app.use('/api/admin/courses', authMiddleware, isAdmin, adminCoursesRoutes);
 // User management – admin only
 app.use('/api/admin/users', adminRateLimiter, authMiddleware, isAdmin, adminUsersRoutes);
+// Attempt management – admin only
+app.use('/api/admin/attempts', adminRateLimiter, authMiddleware, isAdmin, adminAttemptsRoutes);
 app.use('/api/courses', coursesRoutes);
 // Analytics – admin only
 app.use('/api/admin/analytics', authMiddleware, isAdmin, adminAnalyticsRoutes);

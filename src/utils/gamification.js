@@ -85,6 +85,7 @@ const BADGES = [
 const BADGE_ID_SET = new Set(BADGES.map((badge) => badge.id));
 
 const DEFAULT_WEEKEND_BONUS_MULTIPLIER = 1;
+const MIN_COMPETITIVE_WEEKLY_PARTICIPANTS = 3;
 
 function computeAccuracyPercent(totalCorrect = 0, totalQuestions = 0) {
   const correct = Math.max(0, Number(totalCorrect) || 0);
@@ -987,8 +988,8 @@ function normalizeGamificationFields(user = {}) {
 }
 
 function mergeGamificationIntoUser(user, snapshot) {
-  const mergedBadges = mergeBadges(user.badges, snapshot.badges || []);
-  const latestBadge = mergedBadges.length > 0 ? mergedBadges[mergedBadges.length - 1] : null;
+  const badges = normalizeBadgeList(snapshot.badges || []);
+  const latestBadge = badges.length > 0 ? badges[badges.length - 1] : null;
 
   return {
     ...user,
@@ -1036,7 +1037,7 @@ function mergeGamificationIntoUser(user, snapshot) {
     consumedBoostHistory: Array.isArray(snapshot.consumedBoostHistory) ? snapshot.consumedBoostHistory : [],
     groupIds: Array.isArray(snapshot.groupIds) ? snapshot.groupIds : [],
     weeklyGroupRanks: Array.isArray(snapshot.weeklyGroupRanks) ? snapshot.weeklyGroupRanks : [],
-    badges: mergedBadges,
+    badges,
     latestBadge,
     dailyMissionHistory: normalizeMissionHistory(snapshot.dailyMissionHistory),
     todayMissions: snapshot.todayMissions,
@@ -1156,7 +1157,10 @@ async function syncUsersToGamification({
       return a.name.localeCompare(b.name);
     });
 
-  const weeklyRankByUserId = new Map(rankedWeekly.map((entry, index) => [entry.id, index + 1]));
+  const rankedWeeklyEligible = rankedWeekly.filter((entry) => Number(entry.weeklyCompletedQuizzes) > 0);
+  const weeklyRankByUserId = rankedWeeklyEligible.length >= MIN_COMPETITIVE_WEEKLY_PARTICIPANTS
+    ? new Map(rankedWeeklyEligible.map((entry, index) => [entry.id, index + 1]))
+    : new Map();
 
   const normalizedGroups = Array.isArray(groups) ? groups.filter((group) => group && group.id) : [];
   const userSnapshotsById = new Map(preliminary.map((entry) => [entry.user.id, entry.snapshot]));

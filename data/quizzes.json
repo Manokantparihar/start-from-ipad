@@ -234,10 +234,10 @@
     "difficulty": "medium",
     "timeLimit": 20,
     "isPublished": true,
-    "isDeleted": false,
+    "isDeleted": true,
     "createdBy": null,
     "createdAt": "2026-04-07T17:23:04.713Z",
-    "updatedAt": "2026-04-07T17:23:04.713Z",
+    "updatedAt": "2026-04-11T16:29:07.420Z",
     "adminNotes": "",
     "questionCount": 5,
     "questions": [
@@ -338,10 +338,10 @@
     "difficulty": "medium",
     "timeLimit": 5,
     "isPublished": true,
-    "isDeleted": false,
+    "isDeleted": true,
     "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "createdAt": "2026-04-07T20:51:57.649Z",
-    "updatedAt": "2026-04-07T20:52:42.536Z",
+    "updatedAt": "2026-04-11T16:04:24.261Z",
     "adminNotes": "",
     "questions": [
       {
@@ -648,10 +648,10 @@
     "difficulty": "easy",
     "timeLimit": 5,
     "isPublished": true,
-    "isDeleted": false,
+    "isDeleted": true,
     "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "createdAt": "2026-04-08T03:38:59.020Z",
-    "updatedAt": "2026-04-08T03:38:59.020Z",
+    "updatedAt": "2026-04-11T16:04:14.653Z",
     "adminNotes": "",
     "questions": [
       {
@@ -684,10 +684,10 @@
     "difficulty": "medium",
     "timeLimit": 5,
     "isPublished": true,
-    "isDeleted": false,
+    "isDeleted": true,
     "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "createdAt": "2026-04-08T03:42:57.227Z",
-    "updatedAt": "2026-04-08T03:42:57.227Z",
+    "updatedAt": "2026-04-11T16:02:59.695Z",
     "adminNotes": "",
     "questions": [
       {
@@ -720,12 +720,2081 @@
     "difficulty": "medium",
     "timeLimit": 20,
     "isPublished": true,
-    "isDeleted": false,
+    "isDeleted": true,
     "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "createdAt": "2026-04-08T22:31:42.747Z",
-    "updatedAt": "2026-04-09T12:29:08.935Z",
+    "updatedAt": "2026-04-11T16:02:39.080Z",
     "adminNotes": "",
     "questionCount": 0,
     "questions": []
+  },
+  {
+    "id": "e19e870c-2f33-4614-b341-f488dabcc07d",
+    "title": "Maths",
+    "slug": "maths",
+    "description": "",
+    "mode": "topic",
+    "topic": "Maths",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:19:43.189Z",
+    "updatedAt": "2026-04-11T16:26:14.205Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "a097baf2-b2a3-4467-9dc4-76bb9aefc431",
+        "question": "5 + 7 = ?",
+        "options": [
+          "10",
+          "11",
+          "12",
+          "13"
+        ],
+        "correctAnswer": "12",
+        "explanation": "Addition of 5 and 7 is 12",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "6f492c9f-da5b-4ed9-8e18-08db09b63967",
+        "question": "9 × 3 = ?",
+        "options": [
+          "18",
+          "21",
+          "27",
+          "24"
+        ],
+        "correctAnswer": "27",
+        "explanation": "Multiplication of 9 and 3 is 27",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "60f030ee-6ea7-4fb2-8740-d0bd56037802",
+        "question": "15 − 6 = ?",
+        "options": [
+          "7",
+          "8",
+          "9",
+          "10"
+        ],
+        "correctAnswer": "9",
+        "explanation": "Subtraction result is 9",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "2428d377-8a63-4b2e-9c79-8110777f769a",
+        "question": "20 ÷ 4 = ?",
+        "options": [
+          "4",
+          "5",
+          "6",
+          "3"
+        ],
+        "correctAnswer": "5",
+        "explanation": "Division result is 5",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "99208eac-d87e-4b94-b13c-d82b7f79835e",
+        "question": "Square of 8 is?",
+        "options": [
+          "64",
+          "56",
+          "72",
+          "60"
+        ],
+        "correctAnswer": "64",
+        "explanation": "8 × 8 = 64",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "0e493bb7-55c1-4a99-86c7-522f55f9f3a0",
+        "question": "LCM of 4 and 5 is?",
+        "options": [
+          "10",
+          "15",
+          "20",
+          "25"
+        ],
+        "correctAnswer": "20",
+        "explanation": "LCM of 4 and 5 is 20",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "ea2b396f-3178-4a43-b727-cfba37fc0308",
+        "question": "HCF of 12 and 18 is?",
+        "options": [
+          "6",
+          "3",
+          "9",
+          "12"
+        ],
+        "correctAnswer": "6",
+        "explanation": "HCF is 6",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "cac4b4fa-1012-4ad6-897a-9c78869004af",
+        "question": "10% of 200 = ?",
+        "options": [
+          "10",
+          "15",
+          "20",
+          "25"
+        ],
+        "correctAnswer": "20",
+        "explanation": "10 percent of 200 is 20",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "c61a8712-5c49-4a94-bc4d-4dac96acac59",
+        "question": "7² = ?",
+        "options": [
+          "42",
+          "49",
+          "36",
+          "56"
+        ],
+        "correctAnswer": "49",
+        "explanation": "7 square is 49",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "761fc7b7-6482-412c-98df-c141e7cf7a61",
+        "question": "12 × 12 = ?",
+        "options": [
+          "124",
+          "144",
+          "132",
+          "142"
+        ],
+        "correctAnswer": "144",
+        "explanation": "12 multiplied by 12 is 144",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "a7598cfb-d2c0-49a6-9d07-4dfd35b1835f",
+        "question": "100 − 45 = ?",
+        "options": [
+          "55",
+          "65",
+          "45",
+          "50"
+        ],
+        "correctAnswer": "55",
+        "explanation": "Subtraction gives 55",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "c2d880af-8b6f-480b-bc96-65527c1daf6a",
+        "question": "81 ÷ 9 = ?",
+        "options": [
+          "8",
+          "7",
+          "9",
+          "6"
+        ],
+        "correctAnswer": "9",
+        "explanation": "Division result is 9",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "065b9b36-9f24-4857-b655-0ccd6b2078f8",
+        "question": "Perimeter of square with side 5?",
+        "options": [
+          "10",
+          "15",
+          "20",
+          "25"
+        ],
+        "correctAnswer": "20",
+        "explanation": "Perimeter is 4 × side = 20",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "f935c4c9-0aca-479a-9cc2-58fc5d0256c5",
+        "question": "Area of square side 4?",
+        "options": [
+          "12",
+          "14",
+          "16",
+          "18"
+        ],
+        "correctAnswer": "16",
+        "explanation": "Area = side² = 16",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "262c8be1-71ed-41f2-9e00-dd9e120d3cc9",
+        "question": "6 × 7 = ?",
+        "options": [
+          "36",
+          "42",
+          "48",
+          "40"
+        ],
+        "correctAnswer": "42",
+        "explanation": "Multiplication result is 42",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "008a6235-b9f6-46e6-a96a-0f5473db6228",
+        "question": "25 ÷ 5 = ?",
+        "options": [
+          "4",
+          "5",
+          "6",
+          "3"
+        ],
+        "correctAnswer": "5",
+        "explanation": "Division result is 5",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "b50940fc-3d7b-495f-b745-d0c35e2f7e25",
+        "question": "18 + 12 = ?",
+        "options": [
+          "28",
+          "30",
+          "32",
+          "26"
+        ],
+        "correctAnswer": "30",
+        "explanation": "Addition gives 30",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "bc655c98-43c4-43a3-91cf-f197a6992849",
+        "question": "50% of 80 = ?",
+        "options": [
+          "20",
+          "30",
+          "40",
+          "50"
+        ],
+        "correctAnswer": "40",
+        "explanation": "Half of 80 is 40",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3f0561c4-3a13-46de-ae1f-44e5c671093c",
+        "question": "Cube of 3 = ?",
+        "options": [
+          "6",
+          "9",
+          "27",
+          "18"
+        ],
+        "correctAnswer": "27",
+        "explanation": "3 cube is 27",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "315666c1-8d89-4481-a025-65656ecf78aa",
+        "question": "Find next: 2,4,6,?",
+        "options": [
+          "7",
+          "8",
+          "10",
+          "12"
+        ],
+        "correctAnswer": "8",
+        "explanation": "Pattern +2",
+        "topic": "Maths",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 20
+  },
+  {
+    "id": "f5529f28-c716-4c05-9ec9-ee6b2d5b5bd1",
+    "title": "Science",
+    "slug": "science",
+    "description": "",
+    "mode": "topic",
+    "topic": "Science",
+    "difficulty": "medium",
+    "timeLimit": 20,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:27:09.534Z",
+    "updatedAt": "2026-04-11T16:28:32.948Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "065e9992-7002-40f1-97a3-37d1cc8a5e80",
+        "question": "Which gas is essential for respiration?",
+        "options": [
+          "Oxygen",
+          "Nitrogen",
+          "Carbon dioxide",
+          "Hydrogen"
+        ],
+        "correctAnswer": "Oxygen",
+        "explanation": "Oxygen is used in respiration",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "1f3afa64-ccbe-4b48-9ccc-5e4132bb063f",
+        "question": "Water boils at?",
+        "options": [
+          "90°C",
+          "80°C",
+          "100°C",
+          "120°C"
+        ],
+        "correctAnswer": "100°C",
+        "explanation": "Standard boiling point",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "4956a21d-8c14-432e-8a53-794713903093",
+        "question": "Which organ pumps blood?",
+        "options": [
+          "Lungs",
+          "Brain",
+          "Heart",
+          "Liver"
+        ],
+        "correctAnswer": "Heart",
+        "explanation": "Heart pumps blood",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d39e9a24-5ece-4d33-9021-beb623c8ce1a",
+        "question": "Sun is a?",
+        "options": [
+          "Planet",
+          "Star",
+          "Satellite",
+          "Asteroid"
+        ],
+        "correctAnswer": "Star",
+        "explanation": "Sun is a star",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "17172dbc-2a61-45d0-88f0-fabb678b09ac",
+        "question": "Plants make food by?",
+        "options": [
+          "Respiration",
+          "Photosynthesis",
+          "Digestion",
+          "Excretion"
+        ],
+        "correctAnswer": "Photosynthesis",
+        "explanation": "Plants use photosynthesis",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "116a79e5-26dd-4eb8-8cd1-6f8dcd594745",
+        "question": "Unit of force?",
+        "options": [
+          "Newton",
+          "Joule",
+          "Watt",
+          "Volt"
+        ],
+        "correctAnswer": "Newton",
+        "explanation": "SI unit of force",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "44cefcb6-2de0-4441-991d-6c1734629249",
+        "question": "Human blood is?",
+        "options": [
+          "Acidic",
+          "Basic",
+          "Neutral",
+          "Slightly basic"
+        ],
+        "correctAnswer": "Slightly basic",
+        "explanation": "Blood pH is slightly basic",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "0fd343c1-b06c-4901-9864-b5e3fc04a30e",
+        "question": "Which vitamin from sunlight?",
+        "options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "correctAnswer": "D",
+        "explanation": "Sunlight gives Vitamin D",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d6c4e225-e930-4fb9-81a9-c0d7ca472e78",
+        "question": "Earth revolves around?",
+        "options": [
+          "Moon",
+          "Sun",
+          "Mars",
+          "Jupiter"
+        ],
+        "correctAnswer": "Sun",
+        "explanation": "Earth revolves around Sun",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "5effc24d-321f-42c4-909f-5484e216f6de",
+        "question": "Speed of light is?",
+        "options": [
+          "3x10^8 m/s",
+          "3x10^6 m/s",
+          "3x10^5 m/s",
+          "3x10^7 m/s"
+        ],
+        "correctAnswer": "3x10^8 m/s",
+        "explanation": "Speed of light constant",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "abeae6a1-0af9-4ee6-b499-f4218ff5e11e",
+        "question": "Which is metal?",
+        "options": [
+          "Iron",
+          "Oxygen",
+          "Nitrogen",
+          "Hydrogen"
+        ],
+        "correctAnswer": "Iron",
+        "explanation": "Iron is metal",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "8e6c504a-1733-4c62-bf47-cf33ff86c333",
+        "question": "Sound travels in?",
+        "options": [
+          "Vacuum",
+          "Solid only",
+          "All media",
+          "Liquid only"
+        ],
+        "correctAnswer": "All media",
+        "explanation": "Needs medium except vacuum",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "0a6e80b0-6b04-4238-8415-f2590027c6d6",
+        "question": "Which is not renewable?",
+        "options": [
+          "Solar",
+          "Wind",
+          "Coal",
+          "Water"
+        ],
+        "correctAnswer": "Coal",
+        "explanation": "Coal is non-renewable",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "46e63b33-0695-478d-b2da-696d3d7df18a",
+        "question": "Which part controls body?",
+        "options": [
+          "Heart",
+          "Liver",
+          "Brain",
+          "Kidney"
+        ],
+        "correctAnswer": "Brain",
+        "explanation": "Brain controls body",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "fc7faca6-a09f-4465-9ca4-0c593306b72b",
+        "question": "Gas used in balloon?",
+        "options": [
+          "Oxygen",
+          "Nitrogen",
+          "Helium",
+          "CO2"
+        ],
+        "correctAnswer": "Helium",
+        "explanation": "Helium is light gas",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "8b532743-21c4-474f-b18e-cc30fd8a47d4",
+        "question": "Which is largest planet?",
+        "options": [
+          "Earth",
+          "Mars",
+          "Jupiter",
+          "Saturn"
+        ],
+        "correctAnswer": "Jupiter",
+        "explanation": "Jupiter largest",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "efb5f65c-55b4-4557-8c25-db89f7c109e8",
+        "question": "Energy unit?",
+        "options": [
+          "Newton",
+          "Joule",
+          "Watt",
+          "Volt"
+        ],
+        "correctAnswer": "Joule",
+        "explanation": "Energy SI unit",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "049001cc-e191-4eeb-ae3a-79e4e53b595a",
+        "question": "Which is liquid metal?",
+        "options": [
+          "Iron",
+          "Mercury",
+          "Gold",
+          "Silver"
+        ],
+        "correctAnswer": "Mercury",
+        "explanation": "Mercury is liquid",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "167b7059-0db8-4538-8bce-bff8123c4686",
+        "question": "Which gas plants release?",
+        "options": [
+          "Oxygen",
+          "CO2",
+          "Nitrogen",
+          "Hydrogen"
+        ],
+        "correctAnswer": "Oxygen",
+        "explanation": "Plants release oxygen",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "ef379e72-1c9c-469d-bbfb-59005809ccc0",
+        "question": "Which sense organ for hearing?",
+        "options": [
+          "Eye",
+          "Nose",
+          "Ear",
+          "Skin"
+        ],
+        "correctAnswer": "Ear",
+        "explanation": "Ear is hearing organ",
+        "topic": "Science",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 20
+  },
+  {
+    "id": "6427e9cd-22d5-4ad7-9af9-0efc8d0c6198",
+    "title": "Science Mock Test",
+    "slug": "science-mock-test",
+    "description": "",
+    "mode": "mock",
+    "topic": "Science",
+    "difficulty": "hard",
+    "timeLimit": 30,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:32:36.776Z",
+    "updatedAt": "2026-04-11T16:41:49.823Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "83f229b3-245e-4fb4-9748-f3e432d0adaa",
+        "question": "Which law explains the relationship between pressure and volume of a gas?",
+        "options": [
+          "Boyle's Law",
+          "Charles Law",
+          "Ohm's Law",
+          "Newton's Law"
+        ],
+        "correctAnswer": "Boyle's Law",
+        "explanation": "Pressure inversely proportional to volume",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "1023516a-f3b6-44f7-a7ef-1d755f2cbe6e",
+        "question": "Unit of electric current?",
+        "options": [
+          "Volt",
+          "Ampere",
+          "Ohm",
+          "Watt"
+        ],
+        "correctAnswer": "Ampere",
+        "explanation": "SI unit is Ampere",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "71248c96-dab5-4abd-8214-64498ce43270",
+        "question": "Which part of cell contains genetic material?",
+        "options": [
+          "Cytoplasm",
+          "Nucleus",
+          "Membrane",
+          "Ribosome"
+        ],
+        "correctAnswer": "Nucleus",
+        "explanation": "Contains DNA",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "65f9d1d5-8b23-4421-8fe2-d8cf55d984b3",
+        "question": "Speed = distance/time formula is?",
+        "options": [
+          "Velocity",
+          "Acceleration",
+          "Speed",
+          "Force"
+        ],
+        "correctAnswer": "Speed",
+        "explanation": "Definition of speed",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "57ca156b-aaa2-49eb-ad75-a9ba2f88e574",
+        "question": "Which vitamin deficiency causes rickets?",
+        "options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "correctAnswer": "D",
+        "explanation": "Vitamin D deficiency",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "1217dddf-461a-49dd-ab6c-1052d38a6f93",
+        "question": "What is pH of pure water?",
+        "options": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "correctAnswer": "7",
+        "explanation": "Neutral pH",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "4ff2b8b8-9d2f-4623-afe8-dbe2d8bcf465",
+        "question": "Which force pulls objects toward Earth?",
+        "options": [
+          "Magnetic",
+          "Gravitational",
+          "Frictional",
+          "Electrical"
+        ],
+        "correctAnswer": "Gravitational",
+        "explanation": "Gravity force",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "8a27e5c4-c1a2-473c-98e3-e5dd9eaf5d7e",
+        "question": "Which gas is used in photosynthesis?",
+        "options": [
+          "Oxygen",
+          "Nitrogen",
+          "Carbon dioxide",
+          "Hydrogen"
+        ],
+        "correctAnswer": "Carbon dioxide",
+        "explanation": "Used by plants",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "cdb5e55d-6a63-4713-8519-c909d10319f7",
+        "question": "Which organ filters blood?",
+        "options": [
+          "Heart",
+          "Liver",
+          "Kidney",
+          "Lungs"
+        ],
+        "correctAnswer": "Kidney",
+        "explanation": "Removes waste",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "21679115-e15c-4a92-87fb-bb44ebbf72d1",
+        "question": "Which is not a conductor?",
+        "options": [
+          "Copper",
+          "Aluminum",
+          "Plastic",
+          "Iron"
+        ],
+        "correctAnswer": "Plastic",
+        "explanation": "Plastic is insulator",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "bf243fbc-a3c6-4a4b-9365-6fbe0b1528c9",
+        "question": "Which energy is stored in food?",
+        "options": [
+          "Kinetic",
+          "Potential",
+          "Chemical",
+          "Heat"
+        ],
+        "correctAnswer": "Chemical",
+        "explanation": "Food stores chemical energy",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "35055a3d-922e-4143-aaa6-5ba377a6c99c",
+        "question": "Which instrument measures temperature?",
+        "options": [
+          "Barometer",
+          "Thermometer",
+          "Hygrometer",
+          "Ammeter"
+        ],
+        "correctAnswer": "Thermometer",
+        "explanation": "Measures temperature",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "7f92ecf2-2f50-4407-9880-a803f94de228",
+        "question": "Which layer protects Earth from UV rays?",
+        "options": [
+          "Troposphere",
+          "Stratosphere",
+          "Mesosphere",
+          "Thermosphere"
+        ],
+        "correctAnswer": "Stratosphere",
+        "explanation": "Ozone layer present",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d57c22bb-94b7-4e73-9080-1da5cf0fc256",
+        "question": "Which blood cells fight infection?",
+        "options": [
+          "RBC",
+          "WBC",
+          "Platelets",
+          "Plasma"
+        ],
+        "correctAnswer": "WBC",
+        "explanation": "WBC fight infection",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "b05f9d2f-5edb-46c5-a1f3-097e07371083",
+        "question": "Which planet is known as red planet?",
+        "options": [
+          "Earth",
+          "Venus",
+          "Mars",
+          "Jupiter"
+        ],
+        "correctAnswer": "Mars",
+        "explanation": "Due to iron oxide",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "fb2fdb88-2b44-4be9-99a0-16301af55cff",
+        "question": "Which mirror forms real image?",
+        "options": [
+          "Plane",
+          "Convex",
+          "Concave",
+          "None"
+        ],
+        "correctAnswer": "Concave",
+        "explanation": "Concave forms real image",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "a078034d-85b3-4d30-8cf9-411ec2258a27",
+        "question": "Which metal is most reactive?",
+        "options": [
+          "Gold",
+          "Silver",
+          "Potassium",
+          "Copper"
+        ],
+        "correctAnswer": "Potassium",
+        "explanation": "Highly reactive",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "a29d290f-2ab9-4e39-8ecc-852fabdccf12",
+        "question": "Which part of plant conducts water?",
+        "options": [
+          "Leaf",
+          "Stem",
+          "Root",
+          "Flower"
+        ],
+        "correctAnswer": "Stem",
+        "explanation": "Xylem in stem",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "9ccc96bf-2b2d-44a8-a00d-9f73223fc89d",
+        "question": "Which type of energy is wind energy?",
+        "options": [
+          "Non-renewable",
+          "Renewable",
+          "Static",
+          "Nuclear"
+        ],
+        "correctAnswer": "Renewable",
+        "explanation": "Wind is renewable",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "a7baf781-b429-457d-8a5a-b625a2cc47aa",
+        "question": "Find density if mass=10kg and volume=2m^3",
+        "options": [
+          "2",
+          "3",
+          "5",
+          "10"
+        ],
+        "correctAnswer": "5",
+        "explanation": "Density = mass/volume = 5",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 20
+  },
+  {
+    "id": "aaff693c-241c-4a95-9a33-02bfc0029105",
+    "title": "विज्ञान मॉक टेस्ट",
+    "slug": "विज्ञान मॉक टेस्ट",
+    "description": "",
+    "mode": "mock",
+    "topic": "Science",
+    "difficulty": "hard",
+    "timeLimit": 30,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:39:18.579Z",
+    "updatedAt": "2026-04-11T16:42:46.809Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "757d265e-5427-4e15-ba56-254c910ace86",
+        "question": "श्वसन के लिए कौन सी गैस आवश्यक है?",
+        "options": [
+          "ऑक्सीजन",
+          "नाइट्रोजन",
+          "कार्बन डाइऑक्साइड",
+          "हाइड्रोजन"
+        ],
+        "correctAnswer": "ऑक्सीजन",
+        "explanation": "श्वसन में ऑक्सीजन उपयोग होती है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "56560dc6-f518-4af4-82fd-9b7420f6c395",
+        "question": "शुद्ध जल का pH मान कितना होता है?",
+        "options": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "correctAnswer": "7",
+        "explanation": "जल का pH तटस्थ होता है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "18c26ef4-f73b-4de3-b969-5caaf36f6a7e",
+        "question": "कोशिका का नियंत्रण केंद्र कौन सा है?",
+        "options": [
+          "कोशिका द्रव्य",
+          "नाभिक",
+          "झिल्ली",
+          "राइबोसोम"
+        ],
+        "correctAnswer": "नाभिक",
+        "explanation": "नाभिक में DNA होता है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "6749836e-8016-4422-b63a-0d04c7c7a16a",
+        "question": "पृथ्वी सूर्य के चारों ओर कैसे घूमती है?",
+        "options": [
+          "घूर्णन",
+          "परिक्रमण",
+          "दोनों",
+          "कोई नहीं"
+        ],
+        "correctAnswer": "परिक्रमण",
+        "explanation": "पृथ्वी सूर्य की परिक्रमा करती है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "b0a4ce21-91f1-4a72-98b7-6321ff8a2636",
+        "question": "रक्त को छानने का कार्य कौन करता है?",
+        "options": [
+          "हृदय",
+          "यकृत",
+          "गुर्दा",
+          "फेफड़े"
+        ],
+        "correctAnswer": "गुर्दा",
+        "explanation": "गुर्दे रक्त को शुद्ध करते हैं",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "7b4a7cd1-5c2c-4a76-806f-be1ab4d8328c",
+        "question": "ध्वनि किस माध्यम में नहीं चलती?",
+        "options": [
+          "ठोस",
+          "द्रव",
+          "गैस",
+          "निर्वात"
+        ],
+        "correctAnswer": "निर्वात",
+        "explanation": "ध्वनि को माध्यम चाहिए",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "efda46d5-b4f2-4e6b-b339-48f55ea61407",
+        "question": "कौन सी धातु द्रव अवस्था में होती है?",
+        "options": [
+          "लोहा",
+          "चांदी",
+          "पारा",
+          "तांबा"
+        ],
+        "correctAnswer": "पारा",
+        "explanation": "पारा द्रव धातु है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "28566ef6-489d-4ef5-86f1-c3ab7c8a7ef8",
+        "question": "प्रकाश की गति कितनी होती है?",
+        "options": [
+          "3x10^8 m/s",
+          "3x10^6 m/s",
+          "3x10^5 m/s",
+          "3x10^7 m/s"
+        ],
+        "correctAnswer": "3x10^8 m/s",
+        "explanation": "यह स्थिर मान है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "668d09f9-7568-4b4c-ba4e-0db6a5f5f9ee",
+        "question": "कौन सा ग्रह लाल ग्रह कहलाता है?",
+        "options": [
+          "पृथ्वी",
+          "शुक्र",
+          "मंगल",
+          "बृहस्पति"
+        ],
+        "correctAnswer": "मंगल",
+        "explanation": "मंगल लाल रंग का दिखता है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "352ef02c-b046-40f8-b209-faf389f94701",
+        "question": "कौन सी परत हमें पराबैंगनी किरणों से बचाती है?",
+        "options": [
+          "क्षोभमंडल",
+          "समतापमंडल",
+          "मध्य मंडल",
+          "तापमंडल"
+        ],
+        "correctAnswer": "समतापमंडल",
+        "explanation": "ओजोन परत यहीं होती है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "6e4712e7-7990-4ad9-84b3-97279179a702",
+        "question": "ऊर्जा की SI इकाई क्या है?",
+        "options": [
+          "न्यूटन",
+          "जूल",
+          "वाट",
+          "वोल्ट"
+        ],
+        "correctAnswer": "जूल",
+        "explanation": "ऊर्जा की इकाई जूल है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3944a7bd-d75b-494a-911a-469bb8d46c9a",
+        "question": "कौन सा बल वस्तुओं को पृथ्वी की ओर खींचता है?",
+        "options": [
+          "चुंबकीय",
+          "गुरुत्वाकर्षण",
+          "घर्षण",
+          "वैद्युत"
+        ],
+        "correctAnswer": "गुरुत्वाकर्षण",
+        "explanation": "यह पृथ्वी का बल है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "e05322de-46c9-4c0a-b332-541a45b6000d",
+        "question": "पौधे भोजन कैसे बनाते हैं?",
+        "options": [
+          "श्वसन",
+          "प्रकाश संश्लेषण",
+          "पाचन",
+          "उत्सर्जन"
+        ],
+        "correctAnswer": "प्रकाश संश्लेषण",
+        "explanation": "यह भोजन बनाने की प्रक्रिया है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "779b4850-a27f-4370-9ef8-2e2fbb240a19",
+        "question": "कौन सा विटामिन सूर्य से मिलता है?",
+        "options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "correctAnswer": "D",
+        "explanation": "सूर्य से विटामिन D मिलता है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "787181be-ac00-4316-b3e5-b04c3e0aaf00",
+        "question": "कौन सी गैस प्रकाश संश्लेषण में उपयोग होती है?",
+        "options": [
+          "ऑक्सीजन",
+          "नाइट्रोजन",
+          "कार्बन डाइऑक्साइड",
+          "हाइड्रोजन"
+        ],
+        "correctAnswer": "कार्बन डाइऑक्साइड",
+        "explanation": "पौधे इसका उपयोग करते हैं",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "36701777-3f4a-4f74-b94f-f36918a8b392",
+        "question": "विद्युत धारा की इकाई क्या है?",
+        "options": [
+          "वोल्ट",
+          "एम्पियर",
+          "ओम",
+          "वाट"
+        ],
+        "correctAnswer": "एम्पियर",
+        "explanation": "यह SI इकाई है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "2c1c764b-a663-4e8e-b541-32a19b4e649e",
+        "question": "कौन सा ऊतक जल का परिवहन करता है?",
+        "options": [
+          "फ्लोएम",
+          "जाइलम",
+          "एपिडर्मिस",
+          "पैरेंकाइमा"
+        ],
+        "correctAnswer": "जाइलम",
+        "explanation": "जाइलम जल ले जाता है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "da4b0adb-2213-4cec-b5d2-ccbe6fda0a19",
+        "question": "कौन सा पदार्थ विद्युत का कुचालक है?",
+        "options": [
+          "तांबा",
+          "एल्युमिनियम",
+          "प्लास्टिक",
+          "लोहा"
+        ],
+        "correctAnswer": "प्लास्टिक",
+        "explanation": "यह कुचालक है",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "876541e9-3bd6-4816-aa3b-77af90bc37a2",
+        "question": "रक्त में संक्रमण से लड़ने वाली कोशिकाएं कौन सी हैं?",
+        "options": [
+          "RBC",
+          "WBC",
+          "प्लेटलेट्स",
+          "प्लाज्मा"
+        ],
+        "correctAnswer": "WBC",
+        "explanation": "श्वेत रक्त कण रक्षा करते हैं",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "b4ed8034-4add-434d-9e46-50626f4a73df",
+        "question": "घनत्व का सूत्र क्या है?",
+        "options": [
+          "द्रव्यमान/आयतन",
+          "आयतन/द्रव्यमान",
+          "बल/क्षेत्रफल",
+          "दूरी/समय"
+        ],
+        "correctAnswer": "द्रव्यमान/आयतन",
+        "explanation": "घनत्व = द्रव्यमान भाग आयतन",
+        "topic": "Science",
+        "difficulty": "hard",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 20
+  },
+  {
+    "id": "fb5fdb3c-de03-4fda-a45c-46e8db8d0ba3",
+    "title": "भूगोल क्विज",
+    "slug": "",
+    "description": "",
+    "mode": "mock",
+    "topic": "Geography",
+    "difficulty": "medium",
+    "timeLimit": 25,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:49:49.407Z",
+    "updatedAt": "2026-04-11T16:53:56.438Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "7b70b3e9-04ed-4dc1-a0c2-d8515128485f",
+        "question": "भारत की राजधानी क्या है?",
+        "options": [
+          "मुंबई",
+          "नई दिल्ली",
+          "कोलकाता",
+          "चेन्नई"
+        ],
+        "correctAnswer": "नई दिल्ली",
+        "explanation": "नई दिल्ली भारत की राजधानी है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "03b728dc-6d88-4184-983b-aced838c1558",
+        "question": "भारत का सबसे बड़ा राज्य क्षेत्रफल में कौन सा है?",
+        "options": [
+          "उत्तर प्रदेश",
+          "राजस्थान",
+          "मध्य प्रदेश",
+          "महाराष्ट्र"
+        ],
+        "correctAnswer": "राजस्थान",
+        "explanation": "राजस्थान सबसे बड़ा राज्य है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3aa2a4bb-8aee-431f-a988-c4ac7232189a",
+        "question": "विश्व का सबसे बड़ा महासागर कौन सा है?",
+        "options": [
+          "अटलांटिक",
+          "हिन्द",
+          "प्रशांत",
+          "आर्कटिक"
+        ],
+        "correctAnswer": "प्रशांत",
+        "explanation": "प्रशांत महासागर सबसे बड़ा है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "093cbade-5d88-4ab4-8f6e-bf35a79b8c9a",
+        "question": "भारत की सबसे लंबी नदी कौन सी है?",
+        "options": [
+          "गंगा",
+          "यमुना",
+          "नर्मदा",
+          "गोदावरी"
+        ],
+        "correctAnswer": "गंगा",
+        "explanation": "गंगा सबसे लंबी नदी है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "1c90377e-49ba-4122-80fa-f02196b2c889",
+        "question": "पृथ्वी का सबसे ऊँचा पर्वत कौन सा है?",
+        "options": [
+          "K2",
+          "कंचनजंगा",
+          "एवरेस्ट",
+          "नंगा पर्वत"
+        ],
+        "correctAnswer": "एवरेस्ट",
+        "explanation": "एवरेस्ट सबसे ऊँचा है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "5b5779ed-efb6-418a-8ddc-73518901a9a5",
+        "question": "मरुस्थल किसे कहते हैं?",
+        "options": [
+          "जहाँ पानी अधिक हो",
+          "जहाँ वर्षा कम हो",
+          "जहाँ जंगल हो",
+          "जहाँ बर्फ हो"
+        ],
+        "correctAnswer": "जहाँ वर्षा कम हो",
+        "explanation": "कम वर्षा वाला क्षेत्र मरुस्थल है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "5187e6a7-bb8e-42a4-b6e2-2ea6eef92988",
+        "question": "भारत में मानसून कब आता है?",
+        "options": [
+          "जनवरी",
+          "मार्च",
+          "जून",
+          "दिसंबर"
+        ],
+        "correctAnswer": "जून",
+        "explanation": "मानसून जून में आता है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "df4fd769-8845-45fe-813c-d1618ae106e3",
+        "question": "सबसे बड़ी झील कौन सी है?",
+        "options": [
+          "विक्टोरिया",
+          "कैस्पियन सागर",
+          "डल झील",
+          "चिल्का"
+        ],
+        "correctAnswer": "कैस्पियन सागर",
+        "explanation": "कैस्पियन सबसे बड़ी झील है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "39f8e6c8-18a4-4132-8c14-fb8a32ac6279",
+        "question": "भूमध्य रेखा क्या है?",
+        "options": [
+          "रेखा जो पृथ्वी को दो भागों में बाँटती है",
+          "पर्वत",
+          "नदी",
+          "झील"
+        ],
+        "correctAnswer": "रेखा जो पृथ्वी को दो भागों में बाँटती है",
+        "explanation": "यह पृथ्वी को दो भागों में बाँटती है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "9c7ae64e-2466-4fbf-b170-1784d203e69e",
+        "question": "भारत का राष्ट्रीय पशु कौन है?",
+        "options": [
+          "हाथी",
+          "शेर",
+          "बाघ",
+          "गाय"
+        ],
+        "correctAnswer": "बाघ",
+        "explanation": "बाघ राष्ट्रीय पशु है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "439604cb-a893-492a-9364-39ca826a3924",
+        "question": "सूर्य किस दिशा में उगता है?",
+        "options": [
+          "उत्तर",
+          "दक्षिण",
+          "पूर्व",
+          "पश्चिम"
+        ],
+        "correctAnswer": "पूर्व",
+        "explanation": "सूर्य पूर्व में उगता है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "65317875-0d70-402b-8d79-2e68d77bcfe1",
+        "question": "कौन सा देश जनसंख्या में प्रथम है?",
+        "options": [
+          "भारत",
+          "अमेरिका",
+          "चीन",
+          "रूस"
+        ],
+        "correctAnswer": "चीन",
+        "explanation": "चीन की जनसंख्या अधिक है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "44d5d15f-3e4f-4e78-90a5-461bd167de41",
+        "question": "भारत का सबसे ऊँचा पठार कौन सा है?",
+        "options": [
+          "मालवा",
+          "दक्कन",
+          "छोटानागपुर",
+          "तिब्बत"
+        ],
+        "correctAnswer": "तिब्बत",
+        "explanation": "तिब्बत पठार सबसे ऊँचा है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "34fa42a7-6924-46d9-86ec-fa001bb76394",
+        "question": "कौन सा महासागर भारत के दक्षिण में है?",
+        "options": [
+          "अटलांटिक",
+          "प्रशांत",
+          "हिन्द",
+          "आर्कटिक"
+        ],
+        "correctAnswer": "हिन्द",
+        "explanation": "भारत के दक्षिण में हिन्द महासागर है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d449ff3e-1501-44c1-bc2b-e1e1d09c5e4e",
+        "question": "कौन सा राज्य चाय उत्पादन के लिए प्रसिद्ध है?",
+        "options": [
+          "पंजाब",
+          "असम",
+          "राजस्थान",
+          "गुजरात"
+        ],
+        "correctAnswer": "असम",
+        "explanation": "असम चाय के लिए प्रसिद्ध है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "c7d1c8fe-7f15-4475-96ab-da7b317d3cd4",
+        "question": "विश्व का सबसे बड़ा रेगिस्तान कौन सा है?",
+        "options": [
+          "थार",
+          "सहारा",
+          "गोबी",
+          "कालाहारी"
+        ],
+        "correctAnswer": "सहारा",
+        "explanation": "सहारा सबसे बड़ा है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3079dc9e-72f6-41e0-b576-08ff5b56d943",
+        "question": "भारत की सबसे लंबी तटरेखा किस राज्य की है?",
+        "options": [
+          "केरल",
+          "गुजरात",
+          "तमिलनाडु",
+          "महाराष्ट्र"
+        ],
+        "correctAnswer": "गुजरात",
+        "explanation": "गुजरात की तटरेखा सबसे लंबी है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "881136a3-bd5a-42cc-9214-f477fa50fcd2",
+        "question": "कौन सा ग्रह सबसे बड़ा है?",
+        "options": [
+          "पृथ्वी",
+          "मंगल",
+          "बृहस्पति",
+          "शनि"
+        ],
+        "correctAnswer": "बृहस्पति",
+        "explanation": "बृहस्पति सबसे बड़ा ग्रह है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "a7bbb73d-9689-4b3a-a978-5061f18537a0",
+        "question": "हिमालय किस प्रकार का पर्वत है?",
+        "options": [
+          "ज्वालामुखी",
+          "वलित",
+          "ब्लॉक",
+          "गुंबद"
+        ],
+        "correctAnswer": "वलित",
+        "explanation": "हिमालय वलित पर्वत है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "f059b0dd-1666-4c88-b24d-bbd376c94424",
+        "question": "कौन सा देश क्षेत्रफल में सबसे बड़ा है?",
+        "options": [
+          "भारत",
+          "अमेरिका",
+          "रूस",
+          "चीन"
+        ],
+        "correctAnswer": "रूस",
+        "explanation": "रूस सबसे बड़ा देश है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "f0e817b9-b2ff-482b-ac7a-2d86a14cd488",
+        "question": "भारत की सबसे बड़ी नदी घाटी परियोजना कौन सी है?",
+        "options": [
+          "भाखड़ा",
+          "तेहरी",
+          "नर्मदा",
+          "दामोदर"
+        ],
+        "correctAnswer": "भाखड़ा",
+        "explanation": "भाखड़ा बड़ी परियोजना है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "5de7759c-077c-4b5b-8b9a-79061da7bfe4",
+        "question": "कौन सा राज्य कपास उत्पादन में अग्रणी है?",
+        "options": [
+          "पंजाब",
+          "गुजरात",
+          "बिहार",
+          "ओडिशा"
+        ],
+        "correctAnswer": "गुजरात",
+        "explanation": "गुजरात कपास में अग्रणी है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "0507d75b-03cf-4a47-9676-22bbe60caf63",
+        "question": "विश्व का सबसे ठंडा स्थान कौन सा है?",
+        "options": [
+          "साइबेरिया",
+          "अंटार्कटिका",
+          "ग्रीनलैंड",
+          "कनाडा"
+        ],
+        "correctAnswer": "अंटार्कटिका",
+        "explanation": "यह सबसे ठंडा है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3ac8472d-7a03-4b83-aaa4-5a6f3ef0ddd6",
+        "question": "कौन सा देश द्वीपों का समूह है?",
+        "options": [
+          "भारत",
+          "इंडोनेशिया",
+          "चीन",
+          "नेपाल"
+        ],
+        "correctAnswer": "इंडोनेशिया",
+        "explanation": "इंडोनेशिया द्वीप समूह है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "8e3937e3-e025-49b4-ac8f-3d019f67c7cc",
+        "question": "भारत का सबसे बड़ा बंदरगाह कौन सा है?",
+        "options": [
+          "मुंबई",
+          "कोलकाता",
+          "चेन्नई",
+          "विशाखापत्तनम"
+        ],
+        "correctAnswer": "मुंबई",
+        "explanation": "मुंबई बड़ा बंदरगाह है",
+        "topic": "Geography",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 25
+  },
+  {
+    "id": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "title": "करंट अफेयर्स क्विज",
+    "slug": "",
+    "description": "",
+    "mode": "daily",
+    "topic": "Current Affairs",
+    "difficulty": "medium",
+    "timeLimit": 10,
+    "isPublished": true,
+    "isDeleted": false,
+    "createdBy": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "createdAt": "2026-04-11T16:52:28.483Z",
+    "updatedAt": "2026-04-11T16:53:15.218Z",
+    "adminNotes": "",
+    "questions": [
+      {
+        "id": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
+        "question": "हाल ही में ISRO का Aditya-L1 मिशन किससे संबंधित है?",
+        "options": [
+          "चंद्रमा",
+          "मंगल",
+          "सूर्य",
+          "शुक्र"
+        ],
+        "correctAnswer": "सूर्य",
+        "explanation": "यह सूर्य अध्ययन मिशन है",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
+        "question": "हाल ही में G20 शिखर सम्मेलन भारत के किस शहर में हुआ?",
+        "options": [
+          "दिल्ली",
+          "मुंबई",
+          "जयपुर",
+          "लखनऊ"
+        ],
+        "correctAnswer": "दिल्ली",
+        "explanation": "G20 सम्मेलन नई दिल्ली में हुआ",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "ac179359-61ef-469a-88d3-5382e7abba78",
+        "question": "भारत के वर्तमान राष्ट्रपति कौन हैं?",
+        "options": [
+          "रामनाथ कोविंद",
+          "द्रौपदी मुर्मू",
+          "नरेंद्र मोदी",
+          "अमित शाह"
+        ],
+        "correctAnswer": "द्रौपदी मुर्मू",
+        "explanation": "वर्तमान राष्ट्रपति द्रौपदी मुर्मू हैं",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
+        "question": "हाल ही में किस देश ने चंद्रयान-3 मिशन सफलतापूर्वक पूरा किया?",
+        "options": [
+          "अमेरिका",
+          "भारत",
+          "रूस",
+          "चीन"
+        ],
+        "correctAnswer": "भारत",
+        "explanation": "भारत ने Chandrayaan-3 मिशन किया",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+        "question": "हाल ही में BRICS में नए सदस्य के रूप में कौन शामिल हुआ?",
+        "options": [
+          "सऊदी अरब",
+          "जापान",
+          "जर्मनी",
+          "इटली"
+        ],
+        "correctAnswer": "सऊदी अरब",
+        "explanation": "BRICS विस्तार में सऊदी अरब शामिल हुआ",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
+        "question": "हाल ही में किस राज्य ने समान नागरिक संहिता लागू करने की दिशा में कदम बढ़ाया?",
+        "options": [
+          "उत्तर प्रदेश",
+          "उत्तराखंड",
+          "बिहार",
+          "गुजरात"
+        ],
+        "correctAnswer": "उत्तराखंड",
+        "explanation": "उत्तराखंड UCC के लिए चर्चा में रहा",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
+        "question": "हाल ही में किस मिशन का उद्देश्य सूर्य का अध्ययन करना है?",
+        "options": [
+          "Gaganyaan",
+          "Aditya-L1",
+          "Chandrayaan-2",
+          "Mangalyaan"
+        ],
+        "correctAnswer": "Aditya-L1",
+        "explanation": "यह सूर्य मिशन है",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "1656933f-5303-404a-8e7d-08eda9a9f961",
+        "question": "भारत के वर्तमान मुख्य न्यायाधीश कौन हैं?",
+        "options": [
+          "DY चंद्रचूड़",
+          "UU ललित",
+          "एनवी रमना",
+          "रंजन गोगोई"
+        ],
+        "correctAnswer": "DY चंद्रचूड़",
+        "explanation": "वर्तमान CJI DY चंद्रचूड़ हैं",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
+        "question": "हाल ही में भारत का पहला सेमीकंडक्टर प्लांट किस राज्य में स्थापित हो रहा है?",
+        "options": [
+          "गुजरात",
+          "महाराष्ट्र",
+          "तमिलनाडु",
+          "कर्नाटक"
+        ],
+        "correctAnswer": "गुजरात",
+        "explanation": "गुजरात में सेमीकंडक्टर प्लांट बन रहा है",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      },
+      {
+        "id": "fec3c768-a264-41a1-af0d-840e21f25165",
+        "question": "हाल ही में भारत ने किस क्षेत्र में डिजिटल पब्लिक इंफ्रास्ट्रक्चर के लिए पहचान बनाई?",
+        "options": [
+          "स्वास्थ्य",
+          "शिक्षा",
+          "डिजिटल पेमेंट",
+          "कृषि"
+        ],
+        "correctAnswer": "डिजिटल पेमेंट",
+        "explanation": "भारत UPI के लिए प्रसिद्ध है",
+        "topic": "Current Affairs",
+        "difficulty": "medium",
+        "marks": 1,
+        "negativeMarks": 0,
+        "isActive": true
+      }
+    ],
+    "questionCount": 10
   }
 ]

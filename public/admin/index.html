@@ -69,7 +69,8 @@
         <option value="mock">Mock</option>
       </select>
       <select id="statusFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <option value="">All Status</option>
+        <option value="active" selected>Active (Published + Draft)</option>
+        <option value="all">All (including deleted)</option>
         <option value="published">Published</option>
         <option value="draft">Draft</option>
         <option value="deleted">Deleted</option>
@@ -214,14 +215,14 @@
 <!-- ════════════════════════════════════════════════════════════
      CONFIRM DELETE MODAL
 ════════════════════════════════════════════════════════════ -->
-<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop" onclick="event.target.id === 'confirmModal' ? closeConfirmModal() : null">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 text-center" onclick="event.stopPropagation()">
     <div class="text-4xl mb-3">🗑️</div>
     <h3 class="text-lg font-bold text-gray-800 mb-2" id="confirmTitle">Delete Quiz?</h3>
     <p class="text-gray-500 text-sm mb-6" id="confirmMessage">This will soft-delete the quiz. It can be restored later.</p>
     <div class="flex gap-3 justify-center">
       <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">Cancel</button>
-      <button id="confirmOkBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700">Delete</button>
+      <button id="confirmOkBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed">Delete</button>
     </div>
   </div>
 </div>
@@ -351,12 +352,12 @@ function renderTable(quizzes) {
       </td>
       <td class="px-4 py-3 text-right whitespace-nowrap space-x-1">
         ${!q.isDeleted ? `
-          <button onclick="editQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100">Edit</button>
-          <button onclick="togglePublish('${esc(q.id)}', ${!!q.isPublished})" class="px-2 py-1 text-xs ${q.isPublished ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'} rounded">
+          <button onclick="editQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 disabled:opacity-60 disabled:cursor-not-allowed" data-action="edit">Edit</button>
+          <button onclick="togglePublish('${esc(q.id)}', ${!!q.isPublished})" class="px-2 py-1 text-xs ${q.isPublished ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'} rounded disabled:opacity-60 disabled:cursor-not-allowed" data-action="publish">
             ${q.isPublished ? 'Unpublish' : 'Publish'}
           </button>
-          <button onclick="duplicateQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-purple-50 text-purple-600 rounded hover:bg-purple-100">Copy</button>
-          <button onclick="confirmDelete('${esc(q.id)}', '${esc(q.title)}')" class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100">Delete</button>
+          <button onclick="duplicateQuiz('${esc(q.id)}')" class="px-2 py-1 text-xs bg-purple-50 text-purple-600 rounded hover:bg-purple-100 disabled:opacity-60 disabled:cursor-not-allowed" data-action="duplicate">Copy</button>
+          <button onclick="confirmDelete('${esc(q.id)}', '${esc(q.title)}')" class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 disabled:opacity-60 disabled:cursor-not-allowed" data-action="delete">Delete</button>
         ` : `
           <span class="text-xs text-gray-400 italic">Soft-deleted</span>
         `}
@@ -375,28 +376,47 @@ function modeBadge(mode) {
 // CRUD ACTIONS
 // ════════════════════════════════════════════════════════════
 async function togglePublish(id, currentlyPublished) {
+  const btn = event.target;
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = currentlyPublished ? 'Unpublishing…' : 'Publishing…';
+  
   try {
     const res = await fetch(`/api/admin/quizzes/${id}/publish`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isPublished: !currentlyPublished })
     });
-    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed to update');
     showBanner(currentlyPublished ? 'Quiz unpublished.' : 'Quiz published!', 'success');
     loadQuizzes();
   } catch (err) {
-    showBanner('Error: ' + err.message, 'error');
+    showBanner('Error toggling publish: ' + err.message, 'error');
+    btn.disabled = false;
+    btn.textContent = origText;
   }
 }
 
 async function duplicateQuiz(id) {
+  const btn = event.target;
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Copying…';
+  
   try {
-    const res = await fetch(`/api/admin/quizzes/${id}/duplicate`, { method: 'POST' });
-    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    const res = await fetch(`/api/admin/quizzes/${id}/duplicate`, { 
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed to duplicate');
     showBanner('Quiz duplicated as draft.', 'success');
     loadQuizzes();
   } catch (err) {
-    showBanner('Error: ' + err.message, 'error');
+    showBanner('Error duplicating quiz: ' + err.message, 'error');
+    btn.disabled = false;
+    btn.textContent = origText;
   }
 }
 
@@ -405,23 +425,36 @@ function confirmDelete(id, title) {
   pendingDeleteId = id;
   document.getElementById('confirmTitle').textContent = `Delete "${title}"?`;
   document.getElementById('confirmMessage').textContent = 'This will soft-delete the quiz. It will no longer be visible to users.';
+  document.getElementById('confirmOkBtn').disabled = false;
   document.getElementById('confirmOkBtn').onclick = doDelete;
   document.getElementById('confirmModal').classList.remove('hidden');
 }
 function closeConfirmModal() {
   document.getElementById('confirmModal').classList.add('hidden');
   pendingDeleteId = null;
+  document.getElementById('confirmOkBtn').disabled = false;
 }
 async function doDelete() {
   if (!pendingDeleteId) return;
-  closeConfirmModal();
+  const btn = document.getElementById('confirmOkBtn');
+  btn.disabled = true;
+  const origText = btn.textContent;
+  btn.textContent = 'Deleting…';
+  
   try {
-    const res = await fetch(`/api/admin/quizzes/${pendingDeleteId}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
-    showBanner('Quiz deleted (soft).', 'success');
+    const res = await fetch(`/api/admin/quizzes/${pendingDeleteId}`, { 
+      method: 'DELETE',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed to delete');
+    showBanner('Quiz deleted successfully.', 'success');
+    closeConfirmModal();
     loadQuizzes();
   } catch (err) {
-    showBanner('Error: ' + err.message, 'error');
+    showBanner('Error deleting quiz: ' + err.message, 'error');
+    btn.disabled = false;
+    btn.textContent = origText;
   }
 }
 
@@ -498,6 +531,7 @@ async function handleFormSubmit(e) {
 
     const res = await fetch(url, {
       method,
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
@@ -512,7 +546,7 @@ async function handleFormSubmit(e) {
     closeFormModal();
     loadQuizzes();
   } catch (err) {
-    showBanner('Error: ' + err.message, 'error');
+    showBanner('Error saving quiz: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
     btnText.textContent = origText;

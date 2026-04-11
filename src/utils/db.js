@@ -72,6 +72,39 @@ const saveUsers = async (users) => writeFile('users', users.map(normalizeUser));
 const getAttempts = () => readFile('attempts');
 const saveAttempts = (attempts) => writeFile('attempts', attempts);
 
+async function deleteAttemptsByUser(userId) {
+  const attempts = await readFile('attempts');
+  const filtered = attempts.filter((attempt) => attempt.userId !== userId);
+  const deletedCount = attempts.length - filtered.length;
+  if (deletedCount > 0) {
+    await writeFile('attempts', filtered);
+  }
+  return { deletedCount, attempts: filtered };
+}
+
+async function deleteAttemptsByUserAndQuiz(userId, quizId) {
+  const attempts = await readFile('attempts');
+  const filtered = attempts.filter(
+    (attempt) => !(attempt.userId === userId && String(attempt.quizId) === String(quizId))
+  );
+  const deletedCount = attempts.length - filtered.length;
+  if (deletedCount > 0) {
+    await writeFile('attempts', filtered);
+  }
+  return { deletedCount, attempts: filtered };
+}
+
+async function deleteAttemptById(attemptId) {
+  const attempts = await readFile('attempts');
+  const target = attempts.find((attempt) => attempt.id === attemptId) || null;
+  const filtered = attempts.filter((attempt) => attempt.id !== attemptId);
+  const deletedCount = attempts.length - filtered.length;
+  if (deletedCount > 0) {
+    await writeFile('attempts', filtered);
+  }
+  return { deletedCount, attempts: filtered, deletedAttempt: target };
+}
+
 // ─── QUIZ DB HELPERS (migration-friendly) ────────────────────────────────────
 
 /**
@@ -252,11 +285,122 @@ async function saveGamificationConfig(config = {}) {
   return writeFile('gamification-config', [config]);
 }
 
+// ─── REVISION SYSTEM (Wrong Questions & Bookmarks) ───────────────────────────────
+
+/**
+ * Get all wrong questions for a user
+ * Returns array of { userId, questionId, quizId, topic, selectedAnswer, correctAnswer, timestamp }
+ */
+async function getWrongQuestions(userId) {
+  const all = await readFile('wrong-questions');
+  return Array.isArray(all) ? all.filter(w => w.userId === userId) : [];
+}
+
+/**
+ * Add a wrong question (called after quiz submission)
+ */
+async function addWrongQuestion(userId, data) {
+  const all = await readFile('wrong-questions');
+  const entry = {
+    id: uuidv4(),
+    userId,
+    questionId: data.questionId,
+    quizId: data.quizId || '',
+    topic: data.topic || 'General',
+    selectedAnswer: data.selectedAnswer || '',
+    correctAnswer: data.correctAnswer || '',
+    timestamp: new Date().toISOString()
+  };
+  all.push(entry);
+  await writeFile('wrong-questions', all);
+  return entry;
+}
+
+/**
+ * Remove a wrong question entry
+ */
+async function removeWrongQuestion(id) {
+  const all = await readFile('wrong-questions');
+  const filtered = all.filter(w => w.id !== id);
+  await writeFile('wrong-questions', filtered);
+}
+
+async function deleteWrongQuestionsByUser(userId) {
+  const all = await readFile('wrong-questions');
+  const filtered = all.filter((entry) => entry.userId !== userId);
+  const deletedCount = all.length - filtered.length;
+  if (deletedCount > 0) {
+    await writeFile('wrong-questions', filtered);
+  }
+  return { deletedCount, wrongQuestions: filtered };
+}
+
+async function deleteWrongQuestionsByUserAndQuiz(userId, quizId) {
+  const all = await readFile('wrong-questions');
+  const filtered = all.filter((entry) => !(entry.userId === userId && String(entry.quizId) === String(quizId)));
+  const deletedCount = all.length - filtered.length;
+  if (deletedCount > 0) {
+    await writeFile('wrong-questions', filtered);
+  }
+  return { deletedCount, wrongQuestions: filtered };
+}
+
+/**
+ * Get all bookmarks for a user
+ * Returns array of { userId, questionId, quizId, topic, timestamp }
+ */
+async function getBookmarks(userId) {
+  const all = await readFile('bookmarks');
+  return Array.isArray(all) ? all.filter(b => b.userId === userId) : [];
+}
+
+/**
+ * Add a bookmark
+ */
+async function addBookmark(userId, data) {
+  const all = await readFile('bookmarks');
+  // Check if already bookmarked
+  const exists = all.find(b => b.userId === userId && b.questionId === data.questionId);
+  if (exists) return exists;
+  
+  const entry = {
+    id: uuidv4(),
+    userId,
+    questionId: data.questionId,
+    quizId: data.quizId || '',
+    topic: data.topic || 'General',
+    timestamp: new Date().toISOString()
+  };
+  all.push(entry);
+  await writeFile('bookmarks', all);
+  return entry;
+}
+
+/**
+ * Remove a bookmark
+ */
+async function removeBookmark(userId, questionId) {
+  const all = await readFile('bookmarks');
+  const filtered = all.filter(b => !(b.userId === userId && b.questionId === questionId));
+  await writeFile('bookmarks', filtered);
+}
+
+/**
+ * Check if a question is bookmarked
+ */
+async function isQuestionBookmarked(userId, questionId) {
+  const bookmarks = await getBookmarks(userId);
+  return bookmarks.some(b => b.questionId === questionId);
+}
+
 module.exports = {
   getUsers,
   saveUsers,
   getAttempts,
   saveAttempts,
+  deleteAttemptsByUser,
+  deleteAttemptsByUserAndQuiz,
+  deleteAttemptById,
   getResources,
   saveResources,
   getCourses,
@@ -284,5 +428,15 @@ module.exports = {
   deleteQuiz,
   duplicateQuiz,
   generateSlug,
-  normalizeQuestion
+  normalizeQuestion,
+  // Revision system (wrong questions & bookmarks)
+  getWrongQuestions,
+  addWrongQuestion,
+  removeWrongQuestion,
+  deleteWrongQuestionsByUser,
+  deleteWrongQuestionsByUserAndQuiz,
+  getBookmarks,
+  addBookmark,
+  removeBookmark,
+  isQuestionBookmarked
 };

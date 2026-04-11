@@ -295,11 +295,28 @@ const QuizResults = (() => {
             <div class="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">Recommended next quiz</div>
             <h3 class="mt-2 text-xl font-black">${escapeHtml(recommendedNextQuiz.title || 'Next quiz')}</h3>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-blue-100">${escapeHtml(recommendedNextQuiz.reason || 'Continue momentum with the next best quiz.')}</p>
+            <div class="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-white/90">
+              <span class="rounded-full bg-white/10 px-3 py-1">Action: ${escapeHtml(recommendedNextQuiz.action === 'revise' ? 'Revise first' : 'Continue practice')}</span>
+              ${recommendedNextQuiz.topic ? `<span class="rounded-full bg-white/10 px-3 py-1">Topic: ${escapeHtml(recommendedNextQuiz.topic)}</span>` : ''}
+              ${recommendedNextQuiz.estimatedTimeLabel ? `<span class="rounded-full bg-white/10 px-3 py-1">Effort: ${escapeHtml(recommendedNextQuiz.estimatedTimeLabel)}</span>` : ''}
+            </div>
+            ${recommendedNextQuiz.mockReadinessHint ? `<p class="mt-3 max-w-2xl text-xs leading-5 text-blue-100/90">${escapeHtml(recommendedNextQuiz.mockReadinessHint)}</p>` : ''}
           </div>
-          <button type="button" data-result-action="recommended" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100">Open quiz</button>
+          <button type="button" data-result-action="recommended" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100">${escapeHtml(recommendedNextQuiz.ctaLabel || (recommendedNextQuiz.action === 'revise' ? 'Open revision' : 'Open quiz'))}</button>
         </div>
       </section>
-    ` : '';
+    ` : `
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">Next step</div>
+            <h3 class="mt-2 text-lg font-black text-slate-900">Practice another quiz</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Recommendation data is unavailable for this attempt. Continue with another quiz or open revision.</p>
+          </div>
+          <a href="/quizzes.html?mode=all" class="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">Open quizzes</a>
+        </div>
+      </section>
+    `;
 
     return `
       <section class="space-y-6">

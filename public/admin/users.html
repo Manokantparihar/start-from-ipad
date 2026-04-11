@@ -164,6 +164,8 @@
   let totalPages = 1;
   let perPage = 50;
   let currentUserId = null; // logged-in admin's id
+  let activeDetailUserId = null;
+  const ATTEMPT_DATA_REFRESH_KEY = 'attempt-data-refresh';
 
   // ─── Helpers ──────────────────────────────────────────────────────────────────
   function showBanner(msg, type = 'success') {
@@ -172,6 +174,35 @@
     el.className = `banner fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
     el.classList.remove('hidden');
     setTimeout(() => el.classList.add('hidden'), 3500);
+  }
+
+  function broadcastAttemptDataRefresh(payload = {}) {
+    try {
+      localStorage.setItem(ATTEMPT_DATA_REFRESH_KEY, JSON.stringify({
+        at: Date.now(),
+        ...payload
+      }));
+    } catch {
+      // Ignore storage errors and continue normal refresh flow.
+    }
+  }
+
+  async function refreshAfterAttemptMutation(userId, successMessage) {
+    const detailUserId = String(userId || activeDetailUserId || '').trim();
+    const refreshCalls = [loadUsers(currentPage)];
+
+    if (detailUserId) {
+      refreshCalls.push(openDetailModal(detailUserId));
+    }
+
+    try {
+      await Promise.all(refreshCalls);
+      if (successMessage) showBanner(successMessage, 'success');
+    } catch {
+      if (successMessage) showBanner(successMessage, 'success');
+      // Fallback to full reload if any refresh step fails.
+      window.location.reload();
+    }
   }
 
   function fmtDate(iso) {
@@ -347,6 +378,7 @@
 
   // ─── Detail Modal ─────────────────────────────────────────────────────────────
   async function openDetailModal(id) {
+    activeDetailUserId = id;
     const modal = document.getElementById('userModal');
     const content = document.getElementById('modalContent');
     modal.classList.remove('hidden');
@@ -389,19 +421,62 @@
           <div>Tier: <span class="text-gray-600">${user.currentTier || user.masteryLevel || '—'}</span></div>
           <div>Current streak: <span class="text-gray-600">${user.currentStreak || 0} day(s)</span></div>
         </div>
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3 mb-4">
+          <h4 class="font-semibold text-gray-700 text-sm mb-3">Attempt Controls</h4>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button id="resetAllAttemptsBtn" class="px-3 py-2 text-xs font-semibold rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200 ${recentAttempts.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${recentAttempts.length === 0 ? 'disabled' : ''}>Reset All Attempts</button>
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <select id="resetQuizSelect" class="border border-gray-300 rounded-lg px-2.5 py-2 text-xs bg-white min-w-[220px] ${recentAttempts.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${recentAttempts.length === 0 ? 'disabled' : ''}>
+              <option value="">Select quiz to reset attempts</option>
+              ${Array.from(new Map(recentAttempts.map((a) => [String(a.quizId || ''), a])).values())
+                .filter((a) => String(a.quizId || '').trim())
+                .map((a) => `<option value="${escHtml(String(a.quizId))}">${escHtml(a.quizTitle || a.quizId)}</option>`)
+                .join('')}
+            </select>
+            <button id="resetQuizAttemptsBtn" class="px-3 py-2 text-xs font-semibold rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 ${recentAttempts.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${recentAttempts.length === 0 ? 'disabled' : ''}>Reset Quiz Attempts</button>
+          </div>
+        </div>
         ${recentAttempts.length > 0 ? `
           <h4 class="font-semibold text-gray-700 text-sm mb-2">Recent Attempts (last 20)</h4>
           <div class="space-y-1.5 max-h-48 overflow-y-auto">
             ${recentAttempts.map(a => `
-              <div class="flex justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
-                <span class="text-gray-700 truncate max-w-[60%]">${escHtml(a.quizTitle||a.quizId||'Quiz')}</span>
-                <span class="text-gray-500">${formatAttemptScore(a)}</span>
-                <span class="text-gray-400">${fmtDate(a.submittedAt||a.createdAt)}</span>
+              <div class="flex justify-between items-center gap-2 text-xs bg-gray-50 rounded-lg px-3 py-2">
+                <span class="text-gray-700 truncate max-w-[44%]">${escHtml(a.quizTitle||a.quizId||'Quiz')}</span>
+                <span class="text-gray-500 whitespace-nowrap">${formatAttemptScore(a)}</span>
+                <span class="text-gray-400 whitespace-nowrap">${fmtDate(a.submittedAt||a.createdAt)}</span>
+                <button data-action="delete-attempt" data-attempt-id="${escHtml(a.id)}" data-attempt-quiz-title="${escHtml(a.quizTitle||a.quizId||'Quiz')}" class="px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 whitespace-nowrap">Delete</button>
               </div>
             `).join('')}
           </div>
         ` : '<p class="text-sm text-gray-400">No attempts yet.</p>'}
       `;
+
+      const resetAllBtn = content.querySelector('#resetAllAttemptsBtn');
+      const resetQuizBtn = content.querySelector('#resetQuizAttemptsBtn');
+      const resetQuizSelect = content.querySelector('#resetQuizSelect');
+
+      if (resetAllBtn) {
+        resetAllBtn.addEventListener('click', () => confirmResetAllAttempts(user));
+      }
+
+      if (resetQuizBtn) {
+        resetQuizBtn.addEventListener('click', () => {
+          const quizId = resetQuizSelect?.value || '';
+          const quizTitle = resetQuizSelect?.selectedOptions?.[0]?.textContent || 'this quiz';
+          if (!quizId) {
+            showBanner('Please select a quiz first.', 'error');
+            return;
+          }
+          confirmResetQuizAttempts(user, quizId, quizTitle);
+        });
+      }
+
+      content.querySelectorAll('[data-action="delete-attempt"]').forEach((button) => {
+        button.addEventListener('click', () => {
+          confirmDeleteAttempt(button.dataset.attemptId, button.dataset.attemptQuizTitle || 'this attempt');
+        });
+      });
     } catch (err) {
       content.innerHTML = `<p class="text-red-500">${err.message}</p>`;
     }
@@ -517,6 +592,87 @@
       loadUsers(currentPage);
     } catch (err) {
       showBanner(err.message, 'error');
+    }
+  }
+
+  // ─── Attempt Reset / Delete ───────────────────────────────────────────────
+  function confirmResetAllAttempts(user) {
+    openConfirm({
+      title: 'Reset All Attempts',
+      message: `Delete all attempts for "${user.name || user.email}"? This action cannot be undone.`,
+      okLabel: 'Reset All',
+      okClass: 'bg-rose-600 hover:bg-rose-700',
+      onOk: () => resetAllAttempts(user.id)
+    });
+  }
+
+  async function resetAllAttempts(userId) {
+    try {
+      const res = await fetch(`/api/admin/users/${encodeURIComponent(userId)}/attempts`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to reset attempts');
+      const successMessage = data.message || `Deleted ${data.deletedCount || 0} attempts`;
+      broadcastAttemptDataRefresh({ type: 'reset-all', userId, deletedCount: data.deletedCount || 0 });
+      await refreshAfterAttemptMutation(userId, successMessage);
+    } catch (err) {
+      showBanner(err.message || 'Failed to reset attempts', 'error');
+    }
+  }
+
+  function confirmResetQuizAttempts(user, quizId, quizTitle) {
+    openConfirm({
+      title: 'Reset Quiz Attempts',
+      message: `Delete attempts of "${user.name || user.email}" for "${quizTitle}" only?`,
+      okLabel: 'Reset Quiz Attempts',
+      okClass: 'bg-amber-600 hover:bg-amber-700',
+      onOk: () => resetQuizAttempts(user.id, quizId)
+    });
+  }
+
+  async function resetQuizAttempts(userId, quizId) {
+    try {
+      const res = await fetch(`/api/admin/users/${encodeURIComponent(userId)}/attempts/${encodeURIComponent(quizId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to reset quiz attempts');
+      const successMessage = data.message || `Deleted ${data.deletedCount || 0} attempts`;
+      broadcastAttemptDataRefresh({ type: 'reset-quiz', userId, quizId, deletedCount: data.deletedCount || 0 });
+      await refreshAfterAttemptMutation(userId, successMessage);
+    } catch (err) {
+      showBanner(err.message || 'Failed to reset quiz attempts', 'error');
+    }
+  }
+
+  function confirmDeleteAttempt(attemptId, quizTitle) {
+    if (!attemptId) return;
+    openConfirm({
+      title: 'Delete Attempt',
+      message: `Delete this attempt for "${quizTitle}"? This cannot be undone.`,
+      okLabel: 'Delete Attempt',
+      okClass: 'bg-red-600 hover:bg-red-700',
+      onOk: () => deleteAttempt(attemptId)
+    });
+  }
+
+  async function deleteAttempt(attemptId) {
+    try {
+      const res = await fetch(`/api/admin/attempts/${encodeURIComponent(attemptId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete attempt');
+      const userId = data?.attempt?.userId || activeDetailUserId || '';
+      const successMessage = data.message || 'Attempt deleted';
+      broadcastAttemptDataRefresh({ type: 'delete-attempt', userId, attemptId });
+      await refreshAfterAttemptMutation(userId, successMessage);
+    } catch (err) {
+      showBanner(err.message || 'Failed to delete attempt', 'error');
     }
   }
 
