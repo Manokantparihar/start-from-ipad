@@ -57,7 +57,9 @@ const config = {
   contactRateLimitWindowMs: parsePositiveInt(process.env.CONTACT_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
   contactRateLimitMaxRequests: parsePositiveInt(process.env.CONTACT_RATE_LIMIT_MAX_REQUESTS, 5),
   importRateLimitWindowMs: parsePositiveInt(process.env.IMPORT_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
-  importRateLimitMaxRequests: parsePositiveInt(process.env.IMPORT_RATE_LIMIT_MAX_REQUESTS, 20)
+  importRateLimitMaxRequests: parsePositiveInt(process.env.IMPORT_RATE_LIMIT_MAX_REQUESTS, 20),
+  adminRateLimitWindowMs: parsePositiveInt(process.env.ADMIN_RATE_LIMIT_WINDOW_MS, 60 * 1000),
+  adminRateLimitMaxRequests: parsePositiveInt(process.env.ADMIN_RATE_LIMIT_MAX_REQUESTS, 120)
 };
 
 if (!config.jwtSecret && !isLocalDevelopment) {

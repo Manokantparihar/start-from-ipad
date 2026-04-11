@@ -91,6 +91,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Wrong password' });
     }
 
+    if (user.status === 'banned') {
+      return res.status(403).json({ error: 'Your account has been suspended. Please contact support.' });
+    }
+
     const token = jwt.sign(
       { userId: user.id, name: user.name, email: user.email, role: user.role || 'user' },
       JWT_SECRET,

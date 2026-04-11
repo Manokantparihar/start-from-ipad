@@ -33,6 +33,11 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
+    // Deny access for banned accounts
+    if (user.status === 'banned') {
+      return res.status(403).json({ error: 'Your account has been suspended. Please contact support.' });
+    }
+
     req.userId = user.id;
     req.user = {
       id: user.id,
