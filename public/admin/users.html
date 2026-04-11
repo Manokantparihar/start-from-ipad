@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – User Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none !important; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .banner { transition: opacity 0.3s; }
+    .badge-admin { background: #dbeafe; color: #1d4ed8; }
+    .badge-user  { background: #f3f4f6; color: #374151; }
+    .badge-active { background: #dcfce7; color: #166534; }
+    .badge-banned { background: #fee2e2; color: #991b1b; }
+    tr:hover td { background: #f8fafc; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- BANNER -->
+<div id="banner" class="banner hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center"></div>
+
+<!-- HEADER -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-blue-600">👥 Admin – User Management</h1>
+      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Admin</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="userNameDisplay" class="text-sm text-gray-600"></span>
+      <a href="/admin/index.html" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">← Dashboard</a>
+      <a href="/admin/analytics.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">📊 Analytics</a>
+      <a href="/admin/notifications.html" class="px-3 py-1.5 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">🔔 Notifications</a>
+      <button id="logoutBtn" class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ACCESS DENIED -->
+<div id="accessDenied" class="hidden max-w-lg mx-auto mt-24 text-center p-8 bg-white rounded-2xl shadow">
+  <div class="text-5xl mb-4">🔒</div>
+  <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+  <p class="text-gray-600 mb-6">This page is only accessible to administrators.</p>
+  <a href="/index.html" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go to Dashboard</a>
+</div>
+
+<!-- LOADING -->
+<div id="pageLoading" class="text-center py-24 text-gray-500">
+  <div class="spinner mx-auto mb-3" style="width:32px;height:32px;border-width:3px;"></div>
+  <p>Checking authentication…</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="mainPanel" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+  <!-- SUMMARY CARDS -->
+  <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="text-2xl font-black text-gray-900" id="statTotal">—</div>
+      <div class="text-xs text-gray-500 mt-1 font-medium uppercase tracking-wide">Total Users</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="text-2xl font-black text-blue-600" id="statAdmins">—</div>
+      <div class="text-xs text-gray-500 mt-1 font-medium uppercase tracking-wide">Admins</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="text-2xl font-black text-green-600" id="statActive">—</div>
+      <div class="text-xs text-gray-500 mt-1 font-medium uppercase tracking-wide">Active</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="text-2xl font-black text-red-600" id="statBanned">—</div>
+      <div class="text-xs text-gray-500 mt-1 font-medium uppercase tracking-wide">Banned</div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+    <div class="flex flex-wrap gap-3 items-center">
+      <input id="searchInput" type="text" placeholder="Search name or email…"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <select id="roleFilter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">All Roles</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+      </select>
+      <select id="statusFilter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="banned">Banned</option>
+      </select>
+      <button id="applyFilters" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">Apply</button>
+      <button id="resetFilters" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">Reset</button>
+      <div class="ml-auto text-sm text-gray-500" id="resultCount"></div>
+    </div>
+  </section>
+
+  <!-- USER TABLE -->
+  <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div id="tableLoading" class="hidden text-center py-10 text-gray-400">
+      <div class="spinner mx-auto mb-2" style="width:24px;height:24px;border-width:2px;"></div>
+      Loading users…
+    </div>
+    <div id="tableEmpty" class="hidden text-center py-10 text-gray-400">
+      No users found matching your filters.
+    </div>
+    <div id="tableWrapper" class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600 w-6">#</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Name</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Email</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Role</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Attempts</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Avg Score</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Joined</th>
+            <th class="text-left px-5 py-3 font-semibold text-gray-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody" class="divide-y divide-gray-100"></tbody>
+      </table>
+    </div>
+    <!-- PAGINATION -->
+    <div class="flex items-center justify-between px-5 py-4 border-t border-gray-100 bg-gray-50">
+      <button id="prevPage" class="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-40" disabled>← Prev</button>
+      <span id="pageInfo" class="text-sm text-gray-500">Page 1</span>
+      <button id="nextPage" class="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-40" disabled>Next →</button>
+    </div>
+  </section>
+</main>
+
+<!-- USER DETAIL MODAL -->
+<div id="userModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h2 class="text-lg font-bold text-gray-800">User Details</h2>
+      <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+    </div>
+    <div id="modalContent" class="px-6 py-5 space-y-4">
+      <div class="text-center py-6 text-gray-400"><div class="spinner mx-auto mb-2"></div> Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <h3 id="confirmTitle" class="text-lg font-bold text-gray-800 mb-2">Confirm Action</h3>
+    <p id="confirmMessage" class="text-gray-600 mb-6"></p>
+    <div class="flex gap-3 justify-end">
+      <button id="confirmCancel" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</button>
+      <button id="confirmOk" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── State ────────────────────────────────────────────────────────────────────
+  let currentPage = 1;
+  let totalPages = 1;
+  let perPage = 50;
+  let currentUserId = null; // logged-in admin's id
+
+  // ─── Helpers ──────────────────────────────────────────────────────────────────
+  function showBanner(msg, type = 'success') {
+    const el = document.getElementById('banner');
+    el.textContent = msg;
+    el.className = `banner fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold max-w-lg w-full text-center ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 3500);
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+    catch { return '—'; }
+  }
+
+  function roleBadge(role) {
+    const cls = role === 'admin' ? 'badge-admin' : 'badge-user';
+    return `<span class="px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${role}</span>`;
+  }
+
+  function statusBadge(status) {
+    const s = status || 'active';
+    const cls = s === 'banned' ? 'badge-banned' : 'badge-active';
+    return `<span class="px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${s}</span>`;
+  }
+
+  // ─── Auth Check ───────────────────────────────────────────────────────────────
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!res.ok) throw new Error('Not authenticated');
+      const data = await res.json();
+      if (data.user?.role !== 'admin') throw new Error('Not admin');
+      currentUserId = data.user.id;
+      document.getElementById('userNameDisplay').textContent = data.user.name || data.user.email;
+      document.getElementById('pageLoading').classList.add('hidden');
+      document.getElementById('mainPanel').classList.remove('hidden');
+      loadUsers();
+    } catch {
+      document.getElementById('pageLoading').classList.add('hidden');
+      document.getElementById('accessDenied').classList.remove('hidden');
+    }
+  }
+
+  // ─── Load Users ───────────────────────────────────────────────────────────────
+  async function loadUsers(page = 1) {
+    document.getElementById('tableLoading').classList.remove('hidden');
+    document.getElementById('tableWrapper').classList.add('hidden');
+    document.getElementById('tableEmpty').classList.add('hidden');
+
+    const search = document.getElementById('searchInput').value.trim();
+    const role = document.getElementById('roleFilter').value;
+    const status = document.getElementById('statusFilter').value;
+
+    const params = new URLSearchParams({ page, perPage });
+    if (search) params.set('search', search);
+    if (role)   params.set('role', role);
+    if (status) params.set('status', status);
+
+    try {
+      const res = await fetch(`/api/admin/users?${params}`, { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to load users');
+      const data = await res.json();
+
+      currentPage = data.pagination.page;
+      totalPages  = data.pagination.totalPages;
+
+      updateStats(data.summary);
+      renderTable(data.users, currentPage, perPage);
+      renderPagination();
+      document.getElementById('resultCount').textContent = `${data.pagination.total} user(s)`;
+
+      document.getElementById('tableLoading').classList.add('hidden');
+      if (data.users.length === 0) {
+        document.getElementById('tableEmpty').classList.remove('hidden');
+      } else {
+        document.getElementById('tableWrapper').classList.remove('hidden');
+      }
+    } catch (err) {
+      document.getElementById('tableLoading').classList.add('hidden');
+      showBanner(err.message || 'Error loading users', 'error');
+    }
+  }
+
+  function updateStats(summary) {
+    document.getElementById('statTotal').textContent = summary.total;
+    document.getElementById('statAdmins').textContent = summary.admins;
+    document.getElementById('statActive').textContent = summary.active;
+    document.getElementById('statBanned').textContent = summary.banned;
+  }
+
+  function renderTable(users, page, pp) {
+    const tbody = document.getElementById('userTableBody');
+    tbody.innerHTML = '';
+    users.forEach((user, idx) => {
+      const rowNum = (page - 1) * pp + idx + 1;
+      const isSelf = user.id === currentUserId;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="px-5 py-3 text-gray-400 text-xs">${rowNum}</td>
+        <td class="px-5 py-3">
+          <div class="font-medium text-gray-900">${escHtml(user.name || '—')}</div>
+          ${isSelf ? '<div class="text-xs text-blue-500">(you)</div>' : ''}
+        </td>
+        <td class="px-5 py-3 text-gray-600">${escHtml(user.email || '—')}</td>
+        <td class="px-5 py-3">${roleBadge(user.role || 'user')}</td>
+        <td class="px-5 py-3">${statusBadge(user.status)}</td>
+        <td class="px-5 py-3 text-gray-700">${user.totalAttempts ?? '—'}</td>
+        <td class="px-5 py-3 text-gray-700">${user.avgScore !== null && user.avgScore !== undefined ? user.avgScore + '%' : '—'}</td>
+        <td class="px-5 py-3 text-gray-500 text-xs">${fmtDate(user.createdAt)}</td>
+        <td class="px-5 py-3">
+          <div class="flex flex-wrap gap-1">
+            <button data-id="${user.id}" data-action="detail"
+              class="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">Details</button>
+            ${isSelf ? '' : `
+            <button data-id="${user.id}" data-role="${user.role || 'user'}" data-action="toggle-role"
+              class="px-2 py-1 text-xs rounded hover:opacity-80 ${user.role === 'admin' ? 'bg-yellow-50 text-yellow-700' : 'bg-indigo-50 text-indigo-700'}">
+              ${user.role === 'admin' ? 'Demote' : 'Make Admin'}
+            </button>
+            <button data-id="${user.id}" data-status="${user.status || 'active'}" data-action="toggle-status"
+              class="px-2 py-1 text-xs rounded hover:opacity-80 ${(user.status || 'active') === 'banned' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'}">
+              ${(user.status || 'active') === 'banned' ? 'Activate' : 'Ban'}
+            </button>
+            <button data-id="${user.id}" data-name="${escHtml(user.name || user.email)}" data-action="delete"
+              class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100">Delete</button>
+            `}
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Register table event delegation ONCE (not inside renderTable)
+  document.getElementById('userTableBody').addEventListener('click', handleTableAction);
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function handleTableAction(e) {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { id, action, role, status, name } = btn.dataset;
+
+    if (action === 'detail')        { openDetailModal(id); return; }
+    if (action === 'toggle-role')   { confirmToggleRole(id, role); return; }
+    if (action === 'toggle-status') { confirmToggleStatus(id, status); return; }
+    if (action === 'delete')        { confirmDelete(id, name); return; }
+  }
+
+  // ─── Pagination ──────────────────────────────────────────────────────────────
+  function renderPagination() {
+    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+    document.getElementById('prevPage').disabled = currentPage <= 1;
+    document.getElementById('nextPage').disabled = currentPage >= totalPages;
+  }
+
+  document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) loadUsers(currentPage - 1); });
+  document.getElementById('nextPage').addEventListener('click', () => { if (currentPage < totalPages) loadUsers(currentPage + 1); });
+
+  // ─── Filters ─────────────────────────────────────────────────────────────────
+  document.getElementById('applyFilters').addEventListener('click', () => loadUsers(1));
+  document.getElementById('resetFilters').addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('roleFilter').value  = '';
+    document.getElementById('statusFilter').value = '';
+    loadUsers(1);
+  });
+  document.getElementById('searchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadUsers(1);
+  });
+
+  // ─── Detail Modal ─────────────────────────────────────────────────────────────
+  async function openDetailModal(id) {
+    const modal = document.getElementById('userModal');
+    const content = document.getElementById('modalContent');
+    modal.classList.remove('hidden');
+    content.innerHTML = '<div class="text-center py-6 text-gray-400"><div class="spinner mx-auto mb-2"></div> Loading…</div>';
+
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to load user');
+      const { user, stats, recentAttempts } = await res.json();
+
+      content.innerHTML = `
+        <div class="flex items-center gap-4 mb-4">
+          ${user.profileImage
+            ? `<img src="${escHtml(user.profileImage)}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200" alt="avatar">`
+            : `<div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600">${escHtml((user.name||'?')[0]).toUpperCase()}</div>`
+          }
+          <div>
+            <div class="text-xl font-bold text-gray-900">${escHtml(user.name||'—')}</div>
+            <div class="text-sm text-gray-500">${escHtml(user.email||'—')}</div>
+            <div class="flex gap-2 mt-1">${roleBadge(user.role||'user')} ${statusBadge(user.status)}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div class="bg-gray-50 rounded-xl p-3 text-center">
+            <div class="text-xl font-black text-gray-800">${stats.totalAttempts}</div>
+            <div class="text-xs text-gray-500">Attempts</div>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 text-center">
+            <div class="text-xl font-black text-gray-800">${stats.avgScore !== null ? stats.avgScore + '%' : '—'}</div>
+            <div class="text-xs text-gray-500">Avg Score</div>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 text-center">
+            <div class="text-xl font-black text-gray-800">${user.totalXp || 0}</div>
+            <div class="text-xs text-gray-500">Total XP</div>
+          </div>
+        </div>
+        <div class="text-xs text-gray-400 mb-3 space-y-1">
+          <div>Joined: <span class="text-gray-600">${fmtDate(user.createdAt)}</span></div>
+          <div>Last active: <span class="text-gray-600">${fmtDate(stats.lastAttemptAt)}</span></div>
+          <div>Tier: <span class="text-gray-600">${user.currentTier || user.masteryLevel || '—'}</span></div>
+          <div>Current streak: <span class="text-gray-600">${user.currentStreak || 0} day(s)</span></div>
+        </div>
+        ${recentAttempts.length > 0 ? `
+          <h4 class="font-semibold text-gray-700 text-sm mb-2">Recent Attempts (last 20)</h4>
+          <div class="space-y-1.5 max-h-48 overflow-y-auto">
+            ${recentAttempts.map(a => `
+              <div class="flex justify-between text-xs bg-gray-50 rounded-lg px-3 py-2">
+                <span class="text-gray-700 truncate max-w-[60%]">${escHtml(a.quizTitle||a.quizId||'Quiz')}</span>
+                <span class="text-gray-500">${a.status === 'completed' && a.total ? Math.round(((a.score||0)/a.total)*100)+'%' : a.status}</span>
+                <span class="text-gray-400">${fmtDate(a.submittedAt||a.createdAt)}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : '<p class="text-sm text-gray-400">No attempts yet.</p>'}
+      `;
+    } catch (err) {
+      content.innerHTML = `<p class="text-red-500">${err.message}</p>`;
+    }
+  }
+
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('userModal').classList.add('hidden');
+  });
+  document.getElementById('userModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('userModal')) document.getElementById('userModal').classList.add('hidden');
+  });
+
+  // ─── Confirm Modal Helpers ────────────────────────────────────────────────────
+  function openConfirm({ title, message, okLabel = 'Confirm', okClass = 'bg-red-600 hover:bg-red-700', onOk }) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    const okBtn = document.getElementById('confirmOk');
+    okBtn.textContent = okLabel;
+    okBtn.className = `px-4 py-2 text-white rounded-lg ${okClass}`;
+    document.getElementById('confirmModal').classList.remove('hidden');
+
+    const cleanup = () => {
+      document.getElementById('confirmModal').classList.add('hidden');
+      okBtn.onclick = null;
+      document.getElementById('confirmCancel').onclick = null;
+    };
+
+    okBtn.onclick = () => { cleanup(); onOk(); };
+    document.getElementById('confirmCancel').onclick = cleanup;
+  }
+
+  // ─── Role Toggle ─────────────────────────────────────────────────────────────
+  function confirmToggleRole(id, currentRole) {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    openConfirm({
+      title: newRole === 'admin' ? 'Promote to Admin' : 'Demote to User',
+      message: newRole === 'admin'
+        ? 'This user will have full admin access. Are you sure?'
+        : 'This will remove admin privileges from this user.',
+      okLabel: newRole === 'admin' ? 'Promote' : 'Demote',
+      okClass: newRole === 'admin' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-yellow-600 hover:bg-yellow-700',
+      onOk: () => patchRole(id, newRole)
+    });
+  }
+
+  async function patchRole(id, role) {
+    try {
+      const res = await fetch(`/api/admin/users/${id}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ role })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showBanner(data.message || 'Role updated');
+      loadUsers(currentPage);
+    } catch (err) {
+      showBanner(err.message, 'error');
+    }
+  }
+
+  // ─── Status Toggle ────────────────────────────────────────────────────────────
+  function confirmToggleStatus(id, currentStatus) {
+    const newStatus = (currentStatus || 'active') === 'banned' ? 'active' : 'banned';
+    openConfirm({
+      title: newStatus === 'banned' ? 'Ban User' : 'Activate User',
+      message: newStatus === 'banned'
+        ? 'This user will be unable to log in. You can reverse this at any time.'
+        : 'This will restore access for this user.',
+      okLabel: newStatus === 'banned' ? 'Ban Account' : 'Activate',
+      okClass: newStatus === 'banned' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700',
+      onOk: () => patchStatus(id, newStatus)
+    });
+  }
+
+  async function patchStatus(id, status) {
+    try {
+      const res = await fetch(`/api/admin/users/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showBanner(data.message || 'Status updated');
+      loadUsers(currentPage);
+    } catch (err) {
+      showBanner(err.message, 'error');
+    }
+  }
+
+  // ─── Delete ───────────────────────────────────────────────────────────────────
+  function confirmDelete(id, name) {
+    openConfirm({
+      title: 'Delete User Account',
+      message: `Permanently delete "${name}" and all their quiz attempts? This cannot be undone.`,
+      okLabel: 'Delete Forever',
+      onOk: () => deleteUser(id)
+    });
+  }
+
+  async function deleteUser(id) {
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showBanner(data.message || 'User deleted');
+      loadUsers(currentPage);
+    } catch (err) {
+      showBanner(err.message, 'error');
+    }
+  }
+
+  // ─── Logout ───────────────────────────────────────────────────────────────────
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/index.html';
+  });
+
+  // ─── Init ─────────────────────────────────────────────────────────────────────
+  checkAuth();
+</script>
+</body>
+</html>

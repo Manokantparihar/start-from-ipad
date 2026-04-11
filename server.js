@@ -18,6 +18,7 @@ const adminImportExportRoutes = require('./src/routes/adminImportExport');
 const notificationRoutes = require('./src/routes/notifications');
 const adminNotificationRoutes = require('./src/routes/adminNotifications');
 const adminCoursesRoutes = require('./src/routes/adminCourses');
+const adminUsersRoutes = require('./src/routes/adminUsers');
 const coursesRoutes = require('./src/routes/courses');
 const meRoutes = require('./src/routes/me');
 const rewardsRoutes = require('./src/routes/rewards');
@@ -39,6 +40,11 @@ const contactRateLimiter = createRateLimiter({
   windowMs: appConfig.contactRateLimitWindowMs,
   maxRequests: appConfig.contactRateLimitMaxRequests,
   message: 'Too many contact submissions, please try again later.'
+});
+const adminRateLimiter = createRateLimiter({
+  windowMs: appConfig.adminRateLimitWindowMs,
+  maxRequests: appConfig.adminRateLimitMaxRequests,
+  message: 'Too many admin requests, please try again later.'
 });
 
 const corsOriginValidator = (origin, callback) => {
@@ -84,6 +90,8 @@ app.use('/api/admin/resources', authMiddleware, isAdmin, resourceRoutes);
 app.use('/api/resources', resourceRoutes);
 // Courses + lessons: admin management and public listing/detail
 app.use('/api/admin/courses', authMiddleware, isAdmin, adminCoursesRoutes);
+// User management – admin only
+app.use('/api/admin/users', adminRateLimiter, authMiddleware, isAdmin, adminUsersRoutes);
 app.use('/api/courses', coursesRoutes);
 // Analytics – admin only
 app.use('/api/admin/analytics', authMiddleware, isAdmin, adminAnalyticsRoutes);
