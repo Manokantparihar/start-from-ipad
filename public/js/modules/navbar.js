@@ -20,7 +20,7 @@
     { label: 'Mock Tests', href: 'quizzes.html?mode=mock' },
     { label: 'All Quizzes', href: 'quizzes.html?mode=all' }
   ];
-  const FUTURE_RESERVED_SECTIONS = ['premium', 'plans', 'subscription', 'pro-analytics'];
+  const FUTURE_RESERVED_SECTIONS = [];
 
   function linkClass(isActive) {
     return isActive

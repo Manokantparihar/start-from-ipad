@@ -385,7 +385,7 @@
       const avatar = row?.profileImage
         ? `<img src="${row.profileImage}" alt="${escapeHtml(row.name)}" class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-sm">`
         : `<div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/80 text-sm font-black text-slate-700 ring-2 ring-white shadow-sm">${escapeHtml((row?.name || 'U').slice(0, 1).toUpperCase())}</div>`;
-      const label = row ? `#${rank}` : 'Locked';
+      const label = row ? `#${rank}` : 'Open spot';
       const value = row ? getModeMetricValue(row, metric) : '—';
       const detail = row ? getModeDetail(row, metric) : 'No contender yet';
       const currentUserBadge = row && row.isCurrentUser ? '<span class="rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white">You</span>' : '';

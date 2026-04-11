@@ -47,12 +47,37 @@ const adminRateLimiter = createRateLimiter({
   message: 'Too many admin requests, please try again later.'
 });
 
+function isAllowedDevelopmentOrigin(origin) {
+  if (!origin || !appConfig.isLocalDevelopment) return false;
+
+  try {
+    const parsed = new URL(origin);
+    const hostname = String(parsed.hostname || '').toLowerCase();
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return true;
+    }
+
+    if (hostname.endsWith('.app.github.dev') || hostname.endsWith('.githubpreview.dev')) {
+      return true;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 const corsOriginValidator = (origin, callback) => {
   if (!origin) {
     return callback(null, true);
   }
 
   if (appConfig.corsAllowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+
+  if (isAllowedDevelopmentOrigin(origin)) {
     return callback(null, true);
   }
 
