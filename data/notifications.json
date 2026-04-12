@@ -1,15 +1,5 @@
 [
   {
-    "id": "c3124fd4-a68c-4953-b403-23dda29b94f7",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "type": "announcement",
-    "title": "Bxbxbjs",
-    "message": "gsgxsggugsxgsugxgsguxgggxsgiggxhxkkdeuiyhiopigh",
-    "link": null,
-    "read": false,
-    "createdAt": "2026-04-08T21:18:55.926Z"
-  },
-  {
     "id": "36270eb4-1e77-413c-8c56-2f853d0a9d79",
     "userId": "401f86e2-8e13-4199-b271-f5be696d2f58",
     "type": "announcement",
@@ -48,5 +38,85 @@
     "link": null,
     "read": false,
     "createdAt": "2026-04-08T21:18:55.929Z"
+  },
+  {
+    "id": "f5dabaaf-16a8-4455-b78c-5bf9d5c298cd",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "type": "announcement",
+    "title": "Important note",
+    "message": "Summary me GET /api/notifications/unread-count add hua hai, but existing list endpoint already unread count deta tha.\nYe theek hai, bas ensure karo duplicate fetching se unnecessary network spam na ho.",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:29:06.661Z"
+  },
+  {
+    "id": "7f2a6d95-663b-43ad-bca3-471d7dce94e8",
+    "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "type": "announcement",
+    "title": "Important note",
+    "message": "Summary me GET /api/notifications/unread-count add hua hai, but existing list endpoint already unread count deta tha.\nYe theek hai, bas ensure karo duplicate fetching se unnecessary network spam na ho.",
+    "link": null,
+    "read": true,
+    "createdAt": "2026-04-12T20:29:06.662Z"
+  },
+  {
+    "id": "432dd030-0414-4992-bdcd-f8bfb6e204b8",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "type": "announcement",
+    "title": "Agar quick manual workaround chahiye",
+    "message": "Page refresh karne par shayad faded state aa jayegi.",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:50:52.070Z"
+  },
+  {
+    "id": "d4399f61-31bf-4837-bd5f-c8479e8758e2",
+    "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "type": "announcement",
+    "title": "Agar quick manual workaround chahiye",
+    "message": "Page refresh karne par shayad faded state aa jayegi.",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:50:52.071Z"
+  },
+  {
+    "id": "cdaa3ce3-6338-489a-a255-e0270d3a5f47",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "type": "announcement",
+    "title": "Fix ke baad test:",
+    "message": "2–3 unread notifications rakho\n\t•\tMark all as read\n\t•\tdropdown me sab fade",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:51:26.488Z"
+  },
+  {
+    "id": "03dd6b06-8cf2-44b4-8f3c-ccdec6966ffb",
+    "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "type": "announcement",
+    "title": "Fix ke baad test:",
+    "message": "2–3 unread notifications rakho\n\t•\tMark all as read\n\t•\tdropdown me sab fade",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:51:26.489Z"
+  },
+  {
+    "id": "5470287c-37bc-4634-a360-0774677442f5",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "type": "announcement",
+    "title": "full page me sab faded",
+    "message": "Lekin proper fix me refresh ke bina hi change dikhna chahiye.",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:51:56.067Z"
+  },
+  {
+    "id": "443021df-433d-44f1-a567-6878de77c5f4",
+    "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "type": "announcement",
+    "title": "full page me sab faded",
+    "message": "Lekin proper fix me refresh ke bina hi change dikhna chahiye.",
+    "link": null,
+    "read": false,
+    "createdAt": "2026-04-12T20:51:56.068Z"
   }
 ]

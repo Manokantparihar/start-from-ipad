@@ -16,9 +16,20 @@
           <h1 class="text-xl font-semibold text-slate-900">Notification Center</h1>
           <p class="text-sm text-slate-500">View updates, announcements, and quick actions.</p>
         </div>
-        <button id="notificationsPageMarkAll" class="rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50">
-          Mark all as read
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="notificationsPageMarkAll" class="rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50">
+            Mark all as read
+          </button>
+          <button id="notificationsPageClearRead" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            Clear read notifications
+          </button>
+        </div>
+      </div>
+
+      <div id="notificationsPageFilters" class="mb-4 flex flex-wrap gap-2">
+        <button data-filter="all" class="notifications-filter-btn rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">All</button>
+        <button data-filter="unread" class="notifications-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Unread</button>
+        <button data-filter="read" class="notifications-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Read</button>
       </div>
 
       <div id="notificationsPageList"></div>

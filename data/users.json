@@ -12,7 +12,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T19:50:42.225Z"
+      "updatedAt": "2026-04-12T21:06:51.169Z"
     },
     "totalXp": 65,
     "currentLevel": 2,
@@ -42,7 +42,7 @@
       "rarity": "common",
       "unlockedAt": "2026-04-12T19:48:41.967Z"
     },
-    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z",
+    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z",
     "xpBalance": 65,
     "streakFreeze": {
       "maxCount": 1,
@@ -488,7 +488,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T19:50:42.225Z"
+      "updatedAt": "2026-04-12T21:06:51.169Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -506,7 +506,7 @@
     "weekendBonusXp": 18,
     "eventBonusXp": 37,
     "missionBonusXp": 34,
-    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z",
+    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z",
     "revision": {
       "wrongQuestions": [],
       "bookmarks": []
@@ -715,7 +715,7 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T19:50:42.225Z"
+      "updatedAt": "2026-04-12T21:06:51.169Z"
     },
     "latestBadge": {
       "id": "first-quiz",
@@ -731,6 +731,6 @@
     "weekendBonusXp": 4,
     "eventBonusXp": 5,
     "missionBonusXp": 13,
-    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z"
+    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z"
   }
 ]

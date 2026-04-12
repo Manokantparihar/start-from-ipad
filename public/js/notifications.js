@@ -25,6 +25,9 @@
 
   let notifications = [];
   let dropdownOpen = false;
+  let pageFilter = 'all';
+  let globalClickHandlerBound = false;
+  let navbarObserver = null;
 
   function byId(id) {
     return document.getElementById(id);
@@ -125,9 +128,94 @@
     });
   }
 
+  async function clearReadNotifications() {
+    await fetch('/api/notifications/read', {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+  }
+
+  function sortUnreadFirstLatest(notifs = []) {
+    return [...notifs].sort((left, right) => {
+      const leftUnread = left && !left.read ? 1 : 0;
+      const rightUnread = right && !right.read ? 1 : 0;
+      if (rightUnread !== leftUnread) return rightUnread - leftUnread;
+      return new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime();
+    });
+  }
+
+  function getDropdownItems() {
+    return sortUnreadFirstLatest(notifications).slice(0, 5);
+  }
+
+  function getFilteredPageNotifications() {
+    if (pageFilter === 'unread') {
+      return notifications.filter((item) => !item.read);
+    }
+    if (pageFilter === 'read') {
+      return notifications.filter((item) => item.read);
+    }
+    return [...notifications];
+  }
+
+  function applyLocalMarkAllRead() {
+    if (!Array.isArray(notifications) || notifications.length === 0) return;
+
+    notifications = notifications.map((item) => ({
+      ...item,
+      read: true
+    }));
+
+    updateBadges(0);
+    if (dropdownOpen) {
+      renderDropdown();
+    }
+    renderNotificationsPage();
+  }
+
+  function applyLocalMarkOneRead(id) {
+    if (!id) return;
+
+    let changed = false;
+    notifications = notifications.map((item) => {
+      if (item.id === id && !item.read) {
+        changed = true;
+        return {
+          ...item,
+          read: true
+        };
+      }
+      return item;
+    });
+
+    if (!changed) return;
+
+    const unreadCount = notifications.filter((item) => !item.read).length;
+    updateBadges(unreadCount);
+    if (dropdownOpen) {
+      renderDropdown();
+    }
+    renderNotificationsPage();
+  }
+
+  function applyLocalClearRead() {
+    const before = notifications.length;
+    notifications = notifications.filter((item) => !item.read);
+    if (notifications.length === before) return;
+
+    const unreadCount = notifications.filter((item) => !item.read).length;
+    updateBadges(unreadCount);
+    if (dropdownOpen) {
+      renderDropdown();
+    }
+    renderNotificationsPage();
+  }
+
   function notificationItemMarkup(item, compact = false) {
     const action = resolveAction(item);
-    const itemClasses = item.read ? 'bg-white' : 'bg-blue-50/60';
+    const itemClasses = item.read
+      ? 'bg-slate-50 border-slate-200 opacity-80'
+      : 'bg-blue-50/70 border-blue-200';
 
     return `
       <article class="rounded-lg border border-slate-100 p-3 ${itemClasses}" data-id="${escHtml(item.id)}">
@@ -136,7 +224,7 @@
             <div class="mb-1 flex items-center gap-2">
               <span class="inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">${escHtml(toTypeLabel(item.type))}</span>
               <span class="text-[11px] text-slate-400">${escHtml(fmtDate(item.createdAt))}</span>
-              ${item.read ? '<span class="text-[11px] text-slate-400">Read</span>' : '<span class="text-[11px] font-semibold text-blue-600">Unread</span>'}
+              ${item.read ? '<span class="text-[11px] text-slate-400">Read</span>' : '<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600"><span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>Unread</span>'}
             </div>
             <h4 class="text-sm font-semibold text-slate-800">${escHtml(item.title || 'Notification')}</h4>
             <p class="mt-0.5 text-xs text-slate-600">${escHtml(item.message || '')}</p>
@@ -154,6 +242,7 @@
         event.stopPropagation();
         const id = button.dataset.id;
         if (!id) return;
+        applyLocalMarkOneRead(id);
         await markOneRead(id);
         await refreshAll();
       });
@@ -168,6 +257,7 @@
 
         const selected = notifications.find((entry) => entry.id === id);
         if (selected && !selected.read) {
+          applyLocalMarkOneRead(id);
           await markOneRead(id);
           await refreshAll();
         }
@@ -186,24 +276,26 @@
     const dropdown = byId('notifDropdown');
     if (!dropdown) return;
 
-    if (notifications.length === 0) {
+    const dropdownItems = getDropdownItems();
+    if (dropdownItems.length === 0) {
       dropdown.innerHTML = '<div class="px-5 py-10 text-center"><p class="text-sm font-medium text-slate-500">No notifications yet</p><p class="mt-1 text-xs text-slate-400">You\'re all caught up.</p></div>';
       return;
     }
 
-    const body = notifications.slice(0, 8).map((item) => notificationItemMarkup(item, true)).join('');
+    const body = dropdownItems.map((item) => notificationItemMarkup(item, true)).join('');
     dropdown.innerHTML = `
       <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <p class="text-sm font-semibold text-slate-800">Notifications</p>
         <button id="notifMarkAllRead" class="text-xs font-medium text-blue-700 hover:underline">Mark all as read</button>
       </div>
       <div class="max-h-[26rem] space-y-2 overflow-y-auto p-3">${body}</div>
-      <a href="notifications.html" class="block border-t border-slate-100 px-4 py-2 text-center text-xs font-medium text-blue-700 hover:bg-blue-50">Open notification center</a>
+      <a href="notifications.html" class="block border-t border-slate-100 px-4 py-2 text-center text-xs font-medium text-blue-700 hover:bg-blue-50">View all notifications</a>
     `;
 
     dropdown.querySelector('#notifMarkAllRead')?.addEventListener('click', async (event) => {
       event.preventDefault();
       event.stopPropagation();
+      applyLocalMarkAllRead();
       await markAllRead();
       await refreshAll();
     });
@@ -215,17 +307,118 @@
     const list = byId('notificationsPageList');
     if (!list) return;
 
-    if (notifications.length === 0) {
+    const filtered = getFilteredPageNotifications();
+
+    updateFilterButtons();
+
+    if (filtered.length === 0) {
       list.innerHTML = '<div class="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center"><p class="text-base font-semibold text-slate-600">No notifications</p><p class="mt-1 text-sm text-slate-500">When admins share updates, they\'ll appear here.</p></div>';
       return;
     }
 
-    list.innerHTML = `<div class="space-y-3">${notifications.map((item) => notificationItemMarkup(item)).join('')}</div>`;
+    if (pageFilter === 'all') {
+      const unread = filtered.filter((item) => !item.read);
+      const read = filtered.filter((item) => item.read);
+
+      const unreadSection = unread.length > 0
+        ? `<section class="space-y-3"><h2 class="text-sm font-semibold text-blue-700">Unread (${unread.length})</h2>${unread.map((item) => notificationItemMarkup(item)).join('')}</section>`
+        : '';
+      const readSection = read.length > 0
+        ? `<section class="space-y-3"><h2 class="text-sm font-semibold text-slate-500">Read (${read.length})</h2>${read.map((item) => notificationItemMarkup(item)).join('')}</section>`
+        : '';
+
+      list.innerHTML = `<div class="space-y-5">${unreadSection}${readSection}</div>`;
+    } else {
+      list.innerHTML = `<div class="space-y-3">${filtered.map((item) => notificationItemMarkup(item)).join('')}</div>`;
+    }
+
     attachNotificationHandlers(list);
+  }
+
+  function updateFilterButtons() {
+    document.querySelectorAll('.notifications-filter-btn').forEach((button) => {
+      const isActive = button.dataset.filter === pageFilter;
+      button.className = isActive
+        ? 'notifications-filter-btn rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700'
+        : 'notifications-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50';
+    });
+  }
+
+  async function ensureWidgetVisible(widget) {
+    if (!widget) return;
+
+    try {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (meRes.ok) {
+        widget.classList.remove('hidden');
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  function bindDropdownInteractions(widget, bell, dropdown) {
+    if (!widget || !bell || !dropdown) return;
+    if (bell.dataset.notifBound === '1') return;
+
+    bell.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      if (dropdownOpen) {
+        renderDropdown();
+        dropdown.classList.remove('hidden');
+      } else {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    bell.dataset.notifBound = '1';
+
+    if (!globalClickHandlerBound) {
+      document.addEventListener('click', (event) => {
+        const currentWidget = byId('notifWidget');
+        const currentDropdown = byId('notifDropdown');
+        if (dropdownOpen && currentWidget && currentDropdown && !currentWidget.contains(event.target)) {
+          dropdownOpen = false;
+          currentDropdown.classList.add('hidden');
+        }
+      });
+
+      globalClickHandlerBound = true;
+    }
+  }
+
+  async function ensureNavbarWidgetReady() {
+    const widget = byId('notifWidget');
+    const bell = byId('notifBell');
+    const dropdown = byId('notifDropdown');
+
+    if (!widget || !bell || !dropdown) return false;
+
+    await ensureWidgetVisible(widget);
+    bindDropdownInteractions(widget, bell, dropdown);
+    return true;
+  }
+
+  function observeNavbarWidgetMount() {
+    if (navbarObserver || !document.body) return;
+
+    navbarObserver = new MutationObserver(() => {
+      ensureNavbarWidgetReady().catch(() => {
+        // ignore
+      });
+    });
+
+    navbarObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   async function refreshAll() {
     try {
+      await ensureNavbarWidgetReady();
       await fetchNotifications();
       if (dropdownOpen) renderDropdown();
       renderNotificationsPage();
@@ -235,44 +428,26 @@
   }
 
   async function init() {
-    const widget = byId('notifWidget');
-    const bell = byId('notifBell');
-    const dropdown = byId('notifDropdown');
-
-    // If navbar widget exists, ensure user is authenticated before showing.
-    if (widget && bell && dropdown) {
-      try {
-        const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-        if (meRes.ok) {
-          widget.classList.remove('hidden');
-        }
-      } catch {
-        // ignore
-      }
-
-      bell.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        dropdownOpen = !dropdownOpen;
-        if (dropdownOpen) {
-          renderDropdown();
-          dropdown.classList.remove('hidden');
-        } else {
-          dropdown.classList.add('hidden');
-        }
-      });
-
-      document.addEventListener('click', (event) => {
-        if (dropdownOpen && widget && !widget.contains(event.target)) {
-          dropdownOpen = false;
-          dropdown.classList.add('hidden');
-        }
-      });
-    }
+    observeNavbarWidgetMount();
+    await ensureNavbarWidgetReady();
 
     byId('notificationsPageMarkAll')?.addEventListener('click', async () => {
+      applyLocalMarkAllRead();
       await markAllRead();
       await refreshAll();
+    });
+
+    byId('notificationsPageClearRead')?.addEventListener('click', async () => {
+      applyLocalClearRead();
+      await clearReadNotifications();
+      await refreshAll();
+    });
+
+    document.querySelectorAll('.notifications-filter-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        pageFilter = button.dataset.filter || 'all';
+        renderNotificationsPage();
+      });
     });
 
     await refreshAll();

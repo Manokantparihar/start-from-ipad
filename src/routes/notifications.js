@@ -6,6 +6,7 @@
  * GET    /api/notifications          – list current user's notifications (latest first)
  * PATCH  /api/notifications/:id/read – mark one notification as read
  * PATCH  /api/notifications/read-all – mark all user notifications as read
+ * DELETE /api/notifications/read      – clear only read notifications for current user
  * DELETE /api/notifications/:id      – dismiss (delete) one notification
  *
  * Rate limiting: 60 requests per user per minute to prevent abuse.
@@ -90,6 +91,27 @@ router.patch('/read-all', async (req, res) => {
     res.json({ message: `Marked ${changed} notification(s) as read.` });
   } catch {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── DELETE /api/notifications/read ─────────────────────────────────────────
+
+router.delete('/read', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const all = await db.getNotifications();
+    const before = all.length;
+
+    const filtered = all.filter((n) => !(n.userId === userId && n.read));
+    const removed = before - filtered.length;
+
+    if (removed > 0) {
+      await db.saveNotifications(filtered);
+    }
+
+    return res.json({ message: `Cleared ${removed} read notification(s).`, removed });
+  } catch {
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

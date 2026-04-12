@@ -72,5 +72,81 @@
         "error": "SMTP not configured"
       }
     ]
+  },
+  {
+    "id": "21ad602f-a928-4ce9-af8b-b083a30687b4",
+    "adminId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "adminName": "MANOKANT",
+    "title": "Important note",
+    "message": "Summary me GET /api/notifications/unread-count add hua hai, but existing list endpoint already unread count deta tha.\nYe theek hai, bas ensure karo duplicate fetching se unnecessary network spam na ho.",
+    "sentAt": "2026-04-12T20:29:06.660Z",
+    "targetCount": 3,
+    "targetUserIds": [
+      "cb370536-35ed-4e83-b730-7070f92e1e04",
+      "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+      "201ae6be-dc46-4b0c-b031-f87ad73ae2fd"
+    ],
+    "inAppCount": 3,
+    "emailRequested": false,
+    "emailSent": 0,
+    "emailFailed": 0,
+    "emailErrors": []
+  },
+  {
+    "id": "b8543576-1548-4f07-8497-496dcdc4e6e3",
+    "adminId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "adminName": "MANOKANT",
+    "title": "Agar quick manual workaround chahiye",
+    "message": "Page refresh karne par shayad faded state aa jayegi.",
+    "sentAt": "2026-04-12T20:50:52.068Z",
+    "targetCount": 3,
+    "targetUserIds": [
+      "cb370536-35ed-4e83-b730-7070f92e1e04",
+      "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+      "201ae6be-dc46-4b0c-b031-f87ad73ae2fd"
+    ],
+    "inAppCount": 3,
+    "emailRequested": false,
+    "emailSent": 0,
+    "emailFailed": 0,
+    "emailErrors": []
+  },
+  {
+    "id": "17aef7fd-ee65-4ca2-bbf8-67f701a6c5f8",
+    "adminId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "adminName": "MANOKANT",
+    "title": "Fix ke baad test:",
+    "message": "2–3 unread notifications rakho\n\t•\tMark all as read\n\t•\tdropdown me sab fade",
+    "sentAt": "2026-04-12T20:51:26.487Z",
+    "targetCount": 3,
+    "targetUserIds": [
+      "cb370536-35ed-4e83-b730-7070f92e1e04",
+      "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+      "201ae6be-dc46-4b0c-b031-f87ad73ae2fd"
+    ],
+    "inAppCount": 3,
+    "emailRequested": false,
+    "emailSent": 0,
+    "emailFailed": 0,
+    "emailErrors": []
+  },
+  {
+    "id": "70c0a3e8-3fbf-482a-8a63-2f8669256743",
+    "adminId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "adminName": "MANOKANT",
+    "title": "full page me sab faded",
+    "message": "Lekin proper fix me refresh ke bina hi change dikhna chahiye.",
+    "sentAt": "2026-04-12T20:51:56.065Z",
+    "targetCount": 3,
+    "targetUserIds": [
+      "cb370536-35ed-4e83-b730-7070f92e1e04",
+      "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+      "201ae6be-dc46-4b0c-b031-f87ad73ae2fd"
+    ],
+    "inAppCount": 3,
+    "emailRequested": false,
+    "emailSent": 0,
+    "emailFailed": 0,
+    "emailErrors": []
   }
 ]
