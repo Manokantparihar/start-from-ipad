@@ -98,27 +98,6 @@ async function resyncGamificationAfterAttemptChanges(attemptsOverride = null) {
   }
 }
 
-async function clearUserRevisionWrongQuestions(userId, quizId = null) {
-  const users = await db.getUsers();
-  const idx = users.findIndex((entry) => entry.id === userId);
-  if (idx === -1) return;
-
-  const revision = users[idx].revision && typeof users[idx].revision === 'object'
-    ? users[idx].revision
-    : { wrongQuestions: [], bookmarks: [] };
-
-  if (quizId) {
-    revision.wrongQuestions = Array.isArray(revision.wrongQuestions)
-      ? revision.wrongQuestions.filter((entry) => String(entry.quizId || '') !== String(quizId))
-      : [];
-  } else {
-    revision.wrongQuestions = [];
-  }
-
-  users[idx].revision = revision;
-  users[idx].updatedAt = new Date().toISOString();
-  await db.saveUsers(users);
-}
 
 // ─── GET / ───────────────────────────────────────────────────────────────────
 // List all users with basic stats.
@@ -242,7 +221,6 @@ router.delete('/:userId/attempts', async (req, res) => {
 
     const { deletedCount, attempts } = await db.deleteAttemptsByUser(userId);
     await db.deleteWrongQuestionsByUser(userId);
-    await clearUserRevisionWrongQuestions(userId);
     await resyncGamificationAfterAttemptChanges(attempts);
 
     return res.json({
@@ -272,7 +250,6 @@ router.delete('/:userId/attempts/:quizId', async (req, res) => {
 
     const { deletedCount, attempts } = await db.deleteAttemptsByUserAndQuiz(userId, quizId);
     await db.deleteWrongQuestionsByUserAndQuiz(userId, quizId);
-    await clearUserRevisionWrongQuestions(userId, quizId);
     await resyncGamificationAfterAttemptChanges(attempts);
 
     return res.json({

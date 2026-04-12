@@ -39,21 +39,6 @@ async function clearStaleRevisionDataForAttempt(userId, quizId, attempts) {
 
   await db.deleteWrongQuestionsByUserAndQuiz(userId, quizId);
 
-  const users = await db.getUsers();
-  const userIndex = users.findIndex((entry) => entry.id === userId);
-  if (userIndex !== -1) {
-    const revision = users[userIndex].revision && typeof users[userIndex].revision === 'object'
-      ? users[userIndex].revision
-      : { wrongQuestions: [], bookmarks: [] };
-
-    revision.wrongQuestions = Array.isArray(revision.wrongQuestions)
-      ? revision.wrongQuestions.filter((entry) => String(entry.quizId || '') !== String(quizId))
-      : [];
-
-    users[userIndex].revision = revision;
-    users[userIndex].updatedAt = new Date().toISOString();
-    await db.saveUsers(users);
-  }
 }
 
 // DELETE /api/admin/attempts/:attemptId - delete one attempt
