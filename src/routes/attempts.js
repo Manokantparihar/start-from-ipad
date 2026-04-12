@@ -642,33 +642,9 @@ router.put('/:id/save', async (req, res) => {
     }
 
     attempt.answers = answers;
+    attempt.updatedAt = Date.now();
     attempts[idx] = attempt;
     await db.saveAttempts(attempts);
-
-    const answersByQuestionId = new Map((attempt.answers || []).map((ans) => [ans.questionId, ans.selected]));
-    const revisionUpdates = [];
-    if (quiz && Array.isArray(quiz.questions)) {
-      quiz.questions.forEach((question) => {
-        const selected = answersByQuestionId.has(question.id) ? answersByQuestionId.get(question.id) : null;
-        const isAttempted = selected !== null && selected !== undefined && selected !== '';
-        const isCorrect = isAttempted && selected === question.correctAnswer;
-        if (isCorrect) return;
-
-        revisionUpdates.push(sanitizeQuestionEntry({
-          questionId: question.id,
-          question: question.question || question.text || '',
-          options: Array.isArray(question.options) ? question.options : [],
-          correctAnswer: question.correctAnswer,
-          topic: getQuestionTopic(question, quiz),
-          subtopic: question.subtopic || '',
-          quizId: attempt.quizId,
-          quizTitle: attempt.quizTitle,
-          lastSeenAt: new Date().toISOString(),
-          timesWrong: isAttempted ? 1 : 0,
-          timesUnattempted: isAttempted ? 0 : 1
-        }));
-      });
-    }
 
     res.json({ saved: true });
   } catch {
