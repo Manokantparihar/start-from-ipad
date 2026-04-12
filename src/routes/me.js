@@ -8,22 +8,9 @@ const {
   getUserMissionStateForDate,
   toUtcDateKey
 } = require('../utils/gamification');
-const { buildAdaptiveRecommendation } = require('../utils/adaptiveLearning');
+const { getAdaptiveRecommendationForUser } = require('../utils/adaptiveRecommendationService');
 
 const router = express.Router();
-
-function filterWrongQuestionsByActiveAttempts(wrongQuestions = [], attempts = [], userId) {
-  const activeQuizIds = new Set(
-    attempts
-      .filter((attempt) => attempt.userId === userId && ['completed', 'expired'].includes(attempt.status))
-      .map((attempt) => String(attempt.quizId || '').trim())
-      .filter(Boolean)
-  );
-
-  if (activeQuizIds.size === 0) return [];
-  return wrongQuestions.filter((entry) => activeQuizIds.has(String(entry.quizId || '').trim()));
-}
-
 
 router.get('/missions', async (req, res) => {
   try {
@@ -54,28 +41,13 @@ router.get('/missions', async (req, res) => {
 
 router.get('/progress', async (req, res) => {
   try {
-    const [users, attempts, quizzes, wrongQuestions, bookmarks] = await Promise.all([
-      db.getUsers(),
-      db.getAttempts(),
-      db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
-      db.getWrongQuestions(req.userId),
-      db.getBookmarks(req.userId)
-    ]);
-    const user = users.find((entry) => entry.id === req.userId);
+    const { adaptive, user } = await getAdaptiveRecommendationForUser({
+      userId: req.userId
+    });
     if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const activeWrongQuestions = filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId);
 
     const progress = buildPublicGamification(user);
     const todayKey = toUtcDateKey(new Date());
-    const adaptive = buildAdaptiveRecommendation({
-      userId: req.userId,
-      user,
-      attempts,
-      quizzes,
-      wrongQuestions: activeWrongQuestions,
-      bookmarks
-    });
 
     return res.json({
       progress: {
@@ -98,26 +70,10 @@ router.get('/progress', async (req, res) => {
 
 router.get('/recommendation', async (req, res) => {
   try {
-    const [users, attempts, quizzes, wrongQuestions, bookmarks] = await Promise.all([
-      db.getUsers(),
-      db.getAttempts(),
-      db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
-      db.getWrongQuestions(req.userId),
-      db.getBookmarks(req.userId)
-    ]);
-    const user = users.find((entry) => entry.id === req.userId);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const activeWrongQuestions = filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId);
-
-    const adaptive = buildAdaptiveRecommendation({
-      userId: req.userId,
-      user,
-      attempts,
-      quizzes,
-      wrongQuestions: activeWrongQuestions,
-      bookmarks
+    const { adaptive, user } = await getAdaptiveRecommendationForUser({
+      userId: req.userId
     });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
     return res.json(adaptive);
   } catch (error) {

@@ -5,8 +5,8 @@ const auth = require('../middlewares/auth');
 const {
   syncUsersToGamification
 } = require('../utils/gamification');
-const { buildAdaptiveRecommendation } = require('../utils/adaptiveLearning');
 const { getAttemptsRevisionPayload, reconcileRevisionProgress } = require('../utils/revisionSystem');
+const { getAdaptiveRecommendationForUser } = require('../utils/adaptiveRecommendationService');
 
 const router = express.Router();
 const MIN_COMPETITIVE_QUIZ_PARTICIPANTS = 3;
@@ -296,12 +296,9 @@ router.post('/', async (req, res) => {
 // GET /api/attempts/:id/insights - rich result analytics for one attempt
 router.get('/:id/insights', async (req, res) => {
   try {
-    const [attempts, users, allQuizzes, wrongQuestions, bookmarks] = await Promise.all([
+    const [attempts, allQuizzes] = await Promise.all([
       db.getAttempts(),
-      db.getUsers(),
-      db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
-      db.getWrongQuestions(req.userId),
-      db.getBookmarks(req.userId)
+      db.getQuizzes({ includeDeleted: true, includeUnpublished: true })
     ]);
     const attempt = attempts.find((entry) => entry.id === req.params.id && entry.userId === req.userId);
     if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
@@ -310,7 +307,6 @@ router.get('/:id/insights', async (req, res) => {
     if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
 
     const currentSummary = buildAttemptSummary(attempt, quiz);
-    const user = users.find((entry) => entry.id === req.userId) || null;
 
     const sameQuizAttempts = attempts.filter((entry) => (
       entry.quizId === attempt.quizId &&
@@ -350,14 +346,11 @@ router.get('/:id/insights', async (req, res) => {
       previousRank: previousRanking?.quizRank || null
     } : null;
 
-    const adaptive = buildAdaptiveRecommendation({
+    const { adaptive } = await getAdaptiveRecommendationForUser({
       userId: req.userId,
-      user,
-      attempts,
-      quizzes: allQuizzes,
-      wrongQuestions,
-      bookmarks,
-      currentSummary
+      currentSummary,
+      includeDeletedQuizzes: true,
+      includeUnpublishedQuizzes: true
     });
 
     return res.json({
