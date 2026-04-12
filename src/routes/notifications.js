@@ -61,6 +61,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+// ─── GET /api/notifications/unread-count ─────────────────────────────────────
+
+router.get('/unread-count', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const all = await db.getNotifications();
+    const unreadCount = all.filter(n => n.userId === userId && !n.read).length;
+    res.json({ unreadCount });
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ─── PATCH /api/notifications/read-all ───────────────────────────────────────
 
 router.patch('/read-all', async (req, res) => {

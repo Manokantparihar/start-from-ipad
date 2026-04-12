@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications - RPSC/REET</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div id="appNavbar"></div>
+
+  <main class="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+    <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+      <div class="mb-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <div>
+          <h1 class="text-xl font-semibold text-slate-900">Notification Center</h1>
+          <p class="text-sm text-slate-500">View updates, announcements, and quick actions.</p>
+        </div>
+        <button id="notificationsPageMarkAll" class="rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50">
+          Mark all as read
+        </button>
+      </div>
+
+      <div id="notificationsPageList"></div>
+    </section>
+  </main>
+
+  <script src="/js/modules/navbar.js"></script>
+  <script>
+    Navbar.mount('#appNavbar', { active: 'dashboard' });
+  </script>
+  <script src="/js/notifications.js"></script>
+</body>
+</html>
