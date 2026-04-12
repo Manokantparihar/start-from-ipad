@@ -287,33 +287,118 @@ async function saveGamificationConfig(config = {}) {
 
 // ─── REVISION SYSTEM (Wrong Questions & Bookmarks) ───────────────────────────────
 
-/**
- * Get all wrong questions for a user
- * Returns array of { userId, questionId, quizId, topic, selectedAnswer, correctAnswer, timestamp }
- */
-async function getWrongQuestions(userId) {
-  const all = await readFile('wrong-questions');
-  return Array.isArray(all) ? all.filter(w => w.userId === userId) : [];
+function normalizeWrongQuestionRow(row = {}, userId) {
+  const now = new Date().toISOString();
+  const questionId = String(row.questionId || '').trim();
+  return {
+    id: row.id || uuidv4(),
+    userId,
+    questionId,
+    quizId: String(row.quizId || '').trim(),
+    topic: String(row.topic || 'General').trim() || 'General',
+    selectedAnswer: row.selectedAnswer === undefined || row.selectedAnswer === null ? '' : String(row.selectedAnswer),
+    correctAnswer: row.correctAnswer === undefined || row.correctAnswer === null ? '' : String(row.correctAnswer),
+    status: String(row.status || (row.selectedAnswer === undefined || row.selectedAnswer === null || row.selectedAnswer === '' ? 'unattempted' : 'wrong')).trim() || 'wrong',
+    timesMissed: Number.isFinite(Number(row.timesMissed)) ? Number(row.timesMissed) : 1,
+    timestamp: row.timestamp || row.firstSeenAt || now,
+    firstSeenAt: row.firstSeenAt || row.timestamp || now,
+    lastSeenAt: row.lastSeenAt || row.updatedAt || row.timestamp || now,
+    updatedAt: row.updatedAt || row.lastSeenAt || row.timestamp || now,
+    lastOutcome: row.lastOutcome || String(row.status || (row.selectedAnswer === undefined || row.selectedAnswer === null || row.selectedAnswer === '' ? 'unattempted' : 'wrong')).trim() || 'wrong'
+  };
+}
+
+function getWrongQuestionKey(userId, questionId) {
+  return `${String(userId || '').trim()}::${String(questionId || '').trim()}`;
+}
+
+function mergeWrongQuestionRows(rows = []) {
+  const merged = new Map();
+
+  rows.forEach((row) => {
+    const normalized = normalizeWrongQuestionRow(row, row.userId);
+    if (!normalized.userId || !normalized.questionId) return;
+
+    const key = getWrongQuestionKey(normalized.userId, normalized.questionId);
+    const existing = merged.get(key);
+    if (!existing) {
+      merged.set(key, normalized);
+      return;
+    }
+
+    const existingTime = new Date(existing.updatedAt || existing.lastSeenAt || existing.timestamp || 0).getTime();
+    const candidateTime = new Date(normalized.updatedAt || normalized.lastSeenAt || normalized.timestamp || 0).getTime();
+    const selected = candidateTime >= existingTime ? normalized : existing;
+    const other = candidateTime >= existingTime ? existing : normalized;
+
+    merged.set(key, {
+      ...selected,
+      timesMissed: Math.max(Number(selected.timesMissed) || 0, Number(other.timesMissed) || 0),
+      firstSeenAt: selected.firstSeenAt || other.firstSeenAt || selected.timestamp || other.timestamp,
+      timestamp: selected.timestamp || other.timestamp,
+      lastSeenAt: selected.lastSeenAt || other.lastSeenAt,
+      updatedAt: selected.updatedAt || other.updatedAt,
+      lastOutcome: selected.lastOutcome || other.lastOutcome
+    });
+  });
+
+  return Array.from(merged.values());
 }
 
 /**
- * Add a wrong question (called after quiz submission)
+ * Get all wrong questions for a user
+ * Returns unique canonical rows keyed by userId + questionId.
+ */
+async function getWrongQuestions(userId) {
+  const all = await readFile('wrong-questions');
+  const filtered = Array.isArray(all) ? all.filter((w) => w.userId === userId) : [];
+  const deduped = mergeWrongQuestionRows(filtered);
+
+  if (deduped.length !== filtered.length) {
+    const remaining = Array.isArray(all) ? all.filter((entry) => entry.userId !== userId) : [];
+    await writeFile('wrong-questions', [...remaining, ...deduped]);
+  }
+
+  return deduped;
+}
+
+/**
+ * Add or update a wrong question (called after quiz submission)
  */
 async function addWrongQuestion(userId, data) {
   const all = await readFile('wrong-questions');
-  const entry = {
-    id: uuidv4(),
+  const filtered = Array.isArray(all) ? all : [];
+  const questionId = String(data.questionId || '').trim();
+  const key = getWrongQuestionKey(userId, questionId);
+  const now = new Date().toISOString();
+  const status = String(data.status || (data.selectedAnswer === undefined || data.selectedAnswer === null || data.selectedAnswer === '' ? 'unattempted' : 'wrong')).trim() || 'wrong';
+  const existingIndex = filtered.findIndex((row) => getWrongQuestionKey(row.userId, row.questionId) === key);
+  const existing = existingIndex >= 0 ? normalizeWrongQuestionRow(filtered[existingIndex], userId) : null;
+  const nextRow = {
+    ...(existing || {}),
+    id: existing?.id || uuidv4(),
     userId,
-    questionId: data.questionId,
-    quizId: data.quizId || '',
-    topic: data.topic || 'General',
-    selectedAnswer: data.selectedAnswer || '',
-    correctAnswer: data.correctAnswer || '',
-    timestamp: new Date().toISOString()
+    questionId,
+    quizId: String(data.quizId || existing?.quizId || '').trim(),
+    topic: String(data.topic || existing?.topic || 'General').trim() || 'General',
+    selectedAnswer: data.selectedAnswer === undefined || data.selectedAnswer === null ? (existing?.selectedAnswer || '') : String(data.selectedAnswer),
+    correctAnswer: data.correctAnswer === undefined || data.correctAnswer === null ? (existing?.correctAnswer || '') : String(data.correctAnswer),
+    status,
+    timesMissed: (Number(existing?.timesMissed) || 0) + 1,
+    timestamp: existing?.timestamp || now,
+    firstSeenAt: existing?.firstSeenAt || existing?.timestamp || now,
+    lastSeenAt: now,
+    updatedAt: now,
+    lastOutcome: status
   };
-  all.push(entry);
-  await writeFile('wrong-questions', all);
-  return entry;
+
+  const nextRows = existingIndex >= 0
+    ? [...filtered.slice(0, existingIndex), nextRow, ...filtered.slice(existingIndex + 1)]
+    : [...filtered, nextRow];
+
+  const deduped = mergeWrongQuestionRows(nextRows);
+  await writeFile('wrong-questions', deduped);
+  return nextRow;
 }
 
 /**
@@ -323,6 +408,25 @@ async function removeWrongQuestion(id) {
   const all = await readFile('wrong-questions');
   const filtered = all.filter(w => w.id !== id);
   await writeFile('wrong-questions', filtered);
+}
+
+async function replaceWrongQuestionsForUser(userId, nextWrongQuestions = []) {
+  const all = await readFile('wrong-questions');
+  const remainingRows = all.filter((entry) => entry.userId !== userId);
+  const normalizedRows = Array.isArray(nextWrongQuestions) ? nextWrongQuestions : [];
+
+  const updatedRows = normalizedRows
+    .map((row) => normalizeWrongQuestionRow({
+      ...row,
+      status: row.status || (String(row.selectedAnswer || '').trim() ? 'wrong' : 'unattempted'),
+      timesMissed: Number.isFinite(Number(row.timesMissed)) ? Number(row.timesMissed) : 1,
+      updatedAt: row.updatedAt || row.lastSeenAt || row.timestamp,
+      lastOutcome: row.lastOutcome || row.status
+    }, userId))
+    .filter((row) => row.questionId);
+
+  await writeFile('wrong-questions', [...remainingRows, ...mergeWrongQuestionRows(updatedRows)]);
+  return { wrongQuestions: updatedRows, total: remainingRows.length + updatedRows.length };
 }
 
 async function deleteWrongQuestionsByUser(userId) {
@@ -522,6 +626,7 @@ module.exports = {
   getWrongQuestions,
   addWrongQuestion,
   removeWrongQuestion,
+  replaceWrongQuestionsForUser,
   deleteWrongQuestionsByUser,
   deleteWrongQuestionsByUserAndQuiz,
   getBookmarks,

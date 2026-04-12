@@ -621,6 +621,7 @@
 
       return {
         id: item.questionId,
+        quizId: String(item.quizId || '').trim(),
         text: questionText,
         options,
         correctAnswer: item.correctAnswer,
@@ -638,6 +639,7 @@
         const isCorrect = isAttempted && selected === question.correctAnswer;
         return {
           questionId: question.id,
+          quizId: question.quizId || currentQuizId || '',
           question: question.text || question.question || '',
           options: question.options || [],
           selected,
@@ -862,6 +864,11 @@
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Failed to update revision data');
+      }
+
+      const payload = await res.json().catch(() => ({}));
+      if (payload && payload.revision) {
+        revisionData = payload.revision;
       }
     }
 

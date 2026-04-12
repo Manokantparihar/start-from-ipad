@@ -29,6 +29,74 @@ function getAttemptCompletionTime(attempt) {
   return toTimeMs(attempt?.completedAt || attempt?.updatedAt || attempt?.createdAt || attempt?.startedAt);
 }
 
+function summarizeRevisionBacklog(wrongQuestions = []) {
+  const backlogItems = Array.isArray(wrongQuestions) ? wrongQuestions : [];
+  const topicMap = new Map();
+  let wrongCount = 0;
+  let unattemptedCount = 0;
+
+  backlogItems.forEach((item) => {
+    const topic = normalizeTopic(item?.topic || 'General');
+    const status = String(item?.status || item?.lastOutcome || (!item?.selectedAnswer ? 'unattempted' : 'wrong')).trim() || 'wrong';
+    const isUnattempted = status === 'unattempted' || !String(item?.selectedAnswer || '').trim();
+
+    if (!topicMap.has(topic)) {
+      topicMap.set(topic, {
+        topic,
+        total: 0,
+        wrong: 0,
+        unattempted: 0,
+        lastSeenAt: 0
+      });
+    }
+
+    const bucket = topicMap.get(topic);
+    bucket.total += 1;
+
+    if (isUnattempted) {
+      bucket.unattempted += 1;
+      unattemptedCount += 1;
+    } else {
+      bucket.wrong += 1;
+      wrongCount += 1;
+    }
+
+    const seenAt = toTimeMs(item?.lastSeenAt || item?.updatedAt || item?.timestamp || item?.savedAt);
+    if (seenAt > bucket.lastSeenAt) {
+      bucket.lastSeenAt = seenAt;
+    }
+  });
+
+  const topics = Array.from(topicMap.values()).sort((left, right) => {
+    if (right.total !== left.total) return right.total - left.total;
+    if (right.lastSeenAt !== left.lastSeenAt) return right.lastSeenAt - left.lastSeenAt;
+    return left.topic.localeCompare(right.topic);
+  });
+
+  const primaryTopic = topics[0] || null;
+  const total = backlogItems.length;
+
+  return {
+    total,
+    wrongCount,
+    unattemptedCount,
+    topics,
+    primaryTopic,
+    primaryTopicShare: total > 0 && primaryTopic ? (primaryTopic.total / total) : 0
+  };
+}
+
+function getRecentAttemptedQuizIds(attempts = [], userId, windowDays = 21) {
+  const cutoff = Date.now() - (windowDays * DAY_MS);
+  return new Set(
+    attempts
+      .filter((attempt) => String(attempt.userId) === String(userId) && ['completed', 'expired'].includes(attempt.status))
+      .filter((attempt) => getAttemptCompletionTime(attempt) >= cutoff)
+      .map((attempt) => String(attempt.quizId || '').trim())
+      .filter(Boolean)
+  );
+}
+
 function buildQuestionMap(quizzes = []) {
   const map = new Map();
   quizzes.forEach((quiz) => {
@@ -218,12 +286,13 @@ function buildTopicStats({
   };
 }
 
-function scoreQuizForTopic(quiz, topic) {
+function scoreQuizForTopic(quiz, topic, recentQuizIds = new Set()) {
   const normalizedTopic = normalizeTopic(topic);
   let score = 0;
   const quizTopic = normalizeTopic(quiz.topic);
   if (quizTopic === normalizedTopic) score += 10;
   if (String(quiz.mode || '').toLowerCase() === 'topic') score += 4;
+  if (recentQuizIds.has(String(quiz.id))) score -= 12;
 
   for (const question of quiz.questions || []) {
     if (normalizeTopic(question.topic || quizTopic) === normalizedTopic) score += 2;
@@ -232,10 +301,10 @@ function scoreQuizForTopic(quiz, topic) {
   return score;
 }
 
-function selectPracticeQuiz(topic, quizzes = []) {
+function selectPracticeQuiz(topic, quizzes = [], recentQuizIds = new Set()) {
   const publicQuizzes = quizzes.filter((quiz) => !quiz.isDeleted && quiz.isPublished);
   const scored = publicQuizzes
-    .map((quiz) => ({ quiz, score: scoreQuizForTopic(quiz, topic) }))
+    .map((quiz) => ({ quiz, score: scoreQuizForTopic(quiz, topic, recentQuizIds) }))
     .filter((item) => item.score > 0)
     .sort((left, right) => {
       if (right.score !== left.score) return right.score - left.score;
@@ -277,7 +346,7 @@ function getAttemptedQuizIds(attempts = [], userId) {
   );
 }
 
-function selectFallbackQuiz(topic, quizzes = [], excludeQuizId = null) {
+function selectFallbackQuiz(topic, quizzes = [], excludeQuizId = null, recentQuizIds = new Set()) {
   const publicQuizzes = quizzes.filter((quiz) => 
     !quiz.isDeleted && 
     quiz.isPublished && 
@@ -290,7 +359,7 @@ function selectFallbackQuiz(topic, quizzes = [], excludeQuizId = null) {
       const mode = String(quiz.mode || '').toLowerCase();
       return mode === 'topic' || mode === 'mock';
     })
-    .map((quiz) => ({ quiz, score: scoreQuizForTopic(quiz, topic) }))
+    .map((quiz) => ({ quiz, score: scoreQuizForTopic(quiz, topic, recentQuizIds) }))
     .filter((item) => item.score > 0)
     .sort((left, right) => {
       if (right.score !== left.score) return right.score - left.score;
@@ -308,52 +377,32 @@ function selectFallbackQuiz(topic, quizzes = [], excludeQuizId = null) {
   return alternativeQuizzes[0]?.quiz || null;
 }
 
-function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null) {
-  const topTopic = topicRows[0] || null;
-  if (!topTopic) return null;
+function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null, wrongQuestions = []) {
+  const backlog = summarizeRevisionBacklog(wrongQuestions);
+  if (backlog.total <= 0) return null;
 
-  // Must have pending revision items; if none, don't recommend revision
-  if (topTopic.revisionWrongCount === 0) return null;
-
+  const primaryBacklogTopic = backlog.primaryTopic?.topic || topicRows[0]?.topic || 'General';
+  const topicSnapshot = topicRows.find((row) => row.topic === primaryBacklogTopic) || topicRows[0] || null;
   const hasCurrentSummary = Boolean(currentSummary && typeof currentSummary === 'object');
-  const currentAccuracy = hasCurrentSummary ? (Number(currentSummary?.accuracy) || 0) : null;
-  const currentIncorrect = hasCurrentSummary ? (Number(currentSummary?.incorrectAnswers) || 0) : 0;
-  const currentUnattempted = hasCurrentSummary ? (Number(currentSummary?.unattemptedQuestions) || 0) : 0;
-  const hasPendingRevisionGaps = topTopic.revisionWrongCount > 0;
-  const hasCurrentAttemptGaps = hasCurrentSummary && (currentIncorrect > 0 || currentUnattempted > 0);
-  const shouldRevise =
-    (hasPendingRevisionGaps || hasCurrentAttemptGaps) && (
-      topTopic.accuracy < 65 ||
-      topTopic.recentWrong7d >= 2 ||
-      (hasCurrentSummary && currentAccuracy < 60) ||
-      (hasCurrentSummary && currentIncorrect >= 1) ||
-      (hasCurrentSummary && currentUnattempted >= 1) ||
-      (topTopic.daysSinceLastPractice !== null && topTopic.daysSinceLastPractice >= 7 && topTopic.accuracy < 75)
-    );
+  const currentAccuracy = hasCurrentSummary ? (Number(currentSummary?.accuracy) || 0) : 0;
 
-  if (!shouldRevise) return null;
-
-  const revisionSetType = topTopic.skipped > topTopic.wrong && topTopic.skipped > 0
+  const revisionSetType = backlog.unattemptedCount > 0 && backlog.unattemptedCount >= backlog.wrongCount
     ? 'retryUnattempted'
-    : topTopic.recentWrong7d >= 2
-      ? 'lastWrong'
-      : topTopic.accuracy < 55
-        ? 'weakTopic'
-        : 'retryWrong';
+    : topicSnapshot && topicSnapshot.accuracy < 55 && backlog.primaryTopicShare >= 0.55
+      ? 'weakTopic'
+      : 'retryWrong';
 
-  const estimatedMinutes = Math.max(5, Math.min(20, Math.ceil((topTopic.attempted || topTopic.questionSeen || 10) / 2)));
+  const estimatedMinutes = Math.max(5, Math.min(25, Math.ceil(backlog.total / 2)));
   const actionLabel = 'Revise first';
-  const title = `Revise ${topTopic.topic}`;
-  const reason = topTopic.attempted === 0
-    ? `${topTopic.topic} has not been practiced yet, so revision will build a baseline.`
-    : `${topTopic.topic} is at ${topTopic.accuracy}% accuracy with ${topTopic.recentWrong7d} recent wrong answer${topTopic.recentWrong7d === 1 ? '' : 's'}.`;
+  const title = `Revise ${primaryBacklogTopic}`;
+  const reason = `${backlog.total} unresolved revision item${backlog.total === 1 ? '' : 's'} remain (${backlog.wrongCount} wrong, ${backlog.unattemptedCount} unattempted). Clear this backlog before taking a new quiz.`;
 
   return {
     action: 'revise',
     actionLabel,
-     ctaLabel: 'Open revision',
+    ctaLabel: 'Open revision',
     title,
-    topic: topTopic.topic,
+    topic: primaryBacklogTopic,
     reason,
     estimatedMinutes,
     estimatedTimeLabel: `${estimatedMinutes} min`,
@@ -362,28 +411,26 @@ function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null) 
     quizTitle: null,
     quizMode: null,
     url: '/quizzes.html?mode=all',
-    priorityScore: topTopic.priorityScore,
-    mockReadinessHint: currentAccuracy >= 75 && topTopic.accuracy >= 70
+    priorityScore: topicSnapshot?.priorityScore || (75 + backlog.total),
+    mockReadinessHint: currentAccuracy >= 75 && (topicSnapshot?.accuracy || 0) >= 70
       ? 'You are close to mock-ready. Finish this revision, then take a mock test.'
       : 'Revise this topic before moving back to new practice.'
   };
 }
 
-  function buildPracticeRecommendation(topTopic, quizzes, currentSummary = null, topicRows = [], attempts = [], userId = null) {
-    const selectedQuiz = selectPracticeQuiz(topTopic.topic, quizzes);
+  function buildPracticeRecommendation(topTopic, quizzes, currentSummary = null, topicRows = [], attempts = [], userId = null, recentQuizIds = new Set()) {
+    const selectedQuiz = selectPracticeQuiz(topTopic.topic, quizzes, recentQuizIds);
     const currentAccuracy = Number(currentSummary?.accuracy) || 0;
     const overallReadyForMock = currentAccuracy >= 80 && topTopic.accuracy >= 75 && topTopic.practiceSessions >= 2;
-      const attemptedQuizIds = userId ? getAttemptedQuizIds(attempts, userId) : new Set();
+    const attemptedQuizIds = userId ? getAttemptedQuizIds(attempts, userId) : new Set();
   
-      // If selected quiz is already attempted, suggest a fallback alternative (topic test or mock test)
-      let finalQuiz = selectedQuiz;
-      if (finalQuiz && attemptedQuizIds.has(String(finalQuiz.id))) {
-        const fallbackQuiz = selectFallbackQuiz(topTopic.topic, quizzes, finalQuiz.id);
-        if (fallbackQuiz) {
-          finalQuiz = fallbackQuiz;
-        }
-        // If no fallback found, use the original selected quiz anyway
+    let finalQuiz = selectedQuiz;
+    if (finalQuiz && (attemptedQuizIds.has(String(finalQuiz.id)) || recentQuizIds.has(String(finalQuiz.id)))) {
+      const fallbackQuiz = selectFallbackQuiz(topTopic.topic, quizzes, finalQuiz.id, recentQuizIds);
+      if (fallbackQuiz) {
+        finalQuiz = fallbackQuiz;
       }
+    }
   
     const estimatedMinutes = finalQuiz
       ? Math.max(5, Number(finalQuiz.timeLimit) || 15)
@@ -471,10 +518,15 @@ function buildAdaptiveRecommendation({
   const completedQuizCount = user ? Number(user.completedQuizCount) || 0 : 0;
   const userAccuracy = user ? Number(user.accuracyPercent) || overallAccuracy : overallAccuracy;
   const needsBaselinePractice = topicRows.length === 0 || overallAttempted === 0;
+  const recentQuizIds = getRecentAttemptedQuizIds(attempts, userId);
+  const backlog = summarizeRevisionBacklog(wrongQuestions);
+  const hasRevisionBacklog = backlog.total > 0;
 
   let recommendation = null;
 
-  if (needsBaselinePractice) {
+  if (hasRevisionBacklog) {
+    recommendation = buildRevisionRecommendation(topicRows, quizzes, currentSummary, wrongQuestions);
+  } else if (needsBaselinePractice) {
     const defaultQuiz = quizzes
       .filter((quiz) => !quiz.isDeleted && quiz.isPublished)
       .sort((left, right) => {
@@ -504,15 +556,9 @@ function buildAdaptiveRecommendation({
       mockReadinessHint: 'Complete a few topic tests before attempting a mock test.'
     };
   } else {
-    const hasPendingRevision = Array.isArray(wrongQuestions) && wrongQuestions.length > 0;
-    
-    let revisionRecommendation = null;
-    if (hasPendingRevision) {
-      revisionRecommendation = buildRevisionRecommendation(topicRows, quizzes, currentSummary);
-    }
-    
     const shouldTakeMock = Boolean(
       topTopic &&
+      !hasRevisionBacklog &&
       stats.overallAttempted >= 25 &&
       overallAccuracy >= 78 &&
       topTopic.accuracy >= 72 &&
@@ -520,12 +566,10 @@ function buildAdaptiveRecommendation({
       topTopic.priorityScore <= 52
     );
 
-    if (revisionRecommendation) {
-      recommendation = revisionRecommendation;
-    } else if (shouldTakeMock) {
+    if (shouldTakeMock) {
       recommendation = buildMockRecommendation(topTopic, quizzes, overallAccuracy);
     } else if (topTopic) {
-        recommendation = buildPracticeRecommendation(topTopic, quizzes, currentSummary, topicRows, attempts, userId);
+      recommendation = buildPracticeRecommendation(topTopic, quizzes, currentSummary, topicRows, attempts, userId, recentQuizIds);
     }
   }
 
@@ -548,7 +592,13 @@ function buildAdaptiveRecommendation({
       overallAccuracy,
       completedQuizCount,
       userAccuracy,
-      weakTopic: topTopic ? topTopic.topic : null
+      weakTopic: topTopic ? topTopic.topic : null,
+      revisionBacklog: {
+        total: backlog.total,
+        wrong: backlog.wrongCount,
+        unattempted: backlog.unattemptedCount,
+        primaryTopic: backlog.primaryTopic?.topic || null
+      }
     }
   };
 }

@@ -239,9 +239,10 @@ router.post('/revision/reconcile', async (req, res) => {
 
     await db.migrateLegacyRevisionState(req.userId);
     const context = req.body?.context || {};
-    const contextQuizId = String(context.quizId || '').trim();
-
-    const result = await reconcileRevisionProgress(req.userId, reviewItems, contextQuizId);
+    const result = await reconcileRevisionProgress(req.userId, reviewItems, {
+      quizId: String(context.quizId || '').trim(),
+      setKey: String(context.setKey || '').trim()
+    });
     return res.json(result);
   } catch (err) {
     console.error('[POST /api/attempts/revision/reconcile]', err);

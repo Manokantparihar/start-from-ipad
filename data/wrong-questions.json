@@ -1,52 +1,18 @@
 [
   {
-    "id": "51b172fb-3018-4037-a1ad-c92d5f3d6546",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "questionId": "q4",
-    "quizId": "",
-    "topic": "G.k",
+    "id": "86a4ba8f-db26-4e75-87d1-06838c514b52",
+    "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "topic": "Current Affairs",
     "selectedAnswer": "",
-    "correctAnswer": "जयपुर",
-    "timestamp": "2026-04-12T16:52:29.527Z"
-  },
-  {
-    "id": "053cb3a8-1191-4faf-bb58-651b86e8899f",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "questionId": "q2",
-    "quizId": "",
-    "topic": "G.k",
-    "selectedAnswer": "",
-    "correctAnswer": "नई दिल्ली",
-    "timestamp": "2026-04-12T16:52:29.527Z"
-  },
-  {
-    "id": "099968ad-2a07-4d97-a9f3-a8ea17e0f7ba",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "questionId": "779b4850-a27f-4370-9ef8-2e2fbb240a19",
-    "quizId": "aaff693c-241c-4a95-9a33-02bfc0029105",
-    "topic": "Science",
-    "selectedAnswer": "B",
-    "correctAnswer": "D",
-    "timestamp": "2026-04-12T16:59:09.958Z"
-  },
-  {
-    "id": "3147c23a-058c-4144-906e-303dcea1ec59",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "questionId": "b0a4ce21-91f1-4a72-98b7-6321ff8a2636",
-    "quizId": "aaff693c-241c-4a95-9a33-02bfc0029105",
-    "topic": "Science",
-    "selectedAnswer": "",
-    "correctAnswer": "गुर्दा",
-    "timestamp": "2026-04-12T16:59:09.959Z"
-  },
-  {
-    "id": "0ab46e54-a9d3-439c-b4ac-b448b1c60a6c",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "questionId": "28566ef6-489d-4ef5-86f1-c3ab7c8a7ef8",
-    "quizId": "aaff693c-241c-4a95-9a33-02bfc0029105",
-    "topic": "Science",
-    "selectedAnswer": "",
-    "correctAnswer": "3x10^8 m/s",
-    "timestamp": "2026-04-12T16:59:09.960Z"
+    "correctAnswer": "डिजिटल पेमेंट",
+    "status": "unattempted",
+    "timesMissed": 1,
+    "timestamp": "2026-04-12T17:45:48.195Z",
+    "firstSeenAt": "2026-04-12T17:45:48.195Z",
+    "lastSeenAt": "2026-04-12T17:45:48.195Z",
+    "updatedAt": "2026-04-12T17:45:48.195Z",
+    "lastOutcome": "unattempted"
   }
 ]

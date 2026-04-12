@@ -12,15 +12,15 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T16:58:18.432Z"
+      "updatedAt": "2026-04-12T19:50:42.225Z"
     },
-    "totalXp": 114,
+    "totalXp": 65,
     "currentLevel": 2,
-    "xpToNextLevel": 11,
+    "xpToNextLevel": 60,
     "currentLevelXp": 50,
     "nextLevelXp": 125,
-    "currentLevelProgress": 85,
-    "completedQuizCount": 4,
+    "currentLevelProgress": 20,
+    "completedQuizCount": 2,
     "currentStreak": 1,
     "bestStreak": 1,
     "lastActiveDate": "2026-04-12",
@@ -31,7 +31,7 @@
         "description": "Complete your first quiz.",
         "category": "milestone",
         "rarity": "common",
-        "unlockedAt": "2026-04-12T09:10:51.146Z"
+        "unlockedAt": "2026-04-12T19:48:41.967Z"
       }
     ],
     "latestBadge": {
@@ -40,21 +40,21 @@
       "description": "Complete your first quiz.",
       "category": "milestone",
       "rarity": "common",
-      "unlockedAt": "2026-04-12T09:10:51.146Z"
+      "unlockedAt": "2026-04-12T19:48:41.967Z"
     },
-    "gamificationUpdatedAt": "2026-04-12T16:58:18.432Z",
-    "xpBalance": 114,
+    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z",
+    "xpBalance": 65,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 79,
-    "weeklyCompletedQuizzes": 4,
-    "weeklyRank": null,
+    "weeklyXp": 55,
+    "weeklyCompletedQuizzes": 2,
+    "weeklyRank": 3,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Improving",
+    "currentTier": "Beginner",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -73,7 +73,7 @@
         "startDate": "2026-04-01",
         "endDate": "2026-04-30",
         "bonusXp": 15,
-        "progress": 1,
+        "progress": 0,
         "target": 5,
         "completed": false
       },
@@ -83,7 +83,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 4,
+        "progress": 2,
         "target": 2,
         "completed": true
       }
@@ -101,20 +101,20 @@
       {
         "eventId": "mock-marathon",
         "title": "Mock Marathon",
-        "progress": 1,
+        "progress": 0,
         "target": 5,
-        "bonusXpEarned": 15,
+        "bonusXpEarned": 0,
         "completed": false,
         "badgeAwardedAt": null
       },
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 4,
+        "progress": 2,
         "target": 2,
-        "bonusXpEarned": 20,
+        "bonusXpEarned": 10,
         "completed": true,
-        "badgeAwardedAt": "2026-04-12T16:47:28.846Z"
+        "badgeAwardedAt": "2026-04-12T19:50:42.220Z"
       }
     ],
     "rewardRedemptions": [],
@@ -131,10 +131,10 @@
             "rewardXp": 8,
             "rewardEarned": true,
             "progress": {
-              "value": 4,
+              "value": 2,
               "target": 2
             },
-            "completedAt": "2026-04-12T16:58:18.426Z"
+            "completedAt": "2026-04-12T19:50:42.220Z"
           },
           {
             "id": "score-80-plus",
@@ -145,7 +145,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-12T16:58:18.426Z"
+            "completedAt": "2026-04-12T19:50:42.220Z"
           },
           {
             "id": "new-topic",
@@ -156,7 +156,7 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-12T16:58:18.426Z"
+            "completedAt": "2026-04-12T19:50:42.220Z"
           }
         ],
         "completedMissionIds": [
@@ -176,10 +176,10 @@
           "rewardXp": 8,
           "rewardEarned": true,
           "progress": {
-            "value": 4,
+            "value": 2,
             "target": 2
           },
-          "completedAt": "2026-04-12T16:58:18.426Z"
+          "completedAt": "2026-04-12T19:50:42.220Z"
         },
         {
           "id": "score-80-plus",
@@ -190,7 +190,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-12T16:58:18.426Z"
+          "completedAt": "2026-04-12T19:50:42.220Z"
         },
         {
           "id": "new-topic",
@@ -201,7 +201,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-12T16:58:18.426Z"
+          "completedAt": "2026-04-12T19:50:42.220Z"
         }
       ],
       "completedMissionIds": [
@@ -212,17 +212,17 @@
       "rewardXpEarned": 21
     },
     "totalSpentXp": 0,
-    "baseXp": 48,
+    "baseXp": 28,
     "boostXp": 0,
-    "weekendBonusXp": 10,
-    "eventBonusXp": 35,
+    "weekendBonusXp": 6,
+    "eventBonusXp": 10,
     "missionBonusXp": 21,
-    "totalCorrectAnswers": 24,
-    "totalQuestionsAnswered": 41,
-    "accuracyPercent": 59,
-    "masteryLevel": "Improving",
-    "rankScore": 259014,
-    "weeklyAccuracyPercent": 59
+    "totalCorrectAnswers": 12,
+    "totalQuestionsAnswered": 17,
+    "accuracyPercent": 71,
+    "masteryLevel": "Beginner",
+    "rankScore": 171012,
+    "weeklyAccuracyPercent": 71
   },
   {
     "id": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
@@ -256,7 +256,7 @@
     "weeklyXp": 138,
     "weeklyAccuracyPercent": 87,
     "weeklyCompletedQuizzes": 5,
-    "weeklyRank": null,
+    "weeklyRank": 2,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Improving",
     "badges": [
@@ -488,7 +488,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T16:58:18.432Z"
+      "updatedAt": "2026-04-12T19:50:42.225Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -506,10 +506,231 @@
     "weekendBonusXp": 18,
     "eventBonusXp": 37,
     "missionBonusXp": 34,
-    "gamificationUpdatedAt": "2026-04-12T16:58:18.432Z",
+    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z",
     "revision": {
       "wrongQuestions": [],
       "bookmarks": []
     }
+  },
+  {
+    "id": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
+    "name": "Divya",
+    "email": "divya@gmail.com",
+    "password": "$2b$10$y7KPGVxXRm12pmLZ4XLcDeDBdcPcxpJZAMhr71reQDh5SHYNcdKGO",
+    "role": "user",
+    "createdAt": "2026-04-12T17:42:12.735Z",
+    "totalXp": 40,
+    "xpBalance": 40,
+    "currentLevel": 1,
+    "xpToNextLevel": 10,
+    "currentLevelXp": 0,
+    "nextLevelXp": 50,
+    "currentLevelProgress": 80,
+    "completedQuizCount": 1,
+    "totalCorrectAnswers": 9,
+    "totalQuestionsAnswered": 10,
+    "accuracyPercent": 90,
+    "masteryLevel": "Beginner",
+    "rankScore": 190011,
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "lastActiveDate": "2026-04-12",
+    "streakFreeze": {
+      "maxCount": 1,
+      "availableCount": 1,
+      "usedCount": 0,
+      "lastConsumedOn": null
+    },
+    "weeklyXp": 35,
+    "weeklyAccuracyPercent": 90,
+    "weeklyCompletedQuizzes": 1,
+    "weeklyRank": 1,
+    "weekKey": "2026-04-06/2026-04-13",
+    "currentTier": "Beginner",
+    "badges": [
+      {
+        "id": "first-quiz",
+        "title": "First Quiz",
+        "description": "Complete your first quiz.",
+        "category": "milestone",
+        "rarity": "common",
+        "unlockedAt": "2026-04-12T17:45:48.193Z"
+      }
+    ],
+    "activeBoost": null,
+    "activeEvents": [
+      {
+        "id": "geography-week",
+        "title": "Geography Week",
+        "startDate": "2026-04-01",
+        "endDate": "2026-04-14",
+        "bonusXp": 12,
+        "progress": 0,
+        "target": 3,
+        "completed": false
+      },
+      {
+        "id": "mock-marathon",
+        "title": "Mock Marathon",
+        "startDate": "2026-04-01",
+        "endDate": "2026-04-30",
+        "bonusXp": 15,
+        "progress": 0,
+        "target": 5,
+        "completed": false
+      },
+      {
+        "id": "weekend-challenge",
+        "title": "Weekend Challenge",
+        "startDate": "2026-01-01",
+        "endDate": "2026-12-31",
+        "bonusXp": 5,
+        "progress": 1,
+        "target": 2,
+        "completed": false
+      }
+    ],
+    "eventProgress": [
+      {
+        "eventId": "geography-week",
+        "title": "Geography Week",
+        "progress": 0,
+        "target": 3,
+        "bonusXpEarned": 0,
+        "completed": false,
+        "badgeAwardedAt": null
+      },
+      {
+        "eventId": "mock-marathon",
+        "title": "Mock Marathon",
+        "progress": 0,
+        "target": 5,
+        "bonusXpEarned": 0,
+        "completed": false,
+        "badgeAwardedAt": null
+      },
+      {
+        "eventId": "weekend-challenge",
+        "title": "Weekend Challenge",
+        "progress": 1,
+        "target": 2,
+        "bonusXpEarned": 5,
+        "completed": false,
+        "badgeAwardedAt": null
+      }
+    ],
+    "rewardRedemptions": [],
+    "consumedBoostHistory": [],
+    "weeklyGroupRanks": [],
+    "groupIds": [],
+    "dailyMissionHistory": [
+      {
+        "dateKey": "2026-04-12",
+        "missions": [
+          {
+            "id": "complete-two-quizzes",
+            "completed": false,
+            "rewardXp": 8,
+            "rewardEarned": false,
+            "progress": {
+              "value": 1,
+              "target": 2
+            },
+            "completedAt": null
+          },
+          {
+            "id": "score-80-plus",
+            "completed": true,
+            "rewardXp": 6,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-12T17:45:48.193Z"
+          },
+          {
+            "id": "new-topic",
+            "completed": true,
+            "rewardXp": 7,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-12T17:45:48.193Z"
+          }
+        ],
+        "completedMissionIds": [
+          "score-80-plus",
+          "new-topic"
+        ],
+        "rewardXpEarned": 13
+      }
+    ],
+    "todayMissions": {
+      "dateKey": "2026-04-12",
+      "missions": [
+        {
+          "id": "complete-two-quizzes",
+          "completed": false,
+          "rewardXp": 8,
+          "rewardEarned": false,
+          "progress": {
+            "value": 1,
+            "target": 2
+          },
+          "completedAt": null
+        },
+        {
+          "id": "score-80-plus",
+          "completed": true,
+          "rewardXp": 6,
+          "rewardEarned": true,
+          "progress": {
+            "value": 1,
+            "target": 1
+          },
+          "completedAt": "2026-04-12T17:45:48.193Z"
+        },
+        {
+          "id": "new-topic",
+          "completed": true,
+          "rewardXp": 7,
+          "rewardEarned": true,
+          "progress": {
+            "value": 1,
+            "target": 1
+          },
+          "completedAt": "2026-04-12T17:45:48.193Z"
+        }
+      ],
+      "completedMissionIds": [
+        "score-80-plus",
+        "new-topic"
+      ],
+      "rewardXpEarned": 13
+    },
+    "streak": {
+      "currentStreak": 1,
+      "bestStreak": 1,
+      "lastActiveDate": "2026-04-12",
+      "updatedAt": "2026-04-12T19:50:42.225Z"
+    },
+    "latestBadge": {
+      "id": "first-quiz",
+      "title": "First Quiz",
+      "description": "Complete your first quiz.",
+      "category": "milestone",
+      "rarity": "common",
+      "unlockedAt": "2026-04-12T17:45:48.193Z"
+    },
+    "totalSpentXp": 0,
+    "baseXp": 18,
+    "boostXp": 0,
+    "weekendBonusXp": 4,
+    "eventBonusXp": 5,
+    "missionBonusXp": 13,
+    "gamificationUpdatedAt": "2026-04-12T19:50:42.225Z"
   }
 ]
