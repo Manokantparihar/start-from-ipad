@@ -74,5 +74,213 @@
     "completedAt": 1775936713249,
     "score": 15,
     "total": 15
+  },
+  {
+    "id": "92743153-024d-41b8-a9e5-7affd3f6adfb",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "quizTitle": "करंट अफेयर्स क्विज",
+    "status": "completed",
+    "startedAt": 1775983543713,
+    "expiresAt": 1775984143713,
+    "timeLimitMinutes": 10,
+    "answers": [
+      {
+        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
+        "selected": "सूर्य"
+      },
+      {
+        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
+        "selected": "दिल्ली"
+      },
+      {
+        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
+        "selected": "द्रौपदी मुर्मू"
+      },
+      {
+        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
+        "selected": "भारत"
+      },
+      {
+        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+        "selected": "सऊदी अरब"
+      },
+      {
+        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
+        "selected": "उत्तराखंड"
+      },
+      {
+        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
+        "selected": "Aditya-L1"
+      },
+      {
+        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
+        "selected": "रंजन गोगोई"
+      },
+      {
+        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
+        "selected": "गुजरात"
+      },
+      {
+        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
+        "selected": "शिक्षा"
+      }
+    ],
+    "createdAt": 1775983543713,
+    "completedAt": 1775983620382,
+    "score": 8,
+    "total": 10
+  },
+  {
+    "id": "c79611c1-ac3a-45f5-8c4a-5eb9869a308e",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "quizTitle": "करंट अफेयर्स क्विज",
+    "status": "completed",
+    "startedAt": 1775984973735,
+    "expiresAt": 1775985573735,
+    "timeLimitMinutes": 10,
+    "answers": [
+      {
+        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
+        "selected": "सूर्य"
+      },
+      {
+        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
+        "selected": "दिल्ली"
+      },
+      {
+        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
+        "selected": "भारत"
+      },
+      {
+        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+        "selected": "जर्मनी"
+      }
+    ],
+    "createdAt": 1775984973735,
+    "completedAt": 1775985051146,
+    "score": 3,
+    "total": 10
+  },
+  {
+    "id": "365c9b47-0a86-4de8-ac08-63b5bf234cf1",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "quizTitle": "करंट अफेयर्स क्विज",
+    "status": "completed",
+    "startedAt": 1775985593314,
+    "expiresAt": 1775986193314,
+    "timeLimitMinutes": 10,
+    "answers": [
+      {
+        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
+        "selected": "सूर्य"
+      },
+      {
+        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
+        "selected": "दिल्ली"
+      },
+      {
+        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
+        "selected": "द्रौपदी मुर्मू"
+      },
+      {
+        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
+        "selected": "भारत"
+      },
+      {
+        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+        "selected": "सऊदी अरब"
+      },
+      {
+        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
+        "selected": "उत्तराखंड"
+      },
+      {
+        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
+        "selected": "Aditya-L1"
+      },
+      {
+        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
+        "selected": "DY चंद्रचूड़"
+      },
+      {
+        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
+        "selected": "शिक्षा"
+      }
+    ],
+    "createdAt": 1775985593314,
+    "completedAt": 1775985640883,
+    "score": 8,
+    "total": 10
+  },
+  {
+    "id": "bcebf1a3-ead1-4878-8257-3be4e18c2630",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1775986662701,
+    "expiresAt": 1775987862701,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q2",
+        "selected": "33"
+      },
+      {
+        "questionId": "q3",
+        "selected": "ऊँट"
+      },
+      {
+        "questionId": "q4",
+        "selected": "रोहिड़ा"
+      }
+    ],
+    "createdAt": 1775986662701,
+    "completedAt": 1775986684467,
+    "score": 3,
+    "total": 4
+  },
+  {
+    "id": "28f69b8e-471f-4e0d-aa91-51bf2a3a27da",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1775987983959,
+    "expiresAt": 1775989183959,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "मोर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "नई दिल्ली"
+      },
+      {
+        "questionId": "q3",
+        "selected": "4"
+      },
+      {
+        "questionId": "q4",
+        "selected": "जयपुर"
+      },
+      {
+        "questionId": "q5",
+        "selected": "एशिया"
+      },
+      {
+        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
+        "selected": "Jaipur"
+      }
+    ],
+    "createdAt": 1775987983959,
+    "completedAt": 1775988009536,
+    "score": 6,
+    "total": 7
   }
 ]

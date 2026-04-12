@@ -9,33 +9,49 @@
     "profileImage": "/uploads/avatars/cb370536-35ed-4e83-b730-7070f92e1e04.jpeg",
     "updatedAt": "2026-04-11T19:18:08.982Z",
     "streak": {
-      "currentStreak": 0,
-      "bestStreak": 0,
-      "lastActiveDate": null,
-      "updatedAt": "2026-04-11T19:45:13.252Z"
+      "currentStreak": 1,
+      "bestStreak": 1,
+      "lastActiveDate": "2026-04-12",
+      "updatedAt": "2026-04-12T10:00:09.541Z"
     },
-    "totalXp": 0,
+    "totalXp": 28,
     "currentLevel": 1,
-    "xpToNextLevel": 50,
+    "xpToNextLevel": 22,
     "currentLevelXp": 0,
     "nextLevelXp": 50,
-    "currentLevelProgress": 0,
-    "completedQuizCount": 0,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "lastActiveDate": null,
-    "badges": [],
-    "latestBadge": null,
-    "gamificationUpdatedAt": "2026-04-11T19:45:13.252Z",
-    "xpBalance": 0,
+    "currentLevelProgress": 56,
+    "completedQuizCount": 1,
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "lastActiveDate": "2026-04-12",
+    "badges": [
+      {
+        "id": "first-quiz",
+        "title": "First Quiz",
+        "description": "Complete your first quiz.",
+        "category": "milestone",
+        "rarity": "common",
+        "unlockedAt": "2026-04-12T09:10:51.146Z"
+      }
+    ],
+    "latestBadge": {
+      "id": "first-quiz",
+      "title": "First Quiz",
+      "description": "Complete your first quiz.",
+      "category": "milestone",
+      "rarity": "common",
+      "unlockedAt": "2026-04-12T09:10:51.146Z"
+    },
+    "gamificationUpdatedAt": "2026-04-12T10:00:09.541Z",
+    "xpBalance": 28,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 0,
-    "weeklyCompletedQuizzes": 0,
+    "weeklyXp": 23,
+    "weeklyCompletedQuizzes": 1,
     "weeklyRank": null,
     "weekKey": "2026-04-06/2026-04-13",
     "currentTier": "Beginner",
@@ -67,7 +83,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 0,
+        "progress": 1,
         "target": 2,
         "completed": false
       }
@@ -94,9 +110,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 0,
+        "progress": 1,
         "target": 2,
-        "bonusXpEarned": 0,
+        "bonusXpEarned": 5,
         "completed": false,
         "badgeAwardedAt": null
       }
@@ -105,9 +121,52 @@
     "consumedBoostHistory": [],
     "weeklyGroupRanks": [],
     "groupIds": [],
-    "dailyMissionHistory": [],
+    "dailyMissionHistory": [
+      {
+        "dateKey": "2026-04-12",
+        "missions": [
+          {
+            "id": "complete-two-quizzes",
+            "completed": false,
+            "rewardXp": 8,
+            "rewardEarned": false,
+            "progress": {
+              "value": 1,
+              "target": 2
+            },
+            "completedAt": null
+          },
+          {
+            "id": "score-80-plus",
+            "completed": false,
+            "rewardXp": 6,
+            "rewardEarned": false,
+            "progress": {
+              "value": 0,
+              "target": 1
+            },
+            "completedAt": null
+          },
+          {
+            "id": "new-topic",
+            "completed": true,
+            "rewardXp": 7,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-12T09:10:51.146Z"
+          }
+        ],
+        "completedMissionIds": [
+          "new-topic"
+        ],
+        "rewardXpEarned": 7
+      }
+    ],
     "todayMissions": {
-      "dateKey": "2026-04-11",
+      "dateKey": "2026-04-12",
       "missions": [
         {
           "id": "complete-two-quizzes",
@@ -115,7 +174,7 @@
           "rewardXp": 8,
           "rewardEarned": false,
           "progress": {
-            "value": 0,
+            "value": 1,
             "target": 2
           },
           "completedAt": null
@@ -133,33 +192,169 @@
         },
         {
           "id": "new-topic",
-          "completed": false,
+          "completed": true,
           "rewardXp": 7,
-          "rewardEarned": false,
+          "rewardEarned": true,
           "progress": {
-            "value": 0,
+            "value": 1,
             "target": 1
           },
-          "completedAt": null
+          "completedAt": "2026-04-12T09:10:51.146Z"
         }
       ],
-      "completedMissionIds": [],
-      "rewardXpEarned": 0
+      "completedMissionIds": [
+        "new-topic"
+      ],
+      "rewardXpEarned": 7
     },
     "totalSpentXp": 0,
-    "baseXp": 0,
+    "baseXp": 13,
     "boostXp": 0,
-    "weekendBonusXp": 0,
-    "eventBonusXp": 0,
-    "missionBonusXp": 0,
-    "totalCorrectAnswers": 0,
-    "totalQuestionsAnswered": 0,
-    "accuracyPercent": 0,
+    "weekendBonusXp": 3,
+    "eventBonusXp": 5,
+    "missionBonusXp": 7,
+    "totalCorrectAnswers": 3,
+    "totalQuestionsAnswered": 10,
+    "accuracyPercent": 30,
     "masteryLevel": "Beginner",
-    "rankScore": 100000,
-    "weeklyAccuracyPercent": 0,
+    "rankScore": 130011,
+    "weeklyAccuracyPercent": 30,
     "revision": {
-      "wrongQuestions": [],
+      "wrongQuestions": [
+        {
+          "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
+          "question": "भारत के वर्तमान राष्ट्रपति कौन हैं?",
+          "options": [
+            "रामनाथ कोविंद",
+            "द्रौपदी मुर्मू",
+            "नरेंद्र मोदी",
+            "अमित शाह"
+          ],
+          "correctAnswer": "द्रौपदी मुर्मू",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+          "question": "हाल ही में BRICS में नए सदस्य के रूप में कौन शामिल हुआ?",
+          "options": [
+            "सऊदी अरब",
+            "जापान",
+            "जर्मनी",
+            "इटली"
+          ],
+          "correctAnswer": "सऊदी अरब",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 1,
+          "timesUnattempted": 0
+        },
+        {
+          "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
+          "question": "हाल ही में किस राज्य ने समान नागरिक संहिता लागू करने की दिशा में कदम बढ़ाया?",
+          "options": [
+            "उत्तर प्रदेश",
+            "उत्तराखंड",
+            "बिहार",
+            "गुजरात"
+          ],
+          "correctAnswer": "उत्तराखंड",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
+          "question": "हाल ही में किस मिशन का उद्देश्य सूर्य का अध्ययन करना है?",
+          "options": [
+            "Gaganyaan",
+            "Aditya-L1",
+            "Chandrayaan-2",
+            "Mangalyaan"
+          ],
+          "correctAnswer": "Aditya-L1",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
+          "question": "भारत के वर्तमान मुख्य न्यायाधीश कौन हैं?",
+          "options": [
+            "DY चंद्रचूड़",
+            "UU ललित",
+            "एनवी रमना",
+            "रंजन गोगोई"
+          ],
+          "correctAnswer": "DY चंद्रचूड़",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
+          "question": "हाल ही में भारत का पहला सेमीकंडक्टर प्लांट किस राज्य में स्थापित हो रहा है?",
+          "options": [
+            "गुजरात",
+            "महाराष्ट्र",
+            "तमिलनाडु",
+            "कर्नाटक"
+          ],
+          "correctAnswer": "गुजरात",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        },
+        {
+          "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
+          "question": "हाल ही में भारत ने किस क्षेत्र में डिजिटल पब्लिक इंफ्रास्ट्रक्चर के लिए पहचान बनाई?",
+          "options": [
+            "स्वास्थ्य",
+            "शिक्षा",
+            "डिजिटल पेमेंट",
+            "कृषि"
+          ],
+          "correctAnswer": "डिजिटल पेमेंट",
+          "topic": "Current Affairs",
+          "subtopic": "",
+          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+          "quizTitle": "करंट अफेयर्स क्विज",
+          "savedAt": "2026-04-12T09:10:51.147Z",
+          "lastSeenAt": "2026-04-12T09:10:51.147Z",
+          "timesWrong": 0,
+          "timesUnattempted": 1
+        }
+      ],
       "bookmarks": []
     }
   },
@@ -170,34 +365,34 @@
     "password": "$2b$10$wpVw5NzMPJkgLiCEni4IOeRU30D7./RZc1qkyFb9SZ/V3hkPJVOOe",
     "role": "user",
     "createdAt": "2026-04-11T19:38:53.477Z",
-    "totalXp": 64,
-    "xpBalance": 64,
-    "currentLevel": 2,
-    "xpToNextLevel": 61,
-    "currentLevelXp": 50,
-    "nextLevelXp": 125,
-    "currentLevelProgress": 19,
-    "completedQuizCount": 1,
-    "totalCorrectAnswers": 15,
-    "totalQuestionsAnswered": 15,
-    "accuracyPercent": 100,
-    "masteryLevel": "Beginner",
-    "rankScore": 200011,
-    "currentStreak": 1,
-    "bestStreak": 1,
-    "lastActiveDate": "2026-04-11",
+    "totalXp": 175,
+    "xpBalance": 175,
+    "currentLevel": 3,
+    "xpToNextLevel": 50,
+    "currentLevelXp": 125,
+    "nextLevelXp": 225,
+    "currentLevelProgress": 50,
+    "completedQuizCount": 5,
+    "totalCorrectAnswers": 40,
+    "totalQuestionsAnswered": 46,
+    "accuracyPercent": 87,
+    "masteryLevel": "Improving",
+    "rankScore": 287025,
+    "currentStreak": 2,
+    "bestStreak": 2,
+    "lastActiveDate": "2026-04-12",
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 47,
-    "weeklyAccuracyPercent": 100,
-    "weeklyCompletedQuizzes": 1,
+    "weeklyXp": 138,
+    "weeklyAccuracyPercent": 87,
+    "weeklyCompletedQuizzes": 5,
     "weeklyRank": null,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Beginner",
+    "currentTier": "Improving",
     "badges": [
       {
         "id": "first-quiz",
@@ -206,6 +401,14 @@
         "category": "milestone",
         "rarity": "common",
         "unlockedAt": "2026-04-11T19:45:13.249Z"
+      },
+      {
+        "id": "five-quizzes",
+        "title": "5 Quizzes Completed",
+        "description": "Complete five quizzes.",
+        "category": "milestone",
+        "rarity": "common",
+        "unlockedAt": "2026-04-12T10:00:09.536Z"
       },
       {
         "id": "perfect-score",
@@ -244,9 +447,9 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 1,
+        "progress": 5,
         "target": 2,
-        "completed": false
+        "completed": true
       }
     ],
     "eventProgress": [
@@ -271,11 +474,11 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 1,
+        "progress": 5,
         "target": 2,
-        "bonusXpEarned": 5,
-        "completed": false,
-        "badgeAwardedAt": null
+        "bonusXpEarned": 25,
+        "completed": true,
+        "badgeAwardedAt": "2026-04-12T08:47:00.382Z"
       }
     ],
     "rewardRedemptions": [],
@@ -325,21 +528,65 @@
           "new-topic"
         ],
         "rewardXpEarned": 13
+      },
+      {
+        "dateKey": "2026-04-12",
+        "missions": [
+          {
+            "id": "complete-two-quizzes",
+            "completed": true,
+            "rewardXp": 8,
+            "rewardEarned": true,
+            "progress": {
+              "value": 4,
+              "target": 2
+            },
+            "completedAt": "2026-04-12T10:00:09.536Z"
+          },
+          {
+            "id": "score-80-plus",
+            "completed": true,
+            "rewardXp": 6,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-12T10:00:09.536Z"
+          },
+          {
+            "id": "new-topic",
+            "completed": true,
+            "rewardXp": 7,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-12T10:00:09.536Z"
+          }
+        ],
+        "completedMissionIds": [
+          "complete-two-quizzes",
+          "score-80-plus",
+          "new-topic"
+        ],
+        "rewardXpEarned": 21
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-11",
+      "dateKey": "2026-04-12",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": false,
+          "completed": true,
           "rewardXp": 8,
-          "rewardEarned": false,
+          "rewardEarned": true,
           "progress": {
-            "value": 1,
+            "value": 4,
             "target": 2
           },
-          "completedAt": null
+          "completedAt": "2026-04-12T10:00:09.536Z"
         },
         {
           "id": "score-80-plus",
@@ -350,7 +597,7 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-11T19:45:13.249Z"
+          "completedAt": "2026-04-12T10:00:09.536Z"
         },
         {
           "id": "new-topic",
@@ -361,20 +608,21 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-11T19:45:13.249Z"
+          "completedAt": "2026-04-12T10:00:09.536Z"
         }
       ],
       "completedMissionIds": [
+        "complete-two-quizzes",
         "score-80-plus",
         "new-topic"
       ],
-      "rewardXpEarned": 13
+      "rewardXpEarned": 21
     },
     "streak": {
-      "currentStreak": 1,
-      "bestStreak": 1,
-      "lastActiveDate": "2026-04-11",
-      "updatedAt": "2026-04-11T19:45:13.252Z"
+      "currentStreak": 2,
+      "bestStreak": 2,
+      "lastActiveDate": "2026-04-12",
+      "updatedAt": "2026-04-12T10:00:09.541Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -387,11 +635,15 @@
     "profileImage": "/uploads/avatars/8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e.jpeg",
     "updatedAt": "2026-04-11T19:42:30.227Z",
     "totalSpentXp": 0,
-    "baseXp": 28,
+    "baseXp": 86,
     "boostXp": 0,
-    "weekendBonusXp": 6,
-    "eventBonusXp": 17,
-    "missionBonusXp": 13,
-    "gamificationUpdatedAt": "2026-04-11T19:45:13.252Z"
+    "weekendBonusXp": 18,
+    "eventBonusXp": 37,
+    "missionBonusXp": 34,
+    "gamificationUpdatedAt": "2026-04-12T10:00:09.541Z",
+    "revision": {
+      "wrongQuestions": [],
+      "bookmarks": []
+    }
   }
 ]

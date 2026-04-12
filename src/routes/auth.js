@@ -148,11 +148,54 @@ router.get('/me', authSessionRateLimiter, async (req, res) => {
 
     const payload = jwt.verify(token, JWT_SECRET);
     // Re-read latest user from DB (source of truth for role)
-    const users = await db.getUsers();
+    const [users, attempts, quizzes] = await Promise.all([
+      db.getUsers(),
+      db.getAttempts(),
+      db.getQuizzes({ includeDeleted: true, includeUnpublished: true })
+    ]);
+    
     const user = findUserFromTokenPayload(users, payload);
 
     if (!user) {
       return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    // Calculate current user's weekly rank dynamically
+    const publicGamification = buildPublicGamification(user);
+    let weeklyRank = publicGamification.weeklyRank;
+
+    // If no rank assigned (less than 3 competitive users in sync), calculate dynamically
+    if (!weeklyRank && Number(publicGamification.weeklyCompletedQuizzes) > 0) {
+      // Build weekly metrics for all users
+      const weeklyMetrics = users
+        .filter((u) => u && u.id)
+        .map((u) => {
+          const gamif = buildPublicGamification(u);
+          return {
+            userId: u.id,
+            name: u.name || 'Unknown',
+            weeklyAccuracyPercent: Number(gamif.weeklyAccuracyPercent) || 0,
+            weeklyCompletedQuizzes: Number(gamif.weeklyCompletedQuizzes) || 0
+          };
+        })
+        .filter((entry) => Number(entry.weeklyCompletedQuizzes) > 0)
+        .sort((a, b) => {
+          if (b.weeklyAccuracyPercent !== a.weeklyAccuracyPercent) {
+            return b.weeklyAccuracyPercent - a.weeklyAccuracyPercent;
+          }
+          if (b.weeklyCompletedQuizzes !== a.weeklyCompletedQuizzes) {
+            return b.weeklyCompletedQuizzes - a.weeklyCompletedQuizzes;
+          }
+          return a.name.localeCompare(b.name);
+        });
+
+      // Find current user's rank (assign rank if at least 2 competitive users)
+      if (weeklyMetrics.length >= 2) {
+        const userIndex = weeklyMetrics.findIndex((entry) => entry.userId === user.id);
+        if (userIndex >= 0) {
+          weeklyRank = userIndex + 1;
+        }
+      }
     }
 
     return res.json({
@@ -163,7 +206,8 @@ router.get('/me', authSessionRateLimiter, async (req, res) => {
         role: user.role || 'user',
         profileImage: user.profileImage || null,
         updatedAt: user.updatedAt || null,
-        ...buildPublicGamification(user)
+        ...publicGamification,
+        weeklyRank // Override with dynamically calculated rank
       }
     });
   } catch (error) {

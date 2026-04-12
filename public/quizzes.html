@@ -67,6 +67,10 @@
           <div class="flex items-center gap-3 mt-1">
             <span class="text-sm text-gray-500" id="quizProgress">Question 1 of 0</span>
             <span class="text-sm text-orange-600 font-medium" id="timerDisplay"></span>
+            <label class="inline-flex items-center gap-2 text-xs text-gray-600 select-none">
+              <input id="autoAdvanceToggle" type="checkbox" class="h-4 w-4 accent-blue-600" checked>
+              Auto next
+            </label>
           </div>
         </div>
         <button id="abandonBtn" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300">✕ Exit</button>
@@ -192,11 +196,27 @@
     let revisionData = null;
     let navButtonsBound = false;
     const ATTEMPT_DATA_REFRESH_KEY = 'attempt-data-refresh';
+    const AUTO_ADVANCE_PREF_KEY = 'quiz-auto-advance';
+    const AUTO_ADVANCE_DELAY_MS = 250;
+    let autoAdvanceEnabled = true;
 
     function setQuizBackButtonState() {
       const backBtn = document.getElementById('abandonBtn');
       if (!backBtn) return;
       backBtn.textContent = retrySession?.fromRevision ? '← Back to Review & Revise' : 'Exit Quiz';
+    }
+
+    function setupAutoAdvancePreference() {
+      const saved = localStorage.getItem(AUTO_ADVANCE_PREF_KEY);
+      if (saved === 'false') autoAdvanceEnabled = false;
+
+      const toggle = document.getElementById('autoAdvanceToggle');
+      if (!toggle) return;
+      toggle.checked = autoAdvanceEnabled;
+      toggle.addEventListener('change', () => {
+        autoAdvanceEnabled = Boolean(toggle.checked);
+        localStorage.setItem(AUTO_ADVANCE_PREF_KEY, autoAdvanceEnabled ? 'true' : 'false');
+      });
     }
 
     // ─── Init ─────────────────────────────────────────────────────────────────
@@ -206,6 +226,7 @@
       }
       document.getElementById('customQuizNav').classList.remove('hidden');
       setupNavButtons();
+      setupAutoAdvancePreference();
       currentMode = getModeFromQuery();
       applyModeContext();
 
@@ -415,8 +436,15 @@
     }
 
     // ─── Record Answer ────────────────────────────────────────────────────────
-    function recordAnswer(questionId, selected) {
-      userAnswers[questionId] = selected;
+    function recordAnswer(questionId, selected, options = {}) {
+      const { autoAdvance = false } = options;
+
+      if (selected === undefined || selected === null || selected === '') {
+        delete userAnswers[questionId];
+      } else {
+        userAnswers[questionId] = selected;
+      }
+
       // Highlight selected option
       document.querySelectorAll('#optionsContainer label').forEach(label => {
         const input = label.querySelector('input[type=radio]');
@@ -430,6 +458,17 @@
       // Auto-save with debounce
       clearTimeout(saveDebounce);
       saveDebounce = setTimeout(autoSave, 1000);
+
+      // Auto-move to next question after selecting an option (except on last question)
+      if (autoAdvance && autoAdvanceEnabled && selected !== undefined && selected !== null && selected !== '') {
+        const isLast = currentQuestionIndex >= currentQuizData.questions.length - 1;
+        if (!isLast) {
+          setTimeout(() => {
+            currentQuestionIndex++;
+            renderQuestion();
+          }, AUTO_ADVANCE_DELAY_MS);
+        }
+      }
     }
 
     async function autoSave() {
@@ -540,9 +579,25 @@
       });
 
       // Event delegation: quiz answer radio buttons
+      document.getElementById('questionContainer').addEventListener('click', (e) => {
+        const input = e.target.closest('.quiz-answer-radio');
+        if (!input) return;
+
+        const questionId = input.dataset.questionId;
+        const selectedOption = input.dataset.option;
+        const currentlySelected = userAnswers[questionId];
+
+        // Clicking an already selected option clears answer for that question.
+        if (currentlySelected === selectedOption) {
+          e.preventDefault();
+          recordAnswer(questionId, null);
+          renderQuestion();
+        }
+      });
+
       document.getElementById('questionContainer').addEventListener('change', (e) => {
         const input = e.target.closest('.quiz-answer-radio');
-        if (input) recordAnswer(input.dataset.questionId, input.dataset.option);
+        if (input) recordAnswer(input.dataset.questionId, input.dataset.option, { autoAdvance: true });
       });
     }
 

@@ -257,19 +257,68 @@ function selectPracticeQuiz(topic, quizzes = []) {
   return scored[0]?.quiz || null;
 }
 
+function getAttemptedQuizIds(attempts = [], userId) {
+  return new Set(
+    attempts
+      .filter((attempt) => String(attempt.userId) === String(userId) && ['completed', 'expired'].includes(attempt.status))
+      .map((attempt) => String(attempt.quizId || '').trim())
+      .filter(Boolean)
+  );
+}
+
+function selectFallbackQuiz(topic, quizzes = [], excludeQuizId = null) {
+  const publicQuizzes = quizzes.filter((quiz) => 
+    !quiz.isDeleted && 
+    quiz.isPublished && 
+    String(quiz.id) !== String(excludeQuizId)
+  );
+  
+  // Prefer topic tests or mock tests as fallback
+  const alternativeQuizzes = publicQuizzes
+    .filter((quiz) => {
+      const mode = String(quiz.mode || '').toLowerCase();
+      return mode === 'topic' || mode === 'mock';
+    })
+    .map((quiz) => ({ quiz, score: scoreQuizForTopic(quiz, topic) }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => {
+      if (right.score !== left.score) return right.score - left.score;
+      const leftMode = String(left.quiz.mode || '').toLowerCase();
+      const rightMode = String(right.quiz.mode || '').toLowerCase();
+      const modePriority = (mode) => {
+        if (mode === 'topic') return 2;
+        if (mode === 'mock') return 1;
+        return 0;
+      };
+      if (modePriority(rightMode) !== modePriority(leftMode)) return modePriority(rightMode) - modePriority(leftMode);
+      return String(left.quiz.title || '').localeCompare(String(right.quiz.title || ''));
+    });
+  
+  return alternativeQuizzes[0]?.quiz || null;
+}
+
 function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null) {
   const topTopic = topicRows[0] || null;
   if (!topTopic) return null;
 
-  const currentAccuracy = Number(currentSummary?.accuracy) || 0;
-  const currentIncorrect = Number(currentSummary?.incorrectAnswers) || 0;
+  // Must have pending revision items; if none, don't recommend revision
+  if (topTopic.revisionWrongCount === 0) return null;
+
+  const hasCurrentSummary = Boolean(currentSummary && typeof currentSummary === 'object');
+  const currentAccuracy = hasCurrentSummary ? (Number(currentSummary?.accuracy) || 0) : null;
+  const currentIncorrect = hasCurrentSummary ? (Number(currentSummary?.incorrectAnswers) || 0) : 0;
+  const currentUnattempted = hasCurrentSummary ? (Number(currentSummary?.unattemptedQuestions) || 0) : 0;
+  const hasPendingRevisionGaps = topTopic.revisionWrongCount > 0;
+  const hasCurrentAttemptGaps = hasCurrentSummary && (currentIncorrect > 0 || currentUnattempted > 0);
   const shouldRevise =
-    topTopic.accuracy < 65 ||
-    topTopic.recentWrong7d >= 2 ||
-    topTopic.practiceSessions <= 1 ||
-    currentAccuracy < 60 ||
-    currentIncorrect >= 3 ||
-    (topTopic.daysSinceLastPractice !== null && topTopic.daysSinceLastPractice >= 7 && topTopic.accuracy < 75);
+    (hasPendingRevisionGaps || hasCurrentAttemptGaps) && (
+      topTopic.accuracy < 65 ||
+      topTopic.recentWrong7d >= 2 ||
+      (hasCurrentSummary && currentAccuracy < 60) ||
+      (hasCurrentSummary && currentIncorrect >= 1) ||
+      (hasCurrentSummary && currentUnattempted >= 1) ||
+      (topTopic.daysSinceLastPractice !== null && topTopic.daysSinceLastPractice >= 7 && topTopic.accuracy < 75)
+    );
 
   if (!shouldRevise) return null;
 
@@ -309,44 +358,56 @@ function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null) 
   };
 }
 
-function buildPracticeRecommendation(topTopic, quizzes, currentSummary = null, topicRows = []) {
-  const selectedQuiz = selectPracticeQuiz(topTopic.topic, quizzes);
-  const currentAccuracy = Number(currentSummary?.accuracy) || 0;
-  const overallReadyForMock = currentAccuracy >= 80 && topTopic.accuracy >= 75 && topTopic.practiceSessions >= 2;
-  const estimatedMinutes = selectedQuiz
-    ? Math.max(5, Number(selectedQuiz.timeLimit) || 15)
-    : Math.max(8, Math.min(25, Math.ceil((topTopic.questionSeen || 10) / 2)));
+  function buildPracticeRecommendation(topTopic, quizzes, currentSummary = null, topicRows = [], attempts = [], userId = null) {
+    const selectedQuiz = selectPracticeQuiz(topTopic.topic, quizzes);
+    const currentAccuracy = Number(currentSummary?.accuracy) || 0;
+    const overallReadyForMock = currentAccuracy >= 80 && topTopic.accuracy >= 75 && topTopic.practiceSessions >= 2;
+      const attemptedQuizIds = userId ? getAttemptedQuizIds(attempts, userId) : new Set();
+  
+      // If selected quiz is already attempted, suggest a fallback alternative (topic test or mock test)
+      let finalQuiz = selectedQuiz;
+      if (finalQuiz && attemptedQuizIds.has(String(finalQuiz.id))) {
+        const fallbackQuiz = selectFallbackQuiz(topTopic.topic, quizzes, finalQuiz.id);
+        if (fallbackQuiz) {
+          finalQuiz = fallbackQuiz;
+        }
+        // If no fallback found, use the original selected quiz anyway
+      }
+  
+    const estimatedMinutes = finalQuiz
+      ? Math.max(5, Number(finalQuiz.timeLimit) || 15)
+      : Math.max(8, Math.min(25, Math.ceil((topTopic.questionSeen || 10) / 2)));
 
-  const reason = selectedQuiz
-    ? `${selectedQuiz.title} best matches your highest-priority topic, ${topTopic.topic}.`
-    : `Continue with new practice on ${topTopic.topic} to improve its ${topTopic.accuracy}% accuracy.`;
+    const reason = finalQuiz
+      ? `${finalQuiz.title} best matches your highest-priority topic, ${topTopic.topic}.`
+      : `Continue with new practice on ${topTopic.topic} to improve its ${topTopic.accuracy}% accuracy.`;
 
-  const recommendation = {
-    action: 'practice',
-    actionLabel: 'Continue practice',
-     ctaLabel: selectedQuiz ? 'Open quiz' : 'Continue practice',
-    title: selectedQuiz ? selectedQuiz.title : `Practice ${topTopic.topic}`,
-    topic: topTopic.topic,
-    reason,
-    estimatedMinutes,
-    estimatedTimeLabel: `${estimatedMinutes} min`,
-    revisionSetType: null,
-    quizId: selectedQuiz?.id || null,
-    quizTitle: selectedQuiz?.title || null,
-    quizMode: selectedQuiz?.mode || null,
-    url: selectedQuiz ? `/quizzes.html?quizId=${encodeURIComponent(selectedQuiz.id)}` : '/quizzes.html?mode=topic',
-    priorityScore: topTopic.priorityScore,
-    mockReadinessHint: overallReadyForMock
-      ? 'You are mock-ready. Take a full mock test next to validate exam stamina.'
-      : `Finish one more practice cycle on ${topTopic.topic} before moving to a mock.`
-  };
+    const recommendation = {
+      action: 'practice',
+      actionLabel: 'Continue practice',
+      ctaLabel: finalQuiz ? 'Open quiz' : 'Continue practice',
+      title: finalQuiz ? finalQuiz.title : `Practice ${topTopic.topic}`,
+      topic: topTopic.topic,
+      reason,
+      estimatedMinutes,
+      estimatedTimeLabel: `${estimatedMinutes} min`,
+      revisionSetType: null,
+      quizId: finalQuiz?.id || null,
+      quizTitle: finalQuiz?.title || null,
+      quizMode: finalQuiz?.mode || null,
+      url: finalQuiz ? `/quizzes.html?quizId=${encodeURIComponent(finalQuiz.id)}` : '/quizzes.html?mode=topic',
+      priorityScore: topTopic.priorityScore,
+      mockReadinessHint: overallReadyForMock
+        ? 'You are mock-ready. Take a full mock test next to validate exam stamina.'
+        : `Finish one more practice cycle on ${topTopic.topic} before moving to a mock.`
+    };
 
-  if (topTopic.accuracy < 72 && currentAccuracy < 70) {
-    recommendation.mockReadinessHint = 'Build accuracy on this topic before trying a mock test.';
+    if (topTopic.accuracy < 72 && currentAccuracy < 70) {
+      recommendation.mockReadinessHint = 'Build accuracy on this topic before trying a mock test.';
+    }
+
+    return recommendation;
   }
-
-  return recommendation;
-}
 
 function buildAdaptiveRecommendation({
   userId,
@@ -408,11 +469,18 @@ function buildAdaptiveRecommendation({
       mockReadinessHint: 'Complete a few topic tests before attempting a mock test.'
     };
   } else {
-    const revisionRecommendation = buildRevisionRecommendation(topicRows, quizzes, currentSummary);
+    // Check if there are pending revision items (user.revision.wrongQuestions)
+    const hasPendingRevision = user && Array.isArray(user.revision?.wrongQuestions) && user.revision.wrongQuestions.length > 0;
+    
+    let revisionRecommendation = null;
+    if (hasPendingRevision) {
+      revisionRecommendation = buildRevisionRecommendation(topicRows, quizzes, currentSummary);
+    }
+    
     if (revisionRecommendation) {
       recommendation = revisionRecommendation;
     } else if (topTopic) {
-      recommendation = buildPracticeRecommendation(topTopic, quizzes, currentSummary, topicRows);
+        recommendation = buildPracticeRecommendation(topTopic, quizzes, currentSummary, topicRows, attempts, userId);
     }
   }
 
