@@ -257,6 +257,17 @@ function selectPracticeQuiz(topic, quizzes = []) {
   return scored[0]?.quiz || null;
 }
 
+function selectMockQuiz(quizzes = []) {
+  return quizzes
+    .filter((quiz) => !quiz.isDeleted && quiz.isPublished && String(quiz.mode || '').toLowerCase() === 'mock')
+    .sort((left, right) => {
+      const leftQuestions = Array.isArray(left.questions) ? left.questions.length : 0;
+      const rightQuestions = Array.isArray(right.questions) ? right.questions.length : 0;
+      if (rightQuestions !== leftQuestions) return rightQuestions - leftQuestions;
+      return String(left.title || '').localeCompare(String(right.title || ''));
+    })[0] || null;
+}
+
 function getAttemptedQuizIds(attempts = [], userId) {
   return new Set(
     attempts
@@ -409,6 +420,30 @@ function buildRevisionRecommendation(topicRows, quizzes, currentSummary = null) 
     return recommendation;
   }
 
+function buildMockRecommendation(topTopic, quizzes = [], overallAccuracy = 0) {
+  const mockQuiz = selectMockQuiz(quizzes);
+  if (!mockQuiz) return null;
+
+  const estimatedMinutes = Math.max(10, Number(mockQuiz.timeLimit) || 20);
+  return {
+    action: 'mock',
+    actionLabel: 'Take a mock test',
+    ctaLabel: 'Start mock test',
+    title: mockQuiz.title || 'Take a full mock test',
+    topic: topTopic?.topic || 'Mixed',
+    reason: `Your current accuracy is ${overallAccuracy}% and weak-topic risk is controlled. Validate exam stamina with a mock test.`,
+    estimatedMinutes,
+    estimatedTimeLabel: `${estimatedMinutes} min`,
+    revisionSetType: null,
+    quizId: mockQuiz.id,
+    quizTitle: mockQuiz.title || null,
+    quizMode: mockQuiz.mode || 'mock',
+    url: `/quizzes.html?quizId=${encodeURIComponent(mockQuiz.id)}`,
+    priorityScore: topTopic?.priorityScore || 0,
+    mockReadinessHint: 'You are mock-ready. Attempt a full mock, then review mistakes from the result page.'
+  };
+}
+
 function buildAdaptiveRecommendation({
   userId,
   user = null,
@@ -476,8 +511,19 @@ function buildAdaptiveRecommendation({
       revisionRecommendation = buildRevisionRecommendation(topicRows, quizzes, currentSummary);
     }
     
+    const shouldTakeMock = Boolean(
+      topTopic &&
+      stats.overallAttempted >= 25 &&
+      overallAccuracy >= 78 &&
+      topTopic.accuracy >= 72 &&
+      topTopic.recentWrong7d <= 1 &&
+      topTopic.priorityScore <= 52
+    );
+
     if (revisionRecommendation) {
       recommendation = revisionRecommendation;
+    } else if (shouldTakeMock) {
+      recommendation = buildMockRecommendation(topTopic, quizzes, overallAccuracy);
     } else if (topTopic) {
         recommendation = buildPracticeRecommendation(topTopic, quizzes, currentSummary, topicRows, attempts, userId);
     }
