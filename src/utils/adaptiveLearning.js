@@ -469,8 +469,7 @@ function buildAdaptiveRecommendation({
       mockReadinessHint: 'Complete a few topic tests before attempting a mock test.'
     };
   } else {
-    // Check if there are pending revision items (user.revision.wrongQuestions)
-    const hasPendingRevision = user && Array.isArray(user.revision?.wrongQuestions) && user.revision.wrongQuestions.length > 0;
+    const hasPendingRevision = Array.isArray(wrongQuestions) && wrongQuestions.length > 0;
     
     let revisionRecommendation = null;
     if (hasPendingRevision) {

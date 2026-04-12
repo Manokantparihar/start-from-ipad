@@ -393,6 +393,95 @@ async function isQuestionBookmarked(userId, questionId) {
   return bookmarks.some(b => b.questionId === questionId);
 }
 
+async function migrateLegacyRevisionState(userId) {
+  const users = await readFile('users');
+  const userIndex = users.findIndex((entry) => entry.id === userId);
+  if (userIndex === -1) {
+    return { migrated: false, reason: 'user-not-found' };
+  }
+
+  const user = users[userIndex] || {};
+  const legacy = user.revision && typeof user.revision === 'object' ? user.revision : null;
+  if (!legacy) {
+    return { migrated: false, reason: 'no-legacy-revision' };
+  }
+
+  const wrongEntries = Array.isArray(legacy.wrongQuestions) ? legacy.wrongQuestions : [];
+  const bookmarkEntries = Array.isArray(legacy.bookmarks) ? legacy.bookmarks : [];
+
+  const allWrong = await readFile('wrong-questions');
+  const allBookmarks = await readFile('bookmarks');
+
+  const existingWrongKeys = new Set(
+    allWrong
+      .filter((row) => row.userId === userId)
+      .map((row) => `${String(row.questionId || '').trim()}::${String(row.quizId || '').trim()}`)
+  );
+
+  const existingBookmarkKeys = new Set(
+    allBookmarks
+      .filter((row) => row.userId === userId)
+      .map((row) => String(row.questionId || '').trim())
+  );
+
+  let migratedWrongCount = 0;
+  let migratedBookmarkCount = 0;
+
+  for (const row of wrongEntries) {
+    const questionId = String(row?.questionId || '').trim();
+    if (!questionId) continue;
+    const quizId = String(row?.quizId || '').trim();
+    const key = `${questionId}::${quizId}`;
+    if (existingWrongKeys.has(key)) continue;
+
+    allWrong.push({
+      id: uuidv4(),
+      userId,
+      questionId,
+      quizId,
+      topic: String(row?.topic || 'General').trim() || 'General',
+      selectedAnswer: '',
+      correctAnswer: row?.correctAnswer === undefined || row?.correctAnswer === null ? '' : String(row.correctAnswer),
+      timestamp: row?.lastSeenAt || row?.savedAt || new Date().toISOString()
+    });
+
+    existingWrongKeys.add(key);
+    migratedWrongCount += 1;
+  }
+
+  for (const row of bookmarkEntries) {
+    const questionId = String(row?.questionId || '').trim();
+    if (!questionId || existingBookmarkKeys.has(questionId)) continue;
+
+    allBookmarks.push({
+      id: uuidv4(),
+      userId,
+      questionId,
+      quizId: String(row?.quizId || '').trim(),
+      topic: String(row?.topic || 'General').trim() || 'General',
+      timestamp: row?.savedAt || row?.lastSeenAt || new Date().toISOString()
+    });
+
+    existingBookmarkKeys.add(questionId);
+    migratedBookmarkCount += 1;
+  }
+
+  user.revision = undefined;
+  users[userIndex] = user;
+
+  await Promise.all([
+    writeFile('wrong-questions', allWrong),
+    writeFile('bookmarks', allBookmarks),
+    writeFile('users', users.map(normalizeUser))
+  ]);
+
+  return {
+    migrated: true,
+    migratedWrongCount,
+    migratedBookmarkCount
+  };
+}
+
 module.exports = {
   getUsers,
   saveUsers,
@@ -438,5 +527,6 @@ module.exports = {
   getBookmarks,
   addBookmark,
   removeBookmark,
-  isQuestionBookmarked
+  isQuestionBookmarked,
+  migrateLegacyRevisionState
 };

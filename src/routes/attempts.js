@@ -6,6 +6,7 @@ const {
   syncUsersToGamification
 } = require('../utils/gamification');
 const { buildAdaptiveRecommendation } = require('../utils/adaptiveLearning');
+const { getAttemptsRevisionPayload, reconcileRevisionProgress } = require('../utils/revisionSystem');
 
 const router = express.Router();
 const MIN_COMPETITIVE_QUIZ_PARTICIPANTS = 3;
@@ -179,108 +180,11 @@ function getRankingForSummary(summary, others) {
   };
 }
 
-function sanitizeQuestionEntry(entry = {}) {
-  const options = Array.isArray(entry.options) ? entry.options.map((opt) => String(opt)) : [];
-  return {
-    questionId: String(entry.questionId || '').trim(),
-    question: String(entry.question || '').trim(),
-    options,
-    correctAnswer: entry.correctAnswer === undefined || entry.correctAnswer === null ? '' : String(entry.correctAnswer),
-    topic: String(entry.topic || 'General').trim() || 'General',
-    subtopic: String(entry.subtopic || '').trim(),
-    quizId: String(entry.quizId || '').trim(),
-    quizTitle: String(entry.quizTitle || '').trim(),
-    savedAt: entry.savedAt || new Date().toISOString(),
-    lastSeenAt: entry.lastSeenAt || new Date().toISOString(),
-    timesWrong: Math.max(0, toNumber(entry.timesWrong, 0)),
-    timesUnattempted: Math.max(0, toNumber(entry.timesUnattempted, 0))
-  };
-}
-
-function ensureRevisionState(user = {}) {
-  const revision = user.revision && typeof user.revision === 'object' ? user.revision : {};
-  return {
-    wrongQuestions: Array.isArray(revision.wrongQuestions) ? revision.wrongQuestions.map(sanitizeQuestionEntry) : [],
-    bookmarks: Array.isArray(revision.bookmarks) ? revision.bookmarks.map(sanitizeQuestionEntry) : []
-  };
-}
-
-function buildTopicGroups(items = []) {
-  const groups = new Map();
-  items.forEach((item) => {
-    const topic = String(item.topic || 'General').trim() || 'General';
-    if (!groups.has(topic)) {
-      groups.set(topic, { topic, count: 0, questions: [] });
-    }
-    const bucket = groups.get(topic);
-    bucket.count += 1;
-    bucket.questions.push(item);
-  });
-  return Array.from(groups.values()).sort((a, b) => b.count - a.count || a.topic.localeCompare(b.topic));
-}
-
-function buildRevisionPayload(revisionState) {
-  const wrongQuestions = revisionState.wrongQuestions;
-  const bookmarks = revisionState.bookmarks;
-  const groupedByTopic = buildTopicGroups(wrongQuestions);
-  const lastWrongQuestions = [...wrongQuestions]
-    .sort((a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
-    .slice(0, 20);
-  const weakTopic = groupedByTopic[0]?.topic || null;
-  const weakTopicQuestions = weakTopic
-    ? wrongQuestions.filter((item) => item.topic === weakTopic).slice(0, 20)
-    : [];
-  const retryWrongQuestions = [...wrongQuestions]
-    .sort((a, b) => b.timesWrong - a.timesWrong || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
-    .slice(0, 20);
-  const retryUnattemptedQuestions = [...wrongQuestions]
-    .filter((item) => (item.timesUnattempted || 0) > 0)
-    .sort((a, b) => b.timesUnattempted - a.timesUnattempted || new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
-    .slice(0, 20);
-
-  return {
-    totals: {
-      wrongQuestions: wrongQuestions.length,
-      bookmarkedQuestions: bookmarks.length,
-      topicsInRevision: groupedByTopic.length
-    },
-    groupedByTopic,
-    bookmarks,
-    revisionSets: {
-      lastWrongQuestions,
-      weakTopic,
-      weakTopicQuestions,
-      retryWrongQuestions,
-      retryUnattemptedQuestions
-    }
-  };
-}
-
-function upsertRevisionQuestion(wrongQuestions, nextEntry) {
-  const idx = wrongQuestions.findIndex((item) => item.questionId === nextEntry.questionId);
-  if (idx === -1) {
-    wrongQuestions.push(nextEntry);
-    return;
-  }
-
-  const current = wrongQuestions[idx];
-  wrongQuestions[idx] = {
-    ...current,
-    ...nextEntry,
-    timesWrong: Math.max(0, toNumber(current.timesWrong, 0) + toNumber(nextEntry.timesWrong, 0)),
-    timesUnattempted: Math.max(0, toNumber(current.timesUnattempted, 0) + toNumber(nextEntry.timesUnattempted, 0))
-  };
-}
-
 // GET /api/attempts/revision - revision dashboard payload
 router.get('/revision', async (req, res) => {
   try {
-    const users = await db.getUsers();
-    const user = users.find((entry) => entry.id === req.userId);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const revisionState = ensureRevisionState(user);
-    return res.json(buildRevisionPayload(revisionState));
+    const payload = await getAttemptsRevisionPayload(req.userId);
+    return res.json(payload);
   } catch (err) {
     console.error('[GET /api/attempts/revision]', err);
     return res.status(500).json({ error: 'Server error' });
@@ -290,29 +194,19 @@ router.get('/revision', async (req, res) => {
 // POST /api/attempts/revision/bookmarks - add bookmark
 router.post('/revision/bookmarks', async (req, res) => {
   try {
-    const payload = sanitizeQuestionEntry(req.body || {});
-    if (!payload.questionId || !payload.question) {
-      return res.status(400).json({ error: 'questionId and question are required' });
+    const questionId = String(req.body?.questionId || '').trim();
+    if (!questionId) {
+      return res.status(400).json({ error: 'questionId is required' });
     }
 
-    const users = await db.getUsers();
-    const idx = users.findIndex((entry) => entry.id === req.userId);
-    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+    await db.migrateLegacyRevisionState(req.userId);
+    await db.addBookmark(req.userId, {
+      questionId,
+      quizId: String(req.body?.quizId || '').trim(),
+      topic: String(req.body?.topic || 'General').trim() || 'General'
+    });
 
-    const revisionState = ensureRevisionState(users[idx]);
-    const exists = revisionState.bookmarks.some((item) => item.questionId === payload.questionId);
-    if (!exists) {
-      revisionState.bookmarks.push({
-        ...payload,
-        savedAt: new Date().toISOString(),
-        lastSeenAt: new Date().toISOString()
-      });
-    }
-
-    users[idx].revision = revisionState;
-    await db.saveUsers(users);
-
-    return res.status(exists ? 200 : 201).json({ saved: true });
+    return res.status(201).json({ saved: true });
   } catch (err) {
     console.error('[POST /api/attempts/revision/bookmarks]', err);
     return res.status(500).json({ error: 'Server error' });
@@ -325,18 +219,10 @@ router.delete('/revision/bookmarks/:questionId', async (req, res) => {
     const questionId = String(req.params.questionId || '').trim();
     if (!questionId) return res.status(400).json({ error: 'questionId is required' });
 
-    const users = await db.getUsers();
-    const idx = users.findIndex((entry) => entry.id === req.userId);
-    if (idx === -1) return res.status(404).json({ error: 'User not found' });
+    await db.migrateLegacyRevisionState(req.userId);
+    await db.removeBookmark(req.userId, questionId);
 
-    const revisionState = ensureRevisionState(users[idx]);
-    const before = revisionState.bookmarks.length;
-    revisionState.bookmarks = revisionState.bookmarks.filter((item) => item.questionId !== questionId);
-
-    users[idx].revision = revisionState;
-    await db.saveUsers(users);
-
-    return res.json({ removed: before !== revisionState.bookmarks.length });
+    return res.json({ removed: true });
   } catch (err) {
     console.error('[DELETE /api/attempts/revision/bookmarks/:questionId]', err);
     return res.status(500).json({ error: 'Server error' });
@@ -351,88 +237,12 @@ router.post('/revision/reconcile', async (req, res) => {
       return res.status(400).json({ error: 'reviewItems must be an array' });
     }
 
+    await db.migrateLegacyRevisionState(req.userId);
     const context = req.body?.context || {};
     const contextQuizId = String(context.quizId || '').trim();
 
-    const users = await db.getUsers();
-    const idx = users.findIndex((entry) => entry.id === req.userId);
-    if (idx === -1) return res.status(404).json({ error: 'User not found' });
-
-    const revisionState = ensureRevisionState(users[idx]);
-    const solvedQuestionIds = new Set();
-    const stillWrongEntries = [];
-    const stillWrongTrack = [];
-
-    reviewItems.forEach((item) => {
-      const questionId = String(item?.questionId || '').trim();
-      if (!questionId) return;
-
-      const selected = item?.selected;
-      const isAttempted = selected !== null && selected !== undefined && selected !== '';
-      const isCorrect = Boolean(item?.isCorrect) || (isAttempted && selected === item?.correctAnswer);
-
-      if (isCorrect) {
-        solvedQuestionIds.add(questionId);
-        return;
-      }
-
-      const sanitized = sanitizeQuestionEntry({
-        questionId,
-        question: item?.question || '',
-        options: Array.isArray(item?.options) ? item.options : [],
-        correctAnswer: item?.correctAnswer,
-        topic: item?.topic || 'General',
-        subtopic: item?.subtopic || '',
-        quizId: String(item?.quizId || contextQuizId || '').trim(),
-        quizTitle: String(item?.quizTitle || '').trim(),
-        lastSeenAt: new Date().toISOString(),
-        timesWrong: isAttempted ? 1 : 0,
-        timesUnattempted: isAttempted ? 0 : 1
-      });
-
-      stillWrongEntries.push(sanitized);
-      stillWrongTrack.push({
-        questionId,
-        quizId: sanitized.quizId,
-        topic: sanitized.topic,
-        selectedAnswer: isAttempted ? String(selected) : '',
-        correctAnswer: sanitized.correctAnswer
-      });
-    });
-
-    if (solvedQuestionIds.size > 0) {
-      revisionState.wrongQuestions = revisionState.wrongQuestions.filter(
-        (entry) => !solvedQuestionIds.has(String(entry.questionId || '').trim())
-      );
-    }
-
-    stillWrongEntries.forEach((entry) => upsertRevisionQuestion(revisionState.wrongQuestions, entry));
-
-    users[idx].revision = revisionState;
-    await db.saveUsers(users);
-
-    try {
-      const currentWrongRows = await db.getWrongQuestions(req.userId);
-      if (solvedQuestionIds.size > 0) {
-        const rowsToRemove = currentWrongRows.filter((row) => solvedQuestionIds.has(String(row.questionId || '').trim()));
-        for (const row of rowsToRemove) {
-          await db.removeWrongQuestion(row.id);
-        }
-      }
-
-      for (const trackEntry of stillWrongTrack) {
-        await db.addWrongQuestion(req.userId, trackEntry);
-      }
-    } catch (syncErr) {
-      console.error('[POST /api/attempts/revision/reconcile] wrong-questions sync failed:', syncErr);
-    }
-
-    return res.json({
-      updated: true,
-      resolvedCount: solvedQuestionIds.size,
-      stillWrongCount: stillWrongEntries.length,
-      remainingWrongQuestions: revisionState.wrongQuestions.length
-    });
+    const result = await reconcileRevisionProgress(req.userId, reviewItems, contextQuizId);
+    return res.json(result);
   } catch (err) {
     console.error('[POST /api/attempts/revision/reconcile]', err);
     return res.status(500).json({ error: 'Server error' });
@@ -678,7 +488,6 @@ router.post('/:id/submit', async (req, res) => {
     const quiz = allQuizzes.find(q => q.id === attempt.quizId);
     let score = 0;
     let total = 0;
-    const revisionUpdates = [];
     const wrongQuestionsToTrack = []; // For tracking in wrong-questions.json
     
     if (quiz && quiz.questions) {
@@ -695,19 +504,6 @@ router.post('/:id/submit', async (req, res) => {
         }
 
         const topic = getQuestionTopic(q, quiz);
-        revisionUpdates.push(sanitizeQuestionEntry({
-          questionId: q.id,
-          question: q.question || q.text || '',
-          options: Array.isArray(q.options) ? q.options : [],
-          correctAnswer: q.correctAnswer,
-          topic,
-          subtopic: q.subtopic || '',
-          quizId: attempt.quizId,
-          quizTitle: attempt.quizTitle,
-          lastSeenAt: new Date().toISOString(),
-          timesWrong: isAttempted ? 1 : 0,
-          timesUnattempted: isAttempted ? 0 : 1
-        }));
 
         // Track for wrong-questions.json
         wrongQuestionsToTrack.push({
@@ -743,13 +539,6 @@ router.post('/:id/submit', async (req, res) => {
         db.getGamificationConfig()
       ]);
       if (users.length > 0) {
-        const userIdx = users.findIndex((entry) => entry.id === req.userId);
-        if (userIdx !== -1 && revisionUpdates.length > 0) {
-          const revisionState = ensureRevisionState(users[userIdx]);
-          revisionUpdates.forEach((entry) => upsertRevisionQuestion(revisionState.wrongQuestions, entry));
-          users[userIdx].revision = revisionState;
-        }
-
         const syncedUsers = await syncUsersToGamification({
           users,
           attempts,

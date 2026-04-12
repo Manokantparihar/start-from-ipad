@@ -24,16 +24,6 @@ function filterWrongQuestionsByActiveAttempts(wrongQuestions = [], attempts = []
   return wrongQuestions.filter((entry) => activeQuizIds.has(String(entry.quizId || '').trim()));
 }
 
-function filterWrongQuestionsByRevisionState(wrongQuestions = [], user = {}) {
-  const revisionWrongIds = new Set(
-    (user?.revision?.wrongQuestions || [])
-      .map((entry) => String(entry?.questionId || '').trim())
-      .filter(Boolean)
-  );
-
-  if (revisionWrongIds.size === 0) return [];
-  return wrongQuestions.filter((entry) => revisionWrongIds.has(String(entry?.questionId || '').trim()));
-}
 
 router.get('/missions', async (req, res) => {
   try {
@@ -74,10 +64,7 @@ router.get('/progress', async (req, res) => {
     const user = users.find((entry) => entry.id === req.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const activeWrongQuestions = filterWrongQuestionsByRevisionState(
-      filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId),
-      user
-    );
+    const activeWrongQuestions = filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId);
 
     const progress = buildPublicGamification(user);
     const todayKey = toUtcDateKey(new Date());
@@ -121,10 +108,7 @@ router.get('/recommendation', async (req, res) => {
     const user = users.find((entry) => entry.id === req.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const activeWrongQuestions = filterWrongQuestionsByRevisionState(
-      filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId),
-      user
-    );
+    const activeWrongQuestions = filterWrongQuestionsByActiveAttempts(wrongQuestions, attempts, req.userId);
 
     const adaptive = buildAdaptiveRecommendation({
       userId: req.userId,
