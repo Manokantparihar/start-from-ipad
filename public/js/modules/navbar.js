@@ -213,28 +213,40 @@
           ${buildDesktopLinks(active)}
         </div>
 
-        <div class="relative" data-dropdown="profile">
-          <button
-            id="profileMenuBtn"
-            type="button"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-            aria-expanded="false"
-            aria-haspopup="true"
-          >
-            <span class="relative inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
-                <img id="profileMenuAvatarImg" src="" alt="Profile" class="hidden h-8 w-8 rounded-full object-cover" />
-              <span id="profileMenuAvatarFallback">PR</span>
-            </span>
-            <span id="profileMenuLabel" class="max-w-36 truncate">Profile</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+        <div class="flex items-center gap-3">
+          <div id="notifWidget" class="relative hidden">
+            <button id="notifBell" type="button" title="Notifications" class="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50" aria-label="Open notifications">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span id="notifBadge" class="hidden absolute -right-1 -top-1 min-w-[18px] rounded-full bg-red-500 px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white"></span>
+            </button>
+            <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-[22rem] max-w-[88vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl z-50"></div>
+          </div>
 
-          <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl" role="menu">
-            <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${active === 'profile' ? 'text-blue-700 bg-blue-50' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'}" role="menuitem">My Profile</a>
-            <a id="profileAdminLink" href="/admin/" class="hidden rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Admin Panel</a>
-            <button id="profileLogoutBtn" type="button" class="mt-1 w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50" role="menuitem">Logout</button>
+          <div class="relative" data-dropdown="profile">
+            <button
+              id="profileMenuBtn"
+              type="button"
+              class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              <span class="relative inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                  <img id="profileMenuAvatarImg" src="" alt="Profile" class="hidden h-8 w-8 rounded-full object-cover" />
+                <span id="profileMenuAvatarFallback">PR</span>
+              </span>
+              <span id="profileMenuLabel" class="max-w-36 truncate">Profile</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl" role="menu">
+              <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${active === 'profile' ? 'text-blue-700 bg-blue-50' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'}" role="menuitem">My Profile</a>
+              <a id="profileAdminLink" href="/admin/" class="hidden rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">Admin Panel</a>
+              <button id="profileLogoutBtn" type="button" class="mt-1 w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50" role="menuitem">Logout</button>
+            </div>
           </div>
         </div>
       </div>
@@ -260,6 +272,9 @@
         </div>
 
         <div class="mt-2 border-t border-gray-100 pt-2">
+          <a href="notifications.html" class="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+            <span>Notifications</span><span id="mobileNotifBadge" class="hidden rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">0</span>
+          </a>
           <a href="profile.html" class="block rounded-lg px-3 py-2 text-sm ${mobileLinkClass(active === 'profile')}">My Profile</a>
           <a id="mobileProfileAdminLink" href="/admin/" class="hidden block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">Admin Panel</a>
           <button id="mobileProfileLogoutBtn" type="button" class="w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50">Logout</button>
@@ -318,6 +333,17 @@
     mobileProfileAdminLink && mobileProfileAdminLink.classList.add('hidden');
   }
 
+  function applyNotificationVisibility(mountNode, isLoggedIn) {
+    const notifWidget = mountNode.querySelector('#notifWidget');
+    const mobileNotifBadge = mountNode.querySelector('#mobileNotifBadge');
+    if (!isLoggedIn) {
+      notifWidget && notifWidget.classList.add('hidden');
+      mobileNotifBadge && mobileNotifBadge.classList.add('hidden');
+      return;
+    }
+    notifWidget && notifWidget.classList.remove('hidden');
+  }
+
   async function mount(target, options = {}) {
     const mountNode = typeof target === 'string' ? document.querySelector(target) : target;
     if (!mountNode) {
@@ -339,6 +365,7 @@
 
     applyProfileIdentity(mountNode, user);
     applyAdminLinksVisibility(mountNode, isAdmin);
+    applyNotificationVisibility(mountNode, !!user);
 
     const hamburgerBtn = mountNode.querySelector('#navHamburgerBtn');
     const mobileMenu = mountNode.querySelector('#navMobileMenu');
