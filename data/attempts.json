@@ -282,5 +282,180 @@
     "completedAt": 1775988009536,
     "score": 6,
     "total": 7
+  },
+  {
+    "id": "090fbe69-736b-4b61-bb98-b58d89a3be38",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1776012421473,
+    "expiresAt": 1776013621473,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "मोर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "कोलकाता"
+      },
+      {
+        "questionId": "q3",
+        "selected": "4"
+      },
+      {
+        "questionId": "q4",
+        "selected": "उदयपुर"
+      },
+      {
+        "questionId": "q5",
+        "selected": "यूरोप"
+      },
+      {
+        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
+        "selected": "Jaipur"
+      },
+      {
+        "questionId": "490a7222-91e2-40d2-ade4-deeb6dce84f5",
+        "selected": "ffhvfvjl"
+      }
+    ],
+    "createdAt": 1776012421473,
+    "updatedAt": 1776012446963,
+    "completedAt": 1776012448846,
+    "score": 4,
+    "total": 7
+  },
+  {
+    "id": "8019f204-6d7c-46a1-9e11-bd8ca0847542",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "quizTitle": "Rajasthan GK",
+    "status": "completed",
+    "startedAt": 1776012507468,
+    "expiresAt": 1776013707468,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
+      {
+        "questionId": "q2",
+        "selected": "50"
+      },
+      {
+        "questionId": "q3",
+        "selected": "हाथी"
+      },
+      {
+        "questionId": "q4",
+        "selected": "गुलाब"
+      }
+    ],
+    "createdAt": 1776012507468,
+    "updatedAt": 1776012518156,
+    "completedAt": 1776012520571,
+    "score": 1,
+    "total": 4
+  },
+  {
+    "id": "eae65325-2ac2-4798-84ef-de7057482348",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "aaff693c-241c-4a95-9a33-02bfc0029105",
+    "quizTitle": "विज्ञान मॉक टेस्ट",
+    "status": "completed",
+    "startedAt": 1776012894583,
+    "expiresAt": 1776014694583,
+    "timeLimitMinutes": 30,
+    "answers": [
+      {
+        "questionId": "757d265e-5427-4e15-ba56-254c910ace86",
+        "selected": "ऑक्सीजन"
+      },
+      {
+        "questionId": "56560dc6-f518-4af4-82fd-9b7420f6c395",
+        "selected": "7"
+      },
+      {
+        "questionId": "18c26ef4-f73b-4de3-b969-5caaf36f6a7e",
+        "selected": "नाभिक"
+      },
+      {
+        "questionId": "6749836e-8016-4422-b63a-0d04c7c7a16a",
+        "selected": "घूर्णन"
+      },
+      {
+        "questionId": "b0a4ce21-91f1-4a72-98b7-6321ff8a2636",
+        "selected": "हृदय"
+      },
+      {
+        "questionId": "7b4a7cd1-5c2c-4a76-806f-be1ab4d8328c",
+        "selected": "निर्वात"
+      },
+      {
+        "questionId": "efda46d5-b4f2-4e6b-b339-48f55ea61407",
+        "selected": "पारा"
+      },
+      {
+        "questionId": "28566ef6-489d-4ef5-86f1-c3ab7c8a7ef8",
+        "selected": "3x10^6 m/s"
+      },
+      {
+        "questionId": "668d09f9-7568-4b4c-ba4e-0db6a5f5f9ee",
+        "selected": "मंगल"
+      },
+      {
+        "questionId": "352ef02c-b046-40f8-b209-faf389f94701",
+        "selected": "समतापमंडल"
+      },
+      {
+        "questionId": "6e4712e7-7990-4ad9-84b3-97279179a702",
+        "selected": "जूल"
+      },
+      {
+        "questionId": "3944a7bd-d75b-494a-911a-469bb8d46c9a",
+        "selected": "गुरुत्वाकर्षण"
+      },
+      {
+        "questionId": "e05322de-46c9-4c0a-b332-541a45b6000d",
+        "selected": "प्रकाश संश्लेषण"
+      },
+      {
+        "questionId": "779b4850-a27f-4370-9ef8-2e2fbb240a19",
+        "selected": "C"
+      },
+      {
+        "questionId": "787181be-ac00-4316-b3e5-b04c3e0aaf00",
+        "selected": "कार्बन डाइऑक्साइड"
+      },
+      {
+        "questionId": "36701777-3f4a-4f74-b94f-f36918a8b392",
+        "selected": "एम्पियर"
+      },
+      {
+        "questionId": "2c1c764b-a663-4e8e-b541-32a19b4e649e",
+        "selected": "जाइलम"
+      },
+      {
+        "questionId": "da4b0adb-2213-4cec-b5d2-ccbe6fda0a19",
+        "selected": "प्लास्टिक"
+      },
+      {
+        "questionId": "876541e9-3bd6-4816-aa3b-77af90bc37a2",
+        "selected": "WBC"
+      },
+      {
+        "questionId": "b4ed8034-4add-434d-9e46-50626f4a73df",
+        "selected": "द्रव्यमान/आयतन"
+      }
+    ],
+    "createdAt": 1776012894583,
+    "updatedAt": 1776013096361,
+    "completedAt": 1776013098426,
+    "score": 16,
+    "total": 20
   }
 ]

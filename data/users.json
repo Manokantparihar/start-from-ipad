@@ -12,15 +12,15 @@
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T10:00:09.541Z"
+      "updatedAt": "2026-04-12T16:58:18.432Z"
     },
-    "totalXp": 28,
-    "currentLevel": 1,
-    "xpToNextLevel": 22,
-    "currentLevelXp": 0,
-    "nextLevelXp": 50,
-    "currentLevelProgress": 56,
-    "completedQuizCount": 1,
+    "totalXp": 114,
+    "currentLevel": 2,
+    "xpToNextLevel": 11,
+    "currentLevelXp": 50,
+    "nextLevelXp": 125,
+    "currentLevelProgress": 85,
+    "completedQuizCount": 4,
     "currentStreak": 1,
     "bestStreak": 1,
     "lastActiveDate": "2026-04-12",
@@ -42,19 +42,19 @@
       "rarity": "common",
       "unlockedAt": "2026-04-12T09:10:51.146Z"
     },
-    "gamificationUpdatedAt": "2026-04-12T10:00:09.541Z",
-    "xpBalance": 28,
+    "gamificationUpdatedAt": "2026-04-12T16:58:18.432Z",
+    "xpBalance": 114,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 23,
-    "weeklyCompletedQuizzes": 1,
+    "weeklyXp": 79,
+    "weeklyCompletedQuizzes": 4,
     "weeklyRank": null,
     "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Beginner",
+    "currentTier": "Improving",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -73,7 +73,7 @@
         "startDate": "2026-04-01",
         "endDate": "2026-04-30",
         "bonusXp": 15,
-        "progress": 0,
+        "progress": 1,
         "target": 5,
         "completed": false
       },
@@ -83,9 +83,9 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 1,
+        "progress": 4,
         "target": 2,
-        "completed": false
+        "completed": true
       }
     ],
     "eventProgress": [
@@ -101,20 +101,20 @@
       {
         "eventId": "mock-marathon",
         "title": "Mock Marathon",
-        "progress": 0,
+        "progress": 1,
         "target": 5,
-        "bonusXpEarned": 0,
+        "bonusXpEarned": 15,
         "completed": false,
         "badgeAwardedAt": null
       },
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 1,
+        "progress": 4,
         "target": 2,
-        "bonusXpEarned": 5,
-        "completed": false,
-        "badgeAwardedAt": null
+        "bonusXpEarned": 20,
+        "completed": true,
+        "badgeAwardedAt": "2026-04-12T16:47:28.846Z"
       }
     ],
     "rewardRedemptions": [],
@@ -127,25 +127,25 @@
         "missions": [
           {
             "id": "complete-two-quizzes",
-            "completed": false,
+            "completed": true,
             "rewardXp": 8,
-            "rewardEarned": false,
+            "rewardEarned": true,
             "progress": {
-              "value": 1,
+              "value": 4,
               "target": 2
             },
-            "completedAt": null
+            "completedAt": "2026-04-12T16:58:18.426Z"
           },
           {
             "id": "score-80-plus",
-            "completed": false,
+            "completed": true,
             "rewardXp": 6,
-            "rewardEarned": false,
+            "rewardEarned": true,
             "progress": {
-              "value": 0,
+              "value": 1,
               "target": 1
             },
-            "completedAt": null
+            "completedAt": "2026-04-12T16:58:18.426Z"
           },
           {
             "id": "new-topic",
@@ -156,13 +156,15 @@
               "value": 1,
               "target": 1
             },
-            "completedAt": "2026-04-12T09:10:51.146Z"
+            "completedAt": "2026-04-12T16:58:18.426Z"
           }
         ],
         "completedMissionIds": [
+          "complete-two-quizzes",
+          "score-80-plus",
           "new-topic"
         ],
-        "rewardXpEarned": 7
+        "rewardXpEarned": 21
       }
     ],
     "todayMissions": {
@@ -170,25 +172,25 @@
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": false,
+          "completed": true,
           "rewardXp": 8,
-          "rewardEarned": false,
+          "rewardEarned": true,
           "progress": {
-            "value": 1,
+            "value": 4,
             "target": 2
           },
-          "completedAt": null
+          "completedAt": "2026-04-12T16:58:18.426Z"
         },
         {
           "id": "score-80-plus",
-          "completed": false,
+          "completed": true,
           "rewardXp": 6,
-          "rewardEarned": false,
+          "rewardEarned": true,
           "progress": {
-            "value": 0,
+            "value": 1,
             "target": 1
           },
-          "completedAt": null
+          "completedAt": "2026-04-12T16:58:18.426Z"
         },
         {
           "id": "new-topic",
@@ -199,164 +201,28 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-12T09:10:51.146Z"
+          "completedAt": "2026-04-12T16:58:18.426Z"
         }
       ],
       "completedMissionIds": [
+        "complete-two-quizzes",
+        "score-80-plus",
         "new-topic"
       ],
-      "rewardXpEarned": 7
+      "rewardXpEarned": 21
     },
     "totalSpentXp": 0,
-    "baseXp": 13,
+    "baseXp": 48,
     "boostXp": 0,
-    "weekendBonusXp": 3,
-    "eventBonusXp": 5,
-    "missionBonusXp": 7,
-    "totalCorrectAnswers": 3,
-    "totalQuestionsAnswered": 10,
-    "accuracyPercent": 30,
-    "masteryLevel": "Beginner",
-    "rankScore": 130011,
-    "weeklyAccuracyPercent": 30,
-    "revision": {
-      "wrongQuestions": [
-        {
-          "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-          "question": "भारत के वर्तमान राष्ट्रपति कौन हैं?",
-          "options": [
-            "रामनाथ कोविंद",
-            "द्रौपदी मुर्मू",
-            "नरेंद्र मोदी",
-            "अमित शाह"
-          ],
-          "correctAnswer": "द्रौपदी मुर्मू",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        },
-        {
-          "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
-          "question": "हाल ही में BRICS में नए सदस्य के रूप में कौन शामिल हुआ?",
-          "options": [
-            "सऊदी अरब",
-            "जापान",
-            "जर्मनी",
-            "इटली"
-          ],
-          "correctAnswer": "सऊदी अरब",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 1,
-          "timesUnattempted": 0
-        },
-        {
-          "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-          "question": "हाल ही में किस राज्य ने समान नागरिक संहिता लागू करने की दिशा में कदम बढ़ाया?",
-          "options": [
-            "उत्तर प्रदेश",
-            "उत्तराखंड",
-            "बिहार",
-            "गुजरात"
-          ],
-          "correctAnswer": "उत्तराखंड",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        },
-        {
-          "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-          "question": "हाल ही में किस मिशन का उद्देश्य सूर्य का अध्ययन करना है?",
-          "options": [
-            "Gaganyaan",
-            "Aditya-L1",
-            "Chandrayaan-2",
-            "Mangalyaan"
-          ],
-          "correctAnswer": "Aditya-L1",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        },
-        {
-          "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-          "question": "भारत के वर्तमान मुख्य न्यायाधीश कौन हैं?",
-          "options": [
-            "DY चंद्रचूड़",
-            "UU ललित",
-            "एनवी रमना",
-            "रंजन गोगोई"
-          ],
-          "correctAnswer": "DY चंद्रचूड़",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        },
-        {
-          "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
-          "question": "हाल ही में भारत का पहला सेमीकंडक्टर प्लांट किस राज्य में स्थापित हो रहा है?",
-          "options": [
-            "गुजरात",
-            "महाराष्ट्र",
-            "तमिलनाडु",
-            "कर्नाटक"
-          ],
-          "correctAnswer": "गुजरात",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        },
-        {
-          "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
-          "question": "हाल ही में भारत ने किस क्षेत्र में डिजिटल पब्लिक इंफ्रास्ट्रक्चर के लिए पहचान बनाई?",
-          "options": [
-            "स्वास्थ्य",
-            "शिक्षा",
-            "डिजिटल पेमेंट",
-            "कृषि"
-          ],
-          "correctAnswer": "डिजिटल पेमेंट",
-          "topic": "Current Affairs",
-          "subtopic": "",
-          "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-          "quizTitle": "करंट अफेयर्स क्विज",
-          "savedAt": "2026-04-12T09:10:51.147Z",
-          "lastSeenAt": "2026-04-12T09:10:51.147Z",
-          "timesWrong": 0,
-          "timesUnattempted": 1
-        }
-      ],
-      "bookmarks": []
-    }
+    "weekendBonusXp": 10,
+    "eventBonusXp": 35,
+    "missionBonusXp": 21,
+    "totalCorrectAnswers": 24,
+    "totalQuestionsAnswered": 41,
+    "accuracyPercent": 59,
+    "masteryLevel": "Improving",
+    "rankScore": 259014,
+    "weeklyAccuracyPercent": 59
   },
   {
     "id": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
@@ -622,7 +488,7 @@
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T10:00:09.541Z"
+      "updatedAt": "2026-04-12T16:58:18.432Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -640,7 +506,7 @@
     "weekendBonusXp": 18,
     "eventBonusXp": 37,
     "missionBonusXp": 34,
-    "gamificationUpdatedAt": "2026-04-12T10:00:09.541Z",
+    "gamificationUpdatedAt": "2026-04-12T16:58:18.432Z",
     "revision": {
       "wrongQuestions": [],
       "bookmarks": []
