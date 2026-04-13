@@ -78,7 +78,8 @@
       <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
         <div>
           <h2 id="leaderboardTitle" class="font-semibold text-gray-800">Overall Leaderboard</h2>
-           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Sorted by mastery, accuracy, and consistency signals.</p>
+           <p id="leaderboardSubtitle" class="text-xs text-gray-500 mt-0.5">Ranking based on score, then time taken, then accuracy.</p>
+           <p id="rankingBasisLabel" class="mt-1 inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700">Ranking based on score</p>
         </div>
       </div>
 
@@ -165,6 +166,14 @@
       document.getElementById('tableWrap').classList.add('hidden');
     }
 
+    function formatDuration(seconds) {
+      const value = Math.max(0, Number(seconds) || 0);
+      if (value < 60) return `${value}s`;
+      const minutes = Math.floor(value / 60);
+      const remainingSeconds = value % 60;
+      return `${minutes}m ${String(remainingSeconds).padStart(2, '0')}s`;
+    }
+
     async function loadOverallLeaderboard() {
       try {
         const res = await fetch('/api/leaderboard/overall?limit=25', { credentials: 'include' });
@@ -172,7 +181,8 @@
         const data = await res.json();
         state.mode = 'overall';
         document.getElementById('leaderboardTitle').textContent = 'Overall Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy, streak consistency, and progression pace.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Ranking based on score, then lower time taken, then higher accuracy.';
+        document.getElementById('rankingBasisLabel').textContent = 'Ranking based on score';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'overall');
       } catch {
         renderEmpty('Unable to load the overall leaderboard right now.');
@@ -186,7 +196,8 @@
         const data = await res.json();
         state.mode = 'streak';
         document.getElementById('leaderboardTitle').textContent = 'Streak Leaderboard';
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by current streak and rank stability.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Ranking based on score, then lower time taken, then higher accuracy.';
+        document.getElementById('rankingBasisLabel').textContent = 'Ranking based on score';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'streak');
       } catch {
         renderEmpty('Unable to load the streak leaderboard right now.');
@@ -221,7 +232,8 @@
         state.mode = 'topic';
 
         document.getElementById('leaderboardTitle').textContent = `Topic Leaderboard: ${data.selectedTopic?.label || state.selectedTopic}`;
-        document.getElementById('leaderboardSubtitle').textContent = 'Competitive order by accuracy inside the selected topic.';
+        document.getElementById('leaderboardSubtitle').textContent = 'Ranking based on score, then lower time taken, then higher accuracy.';
+        document.getElementById('rankingBasisLabel').textContent = 'Ranking based on score';
         renderLeaderboard(data.leaderboard || [], data.viewer, 'topic');
       } catch {
         renderEmpty('Unable to load the topic leaderboard right now.');
@@ -276,7 +288,7 @@
       }
 
       const isTopic = mode === 'topic';
-      const headers = ['Rank', 'User', isTopic ? 'Topic Score / Completed' : 'Accuracy / Streak'];
+      const headers = ['Rank', 'User', 'Score / Accuracy / Time'];
 
       headRow.innerHTML = headers.map((header, index) => {
         const alignClass = index === 0 ? 'text-center' : 'text-left';
@@ -311,8 +323,9 @@
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="font-semibold ${row.isCurrentUser ? 'text-blue-700' : 'text-blue-600'}">${row.averageScore ?? 0}%</div>
-                <div class="text-xs text-gray-500">${row.totalCompleted ?? 0} completed</div>
+                <div class="font-black ${row.isCurrentUser ? 'text-blue-800' : 'text-slate-900'}">${row.totalMarks ?? 0} marks</div>
+                <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-blue-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}% accuracy</div>
+                <div class="text-xs text-gray-500">${formatDuration(row.totalTimeTakenSeconds)} total time</div>
               </td>
             </tr>
           `;
@@ -332,8 +345,9 @@
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}%</div>
-                <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-violet-700' : 'text-violet-600'}">🔥 ${row.currentStreak ?? 0}-day streak</div>
+                  <div class="font-black ${row.isCurrentUser ? 'text-blue-800' : 'text-slate-900'}">${row.totalMarks ?? 0} marks</div>
+                  <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}% accuracy</div>
+                  <div class="text-xs text-gray-500">${formatDuration(row.totalTimeTakenSeconds)} total time</div>
               </td>
             </tr>
           `;
@@ -352,8 +366,9 @@
               </div>
             </td>
             <td class="px-6 py-4">
-              <div class="font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}%</div>
-              <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-violet-700' : 'text-violet-600'}">🔥 ${row.currentStreak ?? 0}-day streak</div>
+              <div class="font-black ${row.isCurrentUser ? 'text-blue-800' : 'text-slate-900'}">${row.totalMarks ?? 0} marks</div>
+              <div class="text-xs font-semibold ${row.isCurrentUser ? 'text-sky-700' : 'text-sky-600'}">${row.accuracyPercent ?? 0}% accuracy</div>
+              <div class="text-xs text-gray-500">${formatDuration(row.totalTimeTakenSeconds)} total time</div>
             </td>
           </tr>
         `;
@@ -424,35 +439,34 @@
     function getModeMetric(mode) {
       if (mode === 'topic') {
         return {
-          label: 'Average score',
-          helper: (row) => `${row.totalCompleted ?? 0} completions`
+          label: 'Score',
+          helper: (row) => `${row.accuracyPercent ?? 0}% accuracy`
         };
       }
 
       if (mode === 'streak') {
         return {
-          label: 'Current streak',
-          helper: (row) => `${row.accuracyPercent ?? 0}% accuracy`
+          label: 'Score',
+          helper: (row) => `🔥 ${row.currentStreak ?? 0}-day streak`
         };
       }
 
       return {
-        label: 'Accuracy',
-        helper: (row) => `${row.currentStreak ?? 0}-day streak`
+        label: 'Score',
+        helper: (row) => `${formatDuration(row.totalTimeTakenSeconds)} total time`
       };
     }
 
     function getModeMetricValue(row, metric) {
       if (!row) return '—';
-      if (metric.label === 'Average score') return `${row.averageScore ?? 0}%`;
+      if (metric.label === 'Score') return `${row.totalMarks ?? 0}`;
       if (metric.label === 'Current streak') return `${row.currentStreak ?? 0}`;
       return `${row.accuracyPercent ?? 0}%`;
     }
 
     function getModeDetail(row, metric) {
       if (!row) return 'No contender yet';
-      if (metric.label === 'Average score') return `${row.totalCompleted ?? 0} quiz${Number(row.totalCompleted ?? 0) === 1 ? '' : 'zes'} completed`;
-      if (metric.label === 'Current streak') return `${row.accuracyPercent ?? 0}% overall accuracy`;
+      if (metric.label === 'Score') return `${row.accuracyPercent ?? 0}% accuracy`;
       return `${row.currentStreak ?? 0}-day streak in play`;
     }
 
@@ -501,7 +515,7 @@
       const orderedRows = Array.isArray(rows) ? [...rows].sort((a, b) => (a.rank || 0) - (b.rank || 0)) : [];
       if (viewer.rank === 1) {
         const nextRank = orderedRows.find((row) => Number(row.rank) === 2);
-        const gap = nextRank ? Math.max(Number(viewer.accuracyPercent ?? 0) - Number(nextRank.accuracyPercent ?? 0), 0) : 0;
+        const gap = nextRank ? Math.max(Number(viewer.totalMarks ?? 0) - Number(nextRank.totalMarks ?? 0), 0) : 0;
         if (gap <= 1) return 'Complete 1 practice set to hold #1.';
         return 'Complete 1 practice set to protect your lead over #2.';
       }
@@ -515,8 +529,8 @@
 
     function getTopThreeSubtitle(mode) {
       if (mode === 'topic') return 'Top scorers in the selected topic.';
-      if (mode === 'streak') return 'Longest streaks are setting the pace.';
-      return 'The current accuracy leaders are on the podium below.';
+      if (mode === 'streak') return 'Score leaders with active streak context.';
+      return 'The current score leaders are on the podium below.';
     }
 
     function escapeHtml(value) {

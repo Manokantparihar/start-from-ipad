@@ -82,6 +82,21 @@ function computeStreakMetrics(dateKeys, referenceDate = new Date()) {
   return { currentStreak, bestStreak, lastActiveDate };
 }
 
+function getAttemptDurationSeconds(attempt) {
+  const startedAt = Number(attempt?.startedAt) || 0;
+  const completedAt = Number(attempt?.completedAt || attempt?.updatedAt || attempt?.createdAt) || 0;
+  if (startedAt > 0 && completedAt > startedAt) {
+    return Math.max(0, Math.round((completedAt - startedAt) / 1000));
+  }
+
+  const fallbackDuration = Number(
+    attempt?.timeTakenSeconds ?? attempt?.durationSeconds ?? attempt?.timeSpent
+  );
+  return Number.isFinite(fallbackDuration) && fallbackDuration > 0
+    ? Math.round(fallbackDuration)
+    : 0;
+}
+
 function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], topicKey = '' } = {}) {
   const userMap = new Map(users.map((user) => [user.id, user]));
   const quizMap = new Map(quizzes.map((quiz) => [quiz.id, quiz]));
@@ -106,6 +121,8 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
         currentStreak: Number(user.currentStreak ?? user.streak?.currentStreak) || 0,
         bestStreak: Number(user.bestStreak ?? user.streak?.bestStreak) || 0,
         totalCompleted: 0,
+        totalMarks: 0,
+        totalTimeTakenSeconds: 0,
         totalScore: 0,
         totalCorrect: 0,
         totalQuestions: 0,
@@ -142,6 +159,8 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
 
     const summary = ensureSummary(attempt.userId);
     summary.totalCompleted += 1;
+    summary.totalMarks += Math.max(0, Number(attempt.score) || 0);
+    summary.totalTimeTakenSeconds += getAttemptDurationSeconds(attempt);
     summary.totalScore += getAttemptPercent(attempt);
     summary.totalCorrect += Math.max(0, Number(attempt.score) || 0);
     summary.totalQuestions += Math.max(0, Number(attempt.total) || 0);
@@ -201,6 +220,8 @@ function buildLeaderboardSummaries({ users = [], attempts = [], quizzes = [], to
         completedQuizCount: summary.totalCompleted
       }),
       weeklyCompletedQuizzes: summary.weeklyCompletedQuizzes,
+      totalMarks: summary.totalMarks,
+      totalTimeTakenSeconds: summary.totalTimeTakenSeconds,
       averageScore,
       totalCompleted: summary.totalCompleted,
       currentStreak: summary.currentStreak || streakMetrics.currentStreak,
@@ -234,34 +255,31 @@ function sortWeeklyRows(rows) {
 
 function sortOverallRows(rows) {
   return [...rows].sort((a, b) => {
-    const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
-    if (masteryDiff !== 0) return masteryDiff;
+    if (b.totalMarks !== a.totalMarks) return b.totalMarks - a.totalMarks;
+    if (a.totalTimeTakenSeconds !== b.totalTimeTakenSeconds) return a.totalTimeTakenSeconds - b.totalTimeTakenSeconds;
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
-    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
-    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
+    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     return a.name.localeCompare(b.name);
   });
 }
 
 function sortStreakRows(rows) {
   return [...rows].sort((a, b) => {
-    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
-    if (b.bestStreak !== a.bestStreak) return b.bestStreak - a.bestStreak;
-    const masteryDiff = getMasteryRank(b.masteryLevel) - getMasteryRank(a.masteryLevel);
-    if (masteryDiff !== 0) return masteryDiff;
+    if (b.totalMarks !== a.totalMarks) return b.totalMarks - a.totalMarks;
+    if (a.totalTimeTakenSeconds !== b.totalTimeTakenSeconds) return a.totalTimeTakenSeconds - b.totalTimeTakenSeconds;
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
+    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
     return a.name.localeCompare(b.name);
   });
 }
 
 function sortTopicRows(rows) {
   return [...rows].sort((a, b) => {
+    if (b.totalMarks !== a.totalMarks) return b.totalMarks - a.totalMarks;
+    if (a.totalTimeTakenSeconds !== b.totalTimeTakenSeconds) return a.totalTimeTakenSeconds - b.totalTimeTakenSeconds;
     if (b.accuracyPercent !== a.accuracyPercent) return b.accuracyPercent - a.accuracyPercent;
-    if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
-    if (b.rankScore !== a.rankScore) return b.rankScore - a.rankScore;
-    if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
     if (b.totalCompleted !== a.totalCompleted) return b.totalCompleted - a.totalCompleted;
     return a.name.localeCompare(b.name);
   });
@@ -279,6 +297,8 @@ function stripLeaderboardRow(row, rank, includeStreak = false, isCurrentUser = f
     rankScore: row.rankScore || 0,
     weeklyXp: row.weeklyXp || 0,
     weeklyCompletedQuizzes: row.weeklyCompletedQuizzes || 0,
+    totalMarks: row.totalMarks || 0,
+    totalTimeTakenSeconds: row.totalTimeTakenSeconds || 0,
     currentStreak: row.currentStreak || 0,
     tier: row.masteryLevel || row.currentTier || 'Beginner',
     isCurrentUser: Boolean(isCurrentUser)

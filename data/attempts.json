@@ -401,5 +401,62 @@
     "completedAt": 1776023442220,
     "score": 4,
     "total": 7
+  },
+  {
+    "id": "cea70b19-5f55-41fa-929f-e89be8fc89fa",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "quizTitle": "करंट अफेयर्स क्विज",
+    "status": "completed",
+    "startedAt": 1776070195345,
+    "expiresAt": 1776070795345,
+    "timeLimitMinutes": 10,
+    "answers": [
+      {
+        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
+        "selected": "सूर्य"
+      },
+      {
+        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
+        "selected": "दिल्ली"
+      },
+      {
+        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
+        "selected": "द्रौपदी मुर्मू"
+      },
+      {
+        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
+        "selected": "रूस"
+      },
+      {
+        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
+        "selected": "जर्मनी"
+      },
+      {
+        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
+        "selected": "उत्तराखंड"
+      },
+      {
+        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
+        "selected": "Aditya-L1"
+      },
+      {
+        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
+        "selected": "DY चंद्रचूड़"
+      },
+      {
+        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
+        "selected": "गुजरात"
+      },
+      {
+        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
+        "selected": "डिजिटल पेमेंट"
+      }
+    ],
+    "createdAt": 1776070195345,
+    "updatedAt": 1776070224587,
+    "completedAt": 1776070226120,
+    "score": 8,
+    "total": 10
   }
 ]

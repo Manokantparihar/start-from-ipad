@@ -9,21 +9,21 @@
     "profileImage": "/uploads/avatars/cb370536-35ed-4e83-b730-7070f92e1e04.jpeg",
     "updatedAt": "2026-04-11T19:18:08.982Z",
     "streak": {
-      "currentStreak": 1,
-      "bestStreak": 1,
-      "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T21:06:51.169Z"
+      "currentStreak": 2,
+      "bestStreak": 2,
+      "lastActiveDate": "2026-04-13",
+      "updatedAt": "2026-04-13T09:16:16.141Z"
     },
-    "totalXp": 65,
+    "totalXp": 94,
     "currentLevel": 2,
-    "xpToNextLevel": 60,
+    "xpToNextLevel": 31,
     "currentLevelXp": 50,
     "nextLevelXp": 125,
-    "currentLevelProgress": 20,
-    "completedQuizCount": 2,
-    "currentStreak": 1,
-    "bestStreak": 1,
-    "lastActiveDate": "2026-04-12",
+    "currentLevelProgress": 59,
+    "completedQuizCount": 3,
+    "currentStreak": 2,
+    "bestStreak": 2,
+    "lastActiveDate": "2026-04-13",
     "badges": [
       {
         "id": "first-quiz",
@@ -42,19 +42,19 @@
       "rarity": "common",
       "unlockedAt": "2026-04-12T19:48:41.967Z"
     },
-    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z",
-    "xpBalance": 65,
+    "gamificationUpdatedAt": "2026-04-13T09:16:16.141Z",
+    "xpBalance": 94,
     "streakFreeze": {
       "maxCount": 1,
       "availableCount": 1,
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 55,
-    "weeklyCompletedQuizzes": 2,
-    "weeklyRank": 3,
-    "weekKey": "2026-04-06/2026-04-13",
-    "currentTier": "Beginner",
+    "weeklyXp": 24,
+    "weeklyCompletedQuizzes": 1,
+    "weeklyRank": null,
+    "weekKey": "2026-04-13/2026-04-20",
+    "currentTier": "Improving",
     "activeBoost": null,
     "activeEvents": [
       {
@@ -83,7 +83,7 @@
         "startDate": "2026-01-01",
         "endDate": "2026-12-31",
         "bonusXp": 5,
-        "progress": 2,
+        "progress": 3,
         "target": 2,
         "completed": true
       }
@@ -110,9 +110,9 @@
       {
         "eventId": "weekend-challenge",
         "title": "Weekend Challenge",
-        "progress": 2,
+        "progress": 3,
         "target": 2,
-        "bonusXpEarned": 10,
+        "bonusXpEarned": 15,
         "completed": true,
         "badgeAwardedAt": "2026-04-12T19:50:42.220Z"
       }
@@ -165,21 +165,63 @@
           "new-topic"
         ],
         "rewardXpEarned": 21
+      },
+      {
+        "dateKey": "2026-04-13",
+        "missions": [
+          {
+            "id": "complete-two-quizzes",
+            "completed": false,
+            "rewardXp": 8,
+            "rewardEarned": false,
+            "progress": {
+              "value": 1,
+              "target": 2
+            },
+            "completedAt": null
+          },
+          {
+            "id": "score-80-plus",
+            "completed": true,
+            "rewardXp": 6,
+            "rewardEarned": true,
+            "progress": {
+              "value": 1,
+              "target": 1
+            },
+            "completedAt": "2026-04-13T08:50:26.120Z"
+          },
+          {
+            "id": "new-topic",
+            "completed": false,
+            "rewardXp": 7,
+            "rewardEarned": false,
+            "progress": {
+              "value": 0,
+              "target": 1
+            },
+            "completedAt": null
+          }
+        ],
+        "completedMissionIds": [
+          "score-80-plus"
+        ],
+        "rewardXpEarned": 6
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-12",
+      "dateKey": "2026-04-13",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": true,
+          "completed": false,
           "rewardXp": 8,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 2,
+            "value": 1,
             "target": 2
           },
-          "completedAt": "2026-04-12T19:50:42.220Z"
+          "completedAt": null
         },
         {
           "id": "score-80-plus",
@@ -190,39 +232,37 @@
             "value": 1,
             "target": 1
           },
-          "completedAt": "2026-04-12T19:50:42.220Z"
+          "completedAt": "2026-04-13T08:50:26.120Z"
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-12T19:50:42.220Z"
+          "completedAt": null
         }
       ],
       "completedMissionIds": [
-        "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
+        "score-80-plus"
       ],
-      "rewardXpEarned": 21
+      "rewardXpEarned": 6
     },
     "totalSpentXp": 0,
-    "baseXp": 28,
+    "baseXp": 46,
     "boostXp": 0,
     "weekendBonusXp": 6,
-    "eventBonusXp": 10,
-    "missionBonusXp": 21,
-    "totalCorrectAnswers": 12,
-    "totalQuestionsAnswered": 17,
-    "accuracyPercent": 71,
-    "masteryLevel": "Beginner",
-    "rankScore": 171012,
-    "weeklyAccuracyPercent": 71
+    "eventBonusXp": 15,
+    "missionBonusXp": 27,
+    "totalCorrectAnswers": 20,
+    "totalQuestionsAnswered": 27,
+    "accuracyPercent": 74,
+    "masteryLevel": "Improving",
+    "rankScore": 274023,
+    "weeklyAccuracyPercent": 80
   },
   {
     "id": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
@@ -253,11 +293,11 @@
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 138,
-    "weeklyAccuracyPercent": 87,
-    "weeklyCompletedQuizzes": 5,
-    "weeklyRank": 2,
-    "weekKey": "2026-04-06/2026-04-13",
+    "weeklyXp": 0,
+    "weeklyAccuracyPercent": 0,
+    "weeklyCompletedQuizzes": 0,
+    "weeklyRank": null,
+    "weekKey": "2026-04-13/2026-04-20",
     "currentTier": "Improving",
     "badges": [
       {
@@ -441,54 +481,50 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-12",
+      "dateKey": "2026-04-13",
       "missions": [
         {
           "id": "complete-two-quizzes",
-          "completed": true,
+          "completed": false,
           "rewardXp": 8,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 4,
+            "value": 0,
             "target": 2
           },
-          "completedAt": "2026-04-12T10:00:09.536Z"
+          "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-12T10:00:09.536Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-12T10:00:09.536Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "complete-two-quizzes",
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 21
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
     "streak": {
       "currentStreak": 2,
       "bestStreak": 2,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T21:06:51.169Z"
+      "updatedAt": "2026-04-13T09:16:16.141Z"
     },
     "latestBadge": {
       "id": "perfect-score",
@@ -506,7 +542,7 @@
     "weekendBonusXp": 18,
     "eventBonusXp": 37,
     "missionBonusXp": 34,
-    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z",
+    "gamificationUpdatedAt": "2026-04-13T09:16:16.141Z",
     "revision": {
       "wrongQuestions": [],
       "bookmarks": []
@@ -541,11 +577,11 @@
       "usedCount": 0,
       "lastConsumedOn": null
     },
-    "weeklyXp": 35,
-    "weeklyAccuracyPercent": 90,
-    "weeklyCompletedQuizzes": 1,
-    "weeklyRank": 1,
-    "weekKey": "2026-04-06/2026-04-13",
+    "weeklyXp": 0,
+    "weeklyAccuracyPercent": 0,
+    "weeklyCompletedQuizzes": 0,
+    "weeklyRank": null,
+    "weekKey": "2026-04-13/2026-04-20",
     "currentTier": "Beginner",
     "badges": [
       {
@@ -669,7 +705,7 @@
       }
     ],
     "todayMissions": {
-      "dateKey": "2026-04-12",
+      "dateKey": "2026-04-13",
       "missions": [
         {
           "id": "complete-two-quizzes",
@@ -677,45 +713,42 @@
           "rewardXp": 8,
           "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 2
           },
           "completedAt": null
         },
         {
           "id": "score-80-plus",
-          "completed": true,
+          "completed": false,
           "rewardXp": 6,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-12T17:45:48.193Z"
+          "completedAt": null
         },
         {
           "id": "new-topic",
-          "completed": true,
+          "completed": false,
           "rewardXp": 7,
-          "rewardEarned": true,
+          "rewardEarned": false,
           "progress": {
-            "value": 1,
+            "value": 0,
             "target": 1
           },
-          "completedAt": "2026-04-12T17:45:48.193Z"
+          "completedAt": null
         }
       ],
-      "completedMissionIds": [
-        "score-80-plus",
-        "new-topic"
-      ],
-      "rewardXpEarned": 13
+      "completedMissionIds": [],
+      "rewardXpEarned": 0
     },
     "streak": {
       "currentStreak": 1,
       "bestStreak": 1,
       "lastActiveDate": "2026-04-12",
-      "updatedAt": "2026-04-12T21:06:51.169Z"
+      "updatedAt": "2026-04-13T09:16:16.141Z"
     },
     "latestBadge": {
       "id": "first-quiz",
@@ -731,6 +764,6 @@
     "weekendBonusXp": 4,
     "eventBonusXp": 5,
     "missionBonusXp": 13,
-    "gamificationUpdatedAt": "2026-04-12T21:06:51.169Z"
+    "gamificationUpdatedAt": "2026-04-13T09:16:16.141Z"
   }
 ]

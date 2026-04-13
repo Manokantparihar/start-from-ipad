@@ -299,6 +299,18 @@
       return weakestTopic || 'Not enough data';
     }
 
+    async function getOverallRankFallback() {
+      try {
+        const res = await fetch('/api/leaderboard/overall?limit=1', { credentials: 'include' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        const rank = Number(data?.viewer?.rank);
+        return rank > 0 ? rank : null;
+      } catch {
+        return null;
+      }
+    }
+
     function renderStats(user, attempts) {
       const completed = attempts.filter((a) => a.status === 'completed' && a.maxScore > 0);
       const avgFromAttempts = completed.length
@@ -314,7 +326,8 @@
         : null;
       const mastery = String(user?.masteryLevel || user?.currentTier || 'Beginner');
       const streak = Math.max(0, Number(user?.currentStreak) || 0);
-      const rank = Number(user?.weeklyRank) > 0 ? `#${Number(user.weeklyRank)}` : 'Unranked';
+      const effectiveRank = Number(user?.weeklyRank) || Number(user?.overallRank) || 0;
+      const rank = effectiveRank > 0 ? `#${effectiveRank}` : 'Unranked';
 
       const statAccuracyEl = document.getElementById('statAccuracy');
       statAccuracyEl.textContent = accuracy !== null ? `${accuracy}%` : '-';
@@ -581,6 +594,13 @@
         if (!meRes.ok) throw new Error('Not authenticated');
         const meData = await meRes.json();
         user = meData.user;
+
+        if (!(Number(user?.weeklyRank) > 0)) {
+          const overallRank = await getOverallRankFallback();
+          if (overallRank) {
+            user.overallRank = overallRank;
+          }
+        }
       } catch {
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('errorScreen').classList.remove('hidden');
