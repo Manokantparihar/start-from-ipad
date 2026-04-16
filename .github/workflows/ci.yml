@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-  NODE_ENV: test
-  JWT_SECRET: testsecret123
+      NODE_ENV: test
+      JWT_SECRET: testsecret123
 
     steps:
       - name: Checkout repository
