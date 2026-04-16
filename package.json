@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test",
+    "test": "node --test --test-concurrency=1",
     "validate:content": "node tools/validate-content.mjs",
     "phase2:start": "npm run validate:content",
     "phase2:serve": "npm run validate:content && npm run start"
