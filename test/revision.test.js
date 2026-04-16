@@ -10,42 +10,48 @@ test('revision: wrong questions should be tracked after submit', async () => {
   const password = 'Password123!';
   const name = 'Revision User';
 
-  // register
-  await agent.post('/api/auth/register').send({ name, email, password });
+  const registerRes = await agent
+    .post('/api/auth/register')
+    .send({ name, email, password });
 
-  // login
-  await agent.post('/api/auth/login').send({ email, password });
+  assert.equal(registerRes.statusCode, 201);
 
-  // get quizzes
+  const loginRes = await agent
+    .post('/api/auth/login')
+    .send({ email, password });
+
+  assert.equal(loginRes.statusCode, 200);
+
+  const meRes = await agent.get('/api/auth/me');
+  assert.equal(meRes.statusCode, 200);
+  assert.equal(meRes.body.user.email, email);
+
   const quizRes = await agent.get('/api/quizzes');
   assert.equal(quizRes.statusCode, 200);
 
   const quiz = quizRes.body[0];
   assert.ok(quiz);
 
-  // start attempt
   const startRes = await agent
-    .post(`/api/attempts`)
+    .post('/api/attempts')
     .send({ quizId: quiz.id });
 
   assert.equal(startRes.statusCode, 200);
 
   const attemptId = startRes.body.attemptId;
 
-  // submit with empty answers (simulate wrong/unattempted)
   const submitRes = await agent
     .post(`/api/attempts/${attemptId}/submit`)
     .send({ answers: [] });
 
   assert.equal(submitRes.statusCode, 200);
 
-  // fetch revision sets
   const revRes = await agent.get('/api/revision/sets');
   assert.equal(revRes.statusCode, 200);
 
-  // basic validation
   assert.ok(revRes.body);
 });
+
 test('revision: wrong question backlog should not duplicate for same question', async () => {
   const agent = request.agent(app);
 
@@ -53,17 +59,28 @@ test('revision: wrong question backlog should not duplicate for same question', 
   const password = 'Password123!';
   const name = 'Revision Duplicate User';
 
-  // register + login
-  await agent.post('/api/auth/register').send({ name, email, password });
-  await agent.post('/api/auth/login').send({ email, password });
+  const registerRes2 = await agent
+    .post('/api/auth/register')
+    .send({ name, email, password });
 
-  // get first quiz
+  assert.equal(registerRes2.statusCode, 201);
+
+  const loginRes2 = await agent
+    .post('/api/auth/login')
+    .send({ email, password });
+
+  assert.equal(loginRes2.statusCode, 200);
+
+  const meRes2 = await agent.get('/api/auth/me');
+  assert.equal(meRes2.statusCode, 200);
+  assert.equal(meRes2.body.user.email, email);
+
   const quizRes = await agent.get('/api/quizzes');
   assert.equal(quizRes.statusCode, 200);
+
   const quiz = quizRes.body[0];
   assert.ok(quiz);
 
-  // first attempt: submit empty answers to create revision backlog
   const start1 = await agent.post('/api/attempts').send({ quizId: quiz.id });
   assert.equal(start1.statusCode, 200);
 
@@ -79,8 +96,8 @@ test('revision: wrong question backlog should not duplicate for same question', 
   assert.equal(rev1.statusCode, 200);
 
   const firstSnapshot = JSON.stringify(rev1.body);
+  assert.ok(firstSnapshot);
 
-  // second attempt on same quiz: again submit empty answers
   const start2 = await agent.post('/api/attempts').send({ quizId: quiz.id });
   assert.equal(start2.statusCode, 200);
 
@@ -97,12 +114,7 @@ test('revision: wrong question backlog should not duplicate for same question', 
 
   const secondSnapshot = JSON.stringify(rev2.body);
 
-  // crude guard: second snapshot should exist and not explode unexpectedly
   assert.ok(secondSnapshot);
-
-  // optional sanity: response shape should remain stable
   assert.equal(typeof rev2.body, typeof rev1.body);
-
-  // snapshots can differ due to timestamps/order, but backlog should not become invalid/empty
   assert.notEqual(secondSnapshot.length, 0);
 });
