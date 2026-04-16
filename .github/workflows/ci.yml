@@ -13,6 +13,7 @@ jobs:
 
     env:
       NODE_ENV: test
+      JWT_SECRET: testsecret123
 
     steps:
       - name: Checkout repository
