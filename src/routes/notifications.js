@@ -5,7 +5,9 @@
  *
  * GET    /api/notifications          – list current user's notifications (latest first)
  * PATCH  /api/notifications/:id/read – mark one notification as read
- * PATCH  /api/notifications/read-all – mark all user notifications as read
+ * PATCH  /api/notifications/read-all – mark all active (non-archived) user notifications as read
+ * PATCH  /api/notifications/archive   – archive/unarchive selected notifications
+ * PATCH  /api/notifications/:id/archive – archive one notification
  * DELETE /api/notifications/read      – clear only read notifications for current user
  * DELETE /api/notifications/:id      – dismiss (delete) one notification
  *
@@ -56,7 +58,8 @@ router.get('/', async (req, res) => {
     const mine = all
       .filter(n => n.userId === userId)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    res.json({ notifications: mine, unreadCount: mine.filter(n => !n.read).length });
+    const unreadCount = mine.filter(n => !n.read && !n.archived).length;
+    res.json({ notifications: mine, unreadCount });
   } catch {
     res.status(500).json({ error: 'Server error' });
   }
@@ -69,7 +72,7 @@ router.get('/unread-count', async (req, res) => {
   try {
     const userId = req.userId;
     const all = await db.getNotifications();
-    const unreadCount = all.filter(n => n.userId === userId && !n.read).length;
+    const unreadCount = all.filter(n => n.userId === userId && !n.read && !n.archived).length;
     res.json({ unreadCount });
   } catch {
     res.status(500).json({ error: 'Server error' });
@@ -84,13 +87,64 @@ router.patch('/read-all', async (req, res) => {
     const all = await db.getNotifications();
     let changed = 0;
     const updated = all.map(n => {
-      if (n.userId === userId && !n.read) { changed++; return { ...n, read: true }; }
+      if (n.userId === userId && !n.read && !n.archived) { changed++; return { ...n, read: true }; }
       return n;
     });
     if (changed > 0) await db.saveNotifications(updated);
     res.json({ message: `Marked ${changed} notification(s) as read.` });
   } catch {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── PATCH /api/notifications/archive ───────────────────────────────────────
+
+router.patch('/archive', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+    const archived = req.body?.archived !== false;
+
+    const normalizedIds = ids
+      .map((id) => String(id || '').trim())
+      .filter(Boolean);
+
+    if (normalizedIds.length === 0) {
+      return res.status(400).json({ error: 'ids array is required' });
+    }
+
+    const selected = new Set(normalizedIds);
+    const all = await db.getNotifications();
+
+    let changed = 0;
+    const updated = all.map((notification) => {
+      if (notification.userId !== userId || !selected.has(notification.id)) {
+        return notification;
+      }
+
+      if (!!notification.archived === archived) {
+        return notification;
+      }
+
+      changed += 1;
+      return {
+        ...notification,
+        archived
+      };
+    });
+
+    if (changed > 0) {
+      await db.saveNotifications(updated);
+    }
+
+    return res.json({
+      message: archived
+        ? `Archived ${changed} notification(s).`
+        : `Unarchived ${changed} notification(s).`,
+      changed
+    });
+  } catch {
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -128,6 +182,27 @@ router.patch('/:id/read', async (req, res) => {
     if (idx === -1) return res.status(404).json({ error: 'Notification not found' });
 
     all[idx] = { ...all[idx], read: true };
+    await db.saveNotifications(all);
+    res.json({ notification: all[idx] });
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ─── PATCH /api/notifications/:id/archive ───────────────────────────────────
+
+router.patch('/:id/archive', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { id } = req.params;
+    const archived = req.body?.archived !== false;
+    if (!id || typeof id !== 'string') return res.status(400).json({ error: 'Invalid id' });
+
+    const all = await db.getNotifications();
+    const idx = all.findIndex(n => n.id === id && n.userId === userId);
+    if (idx === -1) return res.status(404).json({ error: 'Notification not found' });
+
+    all[idx] = { ...all[idx], archived };
     await db.saveNotifications(all);
     res.json({ notification: all[idx] });
   } catch {
@@ -176,6 +251,7 @@ async function createNotification({ userId, type, title, message, link }) {
     message,
     link: link || null,
     read: false,
+    archived: false,
     createdAt: new Date().toISOString()
   };
   all.push(notification);
