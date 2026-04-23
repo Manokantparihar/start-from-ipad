@@ -1,3 +1,4 @@
+const pool = require('./db.pg');
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -69,8 +70,80 @@ const getUsers = async () => (await readFile('users')).map(normalizeUser);
 const saveUsers = async (users) => writeFile('users', users.map(normalizeUser));
 
 // ATTEMPTS
-const getAttempts = () => readFile('attempts');
-const saveAttempts = (attempts) => writeFile('attempts', attempts);
+const getAttempts = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM attempts');
+
+    if (res.rows.length > 0) {
+  return res.rows.map((row) => ({
+    id: row.id,
+    userId: row.user_id,
+    quizId: row.quiz_id,
+    score: row.score === null ? undefined : Number(row.score),
+    total: row.total === null ? undefined : Number(row.total),
+    status: row.status,
+    startedAt: row.started_at === null ? undefined : Number(row.started_at),
+    completedAt: row.completed_at === null ? undefined : Number(row.completed_at),
+    answers: Array.isArray(row.answers) ? row.answers : []
+  }));
+}
+
+    return readFile('attempts');
+  } catch (err) {
+    console.error('DB read failed, fallback JSON', err.message);
+    return readFile('attempts');
+  }
+};
+
+const saveAttempts = async (attempts) => {
+  try {
+    for (const attempt of attempts) {
+      await pool.query(
+        `
+        INSERT INTO attempts (
+  id,
+  user_id,
+  quiz_id,
+  score,
+  total,
+  status,
+  started_at,
+  completed_at,
+  answers
+)
+VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+ON CONFLICT (id) DO UPDATE SET
+  user_id = EXCLUDED.user_id,
+  quiz_id = EXCLUDED.quiz_id,
+  score = EXCLUDED.score,
+  total = EXCLUDED.total,
+  status = EXCLUDED.status,
+  started_at = EXCLUDED.started_at,
+  completed_at = EXCLUDED.completed_at,
+  answers = EXCLUDED.answers
+        `,
+        [
+  attempt.id,
+  attempt.userId || null,
+  attempt.quizId || null,
+  attempt.score ?? null,
+  attempt.total ?? null,
+  attempt.status || null,
+  attempt.startedAt || null,
+  attempt.completedAt || null,
+  JSON.stringify(attempt.answers || [])
+]
+      );
+    }
+
+    // keep JSON as backup
+    await writeFile('attempts', attempts);
+
+  } catch (err) {
+    console.error('DB write failed, fallback JSON', err.message);
+    await writeFile('attempts', attempts);
+  }
+};
 
 async function deleteAttemptsByUser(userId) {
   const attempts = await readFile('attempts');
@@ -256,8 +329,77 @@ const getLessons = () => readFile('lessons');
 const saveLessons = (lessons) => writeFile('lessons', lessons);
 
 // NOTIFICATIONS
-const getNotifications = () => readFile('notifications');
-const saveNotifications = (notifications) => writeFile('notifications', notifications);
+const getNotifications = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM notifications ORDER BY created_at DESC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => ({
+        id: row.id,
+        userId: row.user_id,
+        title: row.title,
+        message: row.message,
+        type: row.type,
+        read: row.is_read === true,
+        isRead: row.is_read === true,
+        archived: row.is_archived === true,
+        isArchived: row.is_archived === true,
+        createdAt: row.created_at ? new Date(row.created_at).toISOString() : undefined
+      }));
+    }
+
+    return readFile('notifications');
+  } catch (err) {
+    console.error('DB notifications read failed, fallback JSON', err.message);
+    return readFile('notifications');
+  }
+};
+const saveNotifications = async (notifications) => {
+  try {
+    for (const n of notifications) {
+      await pool.query(
+        `
+        INSERT INTO notifications (
+          id,
+          user_id,
+          title,
+          message,
+          type,
+          is_read,
+          is_archived,
+          created_at
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+        ON CONFLICT (id) DO UPDATE SET
+          user_id = EXCLUDED.user_id,
+          title = EXCLUDED.title,
+          message = EXCLUDED.message,
+          type = EXCLUDED.type,
+          is_read = EXCLUDED.is_read,
+          is_archived = EXCLUDED.is_archived,
+          created_at = EXCLUDED.created_at
+        `,
+        [
+          n.id,
+          n.userId || null,
+          n.title || '',
+          n.message || '',
+          n.type || null,
+          n.read !== undefined ? n.read === true : n.isRead === true,
+          n.archived !== undefined ? n.archived === true : n.isArchived === true,
+          n.createdAt ? new Date(n.createdAt) : new Date()
+        ]
+      );
+    }
+
+    // JSON backup (safe fallback)
+    await writeFile('notifications', notifications);
+
+  } catch (err) {
+    console.error('DB notifications write failed, fallback JSON', err.message);
+    await writeFile('notifications', notifications);
+  }
+};
 
 // NOTIFICATION LOGS (admin broadcast history)
 const getNotificationLogs = () => readFile('notification-logs');
