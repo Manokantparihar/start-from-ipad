@@ -682,8 +682,99 @@ const saveNotifications = async (notifications) => {
 };
 
 // NOTIFICATION LOGS (admin broadcast history)
-const getNotificationLogs = () => readFile('notification-logs');
-const saveNotificationLogs = (logs) => writeFile('notification-logs', logs);
+const getNotificationLogs = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM notification_logs ORDER BY created_at DESC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          title: data.title || row.title || '',
+          message: data.message || row.message || '',
+          type: data.type || data.category || row.type || null,
+          category: data.category || data.type || row.type || null,
+          target: data.target || data.audience || row.target || null,
+          audience: data.audience || data.target || row.target || null,
+          sentBy: data.sentBy || data.createdBy || row.sent_by || null,
+          createdBy: data.createdBy || data.sentBy || row.sent_by || null,
+          sentCount:
+            data.sentCount !== undefined ? data.sentCount : Number(row.sent_count) || 0,
+          count:
+            data.count !== undefined
+              ? data.count
+              : data.sentCount !== undefined
+                ? data.sentCount
+                : Number(row.sent_count) || 0,
+          createdAt:
+            data.createdAt ||
+            data.timestamp ||
+            (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          timestamp:
+            data.timestamp ||
+            data.createdAt ||
+            (row.created_at ? new Date(row.created_at).toISOString() : undefined)
+        };
+      });
+    }
+
+    return readFile('notification-logs');
+  } catch (err) {
+    console.error('DB notification logs read failed, fallback JSON', err.message);
+    return readFile('notification-logs');
+  }
+};
+const saveNotificationLogs = async (logs) => {
+  try {
+    for (const log of logs) {
+      await pool.query(
+        `
+        INSERT INTO notification_logs (
+          id,
+          title,
+          message,
+          type,
+          target,
+          sent_by,
+          sent_count,
+          created_at,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          message = EXCLUDED.message,
+          type = EXCLUDED.type,
+          target = EXCLUDED.target,
+          sent_by = EXCLUDED.sent_by,
+          sent_count = EXCLUDED.sent_count,
+          created_at = EXCLUDED.created_at,
+          data = EXCLUDED.data
+        `,
+        [
+          log.id,
+          log.title || '',
+          log.message || '',
+          log.type || log.category || null,
+          log.target || log.audience || null,
+          log.sentBy || log.createdBy || null,
+          Number(log.sentCount || log.count || 0),
+          log.createdAt || log.timestamp ? new Date(log.createdAt || log.timestamp) : new Date(),
+          JSON.stringify(log)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('notification-logs', logs);
+  } catch (err) {
+    console.error('DB notification logs write failed, fallback JSON', err.message);
+    await writeFile('notification-logs', logs);
+  }
+};
 
 // PHASE 3: Events / Groups / Rewards / Config
 const getEvents = () => readFile('events');
