@@ -793,8 +793,41 @@ async function deleteWrongQuestionsByUserAndQuiz(userId, quizId) {
  * Returns array of { userId, questionId, quizId, topic, timestamp }
  */
 async function getBookmarks(userId) {
-  const all = await readFile('bookmarks');
-  return Array.isArray(all) ? all.filter(b => b.userId === userId) : [];
+  try {
+    const res = await pool.query(
+      `
+      SELECT *
+      FROM bookmarks
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [userId]
+    );
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          userId: data.userId || row.user_id,
+          questionId: data.questionId || row.question_id,
+          quizId: data.quizId || row.quiz_id || '',
+          topic: data.topic || row.topic || 'General',
+          timestamp:
+            data.timestamp || (row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString())
+        };
+      });
+    }
+
+    const all = await readFile('bookmarks');
+    return Array.isArray(all) ? all.filter(b => b.userId === userId) : [];
+  } catch (err) {
+    console.error('DB bookmarks read failed, fallback JSON', err.message);
+    const all = await readFile('bookmarks');
+    return Array.isArray(all) ? all.filter(b => b.userId === userId) : [];
+  }
 }
 
 /**
@@ -802,10 +835,9 @@ async function getBookmarks(userId) {
  */
 async function addBookmark(userId, data) {
   const all = await readFile('bookmarks');
-  // Check if already bookmarked
   const exists = all.find(b => b.userId === userId && b.questionId === data.questionId);
   if (exists) return exists;
-  
+
   const entry = {
     id: uuidv4(),
     userId,
@@ -814,6 +846,40 @@ async function addBookmark(userId, data) {
     topic: data.topic || 'General',
     timestamp: new Date().toISOString()
   };
+
+  try {
+    await pool.query(
+      `
+      INSERT INTO bookmarks (
+        id,
+        user_id,
+        question_id,
+        quiz_id,
+        topic,
+        created_at,
+        data
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7)
+      ON CONFLICT (user_id, question_id) DO UPDATE SET
+        quiz_id = EXCLUDED.quiz_id,
+        topic = EXCLUDED.topic,
+        created_at = EXCLUDED.created_at,
+        data = EXCLUDED.data
+      `,
+      [
+        entry.id,
+        entry.userId,
+        entry.questionId,
+        entry.quizId || null,
+        entry.topic || 'General',
+        entry.timestamp ? new Date(entry.timestamp) : new Date(),
+        JSON.stringify(entry)
+      ]
+    );
+  } catch (err) {
+    console.error('DB bookmark write failed, fallback JSON', err.message);
+  }
+
   all.push(entry);
   await writeFile('bookmarks', all);
   return entry;
@@ -823,6 +889,15 @@ async function addBookmark(userId, data) {
  * Remove a bookmark
  */
 async function removeBookmark(userId, questionId) {
+  try {
+    await pool.query(
+      'DELETE FROM bookmarks WHERE user_id = $1 AND question_id = $2',
+      [userId, questionId]
+    );
+  } catch (err) {
+    console.error('DB bookmark delete failed, fallback JSON', err.message);
+  }
+
   const all = await readFile('bookmarks');
   const filtered = all.filter(b => !(b.userId === userId && b.questionId === questionId));
   await writeFile('bookmarks', filtered);
