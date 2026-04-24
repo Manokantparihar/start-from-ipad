@@ -248,15 +248,140 @@ async function deleteAttemptById(attemptId) {
  * @param {boolean} opts.includeUnpublished - include draft/unpublished quizzes (default false)
  */
 async function getQuizzes({ includeDeleted = false, includeUnpublished = false } = {}) {
-  const all = await readFile('quizzes');
-  return all.filter(q => {
-    if (!includeDeleted && q.isDeleted) return false;
-    if (!includeUnpublished && !q.isPublished) return false;
-    return true;
-  });
+  try {
+    const res = await pool.query(
+      `
+      SELECT *
+      FROM quizzes
+      ORDER BY created_at ASC NULLS LAST, title ASC
+      `
+    );
+
+    if (res.rows.length > 0) {
+      const all = res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          title: data.title || row.title || 'Untitled Quiz',
+          slug: data.slug || row.slug || '',
+          description: data.description || row.description || '',
+          mode: data.mode || row.mode || 'topic',
+          topic: data.topic || row.topic || '',
+          difficulty: data.difficulty || row.difficulty || 'medium',
+          timeLimit:
+            data.timeLimit !== undefined ? data.timeLimit : Number(row.time_limit) || 20,
+          isPublished:
+            data.isPublished !== undefined ? data.isPublished === true : row.is_published === true,
+          isDeleted:
+            data.isDeleted !== undefined ? data.isDeleted === true : row.is_deleted === true,
+          createdBy: data.createdBy || row.created_by || null,
+          createdAt:
+            data.createdAt ||
+            (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt ||
+            (row.updated_at ? new Date(row.updated_at).toISOString() : undefined),
+          questions: Array.isArray(data.questions) ? data.questions.map(normalizeQuestion) : [],
+          questionCount:
+            data.questionCount !== undefined
+              ? data.questionCount
+              : Array.isArray(data.questions)
+                ? data.questions.length
+                : Number(row.question_count) || 0
+        };
+      });
+
+      return all.filter(q => {
+        if (!includeDeleted && q.isDeleted) return false;
+        if (!includeUnpublished && !q.isPublished) return false;
+        return true;
+      });
+    }
+
+    const all = await readFile('quizzes');
+    return all.filter(q => {
+      if (!includeDeleted && q.isDeleted) return false;
+      if (!includeUnpublished && !q.isPublished) return false;
+      return true;
+    });
+  } catch (err) {
+    console.error('DB quizzes read failed, fallback JSON', err.message);
+    const all = await readFile('quizzes');
+    return all.filter(q => {
+      if (!includeDeleted && q.isDeleted) return false;
+      if (!includeUnpublished && !q.isPublished) return false;
+      return true;
+    });
+  }
 }
 
-const saveQuizzes = (quizzes) => writeFile('quizzes', quizzes);
+const saveQuizzes = async (quizzes) => {
+  try {
+    for (const quiz of quizzes) {
+      await pool.query(
+        `
+        INSERT INTO quizzes (
+          id,
+          title,
+          slug,
+          description,
+          mode,
+          topic,
+          difficulty,
+          time_limit,
+          is_published,
+          is_deleted,
+          created_by,
+          created_at,
+          updated_at,
+          question_count,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          slug = EXCLUDED.slug,
+          description = EXCLUDED.description,
+          mode = EXCLUDED.mode,
+          topic = EXCLUDED.topic,
+          difficulty = EXCLUDED.difficulty,
+          time_limit = EXCLUDED.time_limit,
+          is_published = EXCLUDED.is_published,
+          is_deleted = EXCLUDED.is_deleted,
+          created_by = EXCLUDED.created_by,
+          updated_at = EXCLUDED.updated_at,
+          question_count = EXCLUDED.question_count,
+          data = EXCLUDED.data
+        `,
+        [
+          quiz.id,
+          quiz.title || 'Untitled Quiz',
+          quiz.slug || null,
+          quiz.description || '',
+          quiz.mode || 'topic',
+          quiz.topic || '',
+          quiz.difficulty || 'medium',
+          Number(quiz.timeLimit) || 20,
+          quiz.isPublished === true,
+          quiz.isDeleted === true,
+          quiz.createdBy || null,
+          quiz.createdAt ? new Date(quiz.createdAt) : new Date(),
+          quiz.updatedAt ? new Date(quiz.updatedAt) : new Date(),
+          Array.isArray(quiz.questions) ? quiz.questions.length : Number(quiz.questionCount) || 0,
+          JSON.stringify(quiz)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('quizzes', quizzes);
+  } catch (err) {
+    console.error('DB quizzes write failed, fallback JSON', err.message);
+    await writeFile('quizzes', quizzes);
+  }
+};
 
 async function findQuizById(id) {
   const all = await readFile('quizzes');
