@@ -553,16 +553,72 @@ function mergeWrongQuestionRows(rows = []) {
  * Returns unique canonical rows keyed by userId + questionId.
  */
 async function getWrongQuestions(userId) {
-  const all = await readFile('wrong-questions');
-  const filtered = Array.isArray(all) ? all.filter((w) => w.userId === userId) : [];
-  const deduped = mergeWrongQuestionRows(filtered);
+  try {
+    const res = await pool.query(
+      `
+      SELECT *
+      FROM wrong_questions
+      WHERE user_id = $1
+      ORDER BY updated_at DESC NULLS LAST, last_seen_at DESC NULLS LAST
+      `,
+      [userId]
+    );
 
-  if (deduped.length !== filtered.length) {
-    const remaining = Array.isArray(all) ? all.filter((entry) => entry.userId !== userId) : [];
-    await writeFile('wrong-questions', [...remaining, ...deduped]);
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return normalizeWrongQuestionRow({
+          ...data,
+          id: data.id || row.id,
+          userId: data.userId || row.user_id,
+          questionId: data.questionId || row.question_id,
+          quizId: data.quizId || row.quiz_id || '',
+          topic: data.topic || row.topic || 'General',
+          selectedAnswer:
+            data.selectedAnswer !== undefined ? data.selectedAnswer : row.selected_answer || '',
+          correctAnswer:
+            data.correctAnswer !== undefined ? data.correctAnswer : row.correct_answer || '',
+          status: data.status || row.status || 'wrong',
+          timesMissed:
+            data.timesMissed !== undefined ? data.timesMissed : Number(row.times_missed) || 1,
+          firstSeenAt:
+            data.firstSeenAt || (row.first_seen_at ? new Date(row.first_seen_at).toISOString() : undefined),
+          lastSeenAt:
+            data.lastSeenAt || (row.last_seen_at ? new Date(row.last_seen_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt || (row.updated_at ? new Date(row.updated_at).toISOString() : undefined),
+          timestamp:
+            data.timestamp || data.firstSeenAt || (row.first_seen_at ? new Date(row.first_seen_at).toISOString() : undefined),
+          lastOutcome: data.lastOutcome || row.status || 'wrong'
+        }, userId);
+      });
+    }
+
+    const all = await readFile('wrong-questions');
+    const filtered = Array.isArray(all) ? all.filter((w) => w.userId === userId) : [];
+    const deduped = mergeWrongQuestionRows(filtered);
+
+    if (deduped.length !== filtered.length) {
+      const remaining = Array.isArray(all) ? all.filter((entry) => entry.userId !== userId) : [];
+      await writeFile('wrong-questions', [...remaining, ...deduped]);
+    }
+
+    return deduped;
+  } catch (err) {
+    console.error('DB wrong questions read failed, fallback JSON', err.message);
+
+    const all = await readFile('wrong-questions');
+    const filtered = Array.isArray(all) ? all.filter((w) => w.userId === userId) : [];
+    const deduped = mergeWrongQuestionRows(filtered);
+
+    if (deduped.length !== filtered.length) {
+      const remaining = Array.isArray(all) ? all.filter((entry) => entry.userId !== userId) : [];
+      await writeFile('wrong-questions', [...remaining, ...deduped]);
+    }
+
+    return deduped;
   }
-
-  return deduped;
 }
 
 /**
@@ -577,6 +633,7 @@ async function addWrongQuestion(userId, data) {
   const status = String(data.status || (data.selectedAnswer === undefined || data.selectedAnswer === null || data.selectedAnswer === '' ? 'unattempted' : 'wrong')).trim() || 'wrong';
   const existingIndex = filtered.findIndex((row) => getWrongQuestionKey(row.userId, row.questionId) === key);
   const existing = existingIndex >= 0 ? normalizeWrongQuestionRow(filtered[existingIndex], userId) : null;
+
   const nextRow = {
     ...(existing || {}),
     id: existing?.id || uuidv4(),
@@ -595,6 +652,57 @@ async function addWrongQuestion(userId, data) {
     lastOutcome: status
   };
 
+  try {
+    await pool.query(
+      `
+      INSERT INTO wrong_questions (
+        id,
+        user_id,
+        question_id,
+        quiz_id,
+        topic,
+        selected_answer,
+        correct_answer,
+        status,
+        times_missed,
+        first_seen_at,
+        last_seen_at,
+        updated_at,
+        data
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      ON CONFLICT (user_id, question_id) DO UPDATE SET
+        quiz_id = EXCLUDED.quiz_id,
+        topic = EXCLUDED.topic,
+        selected_answer = EXCLUDED.selected_answer,
+        correct_answer = EXCLUDED.correct_answer,
+        status = EXCLUDED.status,
+        times_missed = wrong_questions.times_missed + 1,
+        first_seen_at = COALESCE(wrong_questions.first_seen_at, EXCLUDED.first_seen_at),
+        last_seen_at = EXCLUDED.last_seen_at,
+        updated_at = EXCLUDED.updated_at,
+        data = EXCLUDED.data
+      `,
+      [
+        nextRow.id,
+        nextRow.userId,
+        nextRow.questionId,
+        nextRow.quizId || null,
+        nextRow.topic || 'General',
+        nextRow.selectedAnswer || '',
+        nextRow.correctAnswer || '',
+        nextRow.status || 'wrong',
+        Number(nextRow.timesMissed) || 1,
+        nextRow.firstSeenAt ? new Date(nextRow.firstSeenAt) : new Date(),
+        nextRow.lastSeenAt ? new Date(nextRow.lastSeenAt) : new Date(),
+        nextRow.updatedAt ? new Date(nextRow.updatedAt) : new Date(),
+        JSON.stringify(nextRow)
+      ]
+    );
+  } catch (err) {
+    console.error('DB wrong question write failed, fallback JSON', err.message);
+  }
+
   const nextRows = existingIndex >= 0
     ? [...filtered.slice(0, existingIndex), nextRow, ...filtered.slice(existingIndex + 1)]
     : [...filtered, nextRow];
@@ -608,6 +716,12 @@ async function addWrongQuestion(userId, data) {
  * Remove a wrong question entry
  */
 async function removeWrongQuestion(id) {
+  try {
+    await pool.query('DELETE FROM wrong_questions WHERE id = $1', [id]);
+  } catch (err) {
+    console.error('DB wrong question delete failed, fallback JSON', err.message);
+  }
+
   const all = await readFile('wrong-questions');
   const filtered = all.filter(w => w.id !== id);
   await writeFile('wrong-questions', filtered);
@@ -633,24 +747,46 @@ async function replaceWrongQuestionsForUser(userId, nextWrongQuestions = []) {
 }
 
 async function deleteWrongQuestionsByUser(userId) {
+  try {
+    await pool.query('DELETE FROM wrong_questions WHERE user_id = $1', [userId]);
+  } catch (err) {
+    console.error('DB wrong questions delete by user failed, fallback JSON', err.message);
+  }
+
   const all = await readFile('wrong-questions');
   const filtered = all.filter((entry) => entry.userId !== userId);
   const deletedCount = all.length - filtered.length;
+
   if (deletedCount > 0) {
     await writeFile('wrong-questions', filtered);
   }
+
   return { deletedCount, wrongQuestions: filtered };
 }
 
 async function deleteWrongQuestionsByUserAndQuiz(userId, quizId) {
+  try {
+    await pool.query(
+      'DELETE FROM wrong_questions WHERE user_id = $1 AND quiz_id = $2',
+      [userId, String(quizId)]
+    );
+  } catch (err) {
+    console.error('DB wrong questions delete by user+quiz failed, fallback JSON', err.message);
+  }
+
   const all = await readFile('wrong-questions');
-  const filtered = all.filter((entry) => !(entry.userId === userId && String(entry.quizId) === String(quizId)));
+  const filtered = all.filter(
+    (entry) => !(entry.userId === userId && String(entry.quizId) === String(quizId))
+  );
   const deletedCount = all.length - filtered.length;
+
   if (deletedCount > 0) {
     await writeFile('wrong-questions', filtered);
   }
+
   return { deletedCount, wrongQuestions: filtered };
 }
+ 
 
 /**
  * Get all bookmarks for a user
