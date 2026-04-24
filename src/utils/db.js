@@ -777,8 +777,122 @@ const saveNotificationLogs = async (logs) => {
 };
 
 // PHASE 3: Events / Groups / Rewards / Config
-const getEvents = () => readFile('events');
-const saveEvents = (events) => writeFile('events', events);
+const getEvents = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM events ORDER BY starts_at ASC NULLS LAST, created_at DESC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          title: data.title || data.name || row.title || row.id,
+          name: data.name || data.title || row.title || row.id,
+          description: data.description || row.description || '',
+          type: data.type || data.category || row.type || null,
+          category: data.category || data.type || row.type || null,
+          startsAt:
+            data.startsAt ||
+            data.startAt ||
+            data.startDate ||
+            (row.starts_at ? new Date(row.starts_at).toISOString() : null),
+          startAt:
+            data.startAt ||
+            data.startsAt ||
+            data.startDate ||
+            (row.starts_at ? new Date(row.starts_at).toISOString() : null),
+          startDate:
+            data.startDate ||
+            data.startsAt ||
+            data.startAt ||
+            (row.starts_at ? new Date(row.starts_at).toISOString() : null),
+          endsAt:
+            data.endsAt ||
+            data.endAt ||
+            data.endDate ||
+            (row.ends_at ? new Date(row.ends_at).toISOString() : null),
+          endAt:
+            data.endAt ||
+            data.endsAt ||
+            data.endDate ||
+            (row.ends_at ? new Date(row.ends_at).toISOString() : null),
+          endDate:
+            data.endDate ||
+            data.endsAt ||
+            data.endAt ||
+            (row.ends_at ? new Date(row.ends_at).toISOString() : null),
+          isActive:
+            data.isActive !== undefined ? data.isActive !== false : row.is_active !== false,
+          createdAt:
+            data.createdAt || (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt || (row.updated_at ? new Date(row.updated_at).toISOString() : undefined)
+        };
+      });
+    }
+
+    return readFile('events');
+  } catch (err) {
+    console.error('DB events read failed, fallback JSON', err.message);
+    return readFile('events');
+  }
+};
+const saveEvents = async (events) => {
+  try {
+    for (const event of events) {
+      await pool.query(
+        `
+        INSERT INTO events (
+          id,
+          title,
+          description,
+          type,
+          starts_at,
+          ends_at,
+          is_active,
+          created_at,
+          updated_at,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          description = EXCLUDED.description,
+          type = EXCLUDED.type,
+          starts_at = EXCLUDED.starts_at,
+          ends_at = EXCLUDED.ends_at,
+          is_active = EXCLUDED.is_active,
+          updated_at = EXCLUDED.updated_at,
+          data = EXCLUDED.data
+        `,
+        [
+          event.id,
+          event.title || event.name || event.id || 'Untitled Event',
+          event.description || '',
+          event.type || event.category || null,
+          event.startsAt || event.startAt || event.startDate
+            ? new Date(event.startsAt || event.startAt || event.startDate)
+            : null,
+          event.endsAt || event.endAt || event.endDate
+            ? new Date(event.endsAt || event.endAt || event.endDate)
+            : null,
+          event.isActive !== false,
+          event.createdAt ? new Date(event.createdAt) : new Date(),
+          event.updatedAt ? new Date(event.updatedAt) : new Date(),
+          JSON.stringify(event)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('events', events);
+  } catch (err) {
+    console.error('DB events write failed, fallback JSON', err.message);
+    await writeFile('events', events);
+  }
+};
 
 const getGroups = async () => {
   try {
