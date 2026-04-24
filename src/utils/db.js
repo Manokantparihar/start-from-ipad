@@ -787,15 +787,59 @@ const getRewards = () => readFile('rewards');
 const saveRewards = (rewards) => writeFile('rewards', rewards);
 
 async function getGamificationConfig() {
-  const rows = await readFile('gamification-config');
-  if (Array.isArray(rows)) {
-    return rows[0] || {};
+  try {
+    const res = await pool.query(
+      'SELECT data FROM gamification_config WHERE id = $1',
+      ['default']
+    );
+
+    if (res.rows.length > 0) {
+      return res.rows[0].data || {};
+    }
+
+    const rows = await readFile('gamification-config');
+    if (Array.isArray(rows)) {
+      return rows[0] || {};
+    }
+    return rows || {};
+  } catch (err) {
+    console.error('DB gamification config read failed, fallback JSON', err.message);
+
+    const rows = await readFile('gamification-config');
+    if (Array.isArray(rows)) {
+      return rows[0] || {};
+    }
+    return rows || {};
   }
-  return rows || {};
 }
 
 async function saveGamificationConfig(config = {}) {
-  return writeFile('gamification-config', [config]);
+  try {
+    await pool.query(
+      `
+      INSERT INTO gamification_config (
+        id,
+        data,
+        updated_at
+      )
+      VALUES ($1,$2,$3)
+      ON CONFLICT (id) DO UPDATE SET
+        data = EXCLUDED.data,
+        updated_at = EXCLUDED.updated_at
+      `,
+      [
+        'default',
+        JSON.stringify(config || {}),
+        new Date()
+      ]
+    );
+
+    // JSON backup
+    return writeFile('gamification-config', [config]);
+  } catch (err) {
+    console.error('DB gamification config write failed, fallback JSON', err.message);
+    return writeFile('gamification-config', [config]);
+  }
 }
 
 // ─── REVISION SYSTEM (Wrong Questions & Bookmarks) ───────────────────────────────
