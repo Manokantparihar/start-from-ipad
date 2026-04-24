@@ -780,8 +780,77 @@ const saveNotificationLogs = async (logs) => {
 const getEvents = () => readFile('events');
 const saveEvents = (events) => writeFile('events', events);
 
-const getGroups = () => readFile('groups');
-const saveGroups = (groups) => writeFile('groups', groups);
+const getGroups = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM groups ORDER BY created_at ASC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          name: data.name || data.title || row.name || row.id,
+          title: data.title || data.name || row.name || row.id,
+          description: data.description || row.description || '',
+          isActive:
+            data.isActive !== undefined ? data.isActive !== false : row.is_active !== false,
+          createdAt:
+            data.createdAt || (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt || (row.updated_at ? new Date(row.updated_at).toISOString() : undefined)
+        };
+      });
+    }
+
+    return readFile('groups');
+  } catch (err) {
+    console.error('DB groups read failed, fallback JSON', err.message);
+    return readFile('groups');
+  }
+};
+const saveGroups = async (groups) => {
+  try {
+    for (const group of groups) {
+      await pool.query(
+        `
+        INSERT INTO groups (
+          id,
+          name,
+          description,
+          is_active,
+          created_at,
+          updated_at,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          description = EXCLUDED.description,
+          is_active = EXCLUDED.is_active,
+          updated_at = EXCLUDED.updated_at,
+          data = EXCLUDED.data
+        `,
+        [
+          group.id,
+          group.name || group.title || group.id || 'Untitled Group',
+          group.description || '',
+          group.isActive !== false,
+          group.createdAt ? new Date(group.createdAt) : new Date(),
+          group.updatedAt ? new Date(group.updatedAt) : new Date(),
+          JSON.stringify(group)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('groups', groups);
+  } catch (err) {
+    console.error('DB groups write failed, fallback JSON', err.message);
+    await writeFile('groups', groups);
+  }
+};
 
 const getRewards = () => readFile('rewards');
 const saveRewards = (rewards) => writeFile('rewards', rewards);
