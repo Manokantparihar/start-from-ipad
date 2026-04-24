@@ -66,8 +66,69 @@ function normalizeUser(user) {
 }
 
 // USERS
-const getUsers = async () => (await readFile('users')).map(normalizeUser);
-const saveUsers = async (users) => writeFile('users', users.map(normalizeUser));
+const getUsers = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM users ORDER BY created_at ASC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return normalizeUser({
+          ...data,
+          id: data.id || row.id,
+          name: data.name || row.name,
+          email: data.email || row.email,
+          role: data.role || row.role || 'user'
+        });
+      });
+    }
+
+    return (await readFile('users')).map(normalizeUser);
+  } catch (err) {
+    console.error('DB users read failed, fallback JSON', err.message);
+    return (await readFile('users')).map(normalizeUser);
+  }
+};
+
+const saveUsers = async (users) => {
+  const normalizedUsers = users.map(normalizeUser);
+
+  try {
+    for (const user of normalizedUsers) {
+      await pool.query(
+        `
+        INSERT INTO users (
+          id,
+          name,
+          email,
+          role,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          email = EXCLUDED.email,
+          role = EXCLUDED.role,
+          data = EXCLUDED.data
+        `,
+        [
+          user.id,
+          user.name || '',
+          user.email || null,
+          user.role || 'user',
+          JSON.stringify(user)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('users', normalizedUsers);
+  } catch (err) {
+    console.error('DB users write failed, fallback JSON', err.message);
+    await writeFile('users', normalizedUsers);
+  }
+};
 
 // ATTEMPTS
 const getAttempts = async () => {
