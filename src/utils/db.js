@@ -788,6 +788,8 @@ async function deleteWrongQuestionsByUserAndQuiz(userId, quizId) {
 }
  
 
+
+
 /**
  * Get all bookmarks for a user
  * Returns array of { userId, questionId, quizId, topic, timestamp }
@@ -804,25 +806,44 @@ async function getBookmarks(userId) {
       [userId]
     );
 
-    if (res.rows.length > 0) {
-      return res.rows.map((row) => {
-        const data = row.data && typeof row.data === 'object' ? row.data : {};
+    const dbBookmarks = res.rows.map((row) => {
+      const data = row.data && typeof row.data === 'object' ? row.data : {};
 
-        return {
-          ...data,
-          id: data.id || row.id,
-          userId: data.userId || row.user_id,
-          questionId: data.questionId || row.question_id,
-          quizId: data.quizId || row.quiz_id || '',
-          topic: data.topic || row.topic || 'General',
-          timestamp:
-            data.timestamp || (row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString())
-        };
-      });
+      return {
+        ...data,
+        id: data.id || row.id,
+        userId: data.userId || row.user_id,
+        questionId: data.questionId || row.question_id,
+        quizId: data.quizId || row.quiz_id || '',
+        topic: data.topic || row.topic || 'General',
+        timestamp:
+          data.timestamp ||
+          (row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString())
+      };
+    });
+
+    const allJson = await readFile('bookmarks');
+    const jsonBookmarks = Array.isArray(allJson)
+      ? allJson.filter((bookmark) => bookmark.userId === userId)
+      : [];
+
+    const merged = new Map();
+
+    for (const bookmark of jsonBookmarks) {
+      if (!bookmark.questionId) continue;
+      merged.set(String(bookmark.questionId), bookmark);
     }
 
-    const all = await readFile('bookmarks');
-    return Array.isArray(all) ? all.filter(b => b.userId === userId) : [];
+    for (const bookmark of dbBookmarks) {
+      if (!bookmark.questionId) continue;
+      merged.set(String(bookmark.questionId), bookmark);
+    }
+
+    return Array.from(merged.values()).sort((a, b) => {
+      const timeA = new Date(a.timestamp || 0).getTime();
+      const timeB = new Date(b.timestamp || 0).getTime();
+      return timeB - timeA;
+    });
   } catch (err) {
     console.error('DB bookmarks read failed, fallback JSON', err.message);
     const all = await readFile('bookmarks');
@@ -834,8 +855,11 @@ async function getBookmarks(userId) {
  * Add a bookmark
  */
 async function addBookmark(userId, data) {
-  const all = await readFile('bookmarks');
-  const exists = all.find(b => b.userId === userId && b.questionId === data.questionId);
+  const existingBookmarks = await getBookmarks(userId);
+  const exists = existingBookmarks.find(
+    b => b.userId === userId && b.questionId === data.questionId
+  );
+
   if (exists) return exists;
 
   const entry = {
@@ -880,8 +904,14 @@ async function addBookmark(userId, data) {
     console.error('DB bookmark write failed, fallback JSON', err.message);
   }
 
-  all.push(entry);
-  await writeFile('bookmarks', all);
+  const all = await readFile('bookmarks');
+  const filtered = Array.isArray(all)
+    ? all.filter(b => !(b.userId === userId && b.questionId === data.questionId))
+    : [];
+
+  filtered.push(entry);
+  await writeFile('bookmarks', filtered);
+
   return entry;
 }
 
@@ -899,7 +929,10 @@ async function removeBookmark(userId, questionId) {
   }
 
   const all = await readFile('bookmarks');
-  const filtered = all.filter(b => !(b.userId === userId && b.questionId === questionId));
+  const filtered = Array.isArray(all)
+    ? all.filter(b => !(b.userId === userId && b.questionId === questionId))
+    : [];
+
   await writeFile('bookmarks', filtered);
 }
 
@@ -910,7 +943,6 @@ async function isQuestionBookmarked(userId, questionId) {
   const bookmarks = await getBookmarks(userId);
   return bookmarks.some(b => b.questionId === questionId);
 }
-
 async function migrateLegacyRevisionState(userId) {
   const users = await readFile('users');
   const userIndex = users.findIndex((entry) => entry.id === userId);
