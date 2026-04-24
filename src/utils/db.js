@@ -505,8 +505,102 @@ function normalizeQuestion(q) {
 }
 
 // RESOURCES (PDFs / Notes / Assignments)
-const getResources = () => readFile('resources');
-const saveResources = (resources) => writeFile('resources', resources);
+const getResources = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM resources ORDER BY created_at DESC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          title: data.title || row.title || data.name || 'Untitled Resource',
+          name: data.name || data.title || row.title || 'Untitled Resource',
+          description: data.description || row.description || '',
+          type: data.type || row.type || data.category || null,
+          category: data.category || data.type || row.type || null,
+          topic: data.topic || row.topic || data.subject || '',
+          subject: data.subject || data.topic || row.topic || '',
+          fileUrl: data.fileUrl || data.url || row.file_url || '',
+          url: data.url || data.fileUrl || row.file_url || '',
+          filePath: data.filePath || data.path || row.file_path || '',
+          path: data.path || data.filePath || row.file_path || '',
+          uploadedBy: data.uploadedBy || data.createdBy || row.uploaded_by || null,
+          createdBy: data.createdBy || data.uploadedBy || row.uploaded_by || null,
+          isPublished:
+            data.isPublished !== undefined ? data.isPublished !== false : row.is_published !== false,
+          createdAt:
+            data.createdAt || (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt || (row.updated_at ? new Date(row.updated_at).toISOString() : undefined)
+        };
+      });
+    }
+
+    return readFile('resources');
+  } catch (err) {
+    console.error('DB resources read failed, fallback JSON', err.message);
+    return readFile('resources');
+  }
+};
+const saveResources = async (resources) => {
+  try {
+    for (const resource of resources) {
+      await pool.query(
+        `
+        INSERT INTO resources (
+          id,
+          title,
+          description,
+          type,
+          topic,
+          file_url,
+          file_path,
+          uploaded_by,
+          is_published,
+          created_at,
+          updated_at,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          description = EXCLUDED.description,
+          type = EXCLUDED.type,
+          topic = EXCLUDED.topic,
+          file_url = EXCLUDED.file_url,
+          file_path = EXCLUDED.file_path,
+          uploaded_by = EXCLUDED.uploaded_by,
+          is_published = EXCLUDED.is_published,
+          updated_at = EXCLUDED.updated_at,
+          data = EXCLUDED.data
+        `,
+        [
+          resource.id,
+          resource.title || resource.name || 'Untitled Resource',
+          resource.description || '',
+          resource.type || resource.category || null,
+          resource.topic || resource.subject || '',
+          resource.fileUrl || resource.url || null,
+          resource.filePath || resource.path || null,
+          resource.uploadedBy || resource.createdBy || null,
+          resource.isPublished !== false,
+          resource.createdAt ? new Date(resource.createdAt) : new Date(),
+          resource.updatedAt ? new Date(resource.updatedAt) : new Date(),
+          JSON.stringify(resource)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('resources', resources);
+  } catch (err) {
+    console.error('DB resources write failed, fallback JSON', err.message);
+    await writeFile('resources', resources);
+  }
+};
 
 // COURSES / LESSONS
 const getCourses = () => readFile('courses');
