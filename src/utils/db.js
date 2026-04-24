@@ -852,8 +852,95 @@ const saveGroups = async (groups) => {
   }
 };
 
-const getRewards = () => readFile('rewards');
-const saveRewards = (rewards) => writeFile('rewards', rewards);
+const getRewards = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM rewards ORDER BY created_at ASC');
+
+    if (res.rows.length > 0) {
+      return res.rows.map((row) => {
+        const data = row.data && typeof row.data === 'object' ? row.data : {};
+
+        return {
+          ...data,
+          id: data.id || row.id,
+          title: data.title || data.name || row.title || row.id,
+          name: data.name || data.title || row.title || row.id,
+          description: data.description || row.description || '',
+          type: data.type || data.category || row.type || null,
+          category: data.category || data.type || row.type || null,
+          points:
+            data.points !== undefined
+              ? Number(data.points) || 0
+              : Number(row.points) || 0,
+          xp:
+            data.xp !== undefined
+              ? Number(data.xp) || 0
+              : data.points !== undefined
+                ? Number(data.points) || 0
+                : Number(row.points) || 0,
+          isActive:
+            data.isActive !== undefined ? data.isActive !== false : row.is_active !== false,
+          createdAt:
+            data.createdAt || (row.created_at ? new Date(row.created_at).toISOString() : undefined),
+          updatedAt:
+            data.updatedAt || (row.updated_at ? new Date(row.updated_at).toISOString() : undefined)
+        };
+      });
+    }
+
+    return readFile('rewards');
+  } catch (err) {
+    console.error('DB rewards read failed, fallback JSON', err.message);
+    return readFile('rewards');
+  }
+};
+const saveRewards = async (rewards) => {
+  try {
+    for (const reward of rewards) {
+      await pool.query(
+        `
+        INSERT INTO rewards (
+          id,
+          title,
+          description,
+          type,
+          points,
+          is_active,
+          created_at,
+          updated_at,
+          data
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          description = EXCLUDED.description,
+          type = EXCLUDED.type,
+          points = EXCLUDED.points,
+          is_active = EXCLUDED.is_active,
+          updated_at = EXCLUDED.updated_at,
+          data = EXCLUDED.data
+        `,
+        [
+          reward.id,
+          reward.title || reward.name || reward.id || 'Untitled Reward',
+          reward.description || '',
+          reward.type || reward.category || null,
+          Number(reward.points || reward.xp || reward.value || 0),
+          reward.isActive !== false,
+          reward.createdAt ? new Date(reward.createdAt) : new Date(),
+          reward.updatedAt ? new Date(reward.updatedAt) : new Date(),
+          JSON.stringify(reward)
+        ]
+      );
+    }
+
+    // JSON backup
+    await writeFile('rewards', rewards);
+  } catch (err) {
+    console.error('DB rewards write failed, fallback JSON', err.message);
+    await writeFile('rewards', rewards);
+  }
+};
 
 async function getGamificationConfig() {
   try {
