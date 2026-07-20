@@ -15,10 +15,13 @@ My developer journey starts today 🚀
 ## Run locally
 
 ```bash
+npm run init:data
 npm run start
 ```
 
 Open: `http://localhost:5500`
+
+- `npm run init:data` creates local fallback `data/*.json` files when missing (safe to run multiple times).
 
 ## Phase 2 (Content Engine) commands
 
