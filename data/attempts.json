@@ -458,5 +458,130 @@
     "completedAt": 1776070226120,
     "score": 8,
     "total": 10
+  },
+  {
+    "id": "c521f807-87e1-48de-923c-e3ef3ecb5587",
+    "userId": "336f9755-dd6c-4134-be03-488ddfe6428c",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "in-progress",
+    "startedAt": 1784543197548,
+    "expiresAt": 1784544397548,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543197548
+  },
+  {
+    "id": "bc887a38-6c41-4f45-bcc2-04ac329c4479",
+    "userId": "224646dc-e0e2-445b-9639-0578e2bf1613",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "in-progress",
+    "startedAt": 1784543197708,
+    "expiresAt": 1784544397708,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "तोता"
+      }
+    ],
+    "createdAt": 1784543197708,
+    "updatedAt": 1784543197712
+  },
+  {
+    "id": "6ea8e2cb-f971-476f-b8c3-f2feec5c495b",
+    "userId": "b68a97f6-8227-4a22-87aa-f3b8f9c8a02c",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543197873,
+    "expiresAt": 1784544397873,
+    "timeLimitMinutes": 20,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "तोता"
+      }
+    ],
+    "createdAt": 1784543197873,
+    "completedAt": 1784543197877,
+    "score": 0,
+    "total": 7
+  },
+  {
+    "id": "a4218c09-b528-42d4-b468-4a2a4b6ef9a7",
+    "userId": "0169e527-0f93-4e70-97ed-688403fcd298",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543198156,
+    "expiresAt": 1784544398156,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543198156,
+    "completedAt": 1784543198159,
+    "score": 0,
+    "total": 7
+  },
+  {
+    "id": "b1721da2-5589-470d-b51d-cbfa438017be",
+    "userId": "1c9af0f0-693e-49d8-9f88-08072c6119bb",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543198336,
+    "expiresAt": 1784544398336,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543198336,
+    "completedAt": 1784543198339,
+    "score": 0,
+    "total": 7
+  },
+  {
+    "id": "8a49e329-223c-43f9-a896-a09fe37d5d28",
+    "userId": "f80e272b-5de0-42a4-a4bf-8cde4bab6512",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543199877,
+    "expiresAt": 1784544399877,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543199877,
+    "completedAt": 1784543199882,
+    "score": 0,
+    "total": 7
+  },
+  {
+    "id": "9fafd93c-57dd-4d95-9eee-a00b75c83a3a",
+    "userId": "b10a43fc-d9b4-426d-8a4e-139bc06aede0",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543200063,
+    "expiresAt": 1784544400063,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543200063,
+    "completedAt": 1784543200066,
+    "score": 0,
+    "total": 7
+  },
+  {
+    "id": "83227356-298d-4cd9-92d2-04f64641024d",
+    "userId": "b10a43fc-d9b4-426d-8a4e-139bc06aede0",
+    "quizId": "quiz-001",
+    "quizTitle": "General Knowledge - Basic",
+    "status": "completed",
+    "startedAt": 1784543200089,
+    "expiresAt": 1784544400089,
+    "timeLimitMinutes": 20,
+    "answers": [],
+    "createdAt": 1784543200089,
+    "completedAt": 1784543200092,
+    "score": 0,
+    "total": 7
   }
 ]

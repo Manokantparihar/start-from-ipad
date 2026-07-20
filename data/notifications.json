@@ -118,5 +118,38 @@
     "link": null,
     "read": false,
     "createdAt": "2026-04-12T20:51:56.068Z"
+  },
+  {
+    "id": "920c2519-193a-46ae-bedc-8eb196ac00c6",
+    "userId": "a8f11be4-aae3-4522-8e82-b9760379044f",
+    "type": "announcement",
+    "title": "Announcement 1",
+    "message": "Message 1",
+    "link": null,
+    "read": true,
+    "archived": false,
+    "createdAt": "2026-07-20T10:26:39.459Z"
+  },
+  {
+    "id": "52faa5f7-a222-426c-a828-de0ee2ef1d56",
+    "userId": "a8f11be4-aae3-4522-8e82-b9760379044f",
+    "type": "quiz",
+    "title": "Quiz 1",
+    "message": "Message 2",
+    "link": null,
+    "read": true,
+    "archived": true,
+    "createdAt": "2026-07-20T10:26:39.460Z"
+  },
+  {
+    "id": "06605a3e-4af9-40e8-834a-09e6abe007d1",
+    "userId": "a8f11be4-aae3-4522-8e82-b9760379044f",
+    "type": "revision",
+    "title": "Revision 1",
+    "message": "Message 3",
+    "link": null,
+    "read": true,
+    "archived": true,
+    "createdAt": "2026-07-20T10:26:39.462Z"
   }
 ]
