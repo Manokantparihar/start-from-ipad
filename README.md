@@ -20,6 +20,16 @@ npm run start
 
 Open: `http://localhost:5500`
 
+## Initialize local fallback data (fresh clone)
+
+If your clone does not have local JSON fallback files yet, run:
+
+```bash
+node scripts/init-data.js
+```
+
+This creates empty files in `data/` for local fallback usage without overwriting existing files.
+
 ## Phase 2 (Content Engine) commands
 
 ```bash
