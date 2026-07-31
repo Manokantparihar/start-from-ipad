@@ -20,6 +20,24 @@ const authSessionRateLimiter = createRateLimiter({
   message: 'Too many session checks, please try again later.'
 });
 
+function getAuthCookieOptions(req = {}, { isProduction = process.env.NODE_ENV === 'production' } = {}) {
+  const forwardedProtoHeader = req.headers?.['x-forwarded-proto'];
+  const forwardedProto = String(forwardedProtoHeader || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase();
+  const isSecureRequest = Boolean(req.secure || forwardedProto === 'https');
+  const shouldUseCrossSiteCookies = isProduction && isSecureRequest;
+
+  return {
+    httpOnly: true,
+    secure: shouldUseCrossSiteCookies,
+    sameSite: shouldUseCrossSiteCookies ? 'none' : 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  };
+}
+
 function findUserFromTokenPayload(users, payload) {
   const tokenUserId = payload.userId || payload.id;
   if (tokenUserId) {
@@ -112,12 +130,7 @@ router.post('/login', authMutationRateLimiter, async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie('token', token, getAuthCookieOptions(req));
 
     res.json({
       message: 'Logged in successfully',
@@ -217,8 +230,9 @@ router.get('/me', authSessionRateLimiter, async (req, res) => {
 
 // Logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', { path: '/' });
   res.json({ message: "Logged out" });
 });
 
 module.exports = router;
+module.exports.getAuthCookieOptions = getAuthCookieOptions;

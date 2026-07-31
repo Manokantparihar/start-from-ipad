@@ -32,6 +32,8 @@ const { createRateLimiter } = require('./src/middlewares/rateLimit');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const contactRateLimiter = createRateLimiter({
   windowMs: appConfig.contactRateLimitWindowMs,
   maxRequests: appConfig.contactRateLimitMaxRequests,
