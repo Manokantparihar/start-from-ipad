@@ -1,201 +1,273 @@
 [
   {
-    "id": "690999b0-7359-45eb-97d8-40a2752c2963",
-    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
-    "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
-    "quizTitle": "Geography Quiz",
+    "id": "b536480b-90f0-468a-88c0-f8bd71da9d16",
+    "userId": "e8fde9a0-aada-417a-842b-1ceaf674bf37",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
     "status": "completed",
-    "startedAt": 1775936611794,
-    "expiresAt": 1775937811794,
-    "timeLimitMinutes": 20,
-    "answers": [
-      {
-        "questionId": "9cefc458-a37c-48d0-92c7-67175febabcc",
-        "selected": "Asia"
-      },
-      {
-        "questionId": "d00982f5-dd21-490e-8e0c-7e274cbc22aa",
-        "selected": "Nile"
-      },
-      {
-        "questionId": "0d3a60df-8c8a-4886-ac26-e3adf8cae216",
-        "selected": "India"
-      },
-      {
-        "questionId": "ecb31624-283b-49b0-8116-c9b9a2bfdbf9",
-        "selected": "Sahara"
-      },
-      {
-        "questionId": "e37d3ec4-7890-4920-ab33-3cd5c85babae",
-        "selected": "Nepal"
-      },
-      {
-        "questionId": "3b656038-5cb1-4798-9477-602848424530",
-        "selected": "Pacific"
-      },
-      {
-        "questionId": "c6cc3ddd-e607-4068-bddb-b23697c8da6a",
-        "selected": "Japan"
-      },
-      {
-        "questionId": "573cec66-4b34-48b0-8fda-5fd16550792d",
-        "selected": "Australia"
-      },
-      {
-        "questionId": "94b52d35-db56-4237-b139-52f0d08595e5",
-        "selected": "Nile"
-      },
-      {
-        "questionId": "ab13083c-6ddd-467e-8b31-6b2e71e55fc3",
-        "selected": "Everest"
-      },
-      {
-        "questionId": "32eade1c-7e6d-40de-922f-c76425c745e8",
-        "selected": "Indonesia"
-      },
-      {
-        "questionId": "279d6e25-0dd9-43d1-af7f-0b7c3fa5a21e",
-        "selected": "Africa"
-      },
-      {
-        "questionId": "e036235b-f4e0-4355-8a62-c84ceb263cb1",
-        "selected": "Pacific"
-      },
-      {
-        "questionId": "64fe11a5-9e2f-4ae1-8220-ebf828bb2308",
-        "selected": "Russia"
-      },
-      {
-        "questionId": "65b73228-f004-43b8-9eea-66f14a078790",
-        "selected": "Equator"
-      }
-    ],
-    "createdAt": 1775936611794,
-    "completedAt": 1775936713249,
-    "score": 15,
-    "total": 15
+    "startedAt": 1785518544775,
+    "completedAt": 1785518575441,
+    "answers": []
   },
   {
-    "id": "92743153-024d-41b8-a9e5-7affd3f6adfb",
-    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
-    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-    "quizTitle": "करंट अफेयर्स क्विज",
+    "id": "cfb59d0d-4d11-4c9d-8b92-76ee77438322",
+    "userId": "e8fde9a0-aada-417a-842b-1ceaf674bf37",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
     "status": "completed",
-    "startedAt": 1775983543713,
-    "expiresAt": 1775984143713,
-    "timeLimitMinutes": 10,
-    "answers": [
-      {
-        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
-        "selected": "सूर्य"
-      },
-      {
-        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
-        "selected": "दिल्ली"
-      },
-      {
-        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-        "selected": "द्रौपदी मुर्मू"
-      },
-      {
-        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
-        "selected": "भारत"
-      },
-      {
-        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
-        "selected": "सऊदी अरब"
-      },
-      {
-        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-        "selected": "उत्तराखंड"
-      },
-      {
-        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-        "selected": "Aditya-L1"
-      },
-      {
-        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-        "selected": "रंजन गोगोई"
-      },
-      {
-        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
-        "selected": "गुजरात"
-      },
-      {
-        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
-        "selected": "शिक्षा"
-      }
-    ],
-    "createdAt": 1775983543713,
-    "completedAt": 1775983620382,
-    "score": 8,
-    "total": 10
+    "startedAt": 1785518454283,
+    "completedAt": 1785518484791,
+    "answers": []
   },
   {
-    "id": "365c9b47-0a86-4de8-ac08-63b5bf234cf1",
-    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
-    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-    "quizTitle": "करंट अफेयर्स क्विज",
+    "id": "633523b6-abc6-4662-a5c8-ab63165f96e2",
+    "userId": "d0166c6b-c568-4edd-aac7-8a76e69a640e",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
     "status": "completed",
-    "startedAt": 1775985593314,
-    "expiresAt": 1775986193314,
-    "timeLimitMinutes": 10,
-    "answers": [
-      {
-        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
-        "selected": "सूर्य"
-      },
-      {
-        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
-        "selected": "दिल्ली"
-      },
-      {
-        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-        "selected": "द्रौपदी मुर्मू"
-      },
-      {
-        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
-        "selected": "भारत"
-      },
-      {
-        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
-        "selected": "सऊदी अरब"
-      },
-      {
-        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-        "selected": "उत्तराखंड"
-      },
-      {
-        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-        "selected": "Aditya-L1"
-      },
-      {
-        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-        "selected": "DY चंद्रचूड़"
-      },
-      {
-        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
-        "selected": "शिक्षा"
-      }
-    ],
-    "createdAt": 1775985593314,
-    "completedAt": 1775985640883,
-    "score": 8,
-    "total": 10
+    "startedAt": 1777048546661,
+    "completedAt": 1777048558007,
+    "answers": []
   },
   {
-    "id": "bcebf1a3-ead1-4878-8257-3be4e18c2630",
-    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "id": "ff495b16-c6ec-468b-92f1-399b19e201d6",
+    "userId": "aafd56a2-29c9-43b3-af95-a42b5d6c45a8",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785518818681,
+    "answers": []
+  },
+  {
+    "id": "31509193-b0c9-40d2-9050-76563502ec12",
+    "userId": "b3b0818f-5d72-40c3-8933-4918625023dc",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777058854254,
+    "completedAt": 1777058871385,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "421e0fb0-ecb3-4069-a22c-0aa4103116fb",
+    "userId": "8e295cb0-5ae7-4f67-894d-697d60519093",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776989009434,
+    "completedAt": 1776989017370,
+    "answers": []
+  },
+  {
+    "id": "767ff6c6-a5fa-4859-9e9f-559eb74d1834",
+    "userId": "d9fdbcdd-3b77-460b-8e3a-84ca8510d8ee",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987961793,
+    "completedAt": 1776987969261,
+    "answers": []
+  },
+  {
+    "id": "ff35a113-a030-4aac-9fe3-6d39ca7bd5b5",
+    "userId": "f4dab657-3368-4550-bd3f-c8ea1dadcea6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517295435,
+    "completedAt": 1785517324739,
+    "answers": []
+  },
+  {
+    "id": "8cb1fea3-73a7-4d1a-9f1d-4b2ba850a07b",
+    "userId": "472dd3c0-510c-4a7d-af89-bdacb959c09e",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049912245,
+    "completedAt": 1777049924462,
+    "answers": []
+  },
+  {
+    "id": "e5a99f65-7fa2-4ef8-83e3-c35aaf7bfe49",
+    "userId": "31b56284-96c6-4dc3-84c5-d2d5db89179d",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777058807828,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "16b3755c-2497-4291-9af4-b3374c4d004c",
+    "userId": "229f7c1f-e969-490a-92b3-052e934d61ce",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517077678,
+    "completedAt": 1785517106532,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "828e5e3f-37f1-4d81-86f7-83d241b34c91",
+    "userId": "1529e9a9-851d-48ba-96b9-001f18cd83e2",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777053281787,
+    "answers": []
+  },
+  {
+    "id": "61f87cb4-92fa-4d33-9117-2a466df1684c",
+    "userId": "441e66f9-9163-4220-a43d-be2f5ef6e825",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785518964683,
+    "completedAt": 1785518995864,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "d626496b-0703-4f1a-98a9-e0ed53b97e80",
+    "userId": "7ced838c-ed07-42bc-9082-b7ef6334578a",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976875850,
+    "completedAt": 1776976875856,
+    "answers": []
+  },
+  {
+    "id": "7675d0a1-b483-4204-8e08-207dabb49577",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1778524833567,
+    "answers": []
+  },
+  {
+    "id": "76d031a7-023e-4212-8d45-2f88b7e5f3b5",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "quizId": "quiz-002",
-    "quizTitle": "Rajasthan GK",
+    "score": 4,
+    "total": 4,
     "status": "completed",
-    "startedAt": 1775986662701,
-    "expiresAt": 1775987862701,
-    "timeLimitMinutes": 20,
+    "startedAt": 1778524723905,
+    "completedAt": 1778524761607,
     "answers": [
+      {
+        "selected": "जैसलमेर",
+        "questionId": "q1"
+      },
+      {
+        "selected": "33",
+        "questionId": "q2"
+      },
+      {
+        "selected": "ऊँट",
+        "questionId": "q3"
+      },
+      {
+        "selected": "रोहिड़ा",
+        "questionId": "q4"
+      }
+    ]
+  },
+  {
+    "id": "e4eed194-7060-4a9a-9433-d24b7ac4b43d",
+    "userId": "007d7ff2-e692-4d1d-8e14-bf6c600f4948",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785519202738,
+    "completedAt": 1785519234363,
+    "answers": []
+  },
+  {
+    "id": "023c0f15-bf63-46d8-bdb3-8ea81eec8238",
+    "userId": "b936e64e-afac-42f8-88a1-909e9989893d",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045261033,
+    "completedAt": 1777045270161,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "4e2bd659-e01d-4593-8c6c-e99d8fe36675",
+    "userId": "e94e1e58-9cf0-4669-9960-225643732667",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785518339074,
+    "completedAt": 1785518369419,
+    "answers": []
+  },
+  {
+    "id": "b30d5977-fc9e-410f-a006-5a28c4156682",
+    "userId": "64e8d818-0907-4854-9436-489e166532e6",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777064537901,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "512bf98b-4518-47c0-a7eb-479651558517",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-002",
+    "score": 3,
+    "total": 4,
+    "status": "completed",
+    "startedAt": 1785525998830,
+    "completedAt": 1785526053615,
+    "answers": [
+      {
+        "questionId": "q1",
+        "selected": "जैसलमेर"
+      },
       {
         "questionId": "q2",
-        "selected": "33"
+        "selected": "50"
       },
       {
         "questionId": "q3",
@@ -205,258 +277,1676 @@
         "questionId": "q4",
         "selected": "रोहिड़ा"
       }
-    ],
-    "createdAt": 1775986662701,
-    "completedAt": 1775986684467,
-    "score": 3,
-    "total": 4
+    ]
   },
   {
-    "id": "28f69b8e-471f-4e0d-aa91-51bf2a3a27da",
-    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "id": "a3468021-1b4c-4958-bf2e-262a0cff8ebf",
+    "userId": "e98d43c3-46de-4269-b2e8-b963887a1ff5",
     "quizId": "quiz-001",
-    "quizTitle": "General Knowledge - Basic",
+    "score": 0,
+    "total": 7,
     "status": "completed",
-    "startedAt": 1775987983959,
-    "expiresAt": 1775989183959,
-    "timeLimitMinutes": 20,
+    "startedAt": 1785517849190,
+    "completedAt": 1785517879651,
+    "answers": []
+  },
+  {
+    "id": "1f3f9c24-d47f-4e29-93d8-f0160f66df46",
+    "userId": "b68c72ca-3c49-42a5-aabf-b915ce3fde25",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785516944359,
+    "answers": []
+  },
+  {
+    "id": "09891cfb-b238-49d1-b708-5c6913974372",
+    "userId": "51d9d994-8d97-47d7-a54d-aa29f1887b82",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777049682025,
     "answers": [
       {
-        "questionId": "q1",
-        "selected": "मोर"
-      },
-      {
-        "questionId": "q2",
-        "selected": "नई दिल्ली"
-      },
-      {
-        "questionId": "q3",
-        "selected": "4"
-      },
-      {
-        "questionId": "q4",
-        "selected": "जयपुर"
-      },
-      {
-        "questionId": "q5",
-        "selected": "एशिया"
-      },
-      {
-        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
-        "selected": "Jaipur"
+        "selected": "तोता",
+        "questionId": "q1"
       }
-    ],
-    "createdAt": 1775987983959,
-    "completedAt": 1775988009536,
-    "score": 6,
-    "total": 7
+    ]
+  },
+  {
+    "id": "e6dd04ec-5cf0-4f85-9769-f4f278cdc3cd",
+    "userId": "a5bf697e-e47e-4047-be6d-44af2b9d1a6e",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776988993330,
+    "completedAt": 1776989001127,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "34cc364d-c7b1-4749-832c-673309bcb40b",
+    "userId": "00475f75-ea6c-4305-a398-bee0fc36c4fc",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045462904,
+    "completedAt": 1777045472596,
+    "answers": []
+  },
+  {
+    "id": "6292018f-4149-4610-870f-4176b0bfd1e1",
+    "userId": "8ceb7b0b-dcc5-43a9-bd7b-15dd423c570c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984520002,
+    "completedAt": 1776984523121,
+    "answers": []
+  },
+  {
+    "id": "b45d914c-1669-4468-8784-921b12191ab3",
+    "userId": "8f4148ef-8ce6-466e-9264-2e4edd0a72a2",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777048262752,
+    "answers": []
+  },
+  {
+    "id": "dcab69ff-3160-457a-a86e-e8da9b19bb31",
+    "userId": "cf600b87-76de-47f0-908d-d882eb14e3f8",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057777773,
+    "completedAt": 1777057794311,
+    "answers": []
+  },
+  {
+    "id": "2c27c85f-99f7-43ad-aecd-b7f9acf83127",
+    "userId": "9ccbb330-e9ad-48c0-bf4b-d033f885a1de",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777051773643,
+    "completedAt": 1777051786730,
+    "answers": []
+  },
+  {
+    "id": "237ae544-8191-4d2a-b590-acc005a570c9",
+    "userId": "5eaa2ee9-7e5e-4f73-8284-efb04dc3dcf1",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776989154679,
+    "completedAt": 1776989163187,
+    "answers": []
+  },
+  {
+    "id": "93e59bf7-7e2b-40ae-a9b2-effe3f267ab7",
+    "userId": "0eb69929-a619-48aa-a60b-d3c8e1b713b0",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777048276666,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "9267786e-55ce-43a2-b5bb-32ce6f6c07e2",
+    "userId": "d9fdbcdd-3b77-460b-8e3a-84ca8510d8ee",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987947053,
+    "completedAt": 1776987954336,
+    "answers": []
+  },
+  {
+    "id": "690999b0-7359-45eb-97d8-40a2752c2963",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "3e35794e-aa6f-4cbe-9ae7-a9d526edc547",
+    "score": 15,
+    "total": 15,
+    "status": "completed",
+    "startedAt": 1775936611794,
+    "completedAt": 1775936713249,
+    "answers": []
+  },
+  {
+    "id": "5b87c137-b4c2-4f48-b322-b067ce9253ca",
+    "userId": "528b61e9-b3cc-4222-92e9-b6d262185e1b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986943462,
+    "completedAt": 1776986949104,
+    "answers": []
+  },
+  {
+    "id": "c6966fe6-a4a8-445e-8048-2d694db809fe",
+    "userId": "b39563c4-3e2a-4f5e-9b59-375bd154638f",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777048485238,
+    "completedAt": 1777048496389,
+    "answers": []
+  },
+  {
+    "id": "e5b7295a-45ee-476a-b204-e3b7b233b66c",
+    "userId": "c424ccb7-0d6b-4171-8e90-7aa983f46ccb",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777048302092,
+    "completedAt": 1777048312247,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "295ccda9-21e0-4e7a-a381-27f7c49775c4",
+    "userId": "ab242a34-6faa-467d-99ba-7b2b258691ed",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777045227709,
+    "answers": []
+  },
+  {
+    "id": "0d81e434-17a1-48a3-b4e5-c76b8d5e05b7",
+    "userId": "493d02c9-57dd-4df0-ae3e-1e56cc3f90e0",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776988977476,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "12946d03-7833-4291-b272-62d9c43c4060",
+    "userId": "2d328abe-eb0f-4071-9d5b-665b52301555",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049949815,
+    "completedAt": 1777049961980,
+    "answers": []
+  },
+  {
+    "id": "5e14e8fe-d172-4724-a749-5c8e75856457",
+    "userId": "9441f233-8e1f-4a09-a8e8-41201b6ee97d",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517184057,
+    "completedAt": 1785517213203,
+    "answers": []
+  },
+  {
+    "id": "822aa78c-7694-4db3-ba33-9f15e2495b99",
+    "userId": "bab0c76d-51eb-4da1-8af6-c7d23177355b",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777053303933,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "3f88e28b-bafd-4451-a96d-a7679156b2df",
+    "userId": "53a0f297-e857-4fee-a35b-2c5a66357564",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053339345,
+    "completedAt": 1777053353097,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "b26536d5-4ec5-4366-b04b-e24e10ea93fd",
+    "userId": "1c48c99a-e673-4e6b-b000-6ff31ee887e7",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785516996505,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "b4eb8f2a-14fe-4f74-be6f-ba8c2658e774",
+    "userId": "1d4ed06d-b3c2-44ff-806f-38bae76a0b98",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785517596502,
+    "answers": []
+  },
+  {
+    "id": "4f819fa4-1963-4baa-a59b-e09d50d22bb9",
+    "userId": "5d83cc5f-7724-4cb4-bb8b-37ecc073cb1b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517736238,
+    "completedAt": 1785517766714,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "047e1ae4-034f-490e-ae84-aa922ea994b3",
+    "userId": "942dd11e-0de6-4c9e-94d3-d6da3f8f8c96",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785518029414,
+    "completedAt": 1785518059331,
+    "answers": []
+  },
+  {
+    "id": "1a447162-4f0a-4eb7-8741-f092a5c38949",
+    "userId": "bee20746-b841-4759-9163-8d6d143226c7",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785518875848,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "f7e600b3-82c9-4e28-8d04-f69d0aac0b57",
+    "userId": "9c5d7ae7-56b9-4d1c-8190-6b5882d7a668",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785519081030,
+    "completedAt": 1785519112407,
+    "answers": []
+  },
+  {
+    "id": "961aaf10-9dff-44ac-b38b-5f52429822f5",
+    "userId": "55158c22-4fae-49ab-a028-df83d173469f",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053383349,
+    "completedAt": 1777053396978,
+    "answers": []
+  },
+  {
+    "id": "fc67b271-8433-42cd-b8b3-81b899ae14cd",
+    "userId": "d3006013-7210-4c0f-ae3b-2d4a62852fc7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776989120723,
+    "completedAt": 1776989128936,
+    "answers": []
+  },
+  {
+    "id": "2137ae2b-23e2-45ce-ae8f-ab86fbab0ba3",
+    "userId": "966b59c7-d607-4c99-aa2c-6baa76810c41",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986041227,
+    "completedAt": 1776986045690,
+    "answers": []
+  },
+  {
+    "id": "acfb8315-0d5b-4d98-8ee1-45e9bb82af13",
+    "userId": "6d8ed291-576c-4fe0-8657-cd8c8a0761d5",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777045239501,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "12480920-e910-4a7e-b08e-afb6b87082c6",
+    "userId": "48d6daad-204d-4578-beaa-82d390df3c29",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517598487,
+    "completedAt": 1785517628148,
+    "answers": []
+  },
+  {
+    "id": "a8e03a9f-a57c-4fc7-8aba-fdb297448971",
+    "userId": "88e2ca53-8470-4edf-9d99-8bbb12900478",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060478624,
+    "completedAt": 1777060497037,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "0b9023a3-c4d2-49e8-9c3e-17dfb2262d51",
+    "userId": "daf401cf-5008-4c11-b5b3-71f4a8b171bf",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517798507,
+    "completedAt": 1785517829145,
+    "answers": []
+  },
+  {
+    "id": "1387c1c3-1613-46ec-aeb0-5aff37738ade",
+    "userId": "b5369290-413d-401c-adf5-11c1df95181c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057483245,
+    "completedAt": 1777057499263,
+    "answers": []
+  },
+  {
+    "id": "a6256e11-5999-43c1-a6da-325ae3f142fb",
+    "userId": "8d916818-f65c-4638-946c-b172c1e4da4f",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1785517651039,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "5c024ebd-3df8-4389-bd46-a2e7e8bf0188",
+    "userId": "daf401cf-5008-4c11-b5b3-71f4a8b171bf",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1785517711031,
+    "completedAt": 1785517740369,
+    "answers": []
+  },
+  {
+    "id": "164903b2-ac24-4e33-a67c-d40fa8d6c022",
+    "userId": "d0166c6b-c568-4edd-aac7-8a76e69a640e",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777048517808,
+    "completedAt": 1777048529100,
+    "answers": []
+  },
+  {
+    "id": "ba9dedf7-ffe3-46d8-94d5-e4a7971adf6f",
+    "userId": "c18503ad-2ca6-409b-abea-b9d3fd5b1ab2",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777064500713,
+    "answers": []
+  },
+  {
+    "id": "002d53b3-b622-48d5-a9d2-0c16e699358a",
+    "userId": "57fa9fbb-4234-403f-90d4-6950fc3692d9",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984535129,
+    "completedAt": 1776984538515,
+    "answers": []
+  },
+  {
+    "id": "a2e20561-4dae-4bbf-8584-e2d5e3726698",
+    "userId": "13626110-828b-4796-94c0-dc4363c9b057",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777058778305,
+    "answers": []
+  },
+  {
+    "id": "dda9f3d9-e05d-469f-8a08-d8040f3bd0aa",
+    "userId": "c14fee1e-00ab-42d9-8aa4-6d454b80bef0",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062588653,
+    "completedAt": 1777062608489,
+    "answers": []
+  },
+  {
+    "id": "96d8dc2f-1f34-4c82-b36f-cc0adbe1ff3c",
+    "userId": "ff7ab42e-8f5c-449e-9368-8a1d1ce70087",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777064675503,
+    "completedAt": 1777064697165,
+    "answers": []
+  },
+  {
+    "id": "bcebf1a3-ead1-4878-8257-3be4e18c2630",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "quiz-002",
+    "score": 3,
+    "total": 4,
+    "status": "completed",
+    "startedAt": 1775986662701,
+    "completedAt": 1775986684467,
+    "answers": []
+  },
+  {
+    "id": "e9d9090d-613e-4278-809b-6954e4c71e8b",
+    "userId": "1bb61562-fe7e-4c79-be28-f3db54bbca06",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776976875344,
+    "answers": []
+  },
+  {
+    "id": "20a8be30-c7f6-4c5f-8aa6-bb097a5aeb5b",
+    "userId": "094dd3e5-0655-48b7-9d28-495fa6b8bc1c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777059288048,
+    "completedAt": 1777059305969,
+    "answers": []
+  },
+  {
+    "id": "f215c62c-f791-488b-aa99-f280234af4d6",
+    "userId": "b8ca6fbf-fd0c-4c87-b8e1-17739e8fdefe",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986097594,
+    "completedAt": 1776986102381,
+    "answers": []
+  },
+  {
+    "id": "d201f5fb-46cf-423b-9b35-09d772bb0178",
+    "userId": "4a3764a1-5be4-4830-902f-ca56b4525f80",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777065073518,
+    "completedAt": 1777065095438,
+    "answers": []
+  },
+  {
+    "id": "6f504670-7a24-4ed1-a3b5-8a7afd3a602d",
+    "userId": "699f4ee1-367d-4807-9ab3-7b1f7d094f2b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986107692,
+    "completedAt": 1776986112644,
+    "answers": []
+  },
+  {
+    "id": "9df81340-3497-4b45-a746-f80afa849dfa",
+    "userId": "0e2668bb-2a18-4bf7-bbbd-fa0c4d9b40ec",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986052131,
+    "completedAt": 1776986056687,
+    "answers": []
+  },
+  {
+    "id": "426ca1aa-f2f6-4dba-9db6-c67e0b01ac8c",
+    "userId": "0cf743d7-e273-4dfc-a57c-8b0343e980fd",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976876365,
+    "completedAt": 1776976876369,
+    "answers": []
+  },
+  {
+    "id": "e4aeb9fa-42e3-4033-a481-47702b8ef48c",
+    "userId": "453d9e02-49ed-49e9-99ea-41dfd768df3c",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776986920774,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "d8cb7e74-372b-4c10-acee-2db955c6c644",
+    "userId": "171f9f07-0ee7-493a-9fc3-814f0b3339b0",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987037885,
+    "completedAt": 1776987043822,
+    "answers": []
+  },
+  {
+    "id": "7604b2d1-bc21-4706-a7a2-0a5251e78f7d",
+    "userId": "de1ecb38-d526-424d-881d-30e32f459ace",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777055118619,
+    "completedAt": 1777055133977,
+    "answers": []
+  },
+  {
+    "id": "646f05e2-96a8-4fc0-ac07-3bd95ed11b10",
+    "userId": "d94983bd-71cc-4b91-af61-25aadf1cb933",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776988969514,
+    "answers": []
+  },
+  {
+    "id": "82b26e18-f4de-40c5-8143-c7c74546dfff",
+    "userId": "6d8130b9-b7bc-41d9-9b0b-c50e86e58934",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777057385133,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "eba76d9f-e764-4cd9-bd92-d8b90f3911c2",
+    "userId": "a1658fcd-44cf-483e-9b8b-324a99e7d35b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777048359664,
+    "completedAt": 1777048370120,
+    "answers": []
+  },
+  {
+    "id": "0d3abcc5-311a-4a6f-b4ab-f2aefb869c75",
+    "userId": "1ffd954d-fa7f-4677-8ed1-aded90d683d7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986956730,
+    "completedAt": 1776986962452,
+    "answers": []
+  },
+  {
+    "id": "02619262-7db1-45d2-9e52-927b17ea6641",
+    "userId": "d94077d2-15c1-48c4-9b08-e06c69b52738",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049777604,
+    "completedAt": 1777049789058,
+    "answers": []
+  },
+  {
+    "id": "f2b4566a-2fa1-4546-84a8-3db65a508fa2",
+    "userId": "bdf36828-6d21-4728-b89a-41fc8333f244",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776987794989,
+    "answers": []
+  },
+  {
+    "id": "365c9b47-0a86-4de8-ac08-63b5bf234cf1",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "score": 8,
+    "total": 10,
+    "status": "completed",
+    "startedAt": 1775985593314,
+    "completedAt": 1775985640883,
+    "answers": []
+  },
+  {
+    "id": "538e736b-9238-4988-a4a2-737eba65568e",
+    "userId": "84de5d32-8f8b-48a8-88bb-296d05ca3c7a",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776986023248,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
   },
   {
     "id": "ca0f9574-27aa-4493-adff-1bd7d34b0fff",
     "userId": "201ae6be-dc46-4b0c-b031-f87ad73ae2fd",
     "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-    "quizTitle": "करंट अफेयर्स क्विज",
+    "score": 9,
+    "total": 10,
     "status": "completed",
     "startedAt": 1776015923844,
-    "expiresAt": 1776016523844,
-    "timeLimitMinutes": 10,
+    "completedAt": 1776015948193,
+    "answers": []
+  },
+  {
+    "id": "4cce90a1-e96c-4f52-9724-aa1ead6dfbfd",
+    "userId": "d332b19c-6869-43d6-bf69-5f4141c50d63",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777051734164,
+    "completedAt": 1777051747051,
     "answers": [
       {
-        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
-        "selected": "सूर्य"
-      },
-      {
-        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
-        "selected": "दिल्ली"
-      },
-      {
-        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-        "selected": "द्रौपदी मुर्मू"
-      },
-      {
-        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
-        "selected": "भारत"
-      },
-      {
-        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
-        "selected": "सऊदी अरब"
-      },
-      {
-        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-        "selected": "उत्तराखंड"
-      },
-      {
-        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-        "selected": "Aditya-L1"
-      },
-      {
-        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-        "selected": "DY चंद्रचूड़"
-      },
-      {
-        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
-        "selected": "गुजरात"
+        "selected": "तोता",
+        "questionId": "q1"
       }
-    ],
-    "createdAt": 1776015923844,
-    "updatedAt": 1776015945942,
-    "completedAt": 1776015948193,
-    "score": 9,
-    "total": 10
+    ]
+  },
+  {
+    "id": "9023e119-7615-4ae0-9940-3d24e79715ea",
+    "userId": "abcd1af6-e022-46eb-a20c-0ee9287f83f2",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987062628,
+    "completedAt": 1776987068899,
+    "answers": []
+  },
+  {
+    "id": "740a60e4-1750-4887-a1c7-a400a82715c5",
+    "userId": "82d29b9f-f380-4486-8ea2-84f762ea5d00",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776986018647,
+    "answers": []
+  },
+  {
+    "id": "96b2bea0-6b83-45e7-9d7a-651743b964db",
+    "userId": "3995aae0-5bdc-49af-b78f-8b4727b41021",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777054898047,
+    "completedAt": 1777054913539,
+    "answers": []
+  },
+  {
+    "id": "92714a48-e6bf-4f2a-a16b-452afa611ebd",
+    "userId": "eb28c060-b463-42bb-be72-cc5c390d9d39",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984585856,
+    "completedAt": 1776984589595,
+    "answers": []
+  },
+  {
+    "id": "22006b85-6be7-408c-b01f-0ef420ace4d5",
+    "userId": "3e470a5d-f777-4c24-9f8f-280cd0fcc892",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777058915183,
+    "completedAt": 1777058932534,
+    "answers": []
+  },
+  {
+    "id": "24f1d2a4-ba28-4d2e-95e9-6b6d0adfc9e0",
+    "userId": "79e85641-d846-439f-a1fa-a351d4666fa2",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045306007,
+    "completedAt": 1777045315752,
+    "answers": []
+  },
+  {
+    "id": "bbe2c1d7-f512-4fb1-b5df-70c12bba4d7b",
+    "userId": "6f33cc1c-0429-4d78-b023-46cdcec04382",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777060428297,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "32577603-f097-4c07-80fc-bc6b79aec3a4",
+    "userId": "17eb0e56-7995-44bf-94dc-157aa6465f1c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777052009347,
+    "completedAt": 1777052022815,
+    "answers": []
+  },
+  {
+    "id": "e4346263-c959-4e2e-9d44-aaf55064cdfc",
+    "userId": "5c97b2e7-6a30-4e31-85a8-12d49dc8fbe8",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976878911,
+    "completedAt": 1776976878923,
+    "answers": []
+  },
+  {
+    "id": "0d3d945e-a389-4d5b-8c73-c16ed0c32c9f",
+    "userId": "8046c33a-6c38-415e-b7b0-5bfff5ccb44f",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777049665530,
+    "answers": []
+  },
+  {
+    "id": "d4ec09d7-7b07-49ac-85d7-67b8d49b5172",
+    "userId": "7aa60a05-f449-48e1-88ba-c40696d6382e",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045283134,
+    "completedAt": 1777045292129,
+    "answers": []
+  },
+  {
+    "id": "9cc7aa49-99e3-4e03-854b-69c871b6e2d3",
+    "userId": "30cdc9cf-50aa-4f51-b60e-862ff3c5ea12",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777055067110,
+    "completedAt": 1777055082170,
+    "answers": []
+  },
+  {
+    "id": "af766870-a1fd-40d5-8901-d3c746fa84b3",
+    "userId": "5eaa2ee9-7e5e-4f73-8284-efb04dc3dcf1",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776989137788,
+    "completedAt": 1776989146150,
+    "answers": []
+  },
+  {
+    "id": "44b872f2-747f-4a67-bdba-1a898a8bd20c",
+    "userId": "699f4ee1-367d-4807-9ab3-7b1f7d094f2b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986117766,
+    "completedAt": 1776986122825,
+    "answers": []
+  },
+  {
+    "id": "b7d3fcec-29a1-4318-beb9-97365d28f289",
+    "userId": "dda19a1e-58ae-44ec-af71-d28d8ab14445",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053679409,
+    "completedAt": 1777053694404,
+    "answers": []
+  },
+  {
+    "id": "b443df79-3b56-4054-b122-1c7a42f6fb08",
+    "userId": "d3b6e927-6087-4612-ba33-04e43a259cb9",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777057357445,
+    "answers": []
+  },
+  {
+    "id": "642a7f79-2229-48f3-83ac-f8852c26e99d",
+    "userId": "72758329-a4cb-42a6-8495-cbed65604ab3",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057720317,
+    "completedAt": 1777057736660,
+    "answers": []
+  },
+  {
+    "id": "3b60c368-0b5f-453e-82ed-ebfe50b41101",
+    "userId": "69138879-42e2-407b-9590-335dee862bd3",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049710121,
+    "completedAt": 1777049721302,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "5ac057df-be21-4855-8613-afa1f86523d4",
+    "userId": "09ce0326-06b8-4c03-82e5-92085b2c3782",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053590553,
+    "completedAt": 1777053605304,
+    "answers": []
+  },
+  {
+    "id": "396d0a8b-a8d4-4f03-ad85-865f0e77a5a7",
+    "userId": "d167400f-e8aa-463f-b860-2cc00b51da36",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777048330244,
+    "completedAt": 1777048340396,
+    "answers": []
+  },
+  {
+    "id": "5bebf0fd-1df3-4822-8cb2-b3b31e931a8a",
+    "userId": "37d85531-0454-4c31-a59b-657b3291307b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049742976,
+    "completedAt": 1777049754435,
+    "answers": []
+  },
+  {
+    "id": "0ed1a416-72cc-4ad9-a802-659a40561416",
+    "userId": "2df5ff53-8555-4519-b6ab-9d41f8045c50",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045417102,
+    "completedAt": 1777045426387,
+    "answers": []
+  },
+  {
+    "id": "73304a3c-0cc7-4915-9cba-8d9114974519",
+    "userId": "de1ecb38-d526-424d-881d-30e32f459ace",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777055160999,
+    "completedAt": 1777055176359,
+    "answers": []
+  },
+  {
+    "id": "929870b1-0133-4d42-af92-04557645c461",
+    "userId": "f04ff94a-0954-4913-b6ee-a92056c9d71d",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777058979204,
+    "completedAt": 1777058996469,
+    "answers": []
+  },
+  {
+    "id": "edc59491-b1e1-4e63-9c83-08b87d7e7101",
+    "userId": "3a5716c4-fbc5-4455-ba71-9df242e9dd93",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777054729058,
+    "answers": []
+  },
+  {
+    "id": "0e44cd65-c493-4e15-addc-b9bd274a3711",
+    "userId": "00a210d1-b9d1-4057-b92f-93120827d974",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777051701119,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "8462f25f-bd49-4688-a27a-3b036a762bc7",
+    "userId": "e785dd25-e966-4590-b228-8f553dc932cb",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777059172464,
+    "completedAt": 1777059190032,
+    "answers": []
+  },
+  {
+    "id": "9113fb2d-8bd2-42cf-92d6-9f46f8d53ad8",
+    "userId": "7656e957-c3cd-4204-9907-b9daa5db052c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777054794999,
+    "completedAt": 1777054810316,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "5f567530-d76f-47ff-ad5e-8ffac94c452a",
+    "userId": "cf600b87-76de-47f0-908d-d882eb14e3f8",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057823882,
+    "completedAt": 1777057840604,
+    "answers": []
+  },
+  {
+    "id": "ac7effbe-2b1a-4523-8640-fe5cbdd4b43b",
+    "userId": "094dd3e5-0655-48b7-9d28-495fa6b8bc1c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777059236667,
+    "completedAt": 1777059254378,
+    "answers": []
+  },
+  {
+    "id": "3fd3cf93-9efd-410c-abe7-ddf4dff623be",
+    "userId": "b7dd1e2f-3279-4915-8b3e-489611f1734b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777051966184,
+    "completedAt": 1777051979654,
+    "answers": []
+  },
+  {
+    "id": "ca983040-73fb-47a7-bfbf-2b08ea0da56d",
+    "userId": "fa7dec7e-5fee-4535-bb3a-88c51c24b38c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057428264,
+    "completedAt": 1777057444684,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "28f69b8e-471f-4e0d-aa91-51bf2a3a27da",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "quiz-001",
+    "score": 6,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1775987983959,
+    "completedAt": 1775988009536,
+    "answers": []
+  },
+  {
+    "id": "aeca322c-3173-4aab-a7df-55d0744c9034",
+    "userId": "93789086-0db9-4e4f-b1bf-004186d43c64",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777062348880,
+    "answers": []
+  },
+  {
+    "id": "bed6aabd-6209-4461-9039-386be91bed08",
+    "userId": "0bca5888-b1fb-434c-b66e-1d8a8a637fd6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777054845250,
+    "completedAt": 1777054860580,
+    "answers": []
+  },
+  {
+    "id": "abacf36c-36e1-46db-ba6c-37d6f319757f",
+    "userId": "9d0e4597-6bdd-4fd4-babf-2e05d722388b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777064597693,
+    "completedAt": 1777064619004,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "53ea22dd-7771-4c08-bc87-afc421d45779",
+    "userId": "1e78fe24-e9bd-4258-a70f-6159d1458792",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062878439,
+    "completedAt": 1777062898555,
+    "answers": []
+  },
+  {
+    "id": "a82be897-c807-4d0c-9d06-4f20c765122c",
+    "userId": "bb49fdac-0bfc-482a-ab58-5d0a76f27004",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062512040,
+    "completedAt": 1777062532371,
+    "answers": []
+  },
+  {
+    "id": "8137c9d6-4781-46d3-9dab-012e0f0395b3",
+    "userId": "7e5863d8-c572-4e55-a6c7-028915ef11c7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777064757691,
+    "completedAt": 1777064779503,
+    "answers": []
+  },
+  {
+    "id": "bc19fee9-2fe3-4826-a443-abd0dc948459",
+    "userId": "b36c54cd-f21d-401a-9643-169a6afb5939",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777064991652,
+    "completedAt": 1777065013467,
+    "answers": []
+  },
+  {
+    "id": "d2f05b6c-22bf-4157-9ff9-40d08811c18e",
+    "userId": "92fa5110-fcec-4646-b871-eec3b9af3d76",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777051681233,
+    "answers": []
+  },
+  {
+    "id": "317dac88-6735-425d-915b-867efe7a8e57",
+    "userId": "c6a52188-046f-4612-8dea-84fd1dfcbce2",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777054754590,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "4bbdb893-05c5-4014-afbe-9a4800018d2c",
+    "userId": "8bf42e4f-99a6-47c8-af83-7a916c70ea20",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777060396553,
+    "answers": []
+  },
+  {
+    "id": "b0f996fb-ef5f-44cb-95cf-d1d953ff87bd",
+    "userId": "5940df29-d777-4070-9766-7b20ff5fd654",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060543990,
+    "completedAt": 1777060562558,
+    "answers": []
+  },
+  {
+    "id": "8ef7b078-a1d4-43e7-9114-7f53bf43c5d9",
+    "userId": "4ec14fc3-9503-44a9-9e68-029441f34ad7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060886546,
+    "completedAt": 1777060905536,
+    "answers": []
+  },
+  {
+    "id": "47b843f7-3a22-49e9-9c51-9d9691a29d26",
+    "userId": "4ec14fc3-9503-44a9-9e68-029441f34ad7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060941885,
+    "completedAt": 1777060960905,
+    "answers": []
+  },
+  {
+    "id": "a3c20b05-948a-46a0-985d-04a95cd1bf77",
+    "userId": "43e2b8b1-1734-43c8-be24-136a716958ff",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1777062384489,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "e78cc24c-23c6-48a4-8bbb-1e0ce2ab4cc5",
+    "userId": "01bde386-9b9a-4cff-bf3c-f75733a85fe6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986931965,
+    "completedAt": 1776986937462,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "eb13d7d0-c7e1-4966-ba5f-7d0a640195c2",
+    "userId": "13a08f5a-a5a2-48ed-9aaa-46123dd296ce",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776984510240,
+    "answers": []
+  },
+  {
+    "id": "69bf298b-63bb-4575-a854-4bf81b804f16",
+    "userId": "eb28c060-b463-42bb-be72-cc5c390d9d39",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984593470,
+    "completedAt": 1776984597335,
+    "answers": []
+  },
+  {
+    "id": "8fa5407d-fa99-4ed2-ac25-619ca5c8af0f",
+    "userId": "4a766aef-9992-4454-b49d-75b6bbac2584",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776976875583,
+    "answers": []
+  },
+  {
+    "id": "4373d096-0ab7-4374-859b-4b6b865dda0f",
+    "userId": "34527fe1-b88d-449c-8296-bb2ce407680f",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984526748,
+    "completedAt": 1776984530018,
+    "answers": []
+  },
+  {
+    "id": "ccdda2ce-e543-486a-90f4-b7f7f6e43d91",
+    "userId": "a3f0fb72-939a-4a37-b15a-021479307f98",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776984578170,
+    "completedAt": 1776984581759,
+    "answers": []
+  },
+  {
+    "id": "cb061ca7-2022-4358-9010-40a7471fe8e1",
+    "userId": "4d098eb9-f8a4-4a18-971f-caa54182fc53",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776984513572,
+    "answers": []
+  },
+  {
+    "id": "c3118a09-180c-4168-b798-f00fd3cef1b3",
+    "userId": "abcd1af6-e022-46eb-a20c-0ee9287f83f2",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987050284,
+    "completedAt": 1776987056360,
+    "answers": []
+  },
+  {
+    "id": "c630ca61-5921-43ec-ba05-4e1f0fc1ad0b",
+    "userId": "2d328abe-eb0f-4071-9d5b-665b52301555",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777049981840,
+    "completedAt": 1777049994365,
+    "answers": []
+  },
+  {
+    "id": "d920b250-453e-4a55-95d2-a1b41209d1a8",
+    "userId": "710836c4-a803-4cf6-b06c-c79b3ed80456",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776989027261,
+    "completedAt": 1776989035418,
+    "answers": []
+  },
+  {
+    "id": "83376b2d-b303-43c4-8e18-418c0ee5006b",
+    "userId": "17eb0e56-7995-44bf-94dc-157aa6465f1c",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777052045360,
+    "completedAt": 1777052059127,
+    "answers": []
+  },
+  {
+    "id": "f82adf10-4a94-410b-b160-fda66cd09b48",
+    "userId": "311ea3de-b8b5-4471-9cbe-e8a52175b273",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987845114,
+    "completedAt": 1776987852037,
+    "answers": []
+  },
+  {
+    "id": "59eaabef-0688-44bf-b9ab-5a3e7bdf0c48",
+    "userId": "96ba2559-027a-4228-b6bc-cf948cd0ceca",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777057540899,
+    "completedAt": 1777057557094,
+    "answers": []
+  },
+  {
+    "id": "0b84a01a-0784-4221-b133-ac5222a715ed",
+    "userId": "acd5e4c4-2fdc-40d7-b1af-f6368d9b82c1",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060613288,
+    "completedAt": 1777060632007,
+    "answers": []
+  },
+  {
+    "id": "b784c667-1f8d-40dd-a728-df13e1704409",
+    "userId": "dda19a1e-58ae-44ec-af71-d28d8ab14445",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053639266,
+    "completedAt": 1777053653947,
+    "answers": []
+  },
+  {
+    "id": "5a133379-2a05-40c4-b872-89d5fb91df68",
+    "userId": "dd3706c2-d064-4d70-b92a-4647f2a6b2c4",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777053429447,
+    "completedAt": 1777053443372,
+    "answers": []
+  },
+  {
+    "id": "919a105c-cff7-450b-b1b1-ba27b1a95e18",
+    "userId": "1f3d75c8-0316-4890-8c29-98789e0d3419",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987815462,
+    "completedAt": 1776987822149,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "1925875a-a465-4024-aa3a-e923ce3b7a76",
+    "userId": "c1f75ef4-7851-42b7-9526-2e15538f13fb",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062438807,
+    "completedAt": 1777062459434,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "92743153-024d-41b8-a9e5-7affd3f6adfb",
+    "userId": "8b1ca6e3-2754-47f4-a286-5e67dcfc8c8e",
+    "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
+    "score": 8,
+    "total": 10,
+    "status": "completed",
+    "startedAt": 1775983543713,
+    "completedAt": 1775983620382,
+    "answers": []
+  },
+  {
+    "id": "87d57044-253b-4243-85b3-ad946c0c6dfd",
+    "userId": "69365de2-cca9-42d3-962a-acd610bc24c7",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976876125,
+    "completedAt": 1776976876128,
+    "answers": []
+  },
+  {
+    "id": "449e99a3-d941-46b8-85b4-37ff2f8e36a7",
+    "userId": "58b512b3-072d-44d2-9bd9-bbac61c6afc6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062804054,
+    "completedAt": 1777062824044,
+    "answers": []
+  },
+  {
+    "id": "d0e2343b-6db2-4ff2-8d2b-6cd98989afdd",
+    "userId": "6196e5f6-d20f-45eb-a529-b2081e295691",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976878637,
+    "completedAt": 1776976878642,
+    "answers": []
+  },
+  {
+    "id": "b883d8f2-1e56-4f64-9e1f-06b4ba566bd6",
+    "userId": "90709260-ef73-4531-95c1-af4dc2c0dd83",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776987801884,
+    "answers": [
+      {
+        "selected": "तोता",
+        "questionId": "q1"
+      }
+    ]
+  },
+  {
+    "id": "a1ed80ee-f905-461c-8902-a5fa004f5559",
+    "userId": "00475f75-ea6c-4305-a398-bee0fc36c4fc",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777045441427,
+    "completedAt": 1777045451006,
+    "answers": []
+  },
+  {
+    "id": "1066cbd5-cddc-463b-ae09-379cabc61a41",
+    "userId": "5c97b2e7-6a30-4e31-85a8-12d49dc8fbe8",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776976878874,
+    "completedAt": 1776976878878,
+    "answers": []
+  },
+  {
+    "id": "b4df2d11-ebd7-4006-b44e-75504fe1c386",
+    "userId": "4a3764a1-5be4-4830-902f-ca56b4525f80",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777065138047,
+    "completedAt": 1777065160078,
+    "answers": []
   },
   {
     "id": "974cb58a-4adf-4277-af5c-406b562c006c",
     "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-    "quizTitle": "करंट अफेयर्स क्विज",
+    "score": 8,
+    "total": 10,
     "status": "completed",
     "startedAt": 1776023274267,
-    "expiresAt": 1776023874267,
-    "timeLimitMinutes": 10,
-    "answers": [
-      {
-        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
-        "selected": "सूर्य"
-      },
-      {
-        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
-        "selected": "दिल्ली"
-      },
-      {
-        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-        "selected": "द्रौपदी मुर्मू"
-      },
-      {
-        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
-        "selected": "भारत"
-      },
-      {
-        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-        "selected": "उत्तराखंड"
-      },
-      {
-        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-        "selected": "Chandrayaan-2"
-      },
-      {
-        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-        "selected": "DY चंद्रचूड़"
-      },
-      {
-        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
-        "selected": "गुजरात"
-      },
-      {
-        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
-        "selected": "डिजिटल पेमेंट"
-      }
-    ],
-    "createdAt": 1776023274267,
-    "updatedAt": 1776023320754,
     "completedAt": 1776023321967,
-    "score": 8,
-    "total": 10
-  },
-  {
-    "id": "8b3162a5-4be0-46ee-a31d-9ee5781d9667",
-    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
-    "quizId": "quiz-001",
-    "quizTitle": "General Knowledge - Basic",
-    "status": "completed",
-    "startedAt": 1776023420320,
-    "expiresAt": 1776024620320,
-    "timeLimitMinutes": 20,
-    "answers": [
-      {
-        "questionId": "q1",
-        "selected": "मोर"
-      },
-      {
-        "questionId": "q2",
-        "selected": "नई दिल्ली"
-      },
-      {
-        "questionId": "q3",
-        "selected": "4"
-      },
-      {
-        "questionId": "q4",
-        "selected": "उदयपुर"
-      },
-      {
-        "questionId": "q5",
-        "selected": "यूरोप"
-      },
-      {
-        "questionId": "17a47362-a1ca-4e03-812d-44a050847bad",
-        "selected": "Jodhpur"
-      },
-      {
-        "questionId": "490a7222-91e2-40d2-ade4-deeb6dce84f5",
-        "selected": "ffhvfvjl"
-      }
-    ],
-    "createdAt": 1776023420320,
-    "updatedAt": 1776023440450,
-    "completedAt": 1776023442220,
-    "score": 4,
-    "total": 7
+    "answers": []
   },
   {
     "id": "cea70b19-5f55-41fa-929f-e89be8fc89fa",
     "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
     "quizId": "7cf7e4b5-80d2-4c38-938c-ee3fb3076a4d",
-    "quizTitle": "करंट अफेयर्स क्विज",
+    "score": 8,
+    "total": 10,
     "status": "completed",
     "startedAt": 1776070195345,
-    "expiresAt": 1776070795345,
-    "timeLimitMinutes": 10,
+    "completedAt": 1776070226120,
+    "answers": []
+  },
+  {
+    "id": "fbcf97ea-e991-4a3d-b6ed-36520de890d0",
+    "userId": "1e78fe24-e9bd-4258-a70f-6159d1458792",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777062937249,
+    "completedAt": 1777062957421,
+    "answers": []
+  },
+  {
+    "id": "3f38cc4c-7ff1-4ec5-b8bc-c26cdb71ff5d",
+    "userId": "464858d6-5ebc-4a9b-b5c9-50e159535d79",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776986032055,
+    "completedAt": 1776986036372,
     "answers": [
       {
-        "questionId": "af019b51-a35b-4cbd-a5f2-9531e422cff7",
-        "selected": "सूर्य"
-      },
-      {
-        "questionId": "e874538d-b8a8-4298-b0cb-ef46d38ef348",
-        "selected": "दिल्ली"
-      },
-      {
-        "questionId": "ac179359-61ef-469a-88d3-5382e7abba78",
-        "selected": "द्रौपदी मुर्मू"
-      },
-      {
-        "questionId": "6e0474fc-a24f-40d1-8867-1a09f1e7f126",
-        "selected": "रूस"
-      },
-      {
-        "questionId": "d951a6f9-1f92-4824-83db-f798a1c58f9d",
-        "selected": "जर्मनी"
-      },
-      {
-        "questionId": "3c0bca9e-944c-4203-a8f7-2a5e24b631dc",
-        "selected": "उत्तराखंड"
-      },
-      {
-        "questionId": "5ed0d7b2-7e04-4152-9cc8-abe94d7e61e3",
-        "selected": "Aditya-L1"
-      },
-      {
-        "questionId": "1656933f-5303-404a-8e7d-08eda9a9f961",
-        "selected": "DY चंद्रचूड़"
-      },
-      {
-        "questionId": "bb549deb-7f20-4445-9cd7-2eccf35829cc",
-        "selected": "गुजरात"
-      },
-      {
-        "questionId": "fec3c768-a264-41a1-af0d-840e21f25165",
-        "selected": "डिजिटल पेमेंट"
+        "selected": "तोता",
+        "questionId": "q1"
       }
-    ],
-    "createdAt": 1776070195345,
-    "updatedAt": 1776070224587,
-    "completedAt": 1776070226120,
-    "score": 8,
-    "total": 10
+    ]
+  },
+  {
+    "id": "850176a0-ab46-40a1-b9bb-ae08904a5632",
+    "userId": "e250a086-b7c9-4328-ba2c-ce80a2ccf7f6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777060817044,
+    "completedAt": 1777060835918,
+    "answers": []
+  },
+  {
+    "id": "476e6d38-ae12-4587-9759-a1b887cc395f",
+    "userId": "1ec9dd4b-2b85-49f9-a702-d6041e5a36df",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987932180,
+    "completedAt": 1776987939336,
+    "answers": []
+  },
+  {
+    "id": "8b3162a5-4be0-46ee-a31d-9ee5781d9667",
+    "userId": "cb370536-35ed-4e83-b730-7070f92e1e04",
+    "quizId": "quiz-001",
+    "score": 4,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776023420320,
+    "completedAt": 1776023442220,
+    "answers": []
+  },
+  {
+    "id": "7f62965e-d1c6-4712-b6c2-a5b13a8b3650",
+    "userId": "27c2e320-c4ee-4327-8f3d-80fd9f3a482b",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1776987829351,
+    "completedAt": 1776987836198,
+    "answers": []
+  },
+  {
+    "id": "b9eb0aeb-594b-4819-97e6-15d779c69dca",
+    "userId": "85485af3-3337-4453-b0ad-f8df1bb858b6",
+    "quizId": "quiz-001",
+    "score": 0,
+    "total": 7,
+    "status": "completed",
+    "startedAt": 1777051815041,
+    "completedAt": 1777051828234,
+    "answers": []
+  },
+  {
+    "id": "8119beec-8ba9-462d-9526-ecbee553c6db",
+    "userId": "9f4ac1a8-6493-4acf-a2b8-389d2a386458",
+    "quizId": "quiz-001",
+    "status": "in-progress",
+    "startedAt": 1776986915092,
+    "answers": []
   }
 ]
