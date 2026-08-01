@@ -122,11 +122,15 @@ const saveUsers = async (users) => {
       );
     }
 
-    // JSON backup
-    await writeFile('users', normalizedUsers);
+    // JSON backup only for local development
+if (!process.env.VERCEL) {
+  await writeFile('users', normalizedUsers);
+}
   } catch (err) {
     console.error('DB users write failed, fallback JSON', err.message);
-    await writeFile('users', normalizedUsers);
+    if (!process.env.VERCEL) {
+  await writeFile('users', normalizedUsers);
+}
   }
 };
 

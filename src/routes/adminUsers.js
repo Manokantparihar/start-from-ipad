@@ -75,13 +75,18 @@ function buildUserStats(userId, statsMap) {
 }
 
 async function resyncGamificationAfterAttemptChanges(attemptsOverride = null) {
-  const [users, quizzes, events, groups, config] = await Promise.all([
-    db.getUsers(),
-    db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
-    db.getEvents(),
-    db.getGroups(),
-    db.getGamificationConfig()
-  ]);
+  const users = await db.getUsers();
+
+const quizzes = await db.getQuizzes({
+  includeDeleted: true,
+  includeUnpublished: true
+});
+
+const events = await db.getEvents();
+
+const groups = await db.getGroups();
+
+const config = await db.getGamificationConfig();
 
   const attempts = attemptsOverride || await db.getAttempts();
   const syncedUsers = await syncUsersToGamification({
@@ -103,7 +108,8 @@ async function resyncGamificationAfterAttemptChanges(attemptsOverride = null) {
 // List all users with basic stats.
 router.get('/', async (req, res) => {
   try {
-    const [users, attempts] = await Promise.all([db.getUsers(), db.getAttempts()]);
+    const users = await db.getUsers();
+const attempts = await db.getAttempts();
 
     const page = Math.max(1, Number(req.query.page) || 1);
     const perPage = Math.min(100, Math.max(1, Number(req.query.perPage) || 50));
@@ -181,7 +187,8 @@ router.get('/', async (req, res) => {
 // Get a single user with full attempt stats.
 router.get('/:id', async (req, res) => {
   try {
-    const [users, attempts] = await Promise.all([db.getUsers(), db.getAttempts()]);
+    const users = await db.getUsers();
+const attempts = await db.getAttempts();
     const user = users.find((u) => u.id === req.params.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 

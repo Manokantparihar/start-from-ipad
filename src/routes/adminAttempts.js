@@ -5,13 +5,18 @@ const { syncUsersToGamification } = require('../utils/gamification');
 const router = express.Router();
 
 async function resyncGamificationAfterAttemptChanges(attemptsOverride = null) {
-  const [users, quizzes, events, groups, config] = await Promise.all([
-    db.getUsers(),
-    db.getQuizzes({ includeDeleted: true, includeUnpublished: true }),
-    db.getEvents(),
-    db.getGroups(),
-    db.getGamificationConfig()
-  ]);
+  const users = await db.getUsers();
+
+const quizzes = await db.getQuizzes({
+  includeDeleted: true,
+  includeUnpublished: true
+});
+
+const events = await db.getEvents();
+
+const groups = await db.getGroups();
+
+const config = await db.getGamificationConfig();
 
   const attempts = attemptsOverride || await db.getAttempts();
   const syncedUsers = await syncUsersToGamification({
