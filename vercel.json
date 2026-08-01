@@ -1,15 +1,15 @@
 {
-  "outputDirectory": ".",
-  "redirects": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/",
-      "destination": "/index.html",
-      "permanent": false
-    },
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
     {
-      "source": "/dashboard.html",
-      "destination": "/index.html",
-      "permanent": true
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
