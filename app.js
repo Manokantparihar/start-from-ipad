@@ -68,6 +68,8 @@ function isAllowedDevelopmentOrigin(origin) {
 }
 
 const corsOriginValidator = (origin, callback) => {
+   console.log("CORS Origin:", origin);
+  
   if (!origin) {
     return callback(null, true);
   }
