@@ -2,9 +2,10 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const db = require('../utils/db');
+const appConfig = require('../config');
 
 const router = express.Router();
-const LESSONS_DIR = path.join(__dirname, '../../uploads/lessons');
+const LESSONS_DIR = path.join(appConfig.uploadsDir, 'lessons');
 
 function sanitizeOutput(value) {
   return value == null ? '' : String(value);

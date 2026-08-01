@@ -1,11 +1,21 @@
 const pool = require('./db.pg');
 const fs = require('fs').promises;
 const path = require('path');
+const fsSync = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { normalizeGamificationFields } = require('./gamification');
+const appConfig = require('../config');
 
-const DATA_DIR = path.join(__dirname, '../../data');
+const DATA_DIR = appConfig.dataDir;
 const writeQueues = new Map();
+
+try {
+  if (!fsSync.existsSync(DATA_DIR)) {
+    fsSync.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (error) {
+  console.error('Failed to initialize data directory:', error.message);
+}
 
 // Generic read
 async function readFile(filename) {

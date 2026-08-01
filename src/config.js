@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const rawNodeEnv = String(process.env.NODE_ENV || '').trim().toLowerCase();
 const nodeEnv = rawNodeEnv || 'development';
 const isLocalDevelopment = nodeEnv === 'development' || nodeEnv === 'local';
+const isVercel = process.env.VERCEL === '1';
 
 function splitCsv(value) {
   return String(value || '')
@@ -46,8 +47,14 @@ const localDevJwtSecret = isLocalDevelopment
 const config = {
   nodeEnv,
   isLocalDevelopment,
+  isVercel,
   port: Number(process.env.PORT) || 5500,
-  dataDir: path.join(__dirname, '../data'),
+  dataDir: process.env.DATA_DIR
+    ? path.resolve(process.env.DATA_DIR)
+    : (isVercel ? '/tmp/data' : path.join(__dirname, '../data')),
+  uploadsDir: process.env.UPLOADS_DIR
+    ? path.resolve(process.env.UPLOADS_DIR)
+    : (isVercel ? '/tmp/uploads' : path.join(__dirname, '../uploads')),
   jwtSecret: process.env.JWT_SECRET || localDevJwtSecret,
   corsAllowedOrigins: getAllowedCorsOrigins(),
   contactTargetEmail: process.env.CONTACT_TARGET_EMAIL || 'manokantparihar@gmail.com',
