@@ -77,7 +77,15 @@ const corsOriginValidator = (origin, callback) => {
   if (appConfig.corsAllowedOrigins.includes(origin)) {
     return callback(null, true);
   }
+try {
+  const hostname = new URL(origin).hostname;
 
+  if (hostname.endsWith(".vercel.app")) {
+    return callback(null, true);
+  }
+} catch (err) {
+  // Ignore invalid origin
+}
   if (isAllowedDevelopmentOrigin(origin)) {
     return callback(null, true);
   }
