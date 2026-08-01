@@ -4,6 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
+const appConfig = require('../config');
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const VALID_VISIBILITY = ['public', 'private'];
 
 // ─── Upload Directory ─────────────────────────────────────────────────────────
 
-const RESOURCES_DIR = path.join(__dirname, '../../uploads/resources');
+const RESOURCES_DIR = path.join(appConfig.uploadsDir, 'resources');
 if (!fs.existsSync(RESOURCES_DIR)) {
   fs.mkdirSync(RESOURCES_DIR, { recursive: true });
 }
@@ -147,7 +148,7 @@ router.get('/:id/download', async (req, res) => {
       return res.status(404).json({ error: 'Resource not found.' });
     }
 
-    const filePath = path.join(__dirname, '../../uploads/resources', resource.filename);
+    const filePath = path.join(RESOURCES_DIR, resource.filename);
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'File not found on server.' });
     }
@@ -180,7 +181,7 @@ router.get('/:id/view', async (req, res) => {
       return res.status(404).json({ error: 'Resource not found.' });
     }
 
-    const filePath = path.join(__dirname, '../../uploads/resources', resource.filename);
+    const filePath = path.join(RESOURCES_DIR, resource.filename);
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'File not found on server.' });
     }

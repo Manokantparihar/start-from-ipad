@@ -4,10 +4,11 @@ const fs = require('fs');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
+const appConfig = require('../config');
 
 const router = express.Router();
 
-const LESSONS_DIR = path.join(__dirname, '../../uploads/lessons');
+const LESSONS_DIR = path.join(appConfig.uploadsDir, 'lessons');
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const VALID_STATUSES = ['draft', 'published'];
 const VALID_LESSON_TYPES = ['pdf', 'note', 'current-affairs', 'schedule'];

@@ -5,6 +5,7 @@ const fs = require('fs');
 const multer = require('multer');
 const db = require('../utils/db');
 const { buildPublicGamification } = require('../utils/gamification');
+const appConfig = require('../config');
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ function isValidEmail(value) {
 
 // ─── Avatar Upload Setup ──────────────────────────────────────────────────────
 
-const AVATAR_DIR = path.join(__dirname, '../../uploads/avatars');
+const AVATAR_DIR = path.join(appConfig.uploadsDir, 'avatars');
 if (!fs.existsSync(AVATAR_DIR)) {
   fs.mkdirSync(AVATAR_DIR, { recursive: true });
 }
@@ -239,12 +240,17 @@ router.post('/avatar', (req, res, next) => {
       // Remove previous avatar only when it points to a different file.
       // If filename is unchanged (same extension), multer has already replaced the file.
       if (prevImage && prevImage !== avatarUrl) {
-        const prevRelativePath = String(prevImage).replace(/^\/+/, '');
-        const prevFile = path.join(__dirname, '../../', prevRelativePath);
-        if (fs.existsSync(prevFile)) {
-          try { fs.unlinkSync(prevFile); } catch (unlinkErr) {
-            if (unlinkErr.code !== 'ENOENT') {
-              console.error('Failed to delete previous avatar:', unlinkErr.message);
+        const uploadsPrefix = '/uploads/';
+        if (String(prevImage).startsWith(uploadsPrefix)) {
+          const prevRelativePath = String(prevImage).slice(uploadsPrefix.length);
+          const uploadsRoot = path.resolve(appConfig.uploadsDir);
+          const prevFile = path.resolve(uploadsRoot, prevRelativePath);
+
+          if (prevFile.startsWith(`${uploadsRoot}${path.sep}`) && fs.existsSync(prevFile)) {
+            try { fs.unlinkSync(prevFile); } catch (unlinkErr) {
+              if (unlinkErr.code !== 'ENOENT') {
+                console.error('Failed to delete previous avatar:', unlinkErr.message);
+              }
             }
           }
         }

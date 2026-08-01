@@ -121,8 +121,19 @@ app.use('/api/me', authMiddleware, meRoutes);
 app.use('/api/rewards', authMiddleware, rewardsRoutes);
 app.use('/api/admin/notifications', authMiddleware, isAdmin, adminNotificationRoutes);
 
-// Serve uploaded avatars
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+function ensureDirectoryExists(dirPath) {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+  } catch (error) {
+    console.error(`Failed to ensure directory exists: ${dirPath}`, error.message);
+  }
+}
+
+// Serve uploaded assets
+ensureDirectoryExists(appConfig.uploadsDir);
+app.use('/uploads', express.static(appConfig.uploadsDir));
 
 // Serve all static files from the 'public' folder automatically!
 app.use(express.static(path.join(__dirname, 'public')));
@@ -133,9 +144,7 @@ const SUBMISSIONS_FILE = path.join(DATA_DIR, 'contact-submissions.jsonl');
 const CONTACT_TARGET_EMAIL = appConfig.contactTargetEmail;
 
 // Make sure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
+ensureDirectoryExists(DATA_DIR);
 
 // --- Helper Functions ---
 const forwardViaAjaxEndpoint = async ({ name, email, message }) => {
