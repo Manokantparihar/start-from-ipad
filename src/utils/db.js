@@ -792,7 +792,7 @@ const saveNotificationLogs = async (logs) => {
     console.error('DB notification logs write failed, fallback JSON', err.message);
     if (!process.env.VERCEL) {
   await writeFile('notification-logs', logs);
-
+    }
   }
 };
 
@@ -1074,7 +1074,7 @@ const saveRewards = async (rewards) => {
     console.error('DB rewards write failed, fallback JSON', err.message);
     await writeFile('rewards', rewards);
   }
-  }
+  
 };
 
 async function getGamificationConfig() {
