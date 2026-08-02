@@ -1381,10 +1381,63 @@ async function replaceWrongQuestionsForUser(userId, nextWrongQuestions = []) {
       lastOutcome: row.lastOutcome || row.status
     }, userId))
     .filter((row) => row.questionId);
+try {
+  await pool.query(
+    "DELETE FROM wrong_questions WHERE user_id = $1",
+    [userId]
+  );
 
-  await writeFile('wrong-questions', [...remainingRows, ...mergeWrongQuestionRows(updatedRows)]);
-  return { wrongQuestions: updatedRows, total: remainingRows.length + updatedRows.length };
+  for (const row of updatedRows) {
+    await pool.query(
+      `
+      INSERT INTO wrong_questions (
+        id,
+        user_id,
+        question_id,
+        quiz_id,
+        topic,
+        selected_answer,
+        correct_answer,
+        status,
+        times_missed,
+        first_seen_at,
+        last_seen_at,
+        updated_at,
+        data
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      `,
+      [
+        row.id,
+        row.userId,
+        row.questionId,
+        row.quizId || null,
+        row.topic || "General",
+        row.selectedAnswer || "",
+        row.correctAnswer || "",
+        row.status || "wrong",
+        Number(row.timesMissed) || 1,
+        row.firstSeenAt ? new Date(row.firstSeenAt) : new Date(),
+        row.lastSeenAt ? new Date(row.lastSeenAt) : new Date(),
+        row.updatedAt ? new Date(row.updatedAt) : new Date(),
+        JSON.stringify(row)
+      ]
+    );
+  }
+} catch (err) {
+  console.error("replaceWrongQuestionsForUser DB failed", err);
 }
+  const mergedRows = [...remainingRows, ...mergeWrongQuestionRows(updatedRows)];
+
+if (!process.env.VERCEL) {
+  await writeFile("wrong-questions", mergedRows);
+}
+
+return {
+  wrongQuestions: updatedRows,
+  total: mergedRows.length
+};
+
 
 async function deleteWrongQuestionsByUser(userId) {
   try {
