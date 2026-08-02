@@ -161,54 +161,66 @@ const getAttempts = async () => {
 };
 
 const saveAttempts = async (attempts) => {
+  console.log("saveAttempts called", attempts.length);
+
   try {
     for (const attempt of attempts) {
+      console.log("Saving", attempt.id);
+
       await pool.query(
         `
         INSERT INTO attempts (
-  id,
-  user_id,
-  quiz_id,
-  score,
-  total,
-  status,
-  started_at,
-  completed_at,
-  answers
-)
-VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-ON CONFLICT (id) DO UPDATE SET
-  user_id = EXCLUDED.user_id,
-  quiz_id = EXCLUDED.quiz_id,
-  score = EXCLUDED.score,
-  total = EXCLUDED.total,
-  status = EXCLUDED.status,
-  started_at = EXCLUDED.started_at,
-  completed_at = EXCLUDED.completed_at,
-  answers = EXCLUDED.answers
+          id,
+          user_id,
+          quiz_id,
+          score,
+          total,
+          status,
+          started_at,
+          completed_at,
+          answers
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        ON CONFLICT (id) DO UPDATE SET
+          user_id = EXCLUDED.user_id,
+          quiz_id = EXCLUDED.quiz_id,
+          score = EXCLUDED.score,
+          total = EXCLUDED.total,
+          status = EXCLUDED.status,
+          started_at = EXCLUDED.started_at,
+          completed_at = EXCLUDED.completed_at,
+          answers = EXCLUDED.answers
         `,
         [
-  attempt.id,
-  attempt.userId || null,
-  attempt.quizId || null,
-  attempt.score ?? null,
-  attempt.total ?? null,
-  attempt.status || null,
-  attempt.startedAt || null,
-  attempt.completedAt || null,
-  JSON.stringify(attempt.answers || [])
-]
+          attempt.id,
+          attempt.userId || null,
+          attempt.quizId || null,
+          attempt.score ?? null,
+          attempt.total ?? null,
+          attempt.status || null,
+          attempt.startedAt || null,
+          attempt.completedAt || null,
+          JSON.stringify(attempt.answers || [])
+        ]
       );
+
+      console.log("Saved", attempt.id);
     }
 
-    // keep JSON as backup
-    await writeFile('attempts', attempts);
+    console.log("All attempts saved");
+
+    if (!process.env.VERCEL) {
+      await writeFile("attempts", attempts);
+    }
 
   } catch (err) {
-    console.error('DB write failed, fallback JSON', err.message);
-    await writeFile('attempts', attempts);
+    console.error("saveAttempts ERROR");
+    console.error(err);
+    throw err;
   }
 };
+
+  
 
 async function deleteAttemptsByUser(userId) {
   const attempts = await readFile('attempts');
