@@ -610,11 +610,18 @@ const saveResources = async (resources) => {
       );
     }
 
-    // JSON backup
-    await writeFile('resources', resources);
+    // JSON backup (local development only)
+if (!process.env.VERCEL) {
+  await writeFile('resources', resources);
+}
   } catch (err) {
-    console.error('DB resources write failed, fallback JSON', err.message);
-    await writeFile('resources', resources);
+  console.error('DB resources write failed', err.message);
+
+if (!process.env.VERCEL) {
+  await writeFile('resources', resources);
+}
+
+throw err;
   }
 };
 
