@@ -2,9 +2,12 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { Readable } = require('stream');
+const { pipeline } = require('stream/promises');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
 const { createClient } = require('@supabase/supabase-js');
+
 const router = express.Router();
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -14,26 +17,25 @@ const MAX_TITLE_LENGTH = 200;
 const MAX_DESCRIPTION_LENGTH = 1000;
 const VALID_ACCESS_TIERS = ['free', 'premium'];
 const VALID_VISIBILITY = ['public', 'private'];
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-// ─── Upload Directory ─────────────────────────────────────────────────────────
+const SUPABASE_BUCKET = process.env.SUPABASE_RESOURCES_BUCKET || 'Resources';
 
-const RESOURCES_DIR = path.join(__dirname, '../../uploads/resources');
-if (!fs.existsSync(RESOURCES_DIR)) {
-  fs.mkdirSync(RESOURCES_DIR, { recursive: true });
-}
+const SUPABASE_URL = String(process.env.SUPABASE_URL || '').trim();
+const SUPABASE_SERVICE_ROLE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+
+const supabase =
+  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    : null;
 
 // ─── Multer Setup ─────────────────────────────────────────────────────────────
 
-const storage = multer.memoryStorage();
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE },
   fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
+    const name = String(file.originalname || '').toLowerCase();
+    const isPdf = file.mimetype === 'application/pdf' || name.endsWith('.pdf');
+    if (isPdf) {
       cb(null, true);
     } else {
       cb(new Error('Only PDF files are allowed.'));
@@ -49,6 +51,110 @@ function normalizeAccessTier(value) {
 function normalizeVisibility(value) {
   const visibility = String(value || 'public').trim().toLowerCase();
   return VALID_VISIBILITY.includes(visibility) ? visibility : 'public';
+}
+
+function assertSupabaseReady() {
+  if (!supabase) {
+    const error = new Error('Supabase storage is not configured.');
+    error.code = 'SUPABASE_NOT_CONFIGURED';
+    throw error;
+  }
+}
+
+function getStoragePath(resource) {
+  const pathCandidate =
+    resource?.storagePath || resource?.filename || resource?.fileName || resource?.filePath || '';
+  return String(pathCandidate).trim();
+}
+
+function isHttpUrl(value) {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim());
+}
+
+function getPublicUrlForStoragePath(storagePath) {
+  const normalizedPath = String(storagePath || '').trim().replace(/^\/+/, '');
+  if (!normalizedPath) return null;
+
+  if (supabase) {
+    const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(normalizedPath);
+    if (data && data.publicUrl) {
+      return data.publicUrl;
+    }
+  }
+
+  if (!SUPABASE_URL) {
+    return null;
+  }
+
+  const encodedBucket = encodeURIComponent(SUPABASE_BUCKET);
+  const encodedPath = normalizedPath
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+  return `${SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/public/${encodedBucket}/${encodedPath}`;
+}
+
+function resolveResourceUrl(resource) {
+  if (!resource) return null;
+
+  if (isHttpUrl(resource.fileUrl)) return resource.fileUrl.trim();
+  if (isHttpUrl(resource.url)) return resource.url.trim();
+  if (isHttpUrl(resource.filePath)) return resource.filePath.trim();
+
+  const storagePath = getStoragePath(resource);
+  if (!storagePath) return null;
+
+  return getPublicUrlForStoragePath(storagePath);
+}
+
+function getLegacyLocalPath(resource) {
+  if (process.env.VERCEL) return null;
+
+  const legacyName = getStoragePath(resource);
+  if (!legacyName) return null;
+
+  const candidate = path.resolve(__dirname, '../../uploads/resources', path.basename(legacyName));
+  return fs.existsSync(candidate) ? candidate : null;
+}
+
+function safeDispositionName(name) {
+  return String(name || 'resource.pdf').replace(/[\r\n"]/g, '_');
+}
+
+async function streamResourceResponse(res, resource, { inline }) {
+  const localPath = getLegacyLocalPath(resource);
+  if (localPath) {
+    res.setHeader(
+      'Content-Disposition',
+      `${inline ? 'inline' : 'attachment'}; filename="${safeDispositionName(resource.origFilename || resource.title || 'resource.pdf')}"`
+    );
+    if (inline) {
+      res.setHeader('Content-Type', 'application/pdf');
+      return res.sendFile(localPath);
+    }
+    return res.download(localPath, resource.origFilename || resource.title || 'resource.pdf');
+  }
+
+  const fileUrl = resolveResourceUrl(resource);
+  if (!fileUrl) {
+    return res.status(404).json({ error: 'File not available.' });
+  }
+
+  const response = await fetch(fileUrl);
+  if (!response.ok || !response.body) {
+    return res.status(404).json({ error: 'File not available.' });
+  }
+
+  res.setHeader('Content-Type', response.headers.get('content-type') || 'application/pdf');
+  res.setHeader(
+    'Content-Disposition',
+    `${inline ? 'inline' : 'attachment'}; filename="${safeDispositionName(resource.origFilename || resource.title || 'resource.pdf')}"`
+  );
+
+  await pipeline(Readable.fromWeb(response.body), res);
+  return null;
 }
 
 // ─── POST /api/admin/resources ────────────────────────────────────────────────
@@ -70,38 +176,30 @@ router.post('/', (req, res) => {
 
     const { title, description, accessTier, visibility } = req.body;
     if (!title || !String(title).trim()) {
-      // Remove the orphaned file before rejecting – verify path stays within RESOURCES_DIR
-      const safeOrphanPath = path.resolve(RESOURCES_DIR, path.basename(req.file.filename));
-      if (safeOrphanPath.startsWith(RESOURCES_DIR + path.sep)) {
-        try { fs.unlinkSync(safeOrphanPath); } catch (unlinkErr) {
-          if (unlinkErr.code !== 'ENOENT') {
-            console.error('Failed to delete orphaned upload:', unlinkErr.message);
-          }
-        }
-      }
       return res.status(400).json({ error: 'Title is required.' });
     }
 
+    const storagePath = `${uuidv4()}.pdf`;
+    let uploadedToStorage = false;
+
     try {
-      const resources = await db.getResources();
-      const ext = path.extname(req.file.originalname).toLowerCase();
-const fileName = `${uuidv4()}${ext}`;
+      assertSupabaseReady();
 
-const { error: uploadError } = await supabase.storage
-  .from('Resources')
-  .upload(fileName, req.file.buffer, {
-    contentType: 'application/pdf',
-    upsert: false
-  });
+      const { error: uploadError } = await supabase.storage
+        .from(SUPABASE_BUCKET)
+        .upload(storagePath, req.file.buffer, {
+          contentType: req.file.mimetype || 'application/pdf',
+          upsert: false
+        });
 
-if (uploadError) {
-  throw uploadError;
-}
+      if (uploadError) {
+        throw uploadError;
+      }
 
-const { data: publicData } = supabase.storage
-  .from('Resources')
-  .getPublicUrl(fileName);
+      uploadedToStorage = true;
+
       const now = new Date().toISOString();
+      const publicUrl = getPublicUrlForStoragePath(storagePath);
       const record = {
         id: uuidv4(),
         title: String(title).trim().slice(0, MAX_TITLE_LENGTH),
@@ -109,44 +207,68 @@ const { data: publicData } = supabase.storage
         accessTier: normalizeAccessTier(accessTier),
         visibility: normalizeVisibility(visibility),
         origFilename: req.file.originalname,
-        filename: fileName,
-        filePath: publicData.publicUrl,
+        filename: storagePath,
+        storagePath,
+        storageBucket: SUPABASE_BUCKET,
+        storageProvider: 'supabase',
+        fileUrl: publicUrl,
+        filePath: publicUrl,
         size: req.file.size,
         uploadedBy: req.user ? req.user.name || req.user.email : 'admin',
         uploadedById: req.user ? req.user.id : null,
         uploadedAt: now,
         isDeleted: false
       };
+
+      const resources = await db.getResources();
       resources.push(record);
       await db.saveResources(resources);
 
-      return res.status(201).json({ message: 'Resource uploaded successfully.', resource: record });
-    } catch {
-      return res.status(500).json({ error: 'Server error while saving resource.' });
+      return res.status(201).json({
+        message: 'Resource uploaded successfully.',
+        resource: record
+      });
+    } catch (error) {
+      if (uploadedToStorage) {
+        await supabase.storage.from(SUPABASE_BUCKET).remove([storagePath]).catch((removeErr) => {
+          console.warn('[POST /api/admin/resources] rollback failed:', removeErr?.message || removeErr);
+        });
+      }
+
+      console.error('[POST /api/admin/resources] error:', error);
+      return res.status(500).json({
+        error: error?.message || 'Server error while saving resource.'
+      });
     }
   });
 });
 
 // ─── GET /api/resources ───────────────────────────────────────────────────────
 // Public (auth not required): list all active resources.
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   try {
     const resources = await db.getResources();
     const active = resources
-      .filter(r => !r.isDeleted)
-      .map(r => ({
+      .filter((r) => !r.isDeleted)
+      .map((r) => ({
         id: r.id,
         title: r.title,
         description: r.description,
         accessTier: normalizeAccessTier(r.accessTier),
         visibility: normalizeVisibility(r.visibility),
         origFilename: r.origFilename,
+        filename: r.filename || r.storagePath || '',
+        storagePath: r.storagePath || r.filename || '',
+        storageBucket: r.storageBucket || SUPABASE_BUCKET,
+        fileUrl: resolveResourceUrl(r) || '',
+        filePath: resolveResourceUrl(r) || r.filePath || '',
         size: r.size,
         uploadedBy: r.uploadedBy,
         uploadedAt: r.uploadedAt
       }));
     return res.json(active);
-  } catch {
+  } catch (error) {
+    console.error('[GET /api/resources] error:', error);
     return res.status(500).json({ error: 'Server error.' });
   }
 });
@@ -156,30 +278,15 @@ router.get('/', async (req, res) => {
 router.get('/:id/download', async (req, res) => {
   try {
     const resources = await db.getResources();
-    const resource = resources.find(r => r.id === req.params.id && !r.isDeleted);
+    const resource = resources.find((r) => r.id === req.params.id && !r.isDeleted);
     if (!resource) {
       return res.status(404).json({ error: 'Resource not found.' });
     }
 
-    const filePath = path.join(__dirname, '../../uploads/resources', resource.filename);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found on server.' });
-    }
-
     const inline = req.query.inline === '1' || req.query.view === '1';
-
-    if (inline) {
-      res.setHeader(
-        'Content-Disposition',
-        `inline; filename="${encodeURIComponent(resource.origFilename)}"`
-      );
-      res.setHeader('Content-Type', 'application/pdf');
-      return res.sendFile(filePath);
-    }
-
-    // Force browser download for Download button flows.
-    return res.download(filePath, resource.origFilename);
-  } catch {
+    return await streamResourceResponse(res, resource, { inline });
+  } catch (error) {
+    console.error('[GET /api/resources/:id/download] error:', error);
     return res.status(500).json({ error: 'Server error.' });
   }
 });
@@ -189,44 +296,52 @@ router.get('/:id/download', async (req, res) => {
 router.get('/:id/view', async (req, res) => {
   try {
     const resources = await db.getResources();
-    const resource = resources.find(r => r.id === req.params.id && !r.isDeleted);
+    const resource = resources.find((r) => r.id === req.params.id && !r.isDeleted);
     if (!resource) {
       return res.status(404).json({ error: 'Resource not found.' });
     }
 
-    const filePath = path.join(__dirname, '../../uploads/resources', resource.filename);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found on server.' });
-    }
-
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="${encodeURIComponent(resource.origFilename)}"`
-    );
-    res.setHeader('Content-Type', 'application/pdf');
-    return res.sendFile(filePath);
-  } catch {
+    return await streamResourceResponse(res, resource, { inline: true });
+  } catch (error) {
+    console.error('[GET /api/resources/:id/view] error:', error);
     return res.status(500).json({ error: 'Server error.' });
   }
 });
 
 // ─── DELETE /api/admin/resources/:id ─────────────────────────────────────────
-// Admin-only: soft-delete a resource.
+// Admin-only: soft-delete a resource and remove the object from Supabase storage.
 router.delete('/:id', async (req, res) => {
   try {
     const resources = await db.getResources();
-    const idx = resources.findIndex(r => r.id === req.params.id && !r.isDeleted);
+    const idx = resources.findIndex((r) => r.id === req.params.id && !r.isDeleted);
     if (idx === -1) {
       return res.status(404).json({ error: 'Resource not found.' });
     }
 
-    resources[idx].isDeleted = true;
-    resources[idx].deletedAt = new Date().toISOString();
-    resources[idx].deletedBy = req.user ? req.user.id : null;
+    const resource = resources[idx];
+    const storagePath = getStoragePath(resource);
+
+    if (storagePath && supabase) {
+      const { error: removeError } = await supabase.storage
+        .from(SUPABASE_BUCKET)
+        .remove([storagePath]);
+
+      if (removeError) {
+        console.warn('[DELETE /api/admin/resources/:id] storage delete warning:', removeError);
+      }
+    }
+
+    resources[idx] = {
+      ...resource,
+      isDeleted: true,
+      deletedAt: new Date().toISOString(),
+      deletedBy: req.user ? req.user.id : null
+    };
     await db.saveResources(resources);
 
     return res.json({ message: 'Resource deleted successfully.' });
-  } catch {
+  } catch (error) {
+    console.error('[DELETE /api/admin/resources/:id] error:', error);
     return res.status(500).json({ error: 'Server error.' });
   }
 });
