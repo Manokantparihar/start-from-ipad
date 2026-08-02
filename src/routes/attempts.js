@@ -254,14 +254,17 @@ router.post('/revision/reconcile', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { quizId } = req.body;
+    console.log('[POST /api/attempts] body:', req.body);
+    console.log('[POST /api/attempts] userId:', req.userId);
     if (!quizId) return res.status(400).json({ error: 'quizId is required' });
 
     const quizzes = await db.getQuizzes();
+    console.log('[POST /api/attempts] quizzes loaded:', quizzes.length);
     const quiz = quizzes.find(q => q.id === quizId);
     if (!quiz) return res.status(400).json({ error: 'Quiz not found' });
 
     let attempts = await db.getAttempts();
-
+    console.log('[POST /api/attempts] attempts loaded:', attempts.length);
     // Remove previous in-progress attempts for this user+quiz
     attempts = attempts.filter(
       a => !(a.userId === req.userId && a.quizId === quizId && a.status === 'in-progress')
@@ -286,8 +289,10 @@ router.post('/', async (req, res) => {
       createdAt: now
     };
     attempts.push(attempt);
+    console.log('[POST /api/attempts] saving attempt...');
     await db.saveAttempts(attempts);
-
+    console.log('[POST /api/attempts] attempt saved');
+    console.log('[POST /api/attempts] success');
     res.json({ attemptId: attempt.id, expiresAt: attempt.expiresAt });
   } catch (err) {
   console.error('[POST /api/attempts]', err);
