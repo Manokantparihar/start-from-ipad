@@ -785,10 +785,14 @@ const saveNotificationLogs = async (logs) => {
     }
 
     // JSON backup
-    await writeFile('notification-logs', logs);
+    if (!process.env.VERCEL) {
+  await writeFile('notification-logs', logs);
+  }
   } catch (err) {
     console.error('DB notification logs write failed, fallback JSON', err.message);
-    await writeFile('notification-logs', logs);
+    if (!process.env.VERCEL) {
+  await writeFile('notification-logs', logs);
+
   }
 };
 
@@ -1069,6 +1073,7 @@ const saveRewards = async (rewards) => {
   } catch (err) {
     console.error('DB rewards write failed, fallback JSON', err.message);
     await writeFile('rewards', rewards);
+  }
   }
 };
 
