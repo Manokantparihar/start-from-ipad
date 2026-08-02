@@ -1437,7 +1437,7 @@ return {
   wrongQuestions: updatedRows,
   total: mergedRows.length
 };
-
+}
 
 async function deleteWrongQuestionsByUser(userId) {
   try {
