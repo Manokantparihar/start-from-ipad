@@ -296,8 +296,8 @@ router.post('/', async (req, res) => {
     res.json({ attemptId: attempt.id, expiresAt: attempt.expiresAt });
   } catch (err) {
   console.error('[POST /api/attempts]', err);
-  res.status(500).json({
-    error: 'Server error',
+  return res.status(500).json({
+    error: err.message,
     message: err.message
   });
 }
