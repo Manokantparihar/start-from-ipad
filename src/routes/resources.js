@@ -4,7 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../utils/db');
-
+const { createClient } = require('@supabase/supabase-js');
 const router = express.Router();
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -14,7 +14,10 @@ const MAX_TITLE_LENGTH = 200;
 const MAX_DESCRIPTION_LENGTH = 1000;
 const VALID_ACCESS_TIERS = ['free', 'premium'];
 const VALID_VISIBILITY = ['public', 'private'];
-
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 // ─── Upload Directory ─────────────────────────────────────────────────────────
 
 const RESOURCES_DIR = path.join(__dirname, '../../uploads/resources');
@@ -24,13 +27,7 @@ if (!fs.existsSync(RESOURCES_DIR)) {
 
 // ─── Multer Setup ─────────────────────────────────────────────────────────────
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, RESOURCES_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${uuidv4()}${ext}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -87,6 +84,23 @@ router.post('/', (req, res) => {
 
     try {
       const resources = await db.getResources();
+      const ext = path.extname(req.file.originalname).toLowerCase();
+const fileName = `${uuidv4()}${ext}`;
+
+const { error: uploadError } = await supabase.storage
+  .from('Resources')
+  .upload(fileName, req.file.buffer, {
+    contentType: 'application/pdf',
+    upsert: false
+  });
+
+if (uploadError) {
+  throw uploadError;
+}
+
+const { data: publicData } = supabase.storage
+  .from('Resources')
+  .getPublicUrl(fileName);
       const now = new Date().toISOString();
       const record = {
         id: uuidv4(),
@@ -95,8 +109,8 @@ router.post('/', (req, res) => {
         accessTier: normalizeAccessTier(accessTier),
         visibility: normalizeVisibility(visibility),
         origFilename: req.file.originalname,
-        filename: req.file.filename,
-        filePath: `/uploads/resources/${req.file.filename}`,
+        filename: fileName,
+        filePath: publicData.publicUrl,
         size: req.file.size,
         uploadedBy: req.user ? req.user.name || req.user.email : 'admin',
         uploadedById: req.user ? req.user.id : null,

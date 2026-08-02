@@ -12,6 +12,7 @@
     "phase2:serve": "npm run validate:content && npm run start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
     "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
