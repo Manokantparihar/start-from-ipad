@@ -289,9 +289,13 @@ router.post('/', async (req, res) => {
     await db.saveAttempts(attempts);
 
     res.json({ attemptId: attempt.id, expiresAt: attempt.expiresAt });
-  } catch {
-    res.status(500).json({ error: 'Server error' });
-  }
+  } catch (err) {
+  console.error('[POST /api/attempts]', err);
+  res.status(500).json({
+    error: 'Server error',
+    message: err.message
+  });
+}
 });
 
 // GET /api/attempts/:id/insights - rich result analytics for one attempt
