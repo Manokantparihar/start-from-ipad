@@ -54,6 +54,71 @@ function toPositiveInt(value, fallback = 1) {
   return Math.floor(n);
 }
 
+const VALID_DIFFICULTIES = ['Beginner', 'Intermediate', 'Advanced'];
+
+function normalizeDifficulty(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  return VALID_DIFFICULTIES.find((entry) => entry.toLowerCase() === raw) || '';
+}
+
+function toOptionalPositiveInt(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.floor(n);
+}
+
+function toBoolean(value) {
+  if (typeof value === 'boolean') return value;
+  const raw = String(value || '').trim().toLowerCase();
+  return raw === 'true' || raw === '1' || raw === 'on' || raw === 'yes';
+}
+
+function slugify(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/** Optional course metadata. Every field stays optional and backward compatible. */
+function readCourseMetadata(body, current = {}) {
+  const slug = slugify(body.slug !== undefined ? body.slug : current.slug);
+  const coverImage = body.coverImage !== undefined ? sanitize(body.coverImage) : sanitize(current.coverImage);
+  const difficulty = body.difficulty !== undefined
+    ? normalizeDifficulty(body.difficulty)
+    : normalizeDifficulty(current.difficulty);
+  const estimatedMinutes = body.estimatedMinutes !== undefined
+    ? toOptionalPositiveInt(body.estimatedMinutes)
+    : toOptionalPositiveInt(current.estimatedMinutes);
+  const certificateEnabled = body.certificateEnabled !== undefined
+    ? toBoolean(body.certificateEnabled)
+    : Boolean(current.certificateEnabled);
+
+  return {
+    slug: slug || null,
+    coverImage: coverImage || null,
+    difficulty: difficulty || null,
+    estimatedMinutes,
+    certificateEnabled
+  };
+}
+
+/** Module information lives on the lesson record - no separate module store. */
+function readLessonModule(body, current = {}) {
+  const moduleTitle = body.moduleTitle !== undefined ? sanitize(body.moduleTitle) : sanitize(current.moduleTitle);
+  const explicitKey = slugify(body.moduleKey !== undefined ? body.moduleKey : current.moduleKey);
+  const moduleKey = explicitKey || slugify(moduleTitle);
+  const moduleOrder = body.moduleOrder !== undefined
+    ? toPositiveInt(body.moduleOrder, 1)
+    : toPositiveInt(current.moduleOrder, 1);
+
+  return {
+    moduleKey: moduleKey || null,
+    moduleTitle: moduleTitle || null,
+    moduleOrder
+  };
+}
+
 function validateCoursePayload(payload) {
   const errors = [];
   const title = sanitize(payload.title);
@@ -95,6 +160,7 @@ router.post('/lessons', (req, res) => {
     const courseId = sanitize(req.body.courseId);
     const type = normalizeLessonType(req.body.type);
     const order = toPositiveInt(req.body.order, 1);
+    const moduleFields = readLessonModule(req.body);
 
     if (!title) return res.status(400).json({ error: 'Lesson title is required.' });
     if (!courseId) return res.status(400).json({ error: 'Course is required.' });
@@ -114,6 +180,7 @@ router.post('/lessons', (req, res) => {
         description,
         type,
         order,
+        ...moduleFields,
         origFilename: req.file.originalname,
         filename: req.file.filename,
         filePath: `/uploads/lessons/${req.file.filename}`,
@@ -151,6 +218,7 @@ router.put('/lessons/:id', async (req, res) => {
     const courseId = sanitize(req.body.courseId || current.courseId);
     const type = normalizeLessonType(req.body.type || current.type);
     const order = toPositiveInt(req.body.order, Number(current.order) || 1);
+    const moduleFields = readLessonModule(req.body, current);
 
     if (!title) return res.status(400).json({ error: 'Lesson title is required.' });
 
@@ -164,6 +232,7 @@ router.put('/lessons/:id', async (req, res) => {
       courseId,
       type,
       order,
+      ...moduleFields,
       updatedAt: new Date().toISOString()
     };
 
@@ -335,6 +404,7 @@ router.post('/', async (req, res) => {
       description: sanitize(payload.description),
       category: sanitize(payload.category) || 'General',
       status: normalizeStatus(payload.status),
+      ...readCourseMetadata(req.body),
       createdAt: now,
       updatedAt: now,
       lastUpdated: now,
@@ -383,6 +453,7 @@ router.put('/:id', async (req, res) => {
       description: sanitize(payload.description),
       category: sanitize(payload.category) || 'General',
       status: normalizeStatus(payload.status),
+      ...readCourseMetadata(req.body, courses[idx]),
       updatedAt: new Date().toISOString(),
       lastUpdated: new Date().toISOString()
     };

@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Course - RPSC/REET Prep</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.__pdfjsFailed = false;
+  </script>
+  <script
+    src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"
+    onerror="window.__pdfjsFailed = true;"></script>
   <style>
     @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .animation-slideIn { animation: slideIn 0.3s ease-in; }
@@ -14,6 +20,7 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+    #pdfCanvas { max-width: 100%; height: auto; }
   </style>
 </head>
 <body class="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900">
@@ -26,48 +33,157 @@
     </div>
   </div>
 
-  <main id="mainContent" class="hidden mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8 animation-slideIn">
-    <section class="rounded-3xl border border-slate-200 bg-white px-5 py-6 shadow-sm sm:px-7 sm:py-7">
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <div class="space-y-2">
-          <a href="resources.html" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">← Back to Resources</a>
-          <h1 id="courseTitle" class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Course</h1>
-          <p id="courseDescription" class="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">Description</p>
-        </div>
-        <div class="grid gap-3 sm:grid-cols-2 lg:min-w-[22rem]">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 shadow-sm">
-            <div class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Progress</div>
-            <div id="courseProgressPercent" class="mt-1 text-3xl font-black text-slate-900">0%</div>
-            <div id="courseProgressMeta" class="mt-1 text-xs text-slate-500">0 / 0 lessons completed</div>
+  <main id="mainContent" class="hidden mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8 animation-slideIn">
+    <!-- Course header -->
+    <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <div id="courseCoverWrap" class="hidden h-40 w-full bg-slate-100 sm:h-52">
+        <img id="courseCover" alt="" class="h-full w-full object-cover">
+      </div>
+      <div class="px-5 py-6 sm:px-7">
+        <div class="flex flex-wrap items-start justify-between gap-5">
+          <div class="min-w-0 space-y-2">
+            <a href="resources.html" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">← Back to Resources</a>
+            <h1 id="courseTitle" class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Course</h1>
+            <p id="courseDescription" class="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">Description</p>
+            <div id="courseMetaChips" class="mt-3 flex flex-wrap gap-2"></div>
           </div>
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 shadow-sm">
-            <div class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Lessons</div>
-            <div id="courseLessonCount" class="mt-1 text-3xl font-black text-slate-900">0</div>
-            <div class="mt-1 text-xs text-slate-500">Total files in this course</div>
+
+          <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+            <svg viewBox="0 0 36 36" class="h-20 w-20 shrink-0" aria-hidden="true">
+              <path d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 0 1 0-31" fill="none" stroke="#e2e8f0" stroke-width="3"></path>
+              <path id="progressRing" d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 0 1 0-31" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 100"></path>
+            </svg>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Progress</div>
+              <div id="courseProgressPercent" class="text-3xl font-black text-slate-900">0%</div>
+              <div id="courseProgressMeta" class="text-xs text-slate-500">0 / 0 lessons completed</div>
+              <div id="progressHint" class="mt-1 text-[11px] text-slate-400">Sign in to sync progress across devices.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="milestoneChips" class="mt-5 flex flex-wrap gap-2"></div>
+
+        <div class="mt-5 h-3 w-full overflow-hidden rounded-full bg-slate-200/70">
+          <div id="progressBar" class="h-3 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 transition-all duration-300" style="width:0%"></div>
+        </div>
+
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Category</div>
+            <div id="courseCategory" class="mt-1 text-base font-bold text-slate-900">General</div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Lessons</div>
+            <div id="courseLessonCount" class="mt-1 text-base font-bold text-slate-900">0</div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Last opened</div>
+            <div id="lastOpened" class="mt-1 text-base font-bold text-slate-900">—</div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Category</div>
-          <div id="courseCategory" class="mt-2 text-lg font-bold text-slate-900">General</div>
+    <div id="errorBanner" class="hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-medium text-red-700"></div>
+
+    <!-- Continue where you left off -->
+    <section id="continueCard" class="hidden rounded-3xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-sky-50 px-5 py-5 shadow-sm sm:px-7">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-500">Continue where you left off</div>
+          <h2 id="continueLessonTitle" class="mt-1 truncate text-lg font-bold text-slate-900">Lesson</h2>
+          <p id="continueLessonMeta" class="text-xs text-slate-500">—</p>
         </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <div class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Last opened</div>
-          <div id="lastOpened" class="mt-2 text-lg font-bold text-slate-900">—</div>
+        <button id="continueBtn" type="button" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">Resume lesson</button>
+      </div>
+    </section>
+
+    <!-- Reader shell: module rail + reader pane -->
+    <section class="grid gap-5 lg:grid-cols-[20rem_minmax(0,1fr)]">
+      <!-- Module → lesson rail -->
+      <aside class="rounded-3xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Modules</h2>
+            <p class="text-[11px] text-slate-500">Structured lesson path</p>
+          </div>
+          <button id="railToggle" type="button" class="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600 lg:hidden">Show</button>
+        </div>
+        <div id="moduleRail" class="hidden space-y-3 px-3 py-3 lg:block"></div>
+      </aside>
+
+      <!-- Reader pane -->
+      <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="readerLessonBadge" class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600">PDF</span>
+              <span id="readerModuleLabel" class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Module</span>
+            </div>
+            <h2 id="readerLessonTitle" class="mt-1.5 truncate text-lg font-bold text-slate-900">Select a lesson</h2>
+            <p id="readerLessonMeta" class="text-xs text-slate-500">—</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <label id="readerCompleteWrap" class="hidden cursor-pointer items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:inline-flex">
+              <input id="readerCompleteToggle" type="checkbox" class="h-4 w-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+              <span>Mark complete</span>
+            </label>
+            <a id="readerOpenTab" href="#" target="_blank" rel="noopener noreferrer" class="hidden rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200">Open in new tab</a>
+            <a id="readerDownload" href="#" class="hidden rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Download</a>
+          </div>
+        </div>
+
+        <!-- PDF.js toolbar -->
+        <div id="readerToolbar" class="hidden flex-wrap items-center gap-2 border-b border-slate-100 bg-slate-50 px-4 py-2.5 sm:px-5">
+          <button id="pagePrev" type="button" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100">◀ Prev</button>
+          <span id="pageCounter" class="text-xs font-semibold text-slate-600">Page 1 of 1</span>
+          <button id="pageNext" type="button" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100">Next ▶</button>
+          <span class="mx-1 h-4 w-px bg-slate-200"></span>
+          <button id="zoomOut" type="button" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100">−</button>
+          <span id="zoomLevel" class="text-xs font-semibold text-slate-600">100%</span>
+          <button id="zoomIn" type="button" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100">+</button>
+        </div>
+
+        <div class="px-4 py-4 sm:px-5">
+          <div id="readerEmpty" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-14 text-center text-sm text-slate-500">
+            Pick a lesson from the module list to start reading.
+          </div>
+
+          <div id="readerLoading" class="hidden py-14 text-center">
+            <div class="mb-3 inline-block h-7 w-7 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+            <p class="text-sm text-slate-500">Preparing document...</p>
+          </div>
+
+          <div id="readerCanvasWrap" class="hidden overflow-auto rounded-2xl border border-slate-200 bg-slate-100 p-3 text-center">
+            <canvas id="pdfCanvas" class="mx-auto rounded-lg bg-white shadow-sm"></canvas>
+          </div>
+
+          <!-- Automatic fallback when PDF.js cannot load or render -->
+          <div id="readerFallback" class="hidden rounded-2xl border border-amber-200 bg-amber-50 px-5 py-8 text-center">
+            <h3 class="text-base font-bold text-slate-900">In-page reading is unavailable for this file</h3>
+            <p id="readerFallbackReason" class="mx-auto mt-2 max-w-md text-sm text-slate-600">You can still open or download the document.</p>
+            <div class="mt-4 flex flex-wrap justify-center gap-2">
+              <a id="fallbackOpenTab" href="#" target="_blank" rel="noopener noreferrer" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Open in new tab</a>
+              <a id="fallbackDownload" href="#" class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-100">Download</a>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
+            <button id="lessonPrev" type="button" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">← Previous lesson</button>
+            <label id="readerCompleteWrapMobile" class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 sm:hidden">
+              <input id="readerCompleteToggleMobile" type="checkbox" class="h-4 w-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+              <span>Mark complete</span>
+            </label>
+            <button id="lessonNext" type="button" class="rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800">Next lesson →</button>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
-        <div class="mb-2 flex items-center justify-between text-xs text-slate-500">
-          <span id="progressDetail">0 / 0 lessons</span>
-          <span id="progressHint">Progress is saved on this device.</span>
-        </div>
-        <div class="h-3 w-full overflow-hidden rounded-full bg-slate-200/70">
-          <div id="progressBar" class="h-3 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500" style="width:0%"></div>
-        </div>
-      </div>
+    <section id="certificatePanel" class="hidden rounded-3xl border border-amber-200 bg-amber-50 px-5 py-5 shadow-sm sm:px-7">
+      <h2 class="text-lg font-bold text-slate-900">Certificate available for this course</h2>
+      <p class="mt-1 text-sm text-slate-600">This course is marked as certificate-enabled. Certificate issuing is not part of this release.</p>
     </section>
 
     <section class="rounded-3xl border border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-5 shadow-sm sm:px-7">
@@ -85,16 +201,6 @@
       </div>
     </section>
 
-    <div id="errorBanner" class="hidden rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-medium text-red-700"></div>
-
-    <section class="space-y-4">
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Lessons</h2>
-        <p class="text-sm text-slate-500">Clean lesson list with file details and quick actions. Mark complete to track study progress and milestones.</p>
-      </div>
-      <div id="lessonList" class="space-y-3"></div>
-    </section>
-
     <section class="rounded-3xl border border-slate-200 bg-white shadow-sm">
       <div class="border-b border-slate-100 px-5 py-4">
         <h2 class="text-lg font-semibold text-slate-900">Related Quizzes (Optional)</h2>
@@ -107,10 +213,18 @@
   </main>
 
   <script src="/js/modules/navbar.js"></script>
+  <script src="/js/modules/courseProgress.js"></script>
   <script>
     const state = {
       course: null,
-      user: null
+      user: null,
+      progress: null,
+      lessons: [],
+      activeLessonId: null,
+      pdf: null,
+      page: 1,
+      scale: 1.1,
+      renderToken: 0
     };
 
     function escHtml(value) {
@@ -122,8 +236,12 @@
         .replace(/'/g, '&#39;');
     }
 
+    function el(id) {
+      return document.getElementById(id);
+    }
+
     function showError(message) {
-      const banner = document.getElementById('errorBanner');
+      const banner = el('errorBanner');
       banner.textContent = message;
       banner.classList.remove('hidden');
     }
@@ -143,12 +261,22 @@
       return `${(size / (1024 * 1024)).toFixed(2)} MB`;
     }
 
+    function formatDuration(minutes) {
+      const total = Number(minutes || 0);
+      if (!Number.isFinite(total) || total <= 0) return null;
+      const hours = Math.floor(total / 60);
+      const rest = total % 60;
+      if (hours && rest) return `${hours} h ${rest} min`;
+      if (hours) return `${hours} h`;
+      return `${rest} min`;
+    }
+
     function formatLessonType(value) {
       const normalized = String(value || 'pdf').trim().toLowerCase();
       if (!normalized) return 'PDF';
       return normalized
         .split(/[-_\s]+/)
-        .map((chunk) => chunk ? chunk[0].toUpperCase() + chunk.slice(1) : '')
+        .map((chunk) => (chunk ? chunk[0].toUpperCase() + chunk.slice(1) : ''))
         .join(' ');
     }
 
@@ -158,123 +286,282 @@
       return candidate;
     }
 
-    function progressKey(courseId) {
-      return `course-progress:${courseId}`;
+    function isDone(lessonId) {
+      return Boolean(state.progress && state.progress.completedLessonIds.includes(lessonId));
     }
 
-    function getProgress(course) {
-      const lessons = Array.isArray(course?.lessons) ? course.lessons : [];
-      try {
-        const payload = JSON.parse(localStorage.getItem(progressKey(course.id)) || 'null');
-        const completedIds = Array.isArray(payload?.completedLessonIds) ? payload.completedLessonIds : [];
-        const totalLessons = lessons.length;
-        const completedLessons = lessons.filter((lesson) => completedIds.includes(lesson.id)).length;
-        const percent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-        return {
-          completedLessonIds: completedIds,
-          completedLessons,
-          totalLessons,
-          percent,
-          lastOpenedAt: payload?.lastOpenedAt || null
-        };
-      } catch {
-        return {
-          completedLessonIds: [],
-          completedLessons: 0,
-          totalLessons: lessons.length,
-          percent: 0,
-          lastOpenedAt: null
-        };
+    /* ---------------- header ---------------- */
+
+    function renderMetaChips(course) {
+      const chips = [];
+      if (course.difficulty) chips.push(course.difficulty);
+      const duration = formatDuration(course.estimatedMinutes);
+      if (duration) chips.push(duration);
+      if (course.certificateEnabled) chips.push('Certificate available');
+
+      el('courseMetaChips').innerHTML = chips
+        .map((chip) => `<span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">${escHtml(chip)}</span>`)
+        .join('');
+
+      if (course.coverImage) {
+        el('courseCover').src = course.coverImage;
+        el('courseCover').alt = `${course.title || 'Course'} cover`;
+        el('courseCoverWrap').classList.remove('hidden');
       }
+
+      el('certificatePanel').classList.toggle('hidden', !course.certificateEnabled);
     }
 
-    function saveProgress(courseId, progress) {
-      localStorage.setItem(progressKey(courseId), JSON.stringify(progress));
-    }
+    function renderHeader() {
+      const course = state.course;
+      const progress = state.progress;
 
-    function renderHeader(course) {
-      const progress = getProgress(course);
       document.title = `${course.title} - Course - RPSC/REET Prep`;
-      document.getElementById('courseTitle').textContent = course.title || 'Course';
-      document.getElementById('courseDescription').textContent = course.description || 'No description available.';
-      document.getElementById('courseCategory').textContent = course.category || 'General';
-      document.getElementById('courseLessonCount').textContent = String(progress.totalLessons);
-      document.getElementById('courseProgressPercent').textContent = `${progress.percent}%`;
-      document.getElementById('courseProgressMeta').textContent = `${progress.completedLessons} / ${progress.totalLessons} lessons completed`;
-      document.getElementById('progressDetail').textContent = `${progress.completedLessons} / ${progress.totalLessons} lessons`;
-      document.getElementById('progressBar').style.width = `${progress.percent}%`;
-      document.getElementById('lastOpened').textContent = progress.lastOpenedAt ? formatDate(progress.lastOpenedAt) : '—';
-      document.getElementById('progressHint').textContent = progress.percent >= 100
-        ? 'Course milestone complete. You can still revisit lessons any time.'
-        : 'Progress milestones are saved on this device.';
+      el('courseTitle').textContent = course.title || 'Course';
+      el('courseDescription').textContent = course.description || 'No description available.';
+      el('courseCategory').textContent = course.category || 'General';
+      el('courseLessonCount').textContent = String(progress.totalLessons);
+      el('courseProgressPercent').textContent = `${progress.percent}%`;
+      el('courseProgressMeta').textContent = `${progress.completedLessons} / ${progress.totalLessons} lessons completed`;
+      el('progressBar').style.width = `${progress.percent}%`;
+      el('progressRing').setAttribute('stroke-dasharray', `${progress.percent} 100`);
+      el('lastOpened').textContent = progress.lastOpenedAt ? formatDate(progress.lastOpenedAt) : '—';
+
+      el('progressHint').textContent = progress.storage === 'account'
+        ? 'Progress is saved to your account and syncs across devices.'
+        : 'Progress is saved on this device. Sign in to sync it to your account.';
+
+      el('milestoneChips').innerHTML = CourseProgress.milestones(progress.percent)
+        .map((milestone) => `
+          <span class="rounded-full border px-3 py-1 text-xs font-semibold ${milestone.reached ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-white text-slate-400'}">
+            ${milestone.value}%${milestone.reached ? ' reached' : ''}
+          </span>
+        `).join('');
     }
 
-    function renderLessons(course) {
-      const progress = getProgress(course);
-      const doneSet = new Set(progress.completedLessonIds);
-      const list = document.getElementById('lessonList');
+    /* ---------------- module rail ---------------- */
 
-      if (!Array.isArray(course.lessons) || course.lessons.length === 0) {
-        list.innerHTML = '<div class="rounded-2xl border border-slate-200 bg-white px-5 py-8 text-center text-sm text-slate-500">No lessons available in this course.</div>';
+    function renderRail() {
+      const modules = Array.isArray(state.course.modules) ? state.course.modules : [];
+      const rail = el('moduleRail');
+
+      if (!modules.length) {
+        rail.innerHTML = '<div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">No lessons available in this course.</div>';
         return;
       }
 
-      list.innerHTML = course.lessons.map((lesson, index) => {
-        const isDone = doneSet.has(lesson.id);
-        const displayFileName = getDisplayFileName(lesson.origFilename, lesson.title);
+      rail.innerHTML = modules.map((module, moduleIndex) => {
+        const completed = module.lessons.filter((lesson) => isDone(lesson.id)).length;
+        const percent = module.lessons.length ? Math.round((completed / module.lessons.length) * 100) : 0;
+
+        const lessonRows = module.lessons.map((lesson) => {
+          const active = lesson.id === state.activeLessonId;
+          const done = isDone(lesson.id);
+          return `
+            <button type="button" data-lesson-id="${escHtml(lesson.id)}" class="lesson-link flex w-full items-start gap-2 rounded-xl border px-3 py-2 text-left transition ${active ? 'border-blue-300 bg-blue-50' : 'border-transparent hover:border-slate-200 hover:bg-slate-50'}">
+              <span class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${done ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-slate-300 text-transparent'}">✓</span>
+              <span class="min-w-0">
+                <span class="block truncate text-xs font-semibold ${active ? 'text-blue-700' : 'text-slate-800'}">${escHtml(lesson.title || 'Untitled lesson')}</span>
+                <span class="block text-[11px] text-slate-400">${escHtml(formatLessonType(lesson.type))} • ${escHtml(formatSize(lesson.size))}</span>
+              </span>
+            </button>
+          `;
+        }).join('');
+
         return `
-          <article class="rounded-2xl border ${isDone ? 'border-emerald-200 bg-emerald-50/60' : 'border-slate-200 bg-white'} p-4 shadow-sm sm:p-5">
-            <div class="flex flex-wrap items-start justify-between gap-3">
-              <label class="flex min-w-0 flex-1 items-start gap-3">
-                <input type="checkbox" class="lesson-toggle mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" data-lesson-id="${escHtml(lesson.id)}" ${isDone ? 'checked' : ''}>
-                <div class="min-w-0 w-full">
-                  <div class="grid gap-3 md:grid-cols-[minmax(0,2fr)_8.5rem_minmax(0,1.6fr)_7.5rem_auto] md:items-center">
-                    <div class="min-w-0">
-                      <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Lesson ${index + 1}</div>
-                      <h3 class="mt-1 truncate text-base font-semibold text-slate-900 ${isDone ? 'line-through decoration-slate-400/70' : ''}">${escHtml(lesson.title || 'Untitled lesson')}</h3>
-                    </div>
-                    <div>
-                      <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Type</div>
-                      <div class="mt-1 text-sm font-semibold text-slate-700">${escHtml(formatLessonType(lesson.type))}</div>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">File</div>
-                      <div class="mt-1 truncate text-sm font-medium text-slate-700" title="${escHtml(displayFileName)}">${escHtml(displayFileName)}</div>
-                    </div>
-                    <div>
-                      <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Date</div>
-                      <div class="mt-1 text-sm font-medium text-slate-700">${escHtml(formatDate(lesson.updatedAt))}</div>
-                    </div>
-                    <div class="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
-                      <a href="${escHtml(lesson.viewUrl)}" target="_blank" rel="noopener noreferrer" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200">View</a>
-                      <a href="${escHtml(lesson.downloadUrl)}" class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Download</a>
-                    </div>
-                  </div>
-                  <div class="mt-2 text-xs text-slate-500">${escHtml(lesson.description || 'No description available.')} • ${escHtml(formatSize(lesson.size))}</div>
-                </div>
-              </label>
+          <section class="rounded-2xl border border-slate-200 bg-white p-3">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="truncate text-xs font-bold uppercase tracking-[0.16em] text-slate-500">${escHtml(module.title || `Module ${moduleIndex + 1}`)}</h3>
+              <span class="text-[11px] font-semibold text-slate-400">${completed}/${module.lessons.length}</span>
             </div>
-          </article>
+            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div class="h-1.5 rounded-full bg-blue-500" style="width:${percent}%"></div>
+            </div>
+            <div class="mt-2 space-y-1">${lessonRows}</div>
+          </section>
         `;
       }).join('');
 
-      list.querySelectorAll('.lesson-toggle').forEach((checkbox) => {
-        checkbox.addEventListener('change', () => {
-          const current = getProgress(course);
-          const done = new Set(current.completedLessonIds);
-          if (checkbox.checked) done.add(checkbox.dataset.lessonId);
-          else done.delete(checkbox.dataset.lessonId);
-
-          saveProgress(course.id, {
-            completedLessonIds: Array.from(done),
-            lastOpenedAt: new Date().toISOString()
-          });
-
-          renderHeader(course);
-          renderLessons(course);
-        });
+      rail.querySelectorAll('.lesson-link').forEach((button) => {
+        button.addEventListener('click', () => openLesson(button.dataset.lessonId));
       });
     }
+
+    /* ---------------- continue card ---------------- */
+
+    function renderContinueCard() {
+      const card = el('continueCard');
+      const lastId = state.progress.lastLessonId;
+      const lesson = state.lessons.find((entry) => entry.id === lastId);
+
+      if (!lesson || lesson.id === state.activeLessonId) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      el('continueLessonTitle').textContent = lesson.title || 'Lesson';
+      el('continueLessonMeta').textContent = `${lesson.moduleTitle || 'Course content'} • last opened ${formatDate(state.progress.lastOpenedAt)}`;
+      card.classList.remove('hidden');
+      el('continueBtn').onclick = () => openLesson(lesson.id);
+    }
+
+    /* ---------------- PDF.js reader with automatic fallback ---------------- */
+
+    function setReaderView(view) {
+      el('readerEmpty').classList.toggle('hidden', view !== 'empty');
+      el('readerLoading').classList.toggle('hidden', view !== 'loading');
+      el('readerCanvasWrap').classList.toggle('hidden', view !== 'canvas');
+      el('readerFallback').classList.toggle('hidden', view !== 'fallback');
+      el('readerToolbar').classList.toggle('hidden', view !== 'canvas');
+      el('readerToolbar').classList.toggle('flex', view === 'canvas');
+    }
+
+    function showFallback(lesson, reason) {
+      el('readerFallbackReason').textContent = reason;
+      el('fallbackOpenTab').href = lesson.viewUrl;
+      el('fallbackDownload').href = lesson.downloadUrl;
+      setReaderView('fallback');
+    }
+
+    function pdfLibrary() {
+      if (window.__pdfjsFailed) return null;
+      return window.pdfjsLib || null;
+    }
+
+    async function renderPage(lesson) {
+      const token = state.renderToken;
+      try {
+        const page = await state.pdf.getPage(state.page);
+        if (token !== state.renderToken) return;
+
+        const viewport = page.getViewport({ scale: state.scale });
+        const canvas = el('pdfCanvas');
+        const context = canvas.getContext('2d');
+        const ratio = window.devicePixelRatio || 1;
+
+        canvas.width = Math.floor(viewport.width * ratio);
+        canvas.height = Math.floor(viewport.height * ratio);
+        canvas.style.width = `${Math.floor(viewport.width)}px`;
+
+        await page.render({
+          canvasContext: context,
+          viewport,
+          transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null
+        }).promise;
+
+        if (token !== state.renderToken) return;
+
+        el('pageCounter').textContent = `Page ${state.page} of ${state.pdf.numPages}`;
+        el('zoomLevel').textContent = `${Math.round(state.scale * 100)}%`;
+        setReaderView('canvas');
+      } catch (error) {
+        showFallback(lesson, 'This page could not be rendered in the browser. Open or download the file instead.');
+      }
+    }
+
+    async function loadPdf(lesson) {
+      const library = pdfLibrary();
+      if (!library) {
+        showFallback(lesson, 'The in-page reader could not be loaded. Open or download the file instead.');
+        return;
+      }
+
+      library.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+      setReaderView('loading');
+      state.renderToken += 1;
+      const token = state.renderToken;
+
+      try {
+        const pdf = await library.getDocument({ url: lesson.viewUrl, withCredentials: true }).promise;
+        if (token !== state.renderToken) return;
+        state.pdf = pdf;
+        state.page = 1;
+        await renderPage(lesson);
+      } catch (error) {
+        if (token !== state.renderToken) return;
+        showFallback(lesson, 'This document could not be opened in the reader. Open or download the file instead.');
+      }
+    }
+
+    /* ---------------- lesson selection ---------------- */
+
+    function activeLesson() {
+      return state.lessons.find((entry) => entry.id === state.activeLessonId) || null;
+    }
+
+    function renderReaderHeader(lesson) {
+      el('readerLessonBadge').textContent = formatLessonType(lesson.type);
+      el('readerModuleLabel').textContent = lesson.moduleTitle || 'Course content';
+      el('readerLessonTitle').textContent = lesson.title || 'Untitled lesson';
+      el('readerLessonMeta').textContent = `${getDisplayFileName(lesson.origFilename, lesson.title)} • ${formatSize(lesson.size)} • updated ${formatDate(lesson.updatedAt)}`;
+
+      el('readerOpenTab').href = lesson.viewUrl;
+      el('readerDownload').href = lesson.downloadUrl;
+      el('readerOpenTab').classList.remove('hidden');
+      el('readerDownload').classList.remove('hidden');
+
+      el('readerCompleteWrap').classList.remove('hidden');
+      el('readerCompleteWrap').classList.add('sm:inline-flex');
+      el('readerCompleteToggle').checked = isDone(lesson.id);
+      el('readerCompleteToggleMobile').checked = isDone(lesson.id);
+
+      const index = state.lessons.findIndex((entry) => entry.id === lesson.id);
+      el('lessonPrev').disabled = index <= 0;
+      el('lessonNext').disabled = index >= state.lessons.length - 1;
+      el('lessonPrev').classList.toggle('opacity-40', index <= 0);
+      el('lessonNext').classList.toggle('opacity-40', index >= state.lessons.length - 1);
+    }
+
+    async function openLesson(lessonId) {
+      const lesson = state.lessons.find((entry) => entry.id === lessonId);
+      if (!lesson) return;
+
+      state.activeLessonId = lesson.id;
+      renderReaderHeader(lesson);
+      renderRail();
+      renderContinueCard();
+      loadPdf(lesson);
+
+      const updated = await CourseProgress.markOpened(state.course.id, lesson.id, { totalLessons: state.lessons.length });
+      state.progress = updated;
+      renderHeader();
+    }
+
+    function stepLesson(offset) {
+      const index = state.lessons.findIndex((entry) => entry.id === state.activeLessonId);
+      const next = state.lessons[index + offset];
+      if (next) openLesson(next.id);
+    }
+
+    async function toggleComplete(checked) {
+      const lesson = activeLesson();
+      if (!lesson) return;
+
+      el('readerCompleteToggle').checked = checked;
+      el('readerCompleteToggleMobile').checked = checked;
+
+      // Optimistic update
+      const optimistic = new Set(state.progress.completedLessonIds);
+      if (checked) optimistic.add(lesson.id);
+      else optimistic.delete(lesson.id);
+      state.progress = {
+        ...state.progress,
+        completedLessonIds: Array.from(optimistic),
+        completedLessons: optimistic.size,
+        percent: state.lessons.length ? Math.round((optimistic.size / state.lessons.length) * 100) : 0
+      };
+      renderHeader();
+      renderRail();
+
+      state.progress = await CourseProgress.setLessonComplete(state.course.id, lesson.id, checked, {
+        totalLessons: state.lessons.length
+      });
+      renderHeader();
+      renderRail();
+    }
+
+    /* ---------------- related quizzes (unchanged behaviour) ---------------- */
 
     function extractKeywords(text) {
       return String(text || '')
@@ -285,25 +572,21 @@
     }
 
     function getCourseKeywords(course) {
-      const titleWords = extractKeywords(course?.title);
-      const categoryWords = extractKeywords(course?.category);
-      return Array.from(new Set([...titleWords, ...categoryWords]));
+      return Array.from(new Set([...extractKeywords(course?.title), ...extractKeywords(course?.category)]));
     }
 
     function scoreQuizRelevance(quiz, keywords) {
       const searchText = `${quiz.title || ''} ${quiz.mode || ''}`.toLowerCase();
       let score = 0;
-
       keywords.forEach((keyword) => {
         if (searchText.includes(keyword)) score += 2;
       });
-
       if ((quiz.mode || '').toLowerCase() === 'topic') score += 1;
       return score;
     }
 
     function renderRelatedQuizCards(quizzes, course) {
-      const container = document.getElementById('relatedQuizLinks');
+      const container = el('relatedQuizLinks');
       const keywords = getCourseKeywords(course);
       const ranked = [...quizzes]
         .map((quiz) => ({ ...quiz, relevance: scoreQuizRelevance(quiz, keywords) }))
@@ -321,22 +604,21 @@
       container.innerHTML = ranked.map((quiz) => `
         <article class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
           <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">${escHtml((quiz.mode || 'quiz').toUpperCase())}</div>
-          <h3 class="mt-2 line-clamp-2 text-sm font-semibold text-slate-800">${escHtml(quiz.title || 'Quiz')}</h3>
-          <div class="mt-2 text-xs text-slate-500">${escHtml(String(quiz.questionCount || 0))} questions</div>
-          <a href="quizzes.html?mode=${encodeURIComponent(quiz.mode || 'all')}" class="mt-3 inline-flex rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-100">Start Practice</a>
+          <h3 class="mt-2 line-clamp-2 text-sm font-semibold text-slate-900">${escHtml(quiz.title || 'Untitled quiz')}</h3>
+          <p class="mt-1 text-xs text-slate-500">${Number(quiz.questionCount) || 0} questions</p>
+          <a href="quizzes.html?quiz=${encodeURIComponent(quiz.id || '')}" class="mt-3 inline-flex rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Practice</a>
         </article>
       `).join('');
     }
 
     async function loadRelatedQuizzes(course) {
+      const container = el('relatedQuizLinks');
       try {
         const response = await fetch('/api/quizzes', { credentials: 'include' });
-        if (!response.ok) throw new Error('Failed to load quizzes');
-        const quizzes = await response.json();
-        const list = Array.isArray(quizzes) ? quizzes : [];
-        renderRelatedQuizCards(list, course);
+        const payload = await response.json();
+        const quizzes = Array.isArray(payload) ? payload : (payload.quizzes || []);
+        renderRelatedQuizCards(quizzes, course);
       } catch {
-        const container = document.getElementById('relatedQuizLinks');
         container.innerHTML = `
           <a href="quizzes.html?mode=daily" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">Daily Quiz</a>
           <a href="quizzes.html?mode=topic" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">Topic Tests</a>
@@ -346,9 +628,42 @@
       }
     }
 
+    /* ---------------- bootstrap ---------------- */
+
+    function bindControls() {
+      el('pagePrev').addEventListener('click', () => {
+        if (!state.pdf || state.page <= 1) return;
+        state.page -= 1;
+        renderPage(activeLesson());
+      });
+      el('pageNext').addEventListener('click', () => {
+        if (!state.pdf || state.page >= state.pdf.numPages) return;
+        state.page += 1;
+        renderPage(activeLesson());
+      });
+      el('zoomIn').addEventListener('click', () => {
+        state.scale = Math.min(2.5, state.scale + 0.2);
+        if (state.pdf) renderPage(activeLesson());
+      });
+      el('zoomOut').addEventListener('click', () => {
+        state.scale = Math.max(0.5, state.scale - 0.2);
+        if (state.pdf) renderPage(activeLesson());
+      });
+      el('lessonPrev').addEventListener('click', () => stepLesson(-1));
+      el('lessonNext').addEventListener('click', () => stepLesson(1));
+      el('readerCompleteToggle').addEventListener('change', (event) => toggleComplete(event.target.checked));
+      el('readerCompleteToggleMobile').addEventListener('change', (event) => toggleComplete(event.target.checked));
+      el('railToggle').addEventListener('click', () => {
+        const rail = el('moduleRail');
+        const hidden = rail.classList.toggle('hidden');
+        el('railToggle').textContent = hidden ? 'Show' : 'Hide';
+      });
+    }
+
     async function loadCourse() {
       const params = new URLSearchParams(window.location.search);
       const courseId = params.get('course');
+      const requestedLesson = params.get('lesson');
 
       if (!courseId) {
         showError('Invalid course link.');
@@ -361,8 +676,28 @@
         if (!response.ok) throw new Error(payload.error || 'Course not found.');
 
         state.course = payload;
-        renderHeader(payload);
-        renderLessons(payload);
+        state.lessons = Array.isArray(payload.lessons) ? payload.lessons : [];
+
+        state.progress = await CourseProgress.load(payload.id, {
+          totalLessons: state.lessons.length,
+          merge: Boolean(state.user)
+        });
+
+        renderMetaChips(payload);
+        renderHeader();
+        renderRail();
+        renderContinueCard();
+
+        // Deep link wins, then the last opened lesson, then the first
+        // lesson that is still incomplete, then simply the first lesson.
+        const completed = new Set(state.progress.completedLessonIds || []);
+        const startLesson = state.lessons.find((entry) => entry.id === requestedLesson)
+          || state.lessons.find((entry) => entry.id === state.progress.lastLessonId)
+          || state.lessons.find((entry) => !completed.has(entry.id))
+          || state.lessons[0];
+        if (startLesson) openLesson(startLesson.id);
+        else setReaderView('empty');
+
         await loadRelatedQuizzes(payload);
       } catch (error) {
         showError(error.message || 'Failed to load course detail.');
@@ -387,9 +722,10 @@
         Navbar.mount('#appNavbar', { active: 'resources', user: state.user });
       }
 
-      document.getElementById('loadingScreen').classList.add('hidden');
-      document.getElementById('mainContent').classList.remove('hidden');
+      el('loadingScreen').classList.add('hidden');
+      el('mainContent').classList.remove('hidden');
 
+      bindControls();
       await loadCourse();
     }
 

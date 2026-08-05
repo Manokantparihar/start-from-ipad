@@ -133,6 +133,32 @@
             </select>
           </div>
         </div>
+        <div>
+          <label class="mb-1 block text-sm font-semibold text-gray-700">Cover Image URL</label>
+          <input id="courseCoverImageInput" type="url" placeholder="https://..." class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <p class="mt-1 text-xs text-gray-400">Optional. Shown on the course card and course header.</p>
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label class="mb-1 block text-sm font-semibold text-gray-700">Difficulty</label>
+            <select id="courseDifficultyInput" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="">Not set</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-semibold text-gray-700">Estimated Minutes</label>
+            <input id="courseEstimatedMinutesInput" type="number" min="0" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div class="flex items-end">
+            <label class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <input id="courseCertificateEnabledInput" type="checkbox" class="h-4 w-4 rounded border-gray-300">
+              Certificate enabled
+            </label>
+          </div>
+        </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" data-close="courseModal" class="rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Cancel</button>
           <button id="courseSubmitBtn" type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Save</button>
@@ -183,6 +209,24 @@
           <label class="mb-1 block text-sm font-semibold text-gray-700">Order</label>
           <input id="lessonOrderInput" type="number" min="1" value="1" class="w-36 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
           <p id="lessonOrderError" class="field-error hidden"></p>
+        </div>
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+          <p class="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-gray-500">Module (optional)</p>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <label class="mb-1 block text-xs font-semibold text-gray-600">Module Key</label>
+              <input id="lessonModuleKeyInput" type="text" placeholder="module-1" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-semibold text-gray-600">Module Title</label>
+              <input id="lessonModuleTitleInput" type="text" placeholder="Foundations" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-semibold text-gray-600">Module Order</label>
+              <input id="lessonModuleOrderInput" type="number" min="1" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            </div>
+          </div>
+          <p class="mt-2 text-xs text-gray-400">Leave empty to keep the lesson in the default module. Lessons sharing a module key are grouped together.</p>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" data-close="lessonModal" class="rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Cancel</button>
@@ -422,6 +466,10 @@
       document.getElementById('courseDescriptionInput').value = '';
       document.getElementById('courseCategoryInput').value = '';
       document.getElementById('courseStatusInput').value = 'draft';
+      document.getElementById('courseCoverImageInput').value = '';
+      document.getElementById('courseDifficultyInput').value = '';
+      document.getElementById('courseEstimatedMinutesInput').value = '';
+      document.getElementById('courseCertificateEnabledInput').checked = false;
     }
 
     function openCourseForm(course = null) {
@@ -434,6 +482,11 @@
         document.getElementById('courseDescriptionInput').value = course.description || '';
         document.getElementById('courseCategoryInput').value = course.category || '';
         document.getElementById('courseStatusInput').value = course.status || 'draft';
+        document.getElementById('courseCoverImageInput').value = course.coverImage || '';
+        document.getElementById('courseDifficultyInput').value = course.difficulty || '';
+        document.getElementById('courseEstimatedMinutesInput').value =
+          Number(course.estimatedMinutes) > 0 ? course.estimatedMinutes : '';
+        document.getElementById('courseCertificateEnabledInput').checked = Boolean(course.certificateEnabled);
       }
       openModal('courseModal');
     }
@@ -449,6 +502,9 @@
       document.getElementById('lessonOrderInput').value = '1';
       document.getElementById('lessonFileInput').value = '';
       document.getElementById('lessonFileHint').textContent = 'Required for new lesson.';
+      document.getElementById('lessonModuleKeyInput').value = '';
+      document.getElementById('lessonModuleTitleInput').value = '';
+      document.getElementById('lessonModuleOrderInput').value = '';
     }
 
     function openLessonForm(initialCourseId = '', lesson = null) {
@@ -469,6 +525,10 @@
         document.getElementById('lessonOrderInput').value = lesson.order || 1;
         document.getElementById('lessonCourseInput').value = lesson.courseId;
         document.getElementById('lessonFileHint').textContent = 'File is optional while editing metadata.';
+        document.getElementById('lessonModuleKeyInput').value = lesson.moduleKey || '';
+        document.getElementById('lessonModuleTitleInput').value = lesson.moduleTitle || '';
+        document.getElementById('lessonModuleOrderInput').value =
+          Number(lesson.moduleOrder) > 0 ? lesson.moduleOrder : '';
       }
 
       openModal('lessonModal');
@@ -482,7 +542,11 @@
         title: document.getElementById('courseTitleInput').value.trim(),
         description: document.getElementById('courseDescriptionInput').value.trim(),
         category: document.getElementById('courseCategoryInput').value.trim(),
-        status: document.getElementById('courseStatusInput').value
+        status: document.getElementById('courseStatusInput').value,
+        coverImage: document.getElementById('courseCoverImageInput').value.trim(),
+        difficulty: document.getElementById('courseDifficultyInput').value,
+        estimatedMinutes: document.getElementById('courseEstimatedMinutesInput').value.trim(),
+        certificateEnabled: document.getElementById('courseCertificateEnabledInput').checked
       };
 
       if (!payload.title) {
@@ -534,6 +598,9 @@
       const courseId = document.getElementById('lessonCourseInput').value;
       const file = document.getElementById('lessonFileInput').files[0];
       const order = Number(document.getElementById('lessonOrderInput').value);
+      const moduleKey = document.getElementById('lessonModuleKeyInput').value.trim();
+      const moduleTitle = document.getElementById('lessonModuleTitleInput').value.trim();
+      const moduleOrderRaw = document.getElementById('lessonModuleOrderInput').value.trim();
 
       if (!lessonTitle) {
         setFieldError('lessonTitleError', 'Lesson title is required.');
@@ -569,7 +636,10 @@
             courseId,
             type: document.getElementById('lessonTypeInput').value,
             description: document.getElementById('lessonDescriptionInput').value.trim(),
-            order
+            order,
+            moduleKey,
+            moduleTitle,
+            moduleOrder: moduleOrderRaw
           };
 
           const updateResponse = await fetch(`/api/admin/courses/lessons/${state.editingLessonId}`, {
@@ -606,6 +676,9 @@
           formData.append('type', document.getElementById('lessonTypeInput').value);
           formData.append('description', document.getElementById('lessonDescriptionInput').value.trim());
           formData.append('order', String(order));
+          formData.append('moduleKey', moduleKey);
+          formData.append('moduleTitle', moduleTitle);
+          formData.append('moduleOrder', moduleOrderRaw);
           formData.append('file', file);
 
           const createResponse = await fetch('/api/admin/courses/lessons', {
